@@ -1,0 +1,93 @@
+name: PvpTitles
+version: 2.3.1
+description: Get epic titles for pvp
+database: true
+
+author: julito
+
+main: es.jlh.pvptitles.Main.PvpTitles
+softdepend: [ScoreBoardStats, Vault]
+
+commands:
+    pvpTitles:
+        description: It shows info about the plugin.
+        usage: /<command>
+        aliases: pvptitulos
+        permission: pvptitles.help
+    pvpRank:
+        description: It shows info about your rank.
+        usage: /<command>
+        aliases: pvprango
+        permission: pvptitles.rank
+    pvpFame:
+        description: Add, view or set player fame in game.
+        usage: /<command> add|see|set <player> [<world_name>] [<famepoints>]
+        aliases: pvpfama
+        permission: pvptitles.setRank
+    pvpSign:
+        description: It shows the scoreboards per signs created in the server.
+        usage: /<command>
+        aliases: pvpCartel
+        permission: pvptitles.sign
+    pvpPurge:
+        description: It cleans inactive users.
+        usage: /<command>
+        aliases: pvppurga
+        permission: pvptitles.purge
+    pvpLadder:
+        description: It shows the top five players.
+        usage: /<command>
+        aliases: pvpranking
+        permission: pvptitles.ladder
+    pvpReload:
+        description: It reloads the plugin.
+        usage: /<command>        
+        permission: pvptitles.reload
+        
+permissions:
+    pvptitles.*:
+        description: Access to all commands.
+        children:
+            - pvptitles.help: true            
+            - pvptitles.rank: true
+            - pvptitles.setRank: true
+            - pvptitles.sign: true
+            - pvptitles.purge: true
+            - pvptitles.ladder: true
+            - pvptitles.reload: true
+            - pvptitles.managesign: true
+    pvptitles.admin:
+        description: Access to staff commands
+        children:
+            - pvptitles.setRank: true
+            - pvptitles.sign: true
+            - pvptitles.purge: true
+            - pvptitles.reload: true
+            - pvptitles.managesign: true
+    pvptitles.help:
+        description: Access to /pvptitles command.
+        default: true
+    pvptitles.rank:
+        description: Access to /pvprank command.
+        default: true
+    pvptitles.ladder:
+        description: Access to /pvpladder command.
+        default: true
+    pvptitles.setRank:
+        description: Access to /pvpfame command.
+        default: op
+    pvptitles.sign:
+        description: Access to /pvpsign command.
+        default: op
+    pvptitles.purge:
+        description: Access to /pvppurge command.
+        default: op
+    pvptitles.reload:
+        description: Access to /pvpreload command.
+        default: op
+    pvptitles.managesign:
+        description: Create/destroy scoreboards per signs.
+        default: op
+    pvptitles.chat:
+        description: Doesn't display your title in the chat.
+        default: false

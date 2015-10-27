@@ -1,0 +1,188 @@
+# DO NOT TOUCH #
+Version: 2.3
+################
+
+############################################################
+# +------------------------------------------------------+ #
+# |                  METRICS && UPDATES                  | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Enable/Disable metrics
+Metrics: true
+# Notice Update Available
+Alert: true
+# Automatic updates of the plugin
+Update: false
+
+############################################################
+# +------------------------------------------------------+ #
+# |                 MYSQL-PVPTITLES BRIDGE               | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Autoexport Ebean DB content to SQL
+Ebean:
+    # If MySQL is enabled this won't work
+    exportToSQL: true
+
+# False to work with autocreated sql form the plugin
+# True to hook {connect} into the existing server MySQL.
+Mysql:
+    enable: false
+    
+    host: localhost
+    port: 3306
+    database: dbname
+    user: user
+    pass: pass
+    
+# Unique ID per server (Default -1 indicates that the server has not ID)
+MultiS: -1
+# Custom name for this server (If empty server name will be used)
+NameS: Custom
+
+############################################################
+# +------------------------------------------------------+ #
+# |                      MULTIWORLD                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+# MultiWorld
+MW:
+    # Enable points per world
+    enable: false
+        
+# Disable some plugin features between worlds
+MW-filter:
+    # It shows the titles on the worlds listed below.
+    chat: false
+    # Awards points for fame on the worlds listed below.
+    points: false
+    # It shows the players, who played in the worlds listed below, on the leaderboard (pvpladder and signs)
+    show-on-leaderboard: false
+    # List of affected worlds (No case sensitive)
+    affected-worlds:
+    - example_world
+
+############################################################
+# +------------------------------------------------------+ #
+# |                        EVENTS                        | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Update Time for leaderboard per signs (IN MINUTES)
+LBRefresh: 1
+
+# Time to check new Rank (Time requierement) (IN SECONDS)
+RankChecker: 30
+
+# ** You can disable the events (if you don't need it) putting in the fields '-1' ** #
+
+############################################################
+# +------------------------------------------------------+ #
+# |                         PURGE                        | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Command Purge. Erase the data older than (in days)
+TimeP: 20
+# List of players who will not be deleted with the command (Case sensitive)
+NoPurge:
+    - Player1
+
+############################################################
+# +------------------------------------------------------+ #
+# |                        ANTIFARM                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+## KILLSTREAKS ##
+# Maximum deaths of a player (to the same player) during "TimeL"
+Kills: 3
+# Veto time [Stop get points by low] (in seconds)
+TimeV: 300
+# Necessary to clean the deaths made on a player (in seconds)
+TimeL: 300
+# It is restarted for each death
+
+## PLAYED TIME ##
+# Enable/Disable checking afk
+CheckAFK: true
+# AFK Time (time to considerer a player as afk player in minutes)
+AFKTime: 5
+
+## AWARDED POINTS ##
+# Modificator Percentage to increase or decrease the amount of points you receive when you have a run of low
+Mod: 0.25
+# Formula: (Killstreak * mod) + 1 | (Result is truncated upward)
+#   - Example: [Second low # (1 * 0.25 + 1) = 1.25 ~ 2 #
+#   - Recommended value between 0 - 1
+
+############################################################
+# +------------------------------------------------------+ #
+# |                         CHAT                         | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Default translations (ES | EN) \\ | // Custom translations avalaible (DE)
+DefaultLang: EN
+## For system messages and for players whose launcher has another language ##
+
+## [Custom translations] Also, you can add your own translations...
+## Example: You can create "messages_DE" and the messages into the file will be shown to the players whose launcher language is German
+
+
+# Customizable Name for the points earned by players
+Tag: Fame
+# Color of the title in chat
+PrefixColor: green
+# Number of the top players that will be shown in chat with the pvpladder command
+Top: 5
+
+# Prefix in the chat replace (Use double quotes to work)
+Prefix: "{PVPTITLE}"
+# If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat
+
+# Pss, you can use color codes in the title names to get custom colors per rank (Use double quotes)
+RankNames:
+- None
+- "&aHero&r"
+- Fierce Hero
+- Mighty Hero
+- Deadly Hero
+- Terrifying Hero
+- Conquering Hero
+- Subjugating Hero
+- Vanquishing Hero
+- Renowned Hero
+- Illustrious Hero
+- Eminent Hero
+- Kings Hero
+- Emperors Hero
+- Balthazar Hero
+- Legendary Hero
+ReqFame:
+- 0
+- 25
+- 75
+- 180
+- 360
+- 600
+- 1000
+- 1680
+- 2800
+- 4665
+- 7750
+- 12960
+- 21600
+- 36000
+- 60000
+- 100000
+
+# (Optional) Customise the required time (In seconds) to get each title
+#     -> if empty then no time necessary
+#     -> Not cumulative
+#     -> Same structure than before (1 field per title)
+ReqTime:
+- 0
