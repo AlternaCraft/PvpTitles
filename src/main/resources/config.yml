@@ -24,7 +24,7 @@ Update: false
 # Autoexport Ebean DB content to SQL
 Ebean:
     # If MySQL is enabled this won't work
-    exportToSQL: true
+    exportToSQL: false
 
 # False to work with autocreated sql form the plugin
 # True to hook {connect} into the existing server MySQL.
@@ -125,7 +125,7 @@ Mod: 0.25
 # +------------------------------------------------------+ #
 ############################################################
 
-# Default translations (ES | EN) \\ | // Custom translations avalaible (DE)
+# Default translations (ES | EN) \\ | // Custom translations available (DE)
 DefaultLang: EN
 ## For system messages and for players whose launcher has another language ##
 

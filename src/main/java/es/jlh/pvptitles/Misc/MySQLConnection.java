@@ -112,7 +112,7 @@ public class MySQLConnection {
 
     public static String getTablePW() {
         return "create table IF NOT EXISTS PlayerWorld ("
-                + "idServer int(3),"
+                + "idServer int(3) DEFAULT -1,"
                 + "playerName varchar(100),"
                 + "worldName varchar(100),"
                 + "famePoints int(3),"
@@ -170,6 +170,10 @@ public class MySQLConnection {
         }
     }
 
+    public static void fixTablePW() {
+        update("alter table playerworld alter column idServer set default -1;");
+    }
+    
     private static void update(String sql) {
         if (isConnected()) {
             try {

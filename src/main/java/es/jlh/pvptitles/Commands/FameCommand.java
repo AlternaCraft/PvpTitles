@@ -22,9 +22,11 @@ import org.bukkit.entity.Player;
  */
 public class FameCommand implements CommandExecutor {
 
-    private final Manager dm;
+    private PvpTitles pt = null;
+    private Manager dm = null;
 
     public FameCommand(PvpTitles pt) {
+        this.pt = pt;
         this.dm = pt.cm;
     }
 
@@ -48,8 +50,12 @@ public class FameCommand implements CommandExecutor {
      * @return Booleano con el resultado de la ejecucion
      */
     private boolean modRank(CommandSender sender, String[] args, LangType messages) {
-        OfflinePlayer opl = Bukkit.getServer().getOfflinePlayer(args[1]);
+        if (args.length <= 1) {
+            return false;
+        }
 
+        OfflinePlayer opl = Bukkit.getServer().getOfflinePlayer(args[1]);
+        
         // Evitar NullPointerException
         if (opl == null) {
             sender.sendMessage(PLUGIN + ChatColor.RED + args[1] + " doesn't "
@@ -94,11 +100,20 @@ public class FameCommand implements CommandExecutor {
             if (args.length == 2 || args.length == 3) {
                 int fameTotal = 0;
 
-                if (dm.params.isMw_enabled() && args.length == 2) {
-                    sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame see <player> <world_name>'");
-                    return true;
-                } else if (dm.params.isMw_enabled()) {
-                    fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
+                if (dm.params.isMw_enabled()) {
+                    if (args.length == 2) {
+                        String world = pt.getServer().getWorlds().get(0).getName();
+                        
+                        if (sender instanceof Player) {
+                            Player pl = (Player) sender;
+                            world = pl.getWorld().getName();
+                        }
+                        
+                        fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), world);
+                    }
+                    else {
+                        fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
+                    }
                 } else {
                     fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId());
                 }

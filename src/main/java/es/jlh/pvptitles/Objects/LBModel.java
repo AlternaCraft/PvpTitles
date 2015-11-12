@@ -50,17 +50,17 @@ public class LBModel {
         /* FIX PARA EVITAR QUE BORRE MAS FILAS DE LAS QUE DEBE */
         for (ArrayList<ArrayList<String>> param : params) {
             for (ArrayList<String> param1 : param) {
-                for (String param11 : param1) {                    
-                    if (param11.contains("<player>")) {                                
+                for (String variable : param1) {                    
+                    if (variable.contains("<player>")) {                                
                         repePlayer++;                     
                     }                
-                    else if (param11.contains("<rank>")) {
+                    else if (variable.contains("<rank>")) {
                         repeRank++;
                     }
-                    else if (param11.contains("<fame>")) {
+                    else if (variable.contains("<fame>")) {
                         repeFame++;
                     }
-                    else if (param11.contains("<pos>")) {
+                    else if (variable.contains("<pos>")) {
                         repePos++;
                     }
                 }

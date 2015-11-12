@@ -5,9 +5,9 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.InventoryManager;
+import es.jlh.pvptitles.Objects.CustomSign;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
-import es.jlh.pvptitles.Objects.LBData;
-import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -42,9 +42,9 @@ public class SignCommand implements CommandExecutor {
         }
 
         Player pl = (Player)sender;
-        ArrayList<LBData> sd = dm.getDm().buscaCarteles();
+        List<CustomSign> css = pt.cm.getLbm().getSigns();
         
-        pl.openInventory(InventoryManager.createInventory(sd, Localizer.getLocale(pl)));
+        pl.openInventory(InventoryManager.createInventory(css, Localizer.getLocale(pl)).get(0));
         
         return true;
     }

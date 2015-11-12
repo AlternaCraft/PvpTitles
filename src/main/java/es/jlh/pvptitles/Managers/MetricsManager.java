@@ -28,7 +28,8 @@ public class MetricsManager {
                 
                 Graph timeUsageGraph = metrics.createGraph("Req. Time usage");
                 
-                boolean timeUsed = false;                                
+                boolean timeUsed = false;  
+                
                 for (Iterator<Integer> iterator = Manager.reqTime().values().iterator(); iterator.hasNext();) {
                     Integer next = iterator.next();
                     if (next > 0) {
@@ -47,7 +48,6 @@ public class MetricsManager {
                 metrics.start();
             }
         } catch (IOException e) {
-            return;
         }
     }
 

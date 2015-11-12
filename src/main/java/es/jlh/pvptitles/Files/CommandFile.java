@@ -63,7 +63,6 @@ public class CommandFile {
             newConfig.save(commandsFile);
         } 
         catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }
 }

@@ -1,5 +1,5 @@
 // Proyect created: 15-02-2015
-// Last Changed:    24-09-2015
+// Last Changed:    09-11-2015
 // Author:          Julito; Nick: esejuli94
 // 
 // History:
@@ -44,6 +44,11 @@
 //  Ver. 2.3  26/09/2015  Añadida opción para modificar los puntos de jugadores
 //   que no estén online
 //  Ver. 2.3.1  27/10/2015  Cambiada la estructura del gestor de leaderboards
+//  Ver. 2.3.1  09/11/2015  Arreglado fallo con el prefijo siendo OP
+//  Ver. 2.3.1  11/11/2015  Mejorado el diseño del comando /pvpsign
+//  Ver. 2.3.1  12/11/2015  Arreglado fallo con los eventos del plugin y arreglado
+//   un fallo en la extructura de la tabla PlayerWorld de MySQL (idServer)
+
 package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Commands.FameCommand;
@@ -62,8 +67,8 @@ import es.jlh.pvptitles.Handlers.HandleSign;
 import es.jlh.pvptitles.Integrations.SBSSetup;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Managers.MetricsManager;
-import es.jlh.pvptitles.Managers.PlayedTime.MovementManager;
-import es.jlh.pvptitles.Managers.PlayedTime.PlayerManager;
+import es.jlh.pvptitles.Objects.PlayedTime.MovementManager;
+import es.jlh.pvptitles.Objects.PlayedTime.PlayerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.util.Iterator;
@@ -72,7 +77,6 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -85,7 +89,6 @@ public class PvpTitles extends JavaPlugin {
     public static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "] ";
 
-    public PluginDescriptionFile pdf = null;
     public static Logger logger = null;
 
     public Manager cm = null;
@@ -107,7 +110,6 @@ public class PvpTitles extends JavaPlugin {
     public void onEnable() {
         this.cm = Manager.getInstance();
         this.logger = getLogger();
-        this.pdf = this.getDescription();
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
@@ -138,7 +140,7 @@ public class PvpTitles extends JavaPlugin {
         // Registro los managers del timing
         movementManager = new MovementManager(this);
         playerManager = new PlayerManager(this);
-
+        
         checkOnlinePlayers();
 
         // Tareas posteriores
