@@ -1,22 +1,26 @@
 package es.jlh.pvptitles.Objects;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.material.Sign;
 
 /**
  *
  * @author julito
  */
 public class LBData {
+    private final Sign matSign = new Sign(Material.WALL_SIGN);
+    
     private static final String XP = "X+";
     private static final String XN = "X-";
     private static final String ZP = "Z+";
     private static final String ZN = "Z-";
     
-    private static final int NORTH = 1;
-    private static final int SOUTH = 2;
-    private static final int EAST = 3;
-    private static final int WEST = 4;
+    public static final int NORTH = 1;
+    public static final int SOUTH = 2;
+    public static final int EAST = 3;
+    public static final int WEST = 4;
     
     private String nombre = null;
     private String modelo = null;
@@ -71,6 +75,23 @@ public class LBData {
                 zn = true;
         }
     }
+    
+    public String getOrientacion() {
+        if (xp) {
+            return XP;
+        }
+        else if (xn) {
+            return XN;
+        }
+        else if (zp) {
+            return ZP;
+        }
+        else if (zn) {
+            return ZN;
+        }
+        
+        return null;
+    }
 
     public boolean isXp() {
         return xp;
@@ -86,6 +107,10 @@ public class LBData {
 
     public boolean isZn() {
         return zn;
+    }
+    
+    public Sign getSignMaterial() {        
+        return this.matSign;
     }
 
     public BlockFace getBlockface() {
@@ -103,8 +128,13 @@ public class LBData {
         }
     }
 
+    public int getPrimitiveBlockface() {
+        return this.blockface;
+    }
+    
     public void setBlockface(int blockface) {
         this.blockface = blockface;
+        this.matSign.setFacingDirection(this.getBlockface());
     }
     
     @Override

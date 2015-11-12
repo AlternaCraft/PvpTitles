@@ -100,6 +100,18 @@ public enum LangFile {
     SIGN_INVENTORY_INFO2(
             "Click derecho", 
             "Right click"
+    ),    
+    SIGN_INVENTORY_ACTION3_1(
+            "Siguiente pagina | Click derecho", 
+            "Next page | Right click"
+    ),
+    SIGN_INVENTORY_ACTION3_2(
+            "Pagina anterior | Click izquierdo", 
+            "Previous page | Left click"
+    ),
+    SIGN_INVENTORY_INFO3(
+            "&b[INFO] Pagina %pageNumber%", 
+            "&b[INFO] Page %pageNumber%"
     ),
     SIGN_DELETED(
             "&aHas eliminado el cartel correctamente", 

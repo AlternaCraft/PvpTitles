@@ -11,12 +11,13 @@ import es.jlh.pvptitles.Managers.DB.DatabaseManager;
 import es.jlh.pvptitles.Managers.DB.DatabaseManagerEbean;
 import es.jlh.pvptitles.Managers.DB.DatabaseManagerMysql;
 import es.jlh.pvptitles.Managers.RankManager;
-import es.jlh.pvptitles.Managers.SignManager;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
 import es.jlh.pvptitles.Misc.MySQLConnection;
 import es.jlh.pvptitles.Misc.Settings;
+import es.jlh.pvptitles.Objects.CustomSign;
 import es.jlh.pvptitles.Objects.LBData;
 import es.jlh.pvptitles.Objects.LBModel;
+import es.jlh.pvptitles.Objects.LeaderBoard.LeaderBoardManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import es.jlh.pvptitles.Tables.PlayerTable;
 import es.jlh.pvptitles.Tables.PlayerWTable;
@@ -34,9 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -51,6 +49,9 @@ public final class Manager {
     private PvpTitles pvpTitles;
     // Configuracion del config principal
     private FileConfiguration config;
+
+    // Gestor de leaderboards
+    private LeaderBoardManager lbm = null;
 
     // Instancia de la clase
     public static Manager instance = new Manager();
@@ -127,6 +128,8 @@ public final class Manager {
     public boolean setup(PvpTitles plugin) {
         this.pvpTitles = plugin;
 
+        this.lbm = new LeaderBoardManager(plugin);
+
         this.loadConfigPrincipal();
 
         this.selectDB();
@@ -170,11 +173,12 @@ public final class Manager {
 
         /* Signs */
         this.loadModels();
+        this.loadSavedSigns();
         this.loadActualizador();
 
         /* Rank checker */
         this.loadRankChecker();
-        
+
         return true;
     }
 
@@ -291,7 +295,10 @@ public final class Manager {
         params.setNameS(config.getString("NameS"));
 
         String lang = config.getString("DefaultLang");
-        messages = (lang.equals("es")) ? LangType.ES : LangType.EN;
+        messages = LangType.valueOf(lang);
+        if (messages == null) {
+            messages = LangType.EN;
+        }
 
         params.setPrefixColor(config.getString("PrefixColor"));
         params.setTag(config.getString("Tag"));
@@ -315,9 +322,9 @@ public final class Manager {
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
         if (configList.size() != requFame.size()) {
-            pvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            pvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            pvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logger.info("WARNING - RankNames and ReqFame are not equal in their numbers.");
         }
     }
 
@@ -406,6 +413,7 @@ public final class Manager {
             mysql = MySQLConnection.getConnection();
 
             MySQLConnection.creaDefault();
+            MySQLConnection.fixTablePW();
             MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
 
             this.pvpTitles.getServer().getConsoleSender().sendMessage(
@@ -439,6 +447,37 @@ public final class Manager {
     }
 
     /**
+     * Método para guardar en memoria los scoreboards
+     */
+    public void loadSavedSigns() {
+        List<LBData> carteles = pvpTitles.cm.getDm().buscaCarteles();
+
+        for (LBData cartel : carteles) {
+            LBModel sm = pvpTitles.cm.searchModel(cartel.getModelo());
+
+            if (sm == null) {
+                pvpTitles.cm.getDm().borraCartel(cartel.getL());
+
+                pvpTitles.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.RED + "Sign '" + cartel.getNombre()
+                        + "' removed because the model has not been found...");
+
+                continue;
+            }
+
+            CustomSign cs = new CustomSign(cartel, sm);
+            cs.setLineas(new String[0]);
+            cs.setMatSign(cartel.getSignMaterial());
+
+            lbm.loadSign(cs);
+        }
+
+        this.pvpTitles.getServer().getConsoleSender().sendMessage(
+                PLUGIN + ChatColor.YELLOW + this.lbm.getSigns().size() + 
+                        " scoreboards " + ChatColor.AQUA + "loaded correctly."
+        );
+    }
+
+    /**
      * Método para buscar un modelo de tabla de puntuaciones
      *
      * @param modelo String con el modelo a buscar
@@ -446,7 +485,7 @@ public final class Manager {
      */
     public LBModel searchModel(String modelo) {
         for (LBModel smc : modelos) {
-            if (smc.getNombre().equals(modelo)) {
+            if (smc.getNombre().compareToIgnoreCase(modelo) == 0) {
                 return smc;
             }
         }
@@ -565,61 +604,24 @@ public final class Manager {
         if (this.eventoActualizador != -1) {
             Bukkit.getServer().getScheduler().cancelTask(eventoActualizador);
         }
-        
+
         // Optimizador
-        if (this.params.getLBRefresh() == -1)
+        if (this.params.getLBRefresh() == -1) {
             return;
+        }
 
         this.eventoActualizador = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                ArrayList<LBData> sd = dm.buscaCarteles();
-                for (LBData sd1 : sd) {
-                    modCarteles(sd1);
-                }
+                getLbm().updateSigns();
             }
-        }, 20 * 5 /* Tiempo para prevenir fallos */, 20 * (this.params.getLBRefresh() * 60));
+        }, 20 * 5, 20 * (this.params.getLBRefresh() * 60));
 
         this.pvpTitles.getServer().getConsoleSender().sendMessage(
                 PLUGIN + ChatColor.YELLOW + "Refresh event ["
                 + this.params.getLBRefresh() + " min]"
                 + ChatColor.AQUA + " loaded correctly."
         );
-    }
-
-    /**
-     * Método para modificar los carteles de un leaderboard
-     *
-     * @param sd1 Datos del cartel base
-     */
-    public void modCarteles(LBData sd1) {
-        LBModel sm = searchModel(sd1.getModelo());
-        Location base = sd1.getL();
-        Location locSign = new Location(base.getWorld(), base.getX(), base.getY(), base.getZ());
-        org.bukkit.material.Sign matSign = new org.bukkit.material.Sign(Material.WALL_SIGN);
-        BlockFace bf = sd1.getBlockface();
-
-        if (sm == null) {
-            dm.borraCartel(sd1.getL());
-            this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                    PLUGIN + ChatColor.RED + "Sign '" + sd1.getNombre()
-                    + "' removed because the model has not been found...");
-            return;
-        }
-
-        // Orientacion de la creacion de los carteles \\
-        boolean usaXP = sd1.isXp();
-        boolean usaXN = sd1.isXn();
-        boolean usaZP = sd1.isZp();
-        boolean usaZN = sd1.isZn();
-
-        matSign.setFacingDirection(bf);
-
-        // Evito que quede desactualizada la id del server en el cartel
-        dm.modificaCartel(base);
-
-        SignManager.definirSB(this, sm, locSign, usaXP, usaXN, usaZP, bf, matSign,
-                new String[0], base, sd1.getServer());
     }
 
     /**
@@ -630,30 +632,31 @@ public final class Manager {
         if (this.eventoChecker != -1) {
             Bukkit.getServer().getScheduler().cancelTask(eventoChecker);
         }
-        
+
         // Optimizador
-        if (this.params.getRankChecker() == -1)
+        if (this.params.getRankChecker() == -1) {
             return;
-        
-        this.eventoActualizador = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
+        }
+
+        this.eventoChecker = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                Set<TimedPlayer> tp = pvpTitles.getPlayerManager().getTimedPlayers();                
-                
+                Set<TimedPlayer> tp = pvpTitles.getPlayerManager().getTimedPlayers();
+
                 for (Iterator<TimedPlayer> iterator = tp.iterator(); iterator.hasNext();) {
                     TimedPlayer next = iterator.next();
-                    
+
                     if (!next.hasSession()) {
                         continue;
                     }
-                    
+
                     int actualFame = dm.loadPlayerFame(next.getUniqueId());
 
                     int savedTimeB = dm.loadPlayedTime(next.getUniqueId());
                     String rankB = RankManager.GetRank(actualFame, savedTimeB);
                     int savedTimeA = savedTimeB + next.getTotalOnline();
                     String rankA = RankManager.GetRank(actualFame, savedTimeA);
-                    
+
                     if (!rankB.equals(rankA)) {
                         dm.savePlayedTime(next); // Actualizo el tiempo del jugador en el server
                         next.removeSessions(); // Reinicio el tiempo a cero
@@ -668,8 +671,8 @@ public final class Manager {
                 }
             }
         }, 20 * 5 /* Tiempo para prevenir fallos */, 20 * this.params.getRankChecker());
-        
-         this.pvpTitles.getServer().getConsoleSender().sendMessage(
+
+        this.pvpTitles.getServer().getConsoleSender().sendMessage(
                 PLUGIN + ChatColor.YELLOW + "Rank Checker event ["
                 + this.params.getRankChecker() + " sec]"
                 + ChatColor.AQUA + " loaded correctly."
@@ -720,5 +723,9 @@ public final class Manager {
      */
     public DatabaseManager getDm() {
         return dm;
+    }
+
+    public LeaderBoardManager getLbm() {
+        return lbm;
     }
 }

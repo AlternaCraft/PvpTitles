@@ -1,9 +1,12 @@
 package es.jlh.pvptitles.Handlers;
 
+import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Managers.RankManager;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,7 +35,19 @@ public class HandlePlayerPrefix implements Listener {
 
         String rank = null;
 
-        if (event.getPlayer().hasPermission("pvptitles.chat")) {
+        // Fix prefix
+        Permission perm = VaultSetup.permission;
+        if (perm != null) {
+            String group = perm.getPrimaryGroup(event.getPlayer());            
+            World w = null;
+            World wp = event.getPlayer().getWorld();            
+            
+            if (perm.groupHas(w, group, "pvptitles.hideprefix") || 
+                    perm.groupHas(wp, group, "pvptitles.hideprefix")) {
+                return;
+            }
+        }
+        else if (!event.getPlayer().isOp() && event.getPlayer().hasPermission("pvptitles.hideprefix")) {
             return;
         }
 

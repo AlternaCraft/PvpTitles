@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Managers.AntiFarm;
+package es.jlh.pvptitles.Objects.Antifarm;
 
 import es.jlh.pvptitles.Objects.PlayerKills;
 import es.jlh.pvptitles.Main.PvpTitles;

@@ -1,7 +1,8 @@
 package es.jlh.pvptitles.Objects;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Managers.PlayedTime.MovementManager;
+import es.jlh.pvptitles.Objects.PlayedTime.MovementManager;
+import es.jlh.pvptitles.Objects.PlayedTime.MovementManager;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;

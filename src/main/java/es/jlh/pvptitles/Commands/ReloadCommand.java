@@ -25,8 +25,8 @@ public class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        LangFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player)sender) : Manager.messages;
-        
+        LangFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
+
         if (args.length > 0) {
             sender.sendMessage(PLUGIN + LangFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
@@ -34,17 +34,21 @@ public class ReloadCommand implements CommandExecutor {
 
         pvpTitles.cm.loadConfigPrincipal();
         pvpTitles.cm.selectDB();
-        
+
         pvpTitles.cm.loadLang();
         pvpTitles.cm.loadCommands();
         pvpTitles.cm.loadModels();
-        
+
         if (tipo == Manager.DBTYPE.MYSQL) {
             pvpTitles.cm.loadServers();
         }
-        
+
         pvpTitles.cm.loadActualizador();
         pvpTitles.cm.loadRankChecker();
+
+        if (tipo == Manager.DBTYPE.EBEAN && pvpTitles.cm.params.isAuto_export()) {
+            pvpTitles.cm.getDm().SQLExport();
+        }
 
         sender.sendMessage(PLUGIN + LangFile.PLUGIN_RELOAD.getText(messages));
 

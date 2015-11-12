@@ -1,7 +1,7 @@
-package es.jlh.pvptitles.Managers.PlayedTime;
+package es.jlh.pvptitles.Objects.PlayedTime;
 
-import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.OfflinePlayer;
