@@ -1,6 +1,5 @@
 // Proyect created: 15-02-2015
-// Last Changed:    09-11-2015
-// Last Changed:    12-11-2015
+// Last Change:     12-11-2015
 // Author:          Julito; Nick: esejuli94
 // 
 // History:
