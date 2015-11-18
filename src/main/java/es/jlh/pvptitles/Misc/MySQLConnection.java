@@ -1,9 +1,12 @@
 package es.jlh.pvptitles.Misc;
 
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,12 +51,12 @@ public class MySQLConnection {
             conexion = DriverManager.getConnection("jdbc:mysql://" + ruta, user, pass);
             estado_conexion = Estado.CONECTADO;
         } catch (ClassNotFoundException ex) {
-            System.out.println("No se ha encontrado la libreria del programa");
+            System.out.println("MySQL library not found");
             estado_conexion = Estado.SIN_CONEXION;
         } catch (SQLException ex) {
-            System.out.println("[PvpTitles] " + ((ex.getErrorCode() == 0)
-                    ? "Could not connect to MySQL DB" : "Error MySQL") + "; "
-                    + "Using Ebean per default...");
+            PvpTitles.logger.log(Level.SEVERE, "[PvpTitles] {0}" + "; "
+                    + "Using Ebean per default...", ((ex.getErrorCode() == 0)
+                            ? "Could not connect to MySQL DB" : "Error MySQL"));
             estado_conexion = Estado.SIN_CONEXION;
         }
     }
@@ -93,87 +96,90 @@ public class MySQLConnection {
     }
 
     public static void creaDefault() {
-        update(getTablePS());
-        update(getTablePW());
-        update(getTableSS());
-        update(getTableNI());
-        update(getTablePT());
+        update(getTableServers());
+        update(getTablePlayerServer());
+        update(getTablePlayerMeta());
+        update(getTablePlayerWorld());
+        update(getTableSigns());
     }
 
-    public static String getTablePS() {
+    public static String getTableServers() {
+        return "create table IF NOT EXISTS Servers ("
+                + "id smallint(3) primary key,"
+                + "name varchar(50)"
+                + ") ENGINE=InnoDB;";
+    }
+
+    public static String getTablePlayerServer() {
         return "create table IF NOT EXISTS PlayerServer ("
-                + "idServer int(3) DEFAULT -1,"
-                + "playerName varchar(100),"
-                + "famePoints int(3),"
-                + "ultMod date,"
-                + "PRIMARY KEY (idServer, playerName)"
+                + "id smallint(3) not null unique AUTO_INCREMENT,"
+                + "playerUUID varchar(100),"
+                + "serverID smallint(3),"
+                + "PRIMARY KEY (playerUUID, serverID),"
+                + "FOREIGN KEY (serverID) REFERENCES Servers(id)"
+                + "ON UPDATE CASCADE ON DELETE CASCADE"
                 + ") ENGINE=InnoDB;";
     }
 
-    public static String getTablePW() {
+    public static String getTablePlayerMeta() {
+        return "create table IF NOT EXISTS PlayerMeta ("
+                + "psid smallint(3) primary key,"
+                + "points int(10) default 0,"
+                + "playedTime bigint default 0,"
+                + "lastLogin date,"
+                + "FOREIGN KEY (psid) REFERENCES PlayerServer(id)"
+                + "ON UPDATE CASCADE ON DELETE CASCADE"
+                + ") ENGINE=InnoDB;";
+    }
+
+    public static String getTablePlayerWorld() {
         return "create table IF NOT EXISTS PlayerWorld ("
-                + "idServer int(3) DEFAULT -1,"
-                + "playerName varchar(100),"
-                + "worldName varchar(100),"
-                + "famePoints int(3),"
-                + "PRIMARY KEY (idServer, playerName, worldName)"
+                + "psid smallint(3),"
+                + "worldName varchar(50),"
+                + "points int(10) default 0,"
+                + "PRIMARY KEY (psid, worldName),"
+                + "FOREIGN KEY (psid) REFERENCES PlayerServer(id)"
+                + "ON UPDATE CASCADE ON DELETE CASCADE"
                 + ") ENGINE=InnoDB;";
     }
 
-    public static String getTableSS() {
-        return "create table IF NOT EXISTS SignsServer ("
-                + "nombre varchar(100),"
-                + "modelo varchar(100),"
-                + "server varchar(100),"
-                + "serverID int,"
-                + "orientacion varchar(100),"
-                + "world varchar(100),"
+    public static String getTableSigns() {
+        return "create table IF NOT EXISTS Signs ("
+                + "name varchar(50) DEFAULT 'default',"
+                + "signModel varchar(50),"
+                + "dataModel varchar(50),"
+                + "orientation varchar(2),"
+                + "blockface smallint(1),"
+                + "serverID smallint(3),"
+                + "world varchar(50),"
                 + "x int,"
                 + "y int,"
                 + "z int,"
-                + "blockface int,"
-                + "PRIMARY KEY (serverID, world, x, y, z)"
+                + "PRIMARY KEY (serverID, world, x, y, z),"
+                + "FOREIGN KEY (serverID) REFERENCES Servers(id)"
+                + "ON UPDATE CASCADE ON DELETE CASCADE"
                 + ") ENGINE=InnoDB;";
     }
 
-    public static String getTableNI() {
-        return "create table IF NOT EXISTS NameID ("
-                + "idServer int(3) primary key,"
-                + "nombreS varchar(100)"
-                + ") ENGINE=InnoDB;";
-    }
-    
-    public static String getTablePT() {
-        return "create table IF NOT EXISTS PlayerTime ("
-                + "playerName varchar(100),"
-                + "playedTime int,"
-                + "PRIMARY KEY (playerName, playedTime)"
-                + ") ENGINE=InnoDB;";
-    }
-
-    public static void registraServer(int id, String nombre) {
-        String insert = "insert into NameID values (?,?)";
-        String update = "update NameID set nombreS=? where idServer=?";
+    public static void registraServer(short id, String nombre) {
+        String insert = "insert into Servers values (?,?)";
+        String update = "update Servers set name=? where id=?";
         try {
             PreparedStatement insertIS = conexion.prepareStatement(insert);
-            insertIS.setInt(1, id);
+            insertIS.setShort(1, id);
             insertIS.setString(2, nombre);
             insertIS.executeUpdate();
         } catch (SQLException ex) {
             try {
                 PreparedStatement updateIS = conexion.prepareStatement(update);
                 updateIS.setString(1, nombre);
-                updateIS.setInt(2, id);
+                updateIS.setShort(2, id);
                 updateIS.executeUpdate();
             } catch (SQLException ex1) {
             }
         }
     }
 
-    public static void fixTablePW() {
-        update("alter table playerworld alter column idServer set default -1;");
-    }
-    
     private static void update(String sql) {
         if (isConnected()) {
             try {

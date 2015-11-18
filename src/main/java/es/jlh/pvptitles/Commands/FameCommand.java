@@ -74,7 +74,7 @@ public class FameCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("add")) {
             if (args.length == 3) {
-                int fameA = this.dm.getDm().loadPlayerFame(opl.getUniqueId());
+                int fameA = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 int fameIncr = Integer.valueOf(args[2]);
 
                 FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
@@ -115,7 +115,7 @@ public class FameCommand implements CommandExecutor {
                         fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
                     }
                 } else {
-                    fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId());
+                    fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 }
 
                 sender.sendMessage(PLUGIN + LangFile.FAME_SEE.getText(messages).
@@ -129,7 +129,7 @@ public class FameCommand implements CommandExecutor {
             return true;
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length == 3) {
-                int fame = this.dm.getDm().loadPlayerFame(opl.getUniqueId());
+                int fame = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 int fameTotal = Integer.valueOf(args[2]);
 
                 fameTotal = (fameTotal < 0) ? 0 : fameTotal;

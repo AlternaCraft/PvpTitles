@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects.Antifarm;
+package es.jlh.pvptitles.Managers;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -10,19 +10,18 @@ import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.DB.DatabaseManager;
 import es.jlh.pvptitles.Managers.DB.DatabaseManagerEbean;
 import es.jlh.pvptitles.Managers.DB.DatabaseManagerMysql;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
 import es.jlh.pvptitles.Misc.MySQLConnection;
 import es.jlh.pvptitles.Misc.Settings;
-import es.jlh.pvptitles.Objects.CustomSign;
-import es.jlh.pvptitles.Objects.LBData;
-import es.jlh.pvptitles.Objects.LBModel;
-import es.jlh.pvptitles.Objects.LeaderBoard.LeaderBoardManager;
+import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
+import es.jlh.pvptitles.Objects.LBSigns.LBData;
+import es.jlh.pvptitles.Objects.LBSigns.LBModel;
+import es.jlh.pvptitles.Managers.LeaderBoardManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
-import es.jlh.pvptitles.Tables.PlayerTable;
-import es.jlh.pvptitles.Tables.PlayerWTable;
-import es.jlh.pvptitles.Tables.SignTable;
-import es.jlh.pvptitles.Tables.TimeTable;
+import es.jlh.pvptitles.Objects.DB.PlayerPT;
+import es.jlh.pvptitles.Objects.DB.WorldPlayerPT;
+import es.jlh.pvptitles.Objects.DB.SignPT;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -46,9 +45,9 @@ import org.bukkit.entity.Player;
 public final class Manager {
 
     // Variable que almacena el plugin
-    private PvpTitles pvpTitles;
+    private PvpTitles pvpTitles = null;
     // Configuracion del config principal
-    private FileConfiguration config;
+    private FileConfiguration config = null;
 
     // Gestor de leaderboards
     private LeaderBoardManager lbm = null;
@@ -65,13 +64,13 @@ public final class Manager {
     public ArrayList<LBModel> modelos = new ArrayList();
 
     // Recompensas
-    public HashMap<String, HashMap<String, List<String>>> commandsRw = new HashMap();
+    public HashMap<String, HashMap<String, List<String>>> commandsRw = null;
 
     // Servers
-    public HashMap<String, HashMap<Integer, List<String>>> servers = new HashMap();
+    public HashMap<String, HashMap<Short, List<String>>> servers = null;
 
     // Resto de parametros
-    public Settings params = new Settings();
+    public Settings params = null;
 
     // Chat
     public static LangType messages = null;
@@ -81,19 +80,12 @@ public final class Manager {
     public Ebean ebeanServer = null;
     private Connection mysql = null;
 
-    public static DBTYPE tipo = DBTYPE.EBEAN;
+    public static DBTYPE tipo = null;
 
     public static enum DBTYPE {
 
         EBEAN,
         MYSQL;
-    }
-
-    public static enum RETROCP {
-
-        TIME_CREATED,
-        MW_CREATED,
-        NOT_CREATED;
     }
 
     // Entero con el numero del evento
@@ -106,6 +98,11 @@ public final class Manager {
      * Contructor de la clase
      */
     private Manager() {
+        modelos = new ArrayList();
+        commandsRw = new HashMap();
+        servers = new HashMap();
+        params = new Settings();
+        tipo = DBTYPE.EBEAN;
     }
 
     /**
@@ -127,49 +124,25 @@ public final class Manager {
      */
     public boolean setup(PvpTitles plugin) {
         this.pvpTitles = plugin;
-
         this.lbm = new LeaderBoardManager(plugin);
 
         this.loadConfigPrincipal();
 
         this.selectDB();
-
-        // Puntos de los jugadores
         if (tipo == DBTYPE.EBEAN) {
-            dm.conversor(); // Solo se ejecuta la primera vez para convertir los ficheros     
-            dm.conversorUUID();
-
-            RETROCP rcp = RETROCP.NOT_CREATED;
-
-            try {
-                ebeanServer.getDatabase().find(PlayerWTable.class).findList();
-                rcp = RETROCP.MW_CREATED;
-                ebeanServer.getDatabase().find(TimeTable.class).findList();
-                rcp = RETROCP.TIME_CREATED;
-            } catch (Exception e) {
-                dm.exportarData(rcp);
-
-                Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.RED + "Ebean database structure has changed...");
-                Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.RED + "Please remove 'PvpTitles.db' to load the plugin.");
-                Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.RED + "Don't worry, you won't lose data.");
-
-                return false;
+            if (params.isAuto_export_to_sql()) {
+                dm.DBExport();
             }
-
-            dm.importarData(rcp);
-
-            if (params.isAuto_export()) {
-                dm.SQLExport();
+        } else if (tipo == DBTYPE.MYSQL) {
+            this.loadServers();
+            if (params.isAuto_export_to_json()) {
+                dm.DBExport();
             }
         }
 
         // Idioma, comandos y servers
         this.loadLang();
         this.loadCommands();
-
-        if (tipo == DBTYPE.MYSQL) {
-            this.loadServers();
-        }
 
         /* Signs */
         this.loadModels();
@@ -250,11 +223,11 @@ public final class Manager {
         List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
 
         for (int i = 0; i < configList.size(); i++) {
-            Manager.rankList.put(i, configList.get(i));
+            rankList.put(i, configList.get(i));
         }
 
         for (int i = 0; i < requFame.size(); i++) {
-            Manager.reqFame.put(i, requFame.get(i));
+            reqFame.put(i, requFame.get(i));
         }
 
         for (int i = 0; i < configList.size(); i++) {
@@ -264,7 +237,7 @@ public final class Manager {
                 seconds = requTime.get(i);
             }
 
-            Manager.reqTime.put(i, seconds);
+            reqTime.put(i, seconds);
         }
 
         params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
@@ -277,21 +250,22 @@ public final class Manager {
 
         params.getNoPurge().addAll(config.getStringList("NoPurge"));
 
-        params.setAuto_export(config.getBoolean("Ebean.exportToSQL"));
+        params.setAuto_export_to_sql(config.getBoolean("Ebean.exportToSQL"));
+        params.setAuto_export_to_json(config.getBoolean("Mysql.exportToJSON"));
 
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
         if (params.isPvpTitles_Bridge()) {
             tipo = DBTYPE.MYSQL;
 
             params.setHost(config.getString("Mysql.host"));
-            params.setPort(config.getInt("Mysql.port"));
+            params.setPort((short) config.getInt("Mysql.port"));
             params.setDb(config.getString("Mysql.database"));
             params.setUser(config.getString("Mysql.user"));
             params.setPass(config.getString("Mysql.pass"));
         } else {
             tipo = DBTYPE.EBEAN;
         }
-        params.setMultiS(config.getInt("MultiS"));
+        params.setMultiS((short) config.getInt("MultiS"));
         params.setNameS(config.getString("NameS"));
 
         String lang = config.getString("DefaultLang");
@@ -303,19 +277,20 @@ public final class Manager {
         params.setPrefixColor(config.getString("PrefixColor"));
         params.setTag(config.getString("Tag"));
         params.setPrefix(config.getString("Prefix"));
-        params.setTop(config.getInt("Top"));
-        params.setLBRefresh(config.getInt("LBRefresh"));
-        params.setRankChecker(config.getInt("RankChecker"));
-        params.setMod(config.getDouble("Mod"));
-        params.setKills(config.getInt("Kills"));
-        params.setTimeP(config.getInt("TimeP"));
-        params.setTimeV(config.getInt("TimeV"));
-        params.setTimeL(config.getInt("TimeL"));
+        params.setTop((short) config.getInt("Top"));
+        params.setLBRefresh((short) config.getInt("LBRefresh"));
+        params.setRankChecker((short) config.getInt("RankChecker"));
+        params.setMod((float) config.getDouble("Mod"));
+        params.setKills((short) config.getInt("Kills"));
+        params.setTimeP((short) config.getInt("TimeP"));
+        params.setTimeV((short) config.getInt("TimeV"));
+        params.setTimeL((short) config.getInt("TimeL"));
         params.setCheckAFK(config.getBoolean("CheckAFK"));
-        params.setAFKTime(config.getInt("AFKTime"));
+        params.setAFKTime((short) config.getInt("AFKTime"));
         params.setUpdate(config.getBoolean("Update"));
         params.setAlert(config.getBoolean("Alert"));
         params.setMetrics(config.getBoolean("Metrics"));
+        params.setDebug(config.getBoolean("Debug"));
         params.setMw_enabled(config.getBoolean("MW.enable"));
         params.setChat(config.getBoolean("MW-filter.chat"));
         params.setPoints(config.getBoolean("MW-filter.points"));
@@ -362,7 +337,7 @@ public final class Manager {
         config.set("database.username", config.getString("database.username", "root"));
         config.set("database.password", config.getString("database.password", ""));
         config.set("database.isolation", config.getString("database.isolation", "SERIALIZABLE"));
-        config.set("database.logging", config.getBoolean("database.logging", false));
+        config.set("database.logging", config.getBoolean("database.logging", params.isDebug()));
         config.set("database.rebuild", config.getBoolean("database.rebuild", false)); // false
     }
 
@@ -374,10 +349,9 @@ public final class Manager {
             @Override
             protected java.util.List<Class<?>> getDatabaseClasses() {
                 List<Class<?>> list = new ArrayList<>();
-                list.add(PlayerTable.class);
-                list.add(PlayerWTable.class);
-                list.add(SignTable.class);
-                list.add(TimeTable.class);
+                list.add(PlayerPT.class);
+                list.add(WorldPlayerPT.class);
+                list.add(SignPT.class);
 
                 return list;
             }
@@ -413,7 +387,7 @@ public final class Manager {
             mysql = MySQLConnection.getConnection();
 
             MySQLConnection.creaDefault();
-            MySQLConnection.fixTablePW();
+
             MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
 
             this.pvpTitles.getServer().getConsoleSender().sendMessage(
@@ -472,8 +446,8 @@ public final class Manager {
         }
 
         this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + this.lbm.getSigns().size() + 
-                        " scoreboards " + ChatColor.AQUA + "loaded correctly."
+                PLUGIN + ChatColor.YELLOW + this.lbm.getSigns().size()
+                + " scoreboards " + ChatColor.AQUA + "loaded correctly."
         );
     }
 
@@ -575,12 +549,12 @@ public final class Manager {
                 break;
             }
 
-            List<Integer> serverIDs = sf.getIntegerList(next);
+            List<Short> serverIDs = sf.getShortList(next);
 
-            HashMap<Integer, List<String>> server = new HashMap();
+            HashMap<Short, List<String>> server = new HashMap();
 
-            for (Iterator<Integer> iterator1 = serverIDs.iterator(); iterator1.hasNext();) {
-                Integer serverID = iterator1.next();
+            for (Iterator<Short> iterator1 = serverIDs.iterator(); iterator1.hasNext();) {
+                Short serverID = iterator1.next();
                 if (sf.get("Worlds." + serverID) != null) {
                     server.put(serverID, sf.getStringList("Worlds." + serverID));
                 } else {
@@ -592,7 +566,8 @@ public final class Manager {
         }
 
         this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + sfk.size() + " servers combined " + ChatColor.AQUA + "loaded correctly."
+                PLUGIN + ChatColor.YELLOW + servers.size() + " servers combined "
+                + ChatColor.AQUA + "loaded correctly."
         );
     }
 
@@ -650,12 +625,12 @@ public final class Manager {
                         continue;
                     }
 
-                    int actualFame = dm.loadPlayerFame(next.getUniqueId());
-
+                    int actualFame = dm.loadPlayerFame(next.getUniqueId(), null);
                     int savedTimeB = dm.loadPlayedTime(next.getUniqueId());
-                    String rankB = RankManager.GetRank(actualFame, savedTimeB);
+
+                    String rankB = Ranks.GetRank(actualFame, savedTimeB);
                     int savedTimeA = savedTimeB + next.getTotalOnline();
-                    String rankA = RankManager.GetRank(actualFame, savedTimeA);
+                    String rankA = Ranks.GetRank(actualFame, savedTimeA);
 
                     if (!rankB.equals(rankA)) {
                         dm.savePlayedTime(next); // Actualizo el tiempo del jugador en el server

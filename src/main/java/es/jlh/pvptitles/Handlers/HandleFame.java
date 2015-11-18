@@ -7,7 +7,7 @@ import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +63,7 @@ public class HandleFame implements Listener {
         if (rank != null) {
             for (String rango : rank.keySet()) {
                 int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
-                if (rango.equals(RankManager.GetRank(e.getFameTotal(), seconds))) {
+                if (rango.equals(Ranks.GetRank(e.getFameTotal(), seconds))) {
                     for (String cmd : rank.get(rango)) {
                         cmd = cmd.replace("<player>", e.getOfflinePlayer().getName());
                         pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
@@ -83,7 +83,7 @@ public class HandleFame implements Listener {
         int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
         if (pl != null) {
-            String rank = RankManager.GetRank(e.getFameTotal(), seconds);
+            String rank = Ranks.GetRank(e.getFameTotal(), seconds);
 
             pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl)).
                     replace("%fame%", String.valueOf(e.getFameTotal())).
@@ -104,7 +104,7 @@ public class HandleFame implements Listener {
         int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
         if (pl != null) {
-            String rank = RankManager.GetRank(e.getFameTotal(), seconds);
+            String rank = Ranks.GetRank(e.getFameTotal(), seconds);
 
             pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl)).
                     replace("%fame%", String.valueOf(e.getFameTotal())).

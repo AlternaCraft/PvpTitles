@@ -1,7 +1,6 @@
 package es.jlh.pvptitles.Managers.DB;
 
-import es.jlh.pvptitles.Main.Manager;
-import es.jlh.pvptitles.Objects.LBData;
+import es.jlh.pvptitles.Objects.LBSigns.LBData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.util.ArrayList;
@@ -16,9 +15,19 @@ import org.bukkit.entity.Player;
 public interface DatabaseManager {
 
     /**
+     * Método para gestionar los jugadores cuando entran y cuando salen del
+     * server
+     * <p>
+     * Registra el jugador en la bd</p>
+     *
+     * @param player
+     */
+    public void PlayerConnection(Player player);
+
+    /**
      * Método para guardar la fama obtenida por un jugador
      * <p>
-     * Guarda los puntos en un fichero con el nombre del jugador</p>
+     * Guarda los puntos del jugador</p>
      *
      * @param playerUUID
      * @param fame Puntos pvp
@@ -29,29 +38,12 @@ public interface DatabaseManager {
      * Método para cargar los puntos pvp de un jugador
      *
      * @param playerUUID
+     * @param world En caso de MW activado, opción para ver puntos en un mundo
+     * específico
      *
      * @return Entero con la fama del jugador
      */
-    public int loadPlayerFame(UUID playerUUID);
-
-    /**
-     * Método para cargar los puntos pvp de un jugador con MW activado
-     *
-     * @param playerUUID
-     * @param world
-     * @return
-     */
     public int loadPlayerFame(UUID playerUUID, String world);
-
-    /**
-     * Método para la primera conexion de los jugadores en el server
-     * <p>
-     * Crea un archivo con el nombre del jugador y establece a cero sus puntos
-     * pvp</p>
-     *
-     * @param player
-     */
-    public void firstRunPlayer(Player player);
 
     /**
      * Método para crear o añadir el tiempo de juego de un jugador
@@ -81,7 +73,7 @@ public interface DatabaseManager {
      * de la tabla de pùntuaciones
      */
     public void registraCartel(String nombre, String modelo, String server,
-            Location l, String orientacion, int blockface);
+            Location l, String orientacion, short blockface);
 
     /**
      * Método para modificar la id del server de un cartel
@@ -111,7 +103,7 @@ public interface DatabaseManager {
      * @param server
      * @return ArrayList con los jugadores
      */
-    public ArrayList<PlayerFame> getTopPlayers(int cant, String server);
+    public ArrayList<PlayerFame> getTopPlayers(short cant, String server);
 
     /**
      * Método para recibir el nombre del servidor según su ID
@@ -119,7 +111,7 @@ public interface DatabaseManager {
      * @param id int
      * @return String
      */
-    public String getServerName(int id);
+    public String getServerName(short id);
 
     /**
      * Método para borrar los datos de los jugadores inactivos
@@ -129,30 +121,7 @@ public interface DatabaseManager {
     public int purgeData();
 
     /**
-     * Método para convertir los datos de la version anterior a la 2.1
-     */
-    public void conversor();
-
-    /**
-     * Método para convertir los nombres de los jugadores en UUID
-     */
-    public void conversorUUID();
-
-    /**
      * Método para exportar todos los datos de la base de datos a un sql
      */
-    public void SQLExport();
-
-    /**
-     *
-     * @param rcp
-     */
-    public void exportarData(Manager.RETROCP rcp);
-
-    /**
-     * Método para importar todos los datos de un sql a la bd
-     *
-     * @param rcp
-     */
-    public void importarData(Manager.RETROCP rcp);
+    public void DBExport();
 }

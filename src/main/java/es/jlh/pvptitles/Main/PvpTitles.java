@@ -48,6 +48,8 @@
 //  Ver. 2.3.1  11/11/2015  Mejorado el diseño del comando /pvpsign
 //  Ver. 2.3.1  12/11/2015  Arreglado fallo con los eventos del plugin y arreglado
 //   un fallo en la extructura de la tabla PlayerWorld de MySQL (idServer)
+//  Ver. 2.4  16/11/2015  Arreglado fallo con la cuenta de servers.yml y cambiada
+//   la estructura de las bases de datos.
 
 package es.jlh.pvptitles.Main;
 
@@ -67,8 +69,8 @@ import es.jlh.pvptitles.Handlers.HandleSign;
 import es.jlh.pvptitles.Integrations.SBSSetup;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Managers.MetricsManager;
-import es.jlh.pvptitles.Objects.PlayedTime.MovementManager;
-import es.jlh.pvptitles.Objects.PlayedTime.PlayerManager;
+import es.jlh.pvptitles.Managers.MovementManager;
+import es.jlh.pvptitles.Managers.PlayerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.util.Iterator;
@@ -188,7 +190,7 @@ public class PvpTitles extends JavaPlugin {
         // Creo las sesiones en caso de reload y gestiono la fama
         for (Player pl : Bukkit.getOnlinePlayers()) {
             // Fama
-            this.cm.getDm().firstRunPlayer(pl);
+            this.cm.getDm().PlayerConnection(pl);
 
             // Times
             TimedPlayer tPlayer = this.getPlayerManager().hasPlayer(pl)

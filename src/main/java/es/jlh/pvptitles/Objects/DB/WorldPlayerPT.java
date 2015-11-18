@@ -1,8 +1,7 @@
-package es.jlh.pvptitles.Tables;
+package es.jlh.pvptitles.Objects.DB;
 
 import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -12,24 +11,22 @@ import javax.persistence.Table;
  * @author julito
  */
 @SuppressWarnings("PersistenceUnitPresent")
-@Entity()
+@Entity
 @Table(name = "pt_wPlayers")
-public class PlayerWTable implements Serializable {
+public class WorldPlayerPT implements Serializable {
 
-    @Column(unique = true)
     @Id
     private int id = 0;
-
-    @NotNull
-    private String playerName = null;
     
     @NotNull
-    private int famePoints = 0;
+    String playerUUID = null;
+    @NotNull
+    String world = null;
     
     @NotNull
-    private String world = null;
+    private int points = 0;
 
-    public PlayerWTable() {
+    public WorldPlayerPT() {
     }
 
     public int getId() {
@@ -40,20 +37,12 @@ public class PlayerWTable implements Serializable {
         this.id = id;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public String getPlayerUUID() {
+        return playerUUID;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public int getFamePoints() {
-        return famePoints;
-    }
-
-    public void setFamePoints(int famePoints) {
-        this.famePoints = famePoints;
+    public void setPlayerUUID(String playerUUID) {
+        this.playerUUID = playerUUID;
     }
 
     public String getWorld() {
@@ -62,5 +51,13 @@ public class PlayerWTable implements Serializable {
 
     public void setWorld(String world) {
         this.world = world;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

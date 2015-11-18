@@ -1,7 +1,8 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Objects.LBSigns;
 
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Objects.PlayerFame;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.bukkit.block.Sign;
@@ -77,10 +78,10 @@ public class LBArgs {
                             // Varios parametros en la misma linea
                             if (entro) {
                                 s.setLine(i, s.getLine(i).replace("<rank>",
-                                        RankManager.GetRank(pf.get(temp).getFame(), pf.get(temp).getSeconds())));
+                                        Ranks.GetRank(pf.get(temp).getFame(), pf.get(temp).getSeconds())));
                             } else {
                                 s.setLine(i, smfc.replace("<rank>",
-                                        RankManager.GetRank(pf.get(temp).getFame(), pf.get(temp).getSeconds())));
+                                        Ranks.GetRank(pf.get(temp).getFame(), pf.get(temp).getSeconds())));
                             }
                             break;
                         case FAME:

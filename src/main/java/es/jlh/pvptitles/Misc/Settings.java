@@ -18,20 +18,23 @@ public class Settings {
     private boolean update = false;
     // Atributo para guardar si se va a avisar de las actualizaciones o no
     private boolean alert = true;
-
+    // Atributo para mostrar los mensajes de las excepciones
+    private boolean debug = false;
+    
     /* PVPTITLES BRIDGE */
     // Ebean
-    private boolean auto_export = false;
+    private boolean auto_export_to_sql = false;
     // MySQL
+    private boolean auto_export_to_json = false;
     private boolean PvpTitles_Bridge = false;
     // Datos de la conexion a MySQL
     private String host = "localhost";
-    private int port = 3306;
+    private short port = 3306;
     private String db = "database";
     private String user = "user";
     private String pass = "pass";
     // Server ID
-    private int multiS = -1;
+    private short multiS = -1;
     // Server Name
     private String nameS = "";
 
@@ -49,33 +52,33 @@ public class Settings {
 
     /* LEADERBOARD (SIGN) */
     // Tiempo de actualizacion de los carteles (Minutos)
-    private int LBRefresh = 0;
+    private short LBRefresh = 0;
     
     /* RANK CHECKER */
     // Tiempo para comprobar si tiene un nuevo rango
-    private int rankChecker = 0;
+    private short rankChecker = 0;
 
     /* PURGE */
     // Lista de jugadores que NO seran borrados por el comando
     private final List<String> noPurge = new ArrayList();
     // Tiempo necesario para que un registro sea entendido como inactivo
-    private int timeP = 0;
+    private short timeP = 0;
 
     /* ANTIFARM */
     // Maximo de bajas para el sistema antifarm
-    private int kills = 0;
+    private short kills = 0;
     // Tiempo para volver a matar una vez superado el limite de bajas
-    private int timeV = 0;
+    private short timeV = 0;
     // Tiempo para limpiar las bajas realizadas a un jugador
-    private int timeL = 0;    
+    private short timeL = 0;    
     // Comprueba AFK
     private boolean checkAFK = false;
     // Tiempo AFK
-    private int AFKTime = 0;
+    private short AFKTime = 0;
     
     /* KILLSTREAKS */
     // Modificador de los puntos ganados en una racha de bajas
-    private double mod = 0;
+    private float mod = 0;
     /* CHAT */
     // Color del titulo en el chat
     private ChatColor prefixColor = null;
@@ -84,7 +87,7 @@ public class Settings {
     // Tag para intercambiar por el titulo
     private String prefix = null;
     // Cantidad de jugadores que aparecen en el ranking
-    private int top = 0;
+    private short top = 0;
 
     /**
      * Constructor de la clase
@@ -97,8 +100,12 @@ public class Settings {
         this.prefixColor = this.GetPrefixColor(color);
     }
 
-    public void setAuto_export(boolean auto_export) {
-        this.auto_export = auto_export;
+    public void setAuto_export_to_sql(boolean auto_export_to_sql) {
+        this.auto_export_to_sql = auto_export_to_sql;
+    }
+
+    public void setAuto_export_to_json(boolean auto_export_to_json) {
+        this.auto_export_to_json = auto_export_to_json;
     }
 
     public void setPvpTitles_Bridge(boolean PvpTitles_Bridge) {
@@ -109,7 +116,7 @@ public class Settings {
         this.host = host;
     }
 
-    public void setPort(int port) {
+    public void setPort(short port) {
         this.port = port;
     }
 
@@ -125,7 +132,7 @@ public class Settings {
         this.pass = pass;
     }
 
-    public void setMultiS(int multiS) {
+    public void setMultiS(short multiS) {
         this.multiS = multiS;
     }
 
@@ -140,35 +147,35 @@ public class Settings {
         this.tag = tag;
     }
 
-    public void setTop(int top) {
+    public void setTop(short top) {
         this.top = compNum(top);
     }
 
-    public void setLBRefresh(int LBRefresh) {
+    public void setLBRefresh(short LBRefresh) {
         this.LBRefresh = LBRefresh;
     }
 
-    public void setRankChecker(int rankChecker) {
+    public void setRankChecker(short rankChecker) {
         this.rankChecker = rankChecker;
     }
 
-    public void setMod(double mod) {
+    public void setMod(float mod) {
         this.mod = compNum(mod);
     }
 
-    public void setKills(int kills) {
+    public void setKills(short kills) {
         this.kills = compNum(kills);
     }
 
-    public void setTimeP(int timeP) {
+    public void setTimeP(short timeP) {
         this.timeP = compNum(timeP);
     }
 
-    public void setTimeV(int timeV) {
+    public void setTimeV(short timeV) {
         this.timeV = compNum(timeV);
     }
 
-    public void setTimeL(int timeL) {
+    public void setTimeL(short timeL) {
         this.timeL = compNum(timeL);
     }
 
@@ -176,7 +183,7 @@ public class Settings {
         this.checkAFK = checkAFK;
     }
 
-    public void setAFKTime(int AFKTime) {
+    public void setAFKTime(short AFKTime) {
         this.AFKTime = AFKTime;
     }
 
@@ -190,6 +197,10 @@ public class Settings {
 
     public void setMetrics(boolean metrics) {
         this.metrics = metrics;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
     public void setChat(boolean chat) {
@@ -217,8 +228,12 @@ public class Settings {
         return prefixColor;
     }
 
-    public boolean isAuto_export() {
-        return auto_export;
+    public boolean isAuto_export_to_sql() {
+        return auto_export_to_sql;
+    }
+
+    public boolean isAuto_export_to_json() {
+        return auto_export_to_json;
     }
 
     public boolean isPvpTitles_Bridge() {
@@ -229,7 +244,7 @@ public class Settings {
         return host;
     }
 
-    public int getPort() {
+    public short getPort() {
         return port;
     }
 
@@ -245,7 +260,7 @@ public class Settings {
         return pass;
     }
 
-    public int getMultiS() {
+    public short getMultiS() {
         return multiS;
     }
 
@@ -257,15 +272,15 @@ public class Settings {
         return this.tag;
     }
 
-    public int getTop() {
+    public short getTop() {
         return this.top;
     }
 
-    public int getLBRefresh() {
+    public short getLBRefresh() {
         return LBRefresh;
     }
 
-    public int getRankChecker() {
+    public short getRankChecker() {
         return rankChecker;
     }
 
@@ -273,19 +288,19 @@ public class Settings {
         return this.mod;
     }
 
-    public int getKills() {
+    public short getKills() {
         return kills;
     }
 
-    public int getTimeP() {
+    public short getTimeP() {
         return timeP;
     }
 
-    public int getTimeV() {
+    public short getTimeV() {
         return timeV;
     }
 
-    public int getTimeL() {
+    public short getTimeL() {
         return timeL;
     }
 
@@ -293,7 +308,7 @@ public class Settings {
         return checkAFK;
     }
 
-    public int getAFKTime() {
+    public short getAFKTime() {
         return AFKTime;
     }
 
@@ -333,12 +348,16 @@ public class Settings {
         return metrics;
     }
 
+    public boolean isDebug() {
+        return debug;
+    }
+
     public boolean isChat() {
         return chat;
     }
 
     // ** COMPROBACIONES ** \\
-    public int compNum(int valor) {
+    public short compNum(short valor) {
         if (valor < 0 || valor > 1000) {
             return 1;
         }
@@ -346,7 +365,7 @@ public class Settings {
         return valor;
     }
 
-    public double compNum(double valor) {
+    public float compNum(float valor) {
         if (valor < 0 || valor > 1000) {
             return 1;
         }

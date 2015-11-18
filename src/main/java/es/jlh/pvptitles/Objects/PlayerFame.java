@@ -12,7 +12,7 @@ import org.bukkit.ChatColor;
 public class PlayerFame implements Comparable {
     private String uuid = null;
     private int fame = 0;
-    private int server = 0;
+    private short server = 0;
     private String world = "";
     private PvpTitles plugin = null;
     
@@ -40,7 +40,7 @@ public class PlayerFame implements Comparable {
         return server;
     }
 
-    public void setServer(int server) {
+    public void setServer(short server) {
         this.server = server;
     }
 

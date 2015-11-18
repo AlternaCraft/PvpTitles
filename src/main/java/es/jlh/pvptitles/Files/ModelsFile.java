@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Files;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Objects.LBModel;
+import es.jlh.pvptitles.Objects.LBSigns.LBModel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -111,7 +111,7 @@ public class ModelsFile {
             String[] datos = al.get(i).split("&&");
 
             String nombre = datos[0].substring(0, datos[0].indexOf("("));
-            int cant = Integer.valueOf(datos[0].substring(datos[0].indexOf("(") + 1, datos[0].indexOf(")")));
+            short cant = Short.valueOf(datos[0].substring(datos[0].indexOf("(") + 1, datos[0].indexOf(")")));
 
             ArrayList<ArrayList<ArrayList<String>>> params = new ArrayList();
 

@@ -6,7 +6,7 @@ import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class SBSSetup {
         replaceManager.register(new VariableReplacer() {
             @Override
             public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int puntos = plugin.cm.getDm().loadPlayerFame(player.getUniqueId());
+                int puntos = plugin.cm.getDm().loadPlayerFame(player.getUniqueId(), null);
                 int seconds = plugin.cm.getDm().loadPlayedTime(player.getUniqueId());
 
                 /*
@@ -56,7 +56,7 @@ public class SBSSetup {
                         replaceEvent.setScore(puntos);
                         break;
                     case "rank":
-                        replaceEvent.setScoreOrText(RankManager.GetRank(puntos, seconds));
+                        replaceEvent.setScoreOrText(Ranks.GetRank(puntos, seconds));
                         break;
                 }
             }

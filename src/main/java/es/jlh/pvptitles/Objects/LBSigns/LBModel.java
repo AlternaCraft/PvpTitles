@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Objects.LBSigns;
 
 import java.util.ArrayList;
 
@@ -8,16 +8,16 @@ import java.util.ArrayList;
  */
 public class LBModel {    
     private String nombre = null;    
-    private int cantidad = 0;
+    private short cantidad = 0;
     
     private ArrayList<ArrayList<ArrayList<String>>> params = null;
     
-    private int divisorFilas = 0;
-    private int columnas = 0;
+    private short divisorFilas = 0;
+    private short columnas = 0;
     
     private boolean progresivo = false;
 
-    public LBModel(String n, int c, ArrayList formato) {
+    public LBModel(String n, short c, ArrayList formato) {
         this.nombre = n;
         this.cantidad = c;
         this.params = formato;
@@ -31,7 +31,7 @@ public class LBModel {
         return nombre;
     }
 
-    public int getCantidad() {
+    public short getCantidad() {
         return cantidad;
     }
 
@@ -40,7 +40,7 @@ public class LBModel {
     }
     
     public final void setDivisorFilas() {
-        int attFilas = 1;
+        short attFilas = 1;
         
         int repePlayer = 0;
         int repeRank = 0;
@@ -76,22 +76,22 @@ public class LBModel {
     }
 
     public final void setColumnas() {
-        int ant = 0;
+        short ant = 0;
         
         for (ArrayList<ArrayList<String>> param : params) {
             if (param.size() > ant) {
-                ant = param.size();
+                ant = (short)param.size();
             }
         }
         
         this.columnas = ant;
     }
     
-    public int getFilas(int jugadores) {        
-        return this.params.size() + (((int) Math.ceil((double)(jugadores/4.0)/this.divisorFilas))-1);
+    public short getFilas(short jugadores) {        
+        return (short)(this.params.size() + (((int) Math.ceil((double)(jugadores/4.0)/this.divisorFilas))-1));
     }
     
-    public int getCols() {
+    public short getCols() {
         return this.columnas;
     }
     

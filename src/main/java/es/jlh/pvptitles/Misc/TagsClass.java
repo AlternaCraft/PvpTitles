@@ -1,9 +1,8 @@
 package es.jlh.pvptitles.Misc;
 
-import es.jlh.pvptitles.Tables.PlayerTable;
-import es.jlh.pvptitles.Tables.PlayerWTable;
-import es.jlh.pvptitles.Tables.SignTable;
-import es.jlh.pvptitles.Tables.TimeTable;
+import es.jlh.pvptitles.Objects.DB.PlayerPT;
+import es.jlh.pvptitles.Objects.DB.WorldPlayerPT;
+import es.jlh.pvptitles.Objects.DB.SignPT;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +21,7 @@ public class TagsClass {
 
         uuid,
         points,
+        playedTime,
         lastJoin;
     }
 
@@ -49,25 +49,20 @@ public class TagsClass {
         world;
     }
 
-    public enum PlayerTime {
-
-        playerUUID,
-        playedTime;
-    }
-
-    public static Object createPlayer(PlayerTable next) {
+    public static Object createPlayer(PlayerPT next) {
         JSONObject player = new JSONObject();
-        String fecha = new java.sql.Date(next.getUltMod().getTime()).toString();
+        String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
-        player.put(Player.uuid.toString(), next.getPlayerName());
-        player.put(Player.points.toString(), next.getFamePoints());
+        player.put(Player.uuid.toString(), next.getPlayerUUID());
+        player.put(Player.points.toString(), next.getPoints());
+        player.put(Player.playedTime.toString(), next.getPlayedTime());
         player.put(Player.lastJoin.toString(), fecha);
 
         return player;
     }
 
-    public static List<PlayerTable> getPlayers(JSONArray players) {
-        List<PlayerTable> playersT = new ArrayList();
+    public static List<PlayerPT> getPlayers(JSONArray players) {
+        List<PlayerPT> playersT = new ArrayList();
 
         // Check if not exists
         if (players == null)
@@ -76,11 +71,12 @@ public class TagsClass {
         Iterator<JSONObject> eachPlayer = players.iterator();
         while (eachPlayer.hasNext()) {
             JSONObject js = eachPlayer.next();
-            PlayerTable pt = new PlayerTable();
+            PlayerPT pt = new PlayerPT();
 
-            pt.setPlayerName((String) js.get(Player.uuid.toString()));
-            pt.setFamePoints(((Long) js.get(Player.points.toString())).intValue());
-            pt.setUltMod(getDate((String) js.get(Player.lastJoin.toString())));
+            pt.setPlayerUUID((String) js.get(Player.uuid.toString()));
+            pt.setPoints(((Long) js.get(Player.points.toString())).intValue());
+            pt.setPlayedTime(((Integer)js.get(Player.playedTime.toString())));
+            pt.setLastLogin(getDate((String) js.get(Player.lastJoin.toString())));
 
             playersT.add(pt);
         }
@@ -100,12 +96,12 @@ public class TagsClass {
         return newDate;
     }
 
-    public static Object createSign(SignTable next) {
+    public static Object createSign(SignPT next) {
         JSONObject sign = new JSONObject();
 
-        sign.put(Sign.name.toString(), next.getNombre());
-        sign.put(Sign.model.toString(), next.getModelo());
-        sign.put(Sign.orientation.toString(), next.getOrientacion());
+        sign.put(Sign.name.toString(), next.getName());
+        sign.put(Sign.model.toString(), next.getModel());
+        sign.put(Sign.orientation.toString(), next.getOrientation());
         sign.put(Sign.blockface.toString(), next.getBlockface());
 
         JSONObject loc = new JSONObject();
@@ -120,8 +116,8 @@ public class TagsClass {
         return sign;
     }
 
-    public static List<SignTable> getSigns(JSONArray signs) {
-        List<SignTable> signsT = new ArrayList();
+    public static List<SignPT> getSigns(JSONArray signs) {
+        List<SignPT> signsT = new ArrayList();
 
         // Check if not exists
         if (signs == null)
@@ -130,12 +126,12 @@ public class TagsClass {
         Iterator<JSONObject> eachSign = signs.iterator();
         while (eachSign.hasNext()) {
             JSONObject js = eachSign.next();
-            SignTable st = new SignTable();
+            SignPT st = new SignPT();
 
-            st.setNombre((String) js.get(Sign.name.toString()));
-            st.setModelo((String) js.get(Sign.model.toString()));
-            st.setOrientacion((String) js.get(Sign.orientation.toString()));
-            st.setBlockface(((Long) js.get(Sign.blockface.toString())).intValue());
+            st.setName((String) js.get(Sign.name.toString()));
+            st.setModel((String) js.get(Sign.model.toString()));
+            st.setOrientation((String) js.get(Sign.orientation.toString()));
+            st.setBlockface(((Long) js.get(Sign.blockface.toString())).shortValue());
 
             JSONObject loc = (JSONObject) js.get(Sign.location.toString());
 
@@ -150,18 +146,18 @@ public class TagsClass {
         return signsT;
     }
 
-    public static Object createPlayerW(PlayerWTable next) {
+    public static Object createPlayerW(WorldPlayerPT next) {
         JSONObject pworld = new JSONObject();
 
-        pworld.put(PlayerWorld.uuid.toString(), next.getPlayerName());
-        pworld.put(PlayerWorld.points.toString(), next.getFamePoints());
+        pworld.put(PlayerWorld.uuid.toString(), next.getPlayerUUID());
+        pworld.put(PlayerWorld.points.toString(), next.getPoints());
         pworld.put(PlayerWorld.world.toString(), next.getWorld());
 
         return pworld;
     }
 
-    public static List<PlayerWTable> getPWorlds(JSONArray pworlds) {
-        List<PlayerWTable> pworldT = new ArrayList();
+    public static List<WorldPlayerPT> getPWorlds(JSONArray pworlds) {
+        List<WorldPlayerPT> pworldT = new ArrayList();
 
         // Check if not exists
         if (pworlds == null) 
@@ -170,45 +166,15 @@ public class TagsClass {
         Iterator<JSONObject> eachPWorld = pworlds.iterator();
         while (eachPWorld.hasNext()) {
             JSONObject js = eachPWorld.next();
-            PlayerWTable pwt = new PlayerWTable();
+            WorldPlayerPT pwt = new WorldPlayerPT();
 
-            pwt.setPlayerName((String) js.get(PlayerWorld.uuid.toString()));
-            pwt.setFamePoints(((Long) js.get(PlayerWorld.points.toString())).intValue());
+            pwt.setPlayerUUID((String) js.get(PlayerWorld.uuid.toString()));
+            pwt.setPoints(((Long) js.get(PlayerWorld.points.toString())).intValue());
             pwt.setWorld((String) js.get(PlayerWorld.world.toString()));
 
             pworldT.add(pwt);
         }
 
         return pworldT;
-    }
-    
-    public static Object createPlayerTime(TimeTable next) {
-        JSONObject pTime = new JSONObject();
-
-        pTime.put(PlayerTime.playerUUID.toString(), next.getPlayerName());
-        pTime.put(PlayerTime.playedTime.toString(), next.getPlayedTime());
-
-        return pTime;
-    }
-    
-    public static List<TimeTable> getPlayersTime(JSONArray pTimes) {
-        List<TimeTable> pTime = new ArrayList();
-
-        // Check if not exists
-        if (pTimes == null)
-            return pTime;
-        
-        Iterator<JSONObject> eachPTime = pTimes.iterator();
-        while (eachPTime.hasNext()) {
-            JSONObject js = eachPTime.next();
-            TimeTable tt = new TimeTable();
-
-            tt.setPlayerName((String) js.get(PlayerTime.playerUUID.toString()));
-            tt.setPlayedTime(((Long) js.get(PlayerTime.playedTime.toString())).intValue());
-
-            pTime.add(tt);
-        }
-
-        return pTime;
     }
 }

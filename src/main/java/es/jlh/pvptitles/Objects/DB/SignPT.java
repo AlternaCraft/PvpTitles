@@ -1,8 +1,7 @@
-package es.jlh.pvptitles.Tables;
+package es.jlh.pvptitles.Objects.DB;
 
 import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,42 +9,36 @@ import org.bukkit.Location;
 
 /**
  *
- * @author julito
+ * @author Julian
  */
 @SuppressWarnings("PersistenceUnitPresent")
 @Entity()
 @Table(name = "pt_signs")
-public class SignTable implements Serializable {
+public class SignPT implements Serializable {
 
-    @Column(unique = true)
     @Id
     private int id = 0;
+    
+    @NotNull
+    public String world = "";
+    
+    public int x = 0;
+    public int y = 0;
+    public int z = 0;
 
     @NotNull
-    private String nombre = "";
+    private String name = "";
 
     @NotNull
-    private String modelo = "";
+    private String model = "";
 
     @NotNull
-    private String orientacion = "";
+    private String orientation = "";
 
     @NotNull
-    private String world = "";
+    private short blockface = 0;
 
-    @NotNull
-    private int x = 0;
-
-    @NotNull
-    private int y = 0;
-
-    @NotNull
-    private int z = 0;
-
-    @NotNull
-    private int blockface = 0;
-
-    public SignTable() {
+    public SignPT() {
     }
 
     public int getId() {
@@ -56,12 +49,28 @@ public class SignTable implements Serializable {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
     }
 
     public String getWorld() {
@@ -96,22 +105,6 @@ public class SignTable implements Serializable {
         this.z = z;
     }
 
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
-
-    public String getOrientacion() {
-        return orientacion;
-    }
-
-    public void setOrientacion(String orientacion) {
-        this.orientacion = orientacion;
-    }
-
     public void setLocation(Location l) {
         setWorld(l.getWorld().getName());
         setX(l.getBlockX());
@@ -119,11 +112,11 @@ public class SignTable implements Serializable {
         setZ(l.getBlockZ());
     }
 
-    public int getBlockface() {
+    public short getBlockface() {
         return blockface;
     }
 
-    public void setBlockface(int blockface) {
+    public void setBlockface(short blockface) {
         this.blockface = blockface;
     }
 

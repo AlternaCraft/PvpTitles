@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Objects.LBSigns;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,10 +17,10 @@ public class LBData {
     private static final String ZP = "Z+";
     private static final String ZN = "Z-";
     
-    public static final int NORTH = 1;
-    public static final int SOUTH = 2;
-    public static final int EAST = 3;
-    public static final int WEST = 4;
+    public static final short NORTH = 1;
+    public static final short SOUTH = 2;
+    public static final short EAST = 3;
+    public static final short WEST = 4;
     
     private String nombre = null;
     private String modelo = null;
@@ -33,7 +33,7 @@ public class LBData {
     private boolean zn = false;
     
     // BlockFace
-    private int blockface = 0;
+    private short blockface = 0;
     
     private Location l = null;
 
@@ -128,11 +128,11 @@ public class LBData {
         }
     }
 
-    public int getPrimitiveBlockface() {
+    public short getPrimitiveBlockface() {
         return this.blockface;
     }
     
-    public void setBlockface(int blockface) {
+    public void setBlockface(short blockface) {
         this.blockface = blockface;
         this.matSign.setFacingDirection(this.getBlockface());
     }

@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Managers;
+package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Misc.Utils;
@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * @author julito
  */
-public class RankManager {
+public class Ranks {
 
     private static int nextRankFame;
     private static int nextRankTime;

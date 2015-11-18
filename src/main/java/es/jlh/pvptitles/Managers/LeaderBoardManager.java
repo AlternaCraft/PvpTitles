@@ -1,6 +1,6 @@
-package es.jlh.pvptitles.Objects.LeaderBoard;
+package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Objects.CustomSign;
+import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -31,7 +31,7 @@ public class LeaderBoardManager {
         if (!signs.contains(cs)) {
             // Compruebo si ya hay algo ocupando el sitio            
             ArrayList<PlayerFame> pf = this.pt.cm.getDm().getTopPlayers(cs.getModel().getCantidad(), cs.getInfo().getServer());
-            int jugadores = pf.size();
+            short jugadores = (short)pf.size();
             
             if (isOccupied(cs, jugadores)) {
                 int filas = cs.getModel().getFilas(jugadores);
@@ -66,12 +66,12 @@ public class LeaderBoardManager {
     }
     
     public void updateSigns() {
-        for (CustomSign sign : signs) {     
+        for (CustomSign sign : signs) {
             createSign(sign);
         }
     }
 
-    private boolean isOccupied(CustomSign cs, int jugadores) {
+    private boolean isOccupied(CustomSign cs, short jugadores) {
         int filas = cs.getModel().getFilas(jugadores);
         int cols = cs.getModel().getCols();
 
@@ -110,7 +110,7 @@ public class LeaderBoardManager {
         for (Iterator<CustomSign> it = signs.iterator(); it.hasNext();) {
             CustomSign sign = it.next();
             if (sign.getInfo().getL().equals(l)) {
-                int jugadores = pt.cm.getDm().getTopPlayers(
+                short jugadores = (short)pt.cm.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
 
                 sign.delete(jugadores);
@@ -126,7 +126,7 @@ public class LeaderBoardManager {
     public void deleteSign(Location l, BlockBreakEvent event) {
         for (CustomSign sign : signs) {
             if (sign.getInfo().getL().equals(l)) {
-                int jugadores = pt.cm.getDm().getTopPlayers(
+                short jugadores = (short)pt.cm.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
 
                 Player pl = event.getPlayer();

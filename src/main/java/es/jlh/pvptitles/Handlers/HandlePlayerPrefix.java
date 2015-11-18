@@ -3,7 +3,7 @@ package es.jlh.pvptitles.Handlers;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -51,9 +51,9 @@ public class HandlePlayerPrefix implements Listener {
             return;
         }
 
-        int fame = this.cm.getDm().loadPlayerFame(event.getPlayer().getUniqueId());
+        int fame = this.cm.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
         int seconds = this.cm.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
-        rank = RankManager.GetRank(fame, seconds);
+        rank = Ranks.GetRank(fame, seconds);
 
         String format = event.getFormat();
         

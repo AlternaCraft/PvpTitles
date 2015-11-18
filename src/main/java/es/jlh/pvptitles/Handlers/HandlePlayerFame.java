@@ -5,11 +5,11 @@ import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
-import es.jlh.pvptitles.Objects.Antifarm.AntiFarmManager;
-import es.jlh.pvptitles.Objects.Antifarm.CleanTaskManager;
+import es.jlh.pvptitles.Managers.AntiFarmManager;
+import es.jlh.pvptitles.Managers.CleanTaskManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        cm.getDm().firstRunPlayer(player);
+        cm.getDm().PlayerConnection(player);
 
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().hasPlayer(player)
@@ -86,6 +86,7 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        cm.getDm().PlayerConnection(player);
         HandlePlayerFame.racha.put(player.getName(), 0);
 
         // Time
@@ -158,7 +159,7 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Aniado el nuevo valor de kills
-            int fame = this.cm.getDm().loadPlayerFame(killer.getUniqueId());
+            int fame = this.cm.getDm().loadPlayerFame(killer.getUniqueId(), null);
 
             this.calculateRank(victim, killer, fame, kills);
             kills++;
@@ -246,8 +247,8 @@ public class HandlePlayerFame implements Listener {
 
         this.cm.getDm().savePlayerFame(player.getUniqueId(), fameDespues);
 
-        String currentRank = RankManager.GetRank(fameAntes, seconds);
-        String newRank = RankManager.GetRank(fameDespues, seconds);
+        String currentRank = Ranks.GetRank(fameAntes, seconds);
+        String newRank = Ranks.GetRank(fameDespues, seconds);
 
         if (!currentRank.equalsIgnoreCase(newRank)) {
             player.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(player))

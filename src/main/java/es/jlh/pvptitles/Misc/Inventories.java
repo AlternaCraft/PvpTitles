@@ -1,8 +1,8 @@
-package es.jlh.pvptitles.Managers;
+package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Files.LangFile.LangType;
-import es.jlh.pvptitles.Objects.CustomSign;
+import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * @author julito
  */
-public class InventoryManager {
+public class Inventories {
 
     public static final int MAX_SIGNS_PER_PAGE = 18;
 

@@ -1,6 +1,7 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Objects.LBSigns;
 
 import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Objects.PlayerFame;
 import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -161,7 +162,7 @@ public class CustomSign {
         }
     }
 
-    public void delete(int jugadores) {
+    public void delete(short jugadores) {
         int filas = model.getFilas(jugadores);
         int cols = model.getCols();
 

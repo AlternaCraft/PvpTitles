@@ -4,14 +4,14 @@ import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Objects.CustomSign;
+import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
-import es.jlh.pvptitles.Objects.LBData;
-import static es.jlh.pvptitles.Objects.LBData.EAST;
-import static es.jlh.pvptitles.Objects.LBData.NORTH;
-import static es.jlh.pvptitles.Objects.LBData.SOUTH;
-import static es.jlh.pvptitles.Objects.LBData.WEST;
-import es.jlh.pvptitles.Objects.LBModel;
+import es.jlh.pvptitles.Objects.LBSigns.LBData;
+import static es.jlh.pvptitles.Objects.LBSigns.LBData.EAST;
+import static es.jlh.pvptitles.Objects.LBSigns.LBData.NORTH;
+import static es.jlh.pvptitles.Objects.LBSigns.LBData.SOUTH;
+import static es.jlh.pvptitles.Objects.LBSigns.LBData.WEST;
+import es.jlh.pvptitles.Objects.LBSigns.LBModel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -49,7 +49,7 @@ public class HandleSign implements Listener {
         String modelo = "";
         String orientacion = "";
         String server = "";
-        int blockface = 0;
+        short blockface = 0;
         //int refresh = 5;
 
         if (lineas[0].contains("[PvpTitles]") || lineas[0].contains("[pvptitles]")

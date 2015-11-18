@@ -5,7 +5,7 @@ import es.jlh.pvptitles.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.RankManager;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.LangDetector.Localizer;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import org.bukkit.Bukkit;
@@ -50,14 +50,14 @@ public class RankCommand implements CommandExecutor {
      * @param player Jugador que consulta los datos
      */
     private void HandleRankCmd(Player player) {        
-        int fame = pt.cm.getDm().loadPlayerFame(player.getUniqueId());
+        int fame = pt.cm.getDm().loadPlayerFame(player.getUniqueId(), null);
         int racha = (HandlePlayerFame.racha.containsKey(player.getName())) ? HandlePlayerFame.racha.get(player.getName()) : 0;
         int seconds = pt.cm.getDm().loadPlayedTime(player.getUniqueId()) + 
                 pt.getPlayerManager().getPlayer(Bukkit.getOfflinePlayer(player.getUniqueId())).getTotalOnline();
-        String rank = RankManager.GetRank(fame, seconds);        
-        int rankup = RankManager.FameToRankUp();
-        int timeup = RankManager.nextRankTime();
-        String nextRank = RankManager.nextRankTitle();
+        String rank = Ranks.GetRank(fame, seconds);        
+        int rankup = Ranks.FameToRankUp();
+        int timeup = Ranks.nextRankTime();
+        String nextRank = Ranks.nextRankTitle();
         String tag = pt.cm.params.getTag();
         
         player.sendMessage("");

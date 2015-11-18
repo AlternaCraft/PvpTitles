@@ -1,19 +1,23 @@
 # DO NOT TOUCH #
-Version: 2.3
+Version: 2.4
 ################
 
 ############################################################
 # +------------------------------------------------------+ #
-# |                  METRICS && UPDATES                  | #
+# |                    PLUGIN CONTROL                    | #
 # +------------------------------------------------------+ #
 ############################################################
 
 # Enable/Disable metrics
 Metrics: true
+
 # Notice Update Available
 Alert: true
 # Automatic updates of the plugin
 Update: false
+
+# Debug mode (Shows messages from errors)
+Debug: false
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -36,6 +40,10 @@ Mysql:
     database: dbname
     user: user
     pass: pass
+    
+    # If Ebean is enabled this won't work
+    exportToJSON: false
+    # To load the data rename the file to "load_this_file" and run the server
     
 # Unique ID per server (Default -1 indicates that the server has not ID)
 MultiS: -1

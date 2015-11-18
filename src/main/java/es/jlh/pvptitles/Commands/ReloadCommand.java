@@ -46,8 +46,11 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.cm.loadActualizador();
         pvpTitles.cm.loadRankChecker();
 
-        if (tipo == Manager.DBTYPE.EBEAN && pvpTitles.cm.params.isAuto_export()) {
-            pvpTitles.cm.getDm().SQLExport();
+        if (tipo == Manager.DBTYPE.EBEAN && pvpTitles.cm.params.isAuto_export_to_sql()) {
+            pvpTitles.cm.getDm().DBExport();
+        }
+        else if (tipo == Manager.DBTYPE.MYSQL && pvpTitles.cm.params.isAuto_export_to_json()) {
+            pvpTitles.cm.getDm().DBExport();
         }
 
         sender.sendMessage(PLUGIN + LangFile.PLUGIN_RELOAD.getText(messages));
