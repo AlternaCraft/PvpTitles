@@ -43,6 +43,11 @@ commands:
         description: It reloads the plugin.
         usage: /<command>        
         permission: pvptitles.reload
+    pvpDatabase:
+        description: It allows to manage data of the database.
+        usage: /<command> export|import
+        aliases: pvpdb
+        permission: pvptitles.database
         
 permissions:
     pvptitles.*:
@@ -55,6 +60,7 @@ permissions:
             - pvptitles.purge: true
             - pvptitles.ladder: true
             - pvptitles.reload: true
+            - pvptitles.database: true
             - pvptitles.managesign: true
     pvptitles.admin:
         description: Access to staff commands
@@ -63,6 +69,7 @@ permissions:
             - pvptitles.sign: true
             - pvptitles.purge: true
             - pvptitles.reload: true
+            - pvptitles.database: true
             - pvptitles.managesign: true
     pvptitles.help:
         description: Access to /pvptitles command.
@@ -85,6 +92,9 @@ permissions:
     pvptitles.reload:
         description: Access to /pvpreload command.
         default: op
+    pvptitles.database:
+        description: Access to /pvpdatabase command.
+        default: false
     pvptitles.managesign:
         description: Create/destroy scoreboards per signs.
         default: op

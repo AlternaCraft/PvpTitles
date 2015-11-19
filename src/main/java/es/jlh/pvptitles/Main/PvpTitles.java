@@ -1,5 +1,5 @@
 // Proyect created: 15-02-2015
-// Last Change:     12-11-2015
+// Last Change:     18-11-2015
 // Author:          Julito; Nick: esejuli94
 // 
 // History:
@@ -50,9 +50,11 @@
 //   un fallo en la extructura de la tabla PlayerWorld de MySQL (idServer)
 //  Ver. 2.4  16/11/2015  Arreglado fallo con la cuenta de servers.yml y cambiada
 //   la estructura de las bases de datos.
+//  Ver. 2.4  18/11/2015  Añadida nueva gestion de la base de datos
 
 package es.jlh.pvptitles.Main;
 
+import es.jlh.pvptitles.Commands.DBCommand;
 import es.jlh.pvptitles.Commands.FameCommand;
 import es.jlh.pvptitles.Commands.InfoCommand;
 import es.jlh.pvptitles.Commands.LadderCommand;
@@ -60,7 +62,7 @@ import es.jlh.pvptitles.Commands.PurgeCommand;
 import es.jlh.pvptitles.Commands.RankCommand;
 import es.jlh.pvptitles.Commands.ReloadCommand;
 import es.jlh.pvptitles.Commands.SignCommand;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Handlers.HandleFame;
 import es.jlh.pvptitles.Handlers.HandleInventoryClick;
 import es.jlh.pvptitles.Handlers.HandlePlayerFame;
@@ -137,6 +139,7 @@ public class PvpTitles extends JavaPlugin {
         getCommand("pvpPurge").setExecutor(new PurgeCommand(this));
         getCommand("pvpLadder").setExecutor(new LadderCommand(this));
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
+        getCommand("pvpDatabase").setExecutor(new DBCommand(this));
         getCommand("pvpTitles").setExecutor(new InfoCommand(this));
 
         // Registro los managers del timing

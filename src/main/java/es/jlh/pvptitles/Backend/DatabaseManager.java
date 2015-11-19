@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Managers.DB;
+package es.jlh.pvptitles.Backend;
 
 import es.jlh.pvptitles.Objects.LBSigns.LBData;
 import es.jlh.pvptitles.Objects.PlayerFame;
@@ -121,7 +121,12 @@ public interface DatabaseManager {
     public int purgeData();
 
     /**
-     * Método para exportar todos los datos de la base de datos a un sql
+     * Método para exportar todos los datos de la base de datos
      */
     public void DBExport();
+
+    /**
+     * Método para importar todos los datos desde un fichero
+     */
+    public boolean DBImport();
 }

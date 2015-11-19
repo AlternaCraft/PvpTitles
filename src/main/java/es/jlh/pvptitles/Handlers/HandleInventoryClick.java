@@ -1,11 +1,11 @@
 package es.jlh.pvptitles.Handlers;
 
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Inventories;
 import static es.jlh.pvptitles.Misc.Inventories.MAX_SIGNS_PER_PAGE;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
+import es.jlh.pvptitles.Misc.Localizer;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Location;

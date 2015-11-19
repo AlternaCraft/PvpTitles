@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Misc;
+package es.jlh.pvptitles.Backend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.bukkit.ChatColor;
  *
  * @author julito
  */
-public class Settings {
+public class ConfigDataStore {
     /* METRICS && UPDATES */
 
     // Atributo para guardar si se van a usar las metricas
@@ -92,7 +92,7 @@ public class Settings {
     /**
      * Constructor de la clase
      */
-    public Settings() {
+    public ConfigDataStore() {
     }
 
     // ** SETTERS ** \\

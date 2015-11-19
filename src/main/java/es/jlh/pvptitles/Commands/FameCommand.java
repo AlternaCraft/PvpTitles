@@ -2,12 +2,12 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Configs.LangFile.LangType;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
+import es.jlh.pvptitles.Misc.Localizer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

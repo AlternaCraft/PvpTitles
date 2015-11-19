@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Misc;
 
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Configs.LangFile.LangType;
 import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Files;
+package es.jlh.pvptitles.Configs;
 
 import static es.jlh.pvptitles.Main.PvpTitles.logger;
 import es.jlh.pvptitles.Misc.Utils;
@@ -80,6 +80,10 @@ public enum LangFile {
     COMMAND_RELOAD_INFO(
             "Recarga las funciones principales del plugin", 
             "Recharge the main config"
+    ),
+    COMMAND_DATABASE_INFO(
+            "Gestiona los datos de la base de datos", 
+            "Manage data of the database"
     ),
     SIGN_INVENTORY_TITLE(
             "Tablero de puntuaciones", 

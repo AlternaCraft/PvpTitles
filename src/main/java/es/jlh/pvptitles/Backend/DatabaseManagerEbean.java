@@ -1,15 +1,15 @@
-package es.jlh.pvptitles.Managers.DB;
+package es.jlh.pvptitles.Backend;
 
 import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Misc.MySQLConnection;
+import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilFile;
 import es.jlh.pvptitles.Objects.LBSigns.LBData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
-import es.jlh.pvptitles.Objects.DB.PlayerPT;
-import es.jlh.pvptitles.Objects.DB.WorldPlayerPT;
-import es.jlh.pvptitles.Objects.DB.SignPT;
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +22,9 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -369,10 +372,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
         short serverID = pt.cm.params.getMultiS();
 
         String sql = "";
+        sql += MySQLConnection.getTableServers() + "\n";
         sql += MySQLConnection.getTablePlayerServer() + "\n";
         sql += MySQLConnection.getTablePlayerMeta() + "\n";
-        sql += MySQLConnection.getTablePlayerWorld() + "\n";
-        sql += MySQLConnection.getTableServers() + "\n";
+        sql += MySQLConnection.getTablePlayerWorld() + "\n";        
         sql += MySQLConnection.getTableSigns() + "\n";
 
         List<PlayerPT> plClass = (List<PlayerPT>) ebeanServer.getDatabase().
@@ -384,47 +387,45 @@ public class DatabaseManagerEbean implements DatabaseManager {
         List<SignPT> stClass = (List<SignPT>) ebeanServer.getDatabase().
                 find(SignPT.class).findList();
 
-        int id = 0;
         boolean mw = pwClass != null && pwClass.size() > 0;
 
-        sql += "insert into Servers values (" + serverID + ", '" + pt.cm.params.getNameS() + "');\n";
+        sql += "insert into Servers values (" + serverID + ", '" + pt.cm.params.getNameS() + "')"
+                + " ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
 
         if (plClass != null && plClass.size() > 0) {
-            String sql1 = "insert into PlayerServer(id, playerUUID, serverID) values ";
-            String sql2 = "insert into PlayerMeta(psid, points, playedTime, lastLogin) values ";
+            String sql1 = "";
+            String sql2 = "";
             String sql3 = "";
-
-            if (mw) {
-                sql3 = "insert into PlayerWorld(psid, worldName, points) values ";
-            }
 
             for (int j = 0; j < plClass.size(); j++) {
                 PlayerPT next = plClass.get(j);
 
                 String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
-                sql1 += "(" + id + ", '" + next.getPlayerUUID() + "', " + serverID + "),";
-                sql2 += "(" + id + ", " + next.getPoints() + ", " + next.getPlayedTime() + ", '" + fecha + "'),";
+                sql1 += "insert into PlayerServer(id, playerUUID, serverID) select "
+                        + "max(id)+1, '" + next.getPlayerUUID() + "', "
+                        + serverID + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
+                sql2 += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                        + "max(id), " + next.getPoints() + ", "
+                        + next.getPlayedTime() + ", '" + fecha + "' from PlayerServer "
+                        + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
+                        + "lastLogin=VALUES(lastLogin);\n";
 
                 if (mw) {
                     for (int k = 0; k < pwClass.size(); k++) {
                         WorldPlayerPT nextW = pwClass.get(k);
                         if (nextW.getPlayerUUID().equals(next.getPlayerUUID())) {
-                            sql3 += "(" + id + ", '" + nextW.getWorld() + "', " + nextW.getPoints() + "),";
+                            sql3 += "insert into PlayerWorld(psid, worldName, points) select "
+                                    + "max(id), '" + nextW.getWorld() + "', " + 
+                                    nextW.getPoints() + " from PlayerServer "
+                                    + "ON DUPLICATE KEY UPDATE worldName=VALUES"
+                                    + "(worldName),points=VALUES(points);\n";
                             // optimizacion
                             pwClass.remove(k);
                             k--;
                         }
                     }
                 }
-
-                id++;
-            }
-
-            sql1 = sql1.substring(0, sql1.length() - 1) + ";\n"; // Quito la coma sobrante
-            sql2 = sql2.substring(0, sql2.length() - 1) + ";\n"; // Quito la coma sobrante
-            if (mw) {
-                sql3 = sql3.substring(0, sql3.length() - 1) + ";\n"; // Quito la coma sobrante
             }
 
             sql += sql1 + sql2 + sql3;
@@ -442,9 +443,103 @@ public class DatabaseManagerEbean implements DatabaseManager {
             }
 
             sql = sql.substring(0, sql.length() - 1); // Quito la coma sobrante
-            sql += ";";
+            sql += " ON DUPLICATE KEY UPDATE name=VALUES(name),signModel=VALUES(signModel),"
+                    + "orientation=VALUES(orientation),blockface=VALUES(blockface);";
         }
 
         UtilFile.writeFile(ruta, sql);
+    }
+
+    @Override
+    public boolean DBImport() {
+        String ruta = new StringBuilder().append(
+                pt.getDataFolder()).append( // Ruta
+                        File.separator).append( // Separador
+                        "database.json").toString();
+
+        if (!UtilFile.exists(ruta)) {
+            return false;
+        }
+
+        JSONParser parser = new JSONParser();
+
+        try {
+            Object obj = parser.parse(UtilFile.readFile(ruta));
+            JSONObject jsonObject = (JSONObject) obj;
+
+            JSONArray players = (JSONArray) jsonObject.get("Players");
+            JSONArray signs = (JSONArray) jsonObject.get("Signs");
+            JSONArray pworlds = (JSONArray) jsonObject.get("PlayersPerWorld");
+
+            List<PlayerPT> playersJSON = TagsClass.getPlayers(players);
+            for (PlayerPT playersPT : playersJSON) {
+                PlayerPT ppt = ebeanServer.getDatabase().find(PlayerPT.class)
+                        .where()
+                        .ieq("playerUUID", playersPT.getPlayerUUID())
+                        .findUnique();
+
+                if (ppt == null) {
+                    ppt = new PlayerPT();
+                    ppt.setPlayerUUID(playersPT.getPlayerUUID());
+                }
+
+                ppt.setPoints(playersPT.getPoints());
+                ppt.setLastLogin(playersPT.getLastLogin());
+                ppt.setPlayedTime(playersPT.getPlayedTime());
+
+                ebeanServer.getDatabase().save(ppt);
+            }
+
+            List<SignPT> signsJSON = TagsClass.getSigns(signs);
+            for (SignPT signsPT : signsJSON) {
+                SignPT spt = ebeanServer.getDatabase().find(SignPT.class)
+                        .where()
+                        .eq("x", signsPT.getX())
+                        .eq("y", signsPT.getY())
+                        .eq("z", signsPT.getZ())
+                        .ieq("world", signsPT.getWorld())
+                        .findUnique();
+
+                if (spt == null) {
+                    spt = new SignPT();
+                    spt.setLocation(new Location(Bukkit.getWorld(signsPT.getWorld()),
+                            signsPT.getX(), signsPT.getY(), signsPT.getZ()));
+                }
+
+                spt.setName(signsPT.getName());
+                spt.setModel(signsPT.getModel());
+                spt.setBlockface(signsPT.getBlockface());
+                spt.setOrientation(signsPT.getOrientation());
+
+                ebeanServer.getDatabase().save(spt);
+            }
+
+            List<WorldPlayerPT> worldPlayerJSON = TagsClass.getPWorlds(pworlds);
+            for (WorldPlayerPT wordPlayerPT : worldPlayerJSON) {
+                WorldPlayerPT wppt = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                        .where()
+                        .ieq("playerUUID", wordPlayerPT.getPlayerUUID())
+                        .findUnique();
+
+                if (wppt == null) {
+                    wppt = new WorldPlayerPT();
+                    wppt.setPlayerUUID(wordPlayerPT.getPlayerUUID());
+                }
+
+                wppt.setPoints(wordPlayerPT.getPoints());
+                wppt.setWorld(wordPlayerPT.getWorld());
+
+                ebeanServer.getDatabase().save(wppt);
+            }
+
+            UtilFile.delete(ruta);
+
+        } catch (org.json.simple.parser.ParseException ex) {
+            if (pt.cm.params.isDebug()) {
+                PvpTitles.logger.severe(ex.getMessage());
+            }
+        }
+
+        return true;
     }
 }

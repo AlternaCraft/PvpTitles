@@ -1,11 +1,15 @@
-package es.jlh.pvptitles.Managers.DB;
+package es.jlh.pvptitles.Backend;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Misc.MySQLConnection;
+import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilFile;
-import es.jlh.pvptitles.Objects.DB.PlayerPT;
-import es.jlh.pvptitles.Objects.DB.WorldPlayerPT;
-import es.jlh.pvptitles.Objects.DB.SignPT;
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
 import es.jlh.pvptitles.Objects.LBSigns.LBData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
@@ -22,12 +26,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -144,8 +148,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 updateFame.setString(2, pl.getWorld().getName());
                 updateFame.executeUpdate();
             } else {
-                String setPoints = "update PlayerMeta set points=?,ultMod=? "
-                        + "where playerName=? AND serverID=?";
+                String setPoints = "update PlayerMeta set points=? where psid=" + id;
 
                 PreparedStatement updateFame = mysql.prepareStatement(setPoints);
                 updateFame.setInt(1, fame);
@@ -378,7 +381,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         if (!"".equals(server) && servidores != null && pt.cm.servers.containsKey(server)) {
             // Si hay un '-1' recojo los jugadores de todos los servers
             if (servidores.size() > 0 && !servidores.containsKey(-1)) {
-                sql += "where";
+                sql += " where";
                 for (Iterator<Short> iterator = servidores.keySet().iterator(); iterator.hasNext();) {
                     Short next = iterator.next();
                     sql += " (serverID = " + next;
@@ -394,10 +397,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
                     sql += ") OR";
                 }
-                sql = sql.substring(0, sql.length() - 4) + ")";
+                sql = sql.substring(0, sql.length() - 3);
             }
         } else {
-            sql += "where serverID=" + pt.cm.params.getMultiS();
+            sql += " where serverID=" + pt.cm.params.getMultiS();
 
             if (pt.cm.params.isMw_enabled() && servidores != null && servidores.get(pt.cm.params.getMultiS()) != null) {
                 sql += " AND";
@@ -519,8 +522,9 @@ public class DatabaseManagerMysql implements DatabaseManager {
         List<SignPT> signClass = new ArrayList();
 
         String players = "select * from PlayerServer inner join PlayerMeta "
-                + "on id=PlayerMeta.psid inner join PlayerWorld "
-                + "on id=PlayerWorld.psid where serverID=" + serverID;
+                + "on id=psid where serverID=" + serverID;
+        String playersPerWorld = "select * from PlayerServer inner join PlayerWorld "
+                + "on id=psid where serverID=" + serverID;
         String signs = "select * from Signs where serverID=" + serverID;
         try {
             ResultSet rs = mysql.createStatement().executeQuery(players);
@@ -528,14 +532,19 @@ public class DatabaseManagerMysql implements DatabaseManager {
             while (rs.next()) {
                 PlayerPT pl = new PlayerPT();
                 pl.setPlayerUUID(rs.getString("playerUUID"));
-                pl.setPoints(rs.getInt("PlayerServer.points"));
+                pl.setPoints(rs.getInt("points"));
                 pl.setPlayedTime(rs.getInt("playedTime"));
                 pl.setLastLogin(rs.getDate("lastLogin"));
                 plClass.add(pl);
 
+            }
+
+            rs = mysql.createStatement().executeQuery(playersPerWorld);
+
+            while (rs.next()) {
                 WorldPlayerPT plWorld = new WorldPlayerPT();
                 plWorld.setPlayerUUID(rs.getString("playerUUID"));
-                plWorld.setPoints(rs.getInt("PlayerWorld.points"));
+                plWorld.setPoints(rs.getInt("points"));
                 plWorld.setWorld(rs.getString("worldName"));
                 plwClass.add(plWorld);
             }
@@ -562,9 +571,60 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
         }
 
-        
-        
-        //UtilFile.writeFile(ruta, sql);
+        // Estilo
+        JsonParser parser = new JsonParser();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+        JSONObject jo = new JSONObject();
+
+        JSONArray jsPlayers = new JSONArray();
+        JSONArray jsSigns = new JSONArray();
+        JSONArray jsWorldPlayers = new JSONArray();
+
+        for (PlayerPT next : plClass) {
+            jsPlayers.add(TagsClass.createPlayer(next));
+        }
+        jo.put("Players", jsPlayers);
+
+        for (SignPT next : signClass) {
+            jsSigns.add(TagsClass.createSign(next));
+        }
+        jo.put("Signs", jsSigns);
+
+        for (WorldPlayerPT next : plwClass) {
+            jsWorldPlayers.add(TagsClass.createPlayerW(next));
+        }
+        jo.put("PlayersPerWorld", jsWorldPlayers);
+
+        // Escribo el fichero
+        JsonElement el = parser.parse(jo.toJSONString());
+        UtilFile.writeFile(ruta, gson.toJson(el));
+    }
+
+    @Override
+    public boolean DBImport() {
+        String ruta = new StringBuilder().append(
+                pt.getDataFolder()).append( // Ruta
+                        File.separator).append( // Separador
+                        "database.sql").toString();
+
+        if (!UtilFile.exists(ruta)) {
+            return false;
+        }
+
+        String[] sql = UtilFile.readFile(ruta).split("\n");
+        
+        for (String consulta : sql) {
+            try {
+                mysql.createStatement().executeUpdate(consulta);                
+            } catch (SQLException ex) {
+                if (pt.cm.params.isDebug()) {
+                    PvpTitles.logger.severe(ex.getMessage());
+                }
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

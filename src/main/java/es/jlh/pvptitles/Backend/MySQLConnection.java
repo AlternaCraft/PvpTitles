@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Misc;
+package es.jlh.pvptitles.Backend;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import java.sql.Connection;

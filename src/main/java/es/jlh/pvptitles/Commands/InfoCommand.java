@@ -1,10 +1,10 @@
 package es.jlh.pvptitles.Commands;
 
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
+import es.jlh.pvptitles.Misc.Localizer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -49,6 +49,9 @@ public class InfoCommand implements CommandExecutor {
 
         String pvpreload = pvpTitles.getDescription().getCommands().get("pvpReload")
                 .get("usage").toString().replace("<command>", "pvpreload");
+        
+        String pvpdb = pvpTitles.getDescription().getCommands().get("pvpDatabase")
+                .get("usage").toString().replace("<command>", "pvpdatabase");
 
         sender.sendMessage("");
 
@@ -78,6 +81,11 @@ public class InfoCommand implements CommandExecutor {
         if (sender.hasPermission("pvptitles.reload")) {
             sender.sendMessage("  " + ChatColor.AQUA + pvpreload
                     + ChatColor.RESET + " [" + LangFile.COMMAND_RELOAD_INFO.getText(messages) + "]");
+        }
+        
+        if (sender.hasPermission("pvptitles.database")) {
+            sender.sendMessage("  " + ChatColor.AQUA + pvpdb
+                    + ChatColor.RESET + " [" + LangFile.COMMAND_DATABASE_INFO.getText(messages) + "]");
         }
 
         sender.sendMessage("■ " + ChatColor.GOLD + "Created By "

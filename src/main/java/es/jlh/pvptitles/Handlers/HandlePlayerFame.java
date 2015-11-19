@@ -1,12 +1,12 @@
 package es.jlh.pvptitles.Handlers;
 
 import es.jlh.pvptitles.Events.FameEvent;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
+import es.jlh.pvptitles.Misc.Localizer;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import es.jlh.pvptitles.Managers.AntiFarmManager;
 import es.jlh.pvptitles.Managers.CleanTaskManager;
@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -76,6 +77,11 @@ public class HandlePlayerFame implements Listener {
         if (!this.pvpTitles.getPlayerManager().hasPlayer(player)) {
             this.pvpTitles.getPlayerManager().addPlayer(tPlayer);
         }
+    }
+    
+    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        cm.getDm().PlayerConnection(player);
     }
 
     /**

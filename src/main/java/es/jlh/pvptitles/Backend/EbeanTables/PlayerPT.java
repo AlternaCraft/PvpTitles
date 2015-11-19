@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects.DB;
+package es.jlh.pvptitles.Backend.EbeanTables;
 
 import java.io.Serializable;
 import java.util.Date;

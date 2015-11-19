@@ -1,10 +1,10 @@
 package es.jlh.pvptitles.Commands;
 
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
+import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import java.util.ArrayList;
 import org.bukkit.ChatColor;

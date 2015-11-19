@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Files;
+package es.jlh.pvptitles.Configs;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Objects.LBSigns.LBModel;

@@ -1,27 +1,27 @@
 package es.jlh.pvptitles.Main;
 
-import es.jlh.pvptitles.Files.CommandFile;
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
-import es.jlh.pvptitles.Files.ModelsFile;
-import es.jlh.pvptitles.Files.ServersFile;
+import es.jlh.pvptitles.Configs.CommandFile;
+import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Configs.LangFile.LangType;
+import es.jlh.pvptitles.Configs.ModelsFile;
+import es.jlh.pvptitles.Configs.ServersFile;
 import es.jlh.pvptitles.Libraries.Ebean;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.DB.DatabaseManager;
-import es.jlh.pvptitles.Managers.DB.DatabaseManagerEbean;
-import es.jlh.pvptitles.Managers.DB.DatabaseManagerMysql;
+import es.jlh.pvptitles.Backend.DatabaseManager;
+import es.jlh.pvptitles.Backend.DatabaseManagerEbean;
+import es.jlh.pvptitles.Backend.DatabaseManagerMysql;
 import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.LangDetector.Localizer;
-import es.jlh.pvptitles.Misc.MySQLConnection;
-import es.jlh.pvptitles.Misc.Settings;
+import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.Backend.MySQLConnection;
+import es.jlh.pvptitles.Backend.ConfigDataStore;
 import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
 import es.jlh.pvptitles.Objects.LBSigns.LBData;
 import es.jlh.pvptitles.Objects.LBSigns.LBModel;
 import es.jlh.pvptitles.Managers.LeaderBoardManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
-import es.jlh.pvptitles.Objects.DB.PlayerPT;
-import es.jlh.pvptitles.Objects.DB.WorldPlayerPT;
-import es.jlh.pvptitles.Objects.DB.SignPT;
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -70,7 +70,7 @@ public final class Manager {
     public HashMap<String, HashMap<Short, List<String>>> servers = null;
 
     // Resto de parametros
-    public Settings params = null;
+    public ConfigDataStore params = null;
 
     // Chat
     public static LangType messages = null;
@@ -101,7 +101,7 @@ public final class Manager {
         modelos = new ArrayList();
         commandsRw = new HashMap();
         servers = new HashMap();
-        params = new Settings();
+        params = new ConfigDataStore();
         tipo = DBTYPE.EBEAN;
     }
 
