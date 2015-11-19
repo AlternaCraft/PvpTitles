@@ -22,7 +22,8 @@ public class DBStructure {
     }
 
     public void checkEbeanDB() {
-        /*dm.conversor(); // Solo se ejecuta la primera vez para convertir los ficheros     
+        /*
+        dm.conversor(); // Solo se ejecuta la primera vez para convertir los ficheros     
         dm.conversorUUID();
 
         RETROCP rcp = RETROCP.NOT_CREATED;
@@ -46,6 +47,7 @@ public class DBStructure {
 
         if (params.isAuto_export()) {
             dm.SQLExport();
-        }*/
+        }
+        */
     }
 }
