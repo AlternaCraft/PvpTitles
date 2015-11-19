@@ -19,7 +19,7 @@ public class DBStructure {
 
     public DBStructure(PvpTitles plugin) {
         this.plugin = plugin;
-        // HI 2
+        // HI 3
     }
 
     public void checkEbeanDB() {
