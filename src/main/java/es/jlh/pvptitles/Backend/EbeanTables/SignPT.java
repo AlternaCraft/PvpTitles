@@ -9,7 +9,7 @@ import org.bukkit.Location;
 
 /**
  *
- * @author Julian
+ * @author julito
  */
 @SuppressWarnings("PersistenceUnitPresent")
 @Entity()

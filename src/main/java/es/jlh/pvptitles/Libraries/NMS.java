@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author Julian
+ * @author julito
  */
 public class NMS {
 
