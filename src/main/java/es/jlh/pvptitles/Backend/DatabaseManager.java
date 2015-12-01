@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public interface DatabaseManager {
 
@@ -62,6 +62,15 @@ public interface DatabaseManager {
     public int loadPlayedTime(UUID playerUUID);
 
     /**
+     * Método para recibir el top deseado de jugadores ordenado de mejor a peor
+     *
+     * @param cant Cantidad de jugadores a mostrarng w,
+     * @param server
+     * @return ArrayList con los jugadores
+     */
+    public ArrayList<PlayerFame> getTopPlayers(short cant, String server);
+    
+    /**
      * Método para registrar un cartel en la base de datos
      *
      * @param nombre String con el nombre de la tabla de puntuaciones
@@ -95,15 +104,6 @@ public interface DatabaseManager {
      * @return ArrayList con todas ellas
      */
     public ArrayList<LBData> buscaCarteles();
-
-    /**
-     * Método para recibir el top deseado de jugadores ordenado de mejor a peor
-     *
-     * @param cant Cantidad de jugadores a mostrarng w,
-     * @param server
-     * @return ArrayList con los jugadores
-     */
-    public ArrayList<PlayerFame> getTopPlayers(short cant, String server);
 
     /**
      * Método para recibir el nombre del servidor según su ID

@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class FameEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

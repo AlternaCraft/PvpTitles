@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class PurgeCommand implements CommandExecutor {
     private final PvpTitles pvpTitles;
@@ -32,7 +32,7 @@ public class PurgeCommand implements CommandExecutor {
             return false;
         }
         
-        int cantidad = dh.getDm().purgeData();
+        int cantidad = dh.dbh.getDm().purgeData();
         
         sender.sendMessage(PLUGIN + LangFile.PURGE_RESULT.getText(messages).
                 replace("%cant%", String.valueOf(cantidad)));

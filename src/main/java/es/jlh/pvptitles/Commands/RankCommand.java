@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Configs.LangFile;
-import es.jlh.pvptitles.Handlers.HandlePlayerFame;
+import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 /**
  * 
- * @author julito
+ * @author AlternaCraft
  */
 public class RankCommand implements CommandExecutor {
     private PvpTitles pt = null;
@@ -50,9 +50,9 @@ public class RankCommand implements CommandExecutor {
      * @param player Jugador que consulta los datos
      */
     private void HandleRankCmd(Player player) {        
-        int fame = pt.cm.getDm().loadPlayerFame(player.getUniqueId(), null);
+        int fame = pt.cm.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         int racha = (HandlePlayerFame.racha.containsKey(player.getName())) ? HandlePlayerFame.racha.get(player.getName()) : 0;
-        int seconds = pt.cm.getDm().loadPlayedTime(player.getUniqueId()) + 
+        int seconds = pt.cm.dbh.getDm().loadPlayedTime(player.getUniqueId()) + 
                 pt.getPlayerManager().getPlayer(Bukkit.getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         String rank = Ranks.GetRank(fame, seconds);        
         int rankup = Ranks.FameToRankUp();

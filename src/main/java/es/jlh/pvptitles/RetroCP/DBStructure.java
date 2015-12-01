@@ -4,7 +4,7 @@ import es.jlh.pvptitles.Main.PvpTitles;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class DBStructure {
 

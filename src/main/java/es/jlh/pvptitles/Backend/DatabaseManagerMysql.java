@@ -35,20 +35,20 @@ import org.json.simple.JSONObject;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class DatabaseManagerMysql implements DatabaseManager {
 
+    // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt;
     private Connection mysql;
 
     public DatabaseManagerMysql(PvpTitles mpt, Connection mysql) {
-        this.pt = null;
-        this.mysql = null;
         this.pt = mpt;
         this.mysql = mysql;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     private short checkPlayerExists(Player pl) {
         String uuid = pl.getUniqueId().toString();
 
@@ -97,9 +97,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return psid;
@@ -122,9 +120,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             modFecha.setDate(1, sqlDate);
             modFecha.executeUpdate();
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
     }
 
@@ -155,9 +151,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 updateFame.executeUpdate();
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
     }
 
@@ -194,9 +188,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return fama;
@@ -216,9 +208,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     + " where psid=" + psid;
             mysql.createStatement().executeUpdate(update);
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
     }
 
@@ -240,127 +230,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 time = rs.getInt("playedTime");
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return time;
     }
-
-    @Override
-    public void registraCartel(String nombre, String modelo, String server,
-            Location l, String orientacion, short blockface) {
-
-        if (!MySQLConnection.isConnected()) {
-            return;
-        }
-
-        String cartel = "insert into Signs(name, signModel, dataModel, orientation, "
-                + "blockface, serverID, world, x, y, z) values (?,?,?,?,?,?,?,?,?,?)";
-
-        try {
-            PreparedStatement regCartel = mysql.prepareStatement(cartel);
-            regCartel.setString(1, nombre);
-            regCartel.setString(2, modelo);
-            regCartel.setString(3, server);
-            regCartel.setString(4, orientacion);
-            regCartel.setShort(5, blockface);
-            regCartel.setShort(6, pt.cm.params.getMultiS());
-            regCartel.setString(7, l.getWorld().getName());
-            regCartel.setInt(8, l.getBlockX());
-            regCartel.setInt(9, l.getBlockY());
-            regCartel.setInt(10, l.getBlockZ());
-
-            regCartel.executeUpdate();
-        } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public void modificaCartel(Location l) {
-        if (!MySQLConnection.isConnected()) {
-            return;
-        }
-
-        String updateServerID = "update Signs set serverID=? where serverID=-1 "
-                + "AND world=? AND x=? AND y=? AND z=?";
-        try {
-            PreparedStatement actCartel = mysql.prepareStatement(updateServerID);
-            actCartel.setInt(1, pt.cm.params.getMultiS());
-            actCartel.setString(2, l.getWorld().getName());
-            actCartel.setInt(3, l.getBlockX());
-            actCartel.setInt(4, l.getBlockY());
-            actCartel.setInt(5, l.getBlockZ());
-            actCartel.executeUpdate();
-        } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public void borraCartel(Location l) {
-        if (!MySQLConnection.isConnected()) {
-            return;
-        }
-
-        String cartel = "delete from Signs where serverID=? AND world=? "
-                + "AND x=? AND y=? AND z=?";
-        try {
-            PreparedStatement regCartel = mysql.prepareStatement(cartel);
-            regCartel.setInt(1, pt.cm.params.getMultiS());
-            regCartel.setString(2, l.getWorld().getName());
-            regCartel.setInt(3, l.getBlockX());
-            regCartel.setInt(4, l.getBlockY());
-            regCartel.setInt(5, l.getBlockZ());
-            regCartel.executeUpdate();
-        } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public ArrayList buscaCarteles() {
-        String sql = "select * from Signs where serverID = " + pt.cm.params.getMultiS();
-        ArrayList sd = new ArrayList();
-
-        if (!MySQLConnection.isConnected()) {
-            return sd;
-        }
-
-        try {
-            LBData sdc;
-            for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); sd.add(sdc)) {
-                String nombre = rs.getString("name");
-                String modelo = rs.getString("signModel");
-                String server = rs.getString("dataModel");
-                String orientacion = rs.getString("orientation");
-                short blockface = rs.getShort("blockface");
-                String world = rs.getString("world");
-                int x = rs.getInt("x");
-                int y = rs.getInt("y");
-                int z = rs.getInt("z");
-                Location l = new Location(pt.getServer().getWorld(world), x, y, z);
-                sdc = new LBData(nombre, modelo, server, l);
-                sdc.setOrientacion(orientacion);
-                sdc.setBlockface(blockface);
-            }
-
-        } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
-        }
-        return sd;
-    }
-
+    
     @Override
     public ArrayList getTopPlayers(short cant, String server) {
         ArrayList rankedPlayers = new ArrayList();
@@ -431,13 +306,118 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
         return rankedPlayers;
     }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SIGNS...">  
+    @Override
+    public void registraCartel(String nombre, String modelo, String server,
+            Location l, String orientacion, short blockface) {
 
+        if (!MySQLConnection.isConnected()) {
+            return;
+        }
+
+        String cartel = "insert into Signs(name, signModel, dataModel, orientation, "
+                + "blockface, serverID, world, x, y, z) values (?,?,?,?,?,?,?,?,?,?)";
+
+        try {
+            PreparedStatement regCartel = mysql.prepareStatement(cartel);
+            regCartel.setString(1, nombre);
+            regCartel.setString(2, modelo);
+            regCartel.setString(3, server);
+            regCartel.setString(4, orientacion);
+            regCartel.setShort(5, blockface);
+            regCartel.setShort(6, pt.cm.params.getMultiS());
+            regCartel.setString(7, l.getWorld().getName());
+            regCartel.setInt(8, l.getBlockX());
+            regCartel.setInt(9, l.getBlockY());
+            regCartel.setInt(10, l.getBlockZ());
+
+            regCartel.executeUpdate();
+        } catch (SQLException ex) {
+            PvpTitles.logError(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void modificaCartel(Location l) {
+        if (!MySQLConnection.isConnected()) {
+            return;
+        }
+
+        String updateServerID = "update Signs set serverID=? where serverID=-1 "
+                + "AND world=? AND x=? AND y=? AND z=?";
+        try {
+            PreparedStatement actCartel = mysql.prepareStatement(updateServerID);
+            actCartel.setInt(1, pt.cm.params.getMultiS());
+            actCartel.setString(2, l.getWorld().getName());
+            actCartel.setInt(3, l.getBlockX());
+            actCartel.setInt(4, l.getBlockY());
+            actCartel.setInt(5, l.getBlockZ());
+            actCartel.executeUpdate();
+        } catch (SQLException ex) {
+            PvpTitles.logError(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void borraCartel(Location l) {
+        if (!MySQLConnection.isConnected()) {
+            return;
+        }
+
+        String cartel = "delete from Signs where serverID=? AND world=? "
+                + "AND x=? AND y=? AND z=?";
+        try {
+            PreparedStatement regCartel = mysql.prepareStatement(cartel);
+            regCartel.setInt(1, pt.cm.params.getMultiS());
+            regCartel.setString(2, l.getWorld().getName());
+            regCartel.setInt(3, l.getBlockX());
+            regCartel.setInt(4, l.getBlockY());
+            regCartel.setInt(5, l.getBlockZ());
+            regCartel.executeUpdate();
+        } catch (SQLException ex) {
+            PvpTitles.logError(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public ArrayList buscaCarteles() {
+        String sql = "select * from Signs where serverID = " + pt.cm.params.getMultiS();
+        ArrayList sd = new ArrayList();
+
+        if (!MySQLConnection.isConnected()) {
+            return sd;
+        }
+
+        try {
+            LBData sdc;
+            for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); sd.add(sdc)) {
+                String nombre = rs.getString("name");
+                String modelo = rs.getString("signModel");
+                String server = rs.getString("dataModel");
+                String orientacion = rs.getString("orientation");
+                short blockface = rs.getShort("blockface");
+                String world = rs.getString("world");
+                int x = rs.getInt("x");
+                int y = rs.getInt("y");
+                int z = rs.getInt("z");
+                Location l = new Location(pt.getServer().getWorld(world), x, y, z);
+                sdc = new LBData(nombre, modelo, server, l);
+                sdc.setOrientacion(orientacion);
+                sdc.setBlockface(blockface);
+            }
+
+        } catch (SQLException ex) {
+            PvpTitles.logError(ex.getMessage(), ex);
+        }
+        return sd;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="OTHERS...">  
     @Override
     public String getServerName(short id) {
         String nombre = "";
@@ -455,9 +435,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 break;
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return nombre;
@@ -501,9 +479,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             } while (rs.next());
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
         return contador;
     }
@@ -536,7 +512,6 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 pl.setPlayedTime(rs.getInt("playedTime"));
                 pl.setLastLogin(rs.getDate("lastLogin"));
                 plClass.add(pl);
-
             }
 
             rs = mysql.createStatement().executeQuery(playersPerWorld);
@@ -566,9 +541,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 signClass.add(sg);
             }
         } catch (SQLException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         // Estilo
@@ -618,13 +591,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
             try {
                 mysql.createStatement().executeUpdate(consulta);                
             } catch (SQLException ex) {
-                if (pt.cm.params.isDebug()) {
-                    PvpTitles.logger.severe(ex.getMessage());
-                }
+                PvpTitles.logError(ex.getMessage(), ex);
                 return false;
             }
         }
         
         return true;
     }
+    //</editor-fold>
 }

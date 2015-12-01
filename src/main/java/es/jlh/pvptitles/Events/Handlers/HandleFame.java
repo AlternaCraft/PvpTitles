@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Handlers;
+package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameEvent;
@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class HandleFame implements Listener {
 
@@ -62,7 +62,7 @@ public class HandleFame implements Listener {
         HashMap<String, List<String>> rank = pt.cm.commandsRw.get("onRank");
         if (rank != null) {
             for (String rango : rank.keySet()) {
-                int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+                int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
                 if (rango.equals(Ranks.GetRank(e.getFameTotal(), seconds))) {
                     for (String cmd : rank.get(rango)) {
                         cmd = cmd.replace("<player>", e.getOfflinePlayer().getName());
@@ -80,7 +80,7 @@ public class HandleFame implements Listener {
             return;
         
         Player pl = e.getPlayer();
-        int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+        int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
         if (pl != null) {
             String rank = Ranks.GetRank(e.getFameTotal(), seconds);
@@ -101,7 +101,7 @@ public class HandleFame implements Listener {
             return;
         
         Player pl = e.getPlayer();
-        int seconds = dm.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+        int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
         if (pl != null) {
             String rank = Ranks.GetRank(e.getFameTotal(), seconds);

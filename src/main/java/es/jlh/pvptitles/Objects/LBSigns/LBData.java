@@ -7,7 +7,7 @@ import org.bukkit.material.Sign;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class LBData {
     private final Sign matSign = new Sign(Material.WALL_SIGN);

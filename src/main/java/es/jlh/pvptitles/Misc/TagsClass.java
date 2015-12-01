@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class TagsClass {
 

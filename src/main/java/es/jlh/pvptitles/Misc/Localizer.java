@@ -12,14 +12,21 @@ import org.bukkit.entity.Player;
  */
 public enum Localizer {
 
-    // English variants have been merged for sake of simplicity.
     ENGLISH(LangType.EN, "en_US"),
     SPANISH(LangType.ES, "es_ES"),
     ARGENTINEAN_SPANISH(LangType.ES, "es_AR"),
     MEXICO_SPANISH(LangType.ES, "es_MX"),
     URUGUAY_SPANISH(LangType.ES, "es_UY"),
     VENEZUELA_SPANISH(LangType.ES, "es_VE"),
-    DEUTSCH(LangType.DE, "de_DE");
+    
+    DEUTSCH(LangType.CUSTOM_DE, "de_DE"),
+    GREEK(LangType.CUSTOM_GR, "el_GR"),
+    FRENCH_CA(LangType.CUSTOM_FR, "fr_CA"), 
+    FRENCH(LangType.CUSTOM_FR, "fr_FR"),
+    JAPANESE(LangType.CUSTOM_JP, "ja_JP"),
+    SIMPLIFIED_CHINESE(LangType.CUSTOM_CH, "zh_CN"), 
+    TRADITIONAL_CHINESE(LangType.CUSTOM_CH, "zh_TW"),
+    RUSSIAN(LangType.CUSTOM_RU, "ru_RU");
 
     private final LangType type;
     private final String code;

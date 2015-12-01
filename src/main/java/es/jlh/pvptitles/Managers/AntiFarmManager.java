@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class AntiFarmManager {
 

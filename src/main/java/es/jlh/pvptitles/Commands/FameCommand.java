@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class FameCommand implements CommandExecutor {
 
@@ -74,7 +74,7 @@ public class FameCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("add")) {
             if (args.length == 3) {
-                int fameA = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
+                int fameA = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 int fameIncr = Integer.valueOf(args[2]);
 
                 FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
@@ -82,7 +82,7 @@ public class FameCommand implements CommandExecutor {
                 Bukkit.getServer().getPluginManager().callEvent(event);
 
                 if (!event.isCancelled()) {
-                    this.dm.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal());
+                    this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal());
                     sender.sendMessage(PLUGIN + LangFile.FAME_ADD.getText(messages).
                             replace("%tag%", this.dm.params.getTag())
                     );
@@ -109,13 +109,13 @@ public class FameCommand implements CommandExecutor {
                             world = pl.getWorld().getName();
                         }
                         
-                        fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), world);
+                        fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     }
                     else {
-                        fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
+                        fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
                     }
                 } else {
-                    fameTotal = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
+                    fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 }
 
                 sender.sendMessage(PLUGIN + LangFile.FAME_SEE.getText(messages).
@@ -129,7 +129,7 @@ public class FameCommand implements CommandExecutor {
             return true;
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length == 3) {
-                int fame = this.dm.getDm().loadPlayerFame(opl.getUniqueId(), null);
+                int fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                 int fameTotal = Integer.valueOf(args[2]);
 
                 fameTotal = (fameTotal < 0) ? 0 : fameTotal;
@@ -139,7 +139,7 @@ public class FameCommand implements CommandExecutor {
                 Bukkit.getServer().getPluginManager().callEvent(event);
 
                 if (!event.isCancelled()) {
-                    this.dm.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal());
+                    this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal());
                     sender.sendMessage(PLUGIN + LangFile.FAME_SET.getText(messages).
                             replace("%tag%", this.dm.params.getTag()));
                 } else {

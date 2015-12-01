@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class MetricsManager {
 

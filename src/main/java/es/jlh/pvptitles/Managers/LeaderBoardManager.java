@@ -15,7 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class LeaderBoardManager {
 
@@ -30,7 +30,7 @@ public class LeaderBoardManager {
     public boolean addSign(CustomSign cs, Player pl) {
         if (!signs.contains(cs)) {
             // Compruebo si ya hay algo ocupando el sitio            
-            ArrayList<PlayerFame> pf = this.pt.cm.getDm().getTopPlayers(cs.getModel().getCantidad(), cs.getInfo().getServer());
+            ArrayList<PlayerFame> pf = this.pt.cm.dbh.getDm().getTopPlayers(cs.getModel().getCantidad(), cs.getInfo().getServer());
             short jugadores = (short)pf.size();
             
             if (isOccupied(cs, jugadores)) {
@@ -46,7 +46,7 @@ public class LeaderBoardManager {
             createSign(cs);
             signs.add(cs);
 
-            pt.cm.getDm().registraCartel(cs.getInfo().getNombre(),
+            pt.cm.dbh.getDm().registraCartel(cs.getInfo().getNombre(),
                     cs.getModel().getNombre(), cs.getInfo().getServer(),
                     cs.getInfo().getL(), cs.getInfo().getOrientacion(),
                     cs.getInfo().getPrimitiveBlockface());
@@ -110,12 +110,12 @@ public class LeaderBoardManager {
         for (Iterator<CustomSign> it = signs.iterator(); it.hasNext();) {
             CustomSign sign = it.next();
             if (sign.getInfo().getL().equals(l)) {
-                short jugadores = (short)pt.cm.getDm().getTopPlayers(
+                short jugadores = (short)pt.cm.dbh.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
 
                 sign.delete(jugadores);
 
-                pt.cm.getDm().borraCartel(sign.getInfo().getL());
+                pt.cm.dbh.getDm().borraCartel(sign.getInfo().getL());
                 signs.remove(sign);
 
                 break;
@@ -126,7 +126,7 @@ public class LeaderBoardManager {
     public void deleteSign(Location l, BlockBreakEvent event) {
         for (CustomSign sign : signs) {
             if (sign.getInfo().getL().equals(l)) {
-                short jugadores = (short)pt.cm.getDm().getTopPlayers(
+                short jugadores = (short)pt.cm.dbh.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
 
                 Player pl = event.getPlayer();
@@ -142,7 +142,7 @@ public class LeaderBoardManager {
 
                 pl.sendMessage(PLUGIN + LangFile.SIGN_DELETED.getText(Localizer.getLocale(pl)));
 
-                pt.cm.getDm().borraCartel(sign.getInfo().getL());
+                pt.cm.dbh.getDm().borraCartel(sign.getInfo().getL());
                 signs.remove(sign);
 
                 break;
@@ -151,7 +151,7 @@ public class LeaderBoardManager {
     }
 
     private void createSign(CustomSign cs) {
-        ArrayList<PlayerFame> pf = pt.cm.getDm().getTopPlayers(
+        ArrayList<PlayerFame> pf = pt.cm.dbh.getDm().getTopPlayers(
                 cs.getModel().getCantidad(), cs.getInfo().getServer());
 
         cs.create(pf);

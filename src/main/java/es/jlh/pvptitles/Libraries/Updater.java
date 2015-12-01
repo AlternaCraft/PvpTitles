@@ -37,7 +37,7 @@ import org.json.simple.JSONValue;
  * <br>
  * If you are unsure about these rules, please read the plugin submission guidelines: http://goo.gl/8iU5l
  *
- * @author julito
+ * @author AlternaCraft
  * @version 2.3
  */
 

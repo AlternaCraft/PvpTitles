@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class CommandFile {
     public File commandsFile = new File("plugins/PvpTitles/commands.yml");        

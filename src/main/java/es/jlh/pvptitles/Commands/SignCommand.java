@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 /**
  * 
- * @author julito
+ * @author AlternaCraft
  */
 public class SignCommand implements CommandExecutor {    
     private final Manager dm;

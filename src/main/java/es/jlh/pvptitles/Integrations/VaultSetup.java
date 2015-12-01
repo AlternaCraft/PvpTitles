@@ -11,7 +11,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class VaultSetup {
 

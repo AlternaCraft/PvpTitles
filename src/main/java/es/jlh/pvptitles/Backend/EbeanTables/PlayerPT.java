@@ -10,7 +10,7 @@ import javax.persistence.Temporal;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 @SuppressWarnings("PersistenceUnitPresent")
 @Entity()

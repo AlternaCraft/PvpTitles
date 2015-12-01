@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class LBModel {    
     private String nombre = null;    

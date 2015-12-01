@@ -9,7 +9,7 @@ import org.bukkit.block.Sign;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class LBArgs {
 

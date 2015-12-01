@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class Inventories {
 

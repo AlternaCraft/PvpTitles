@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Handlers;
+package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Main.Manager;
@@ -14,7 +14,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class HandlePlayerPrefix implements Listener {
 
@@ -51,8 +51,8 @@ public class HandlePlayerPrefix implements Listener {
             return;
         }
 
-        int fame = this.cm.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-        int seconds = this.cm.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
+        int fame = this.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
+        int seconds = this.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
         rank = Ranks.GetRank(fame, seconds);
 
         String format = event.getFormat();

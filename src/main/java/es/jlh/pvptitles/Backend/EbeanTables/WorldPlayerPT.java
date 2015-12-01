@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 @SuppressWarnings("PersistenceUnitPresent")
 @Entity

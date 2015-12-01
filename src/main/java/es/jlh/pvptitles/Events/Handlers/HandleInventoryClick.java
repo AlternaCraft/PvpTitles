@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Handlers;
+package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.EventExecutor;
 /**
  * Clase evento para comprobar los jugadores que pulsan click en el inv virtual
  *
- * @author julito
+ * @author AlternaCraft
  * @version 1.0
  */
 public class HandleInventoryClick implements Listener, EventExecutor {
@@ -110,7 +110,7 @@ public class HandleInventoryClick implements Listener, EventExecutor {
     }
 
     public Location getLocation(int pos) {
-        return this.plugin.cm.getDm().buscaCarteles().get(pos).getL();
+        return this.plugin.cm.dbh.getDm().buscaCarteles().get(pos).getL();
     }
 
     public int getPageNumber(Inventory inventory, Map<Integer, Inventory> inventories) {

@@ -1,11 +1,10 @@
 package es.jlh.pvptitles.Configs;
 
-import static es.jlh.pvptitles.Main.PvpTitles.logger;
+import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -168,7 +167,12 @@ public enum LangFile {
         ES,
         EN,
         // Other languages not include in the plugin
-        DE;
+        CUSTOM_DE,
+        CUSTOM_GR,
+        CUSTOM_FR,
+        CUSTOM_JP,
+        CUSTOM_CH,
+        CUSTOM_RU;
     }
 
     private static final String DIRECTORY = new StringBuilder().append(
@@ -207,7 +211,7 @@ public enum LangFile {
                 ? this.messages.get(LangType.EN) : this.messages.get(lang);
 
         // File access to get custom message (if exists)
-        File langFile = new File(DIRECTORY + "messages_" + lang.name() + ".yml");
+        File langFile = new File(DIRECTORY + "messages_" + lang.name().replace("CUSTOM_", "") + ".yml");
         YamlConfiguration langConf = YamlConfiguration.loadConfiguration(langFile);
 
         if (langConf != null && langConf.contains(this.name())) {
@@ -221,7 +225,7 @@ public enum LangFile {
         for (LangType langType : LangType.values()) {
 
             // Lista negra
-            if (langType.equals(langType.DE)) {
+            if (langType.name().contains("CUSTOM")) {
                 continue;
             }
 
@@ -234,8 +238,8 @@ public enum LangFile {
             YamlConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
 
             if (!compLocales(langFile, lang, langType)) {
-                logger.log(Level.INFO, "Error loading {0}" + " locales, "
-                        + "a new one has been created.", langType.name());
+                PvpTitles.logError("Error loading " + langType.name() + " locales, "
+                        + "a new one has been created.", null);
             }
         }
     }

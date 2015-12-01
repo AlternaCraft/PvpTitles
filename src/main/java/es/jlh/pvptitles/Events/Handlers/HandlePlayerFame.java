@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Handlers;
+package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Events.FameEvent;
 import es.jlh.pvptitles.Configs.LangFile;
@@ -26,7 +26,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class HandlePlayerFame implements Listener {
 
@@ -64,7 +64,7 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        cm.getDm().PlayerConnection(player);
+        cm.dbh.getDm().PlayerConnection(player);
 
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().hasPlayer(player)
@@ -81,7 +81,7 @@ public class HandlePlayerFame implements Listener {
     
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        cm.getDm().PlayerConnection(player);
+        cm.dbh.getDm().PlayerConnection(player);
     }
 
     /**
@@ -92,7 +92,7 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        cm.getDm().PlayerConnection(player);
+        cm.dbh.getDm().PlayerConnection(player);
         HandlePlayerFame.racha.put(player.getName(), 0);
 
         // Time
@@ -165,7 +165,7 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Aniado el nuevo valor de kills
-            int fame = this.cm.getDm().loadPlayerFame(killer.getUniqueId(), null);
+            int fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
 
             this.calculateRank(victim, killer, fame, kills);
             kills++;
@@ -236,7 +236,7 @@ public class HandlePlayerFame implements Listener {
      * @param kills Racha de bajas
      */
     private void calculateRank(String killed, Player player, int fame, int kills) {
-        int seconds = pvpTitles.cm.getDm().loadPlayedTime(player.getUniqueId());
+        int seconds = pvpTitles.cm.dbh.getDm().loadPlayedTime(player.getUniqueId());
 
         int fameAntes = fame;
         String tag = this.cm.params.getTag();
@@ -251,7 +251,7 @@ public class HandlePlayerFame implements Listener {
 
         int fameDespues = fameAntes + fameRec;
 
-        this.cm.getDm().savePlayerFame(player.getUniqueId(), fameDespues);
+        this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues);
 
         String currentRank = Ranks.GetRank(fameAntes, seconds);
         String newRank = Ranks.GetRank(fameDespues, seconds);

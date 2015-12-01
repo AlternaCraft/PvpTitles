@@ -5,12 +5,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class MySQLConnection {
 
@@ -54,9 +52,9 @@ public class MySQLConnection {
             System.out.println("MySQL library not found");
             estado_conexion = Estado.SIN_CONEXION;
         } catch (SQLException ex) {
-            PvpTitles.logger.log(Level.SEVERE, "[PvpTitles] {0}" + "; "
-                    + "Using Ebean per default...", ((ex.getErrorCode() == 0)
-                            ? "Could not connect to MySQL DB" : "Error MySQL"));
+            PvpTitles.logError("[PvpTitles] " + ((ex.getErrorCode() == 0)
+                    ? "Could not connect to MySQL DB" : "Error MySQL") 
+                    + "; Using Ebean per default...", null);
             estado_conexion = Estado.SIN_CONEXION;
         }
     }

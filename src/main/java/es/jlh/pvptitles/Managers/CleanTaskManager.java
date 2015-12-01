@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class CleanTaskManager {
 

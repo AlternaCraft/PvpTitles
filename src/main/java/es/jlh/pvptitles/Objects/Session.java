@@ -2,7 +2,7 @@ package es.jlh.pvptitles.Objects;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class Session {
 

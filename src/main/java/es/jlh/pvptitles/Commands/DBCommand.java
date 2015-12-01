@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class DBCommand implements CommandExecutor {
 
@@ -32,10 +32,10 @@ public class DBCommand implements CommandExecutor {
         }
         
         if (args[0].equals("export")) {
-            pvpTitles.cm.getDm().DBExport();
+            pvpTitles.cm.dbh.getDm().DBExport();
         }
         else if (args[0].equals("import")) {
-            if (pvpTitles.cm.getDm().DBImport()) {
+            if (pvpTitles.cm.dbh.getDm().DBImport()) {
                 sender.sendMessage(PLUGIN + "Imported correctly");
             }
             else {

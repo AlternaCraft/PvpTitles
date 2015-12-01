@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class InfoCommand implements CommandExecutor {
 

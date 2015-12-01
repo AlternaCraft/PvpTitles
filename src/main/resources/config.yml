@@ -133,13 +133,14 @@ Mod: 0.25
 # +------------------------------------------------------+ #
 ############################################################
 
-# Default translations (ES | EN) \\ | // Custom translations available (DE)
+# Default translations (Spanish (ES) | English (EN))
+# ####################### // Custom translations available \\ ########################
+# German (DE) | Greek (GR) | French (FR) | Japanese (JP) | Chinese (CH) | Russian (RU)
+# ####################################################################################
 DefaultLang: EN
 ## For system messages and for players whose launcher has another language ##
-
 ## [Custom translations] Also, you can add your own translations...
 ## Example: You can create "messages_DE" and the messages into the file will be shown to the players whose launcher language is German
-
 
 # Customizable Name for the points earned by players
 Tag: Fame

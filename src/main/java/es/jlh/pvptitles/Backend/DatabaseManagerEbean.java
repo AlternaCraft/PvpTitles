@@ -28,10 +28,11 @@ import org.json.simple.parser.JSONParser;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class DatabaseManagerEbean implements DatabaseManager {
 
+    // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt = null;
     private Ebean ebeanServer = null;
 
@@ -39,7 +40,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
         this.pt = pt;
         this.ebeanServer = ebeanServer;
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     @Override
     public void PlayerConnection(Player player) {
         PlayerPT plClass = null;
@@ -190,59 +192,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         return time;
     }
-
-    /* TABLA CARTELES */
-    @Override
-    public void registraCartel(String nombre, String modelo, String server,
-            Location l, String orientacion, short blockface) {
-        SignPT st = new SignPT();
-
-        st.setName(nombre);
-        st.setModel(modelo);
-        st.setLocation(l);
-        st.setOrientation(orientacion);
-        st.setBlockface(blockface);
-
-        ebeanServer.getDatabase().save(st);
-    }
-
-    @Override
-    public void modificaCartel(Location l) {
-        // Nothing yet
-    }
-
-    @Override
-    public void borraCartel(Location l) {
-        SignPT st = ebeanServer.getDatabase().find(SignPT.class)
-                .where()
-                .eq("x", l.getX())
-                .eq("y", l.getY())
-                .eq("z", l.getZ())
-                .ieq("world", l.getWorld().getName())
-                .findUnique();
-
-        ebeanServer.getDatabase().delete(st);
-    }
-
-    @Override
-    public ArrayList<LBData> buscaCarteles() {
-        List<SignPT> plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
-        ArrayList<LBData> sd = new ArrayList();
-
-        for (Iterator<SignPT> it = plClass.iterator(); it.hasNext();) {
-            SignPT st = it.next();
-
-            Location l = new Location(pt.getServer().getWorld(st.getWorld()), st.getX(), st.getY(), st.getZ());
-            LBData sdc = new LBData(st.getName(), st.getModel(), "", l);
-            sdc.setOrientacion(st.getOrientation());
-            sdc.setBlockface(st.getBlockface());
-
-            sd.add(sdc);
-        }
-
-        return sd;
-    }
-
+    
     /* OTROS */
     @Override
     public ArrayList<PlayerFame> getTopPlayers(short cant, String server) {
@@ -308,7 +258,61 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         return rankedPlayers;
     }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="SIGNS...">
+    /* TABLA CARTELES */
+    @Override
+    public void registraCartel(String nombre, String modelo, String server,
+            Location l, String orientacion, short blockface) {
+        SignPT st = new SignPT();
 
+        st.setName(nombre);
+        st.setModel(modelo);
+        st.setLocation(l);
+        st.setOrientation(orientacion);
+        st.setBlockface(blockface);
+
+        ebeanServer.getDatabase().save(st);
+    }
+
+    @Override
+    public void modificaCartel(Location l) {
+        // Nothing yet
+    }
+
+    @Override
+    public void borraCartel(Location l) {
+        SignPT st = ebeanServer.getDatabase().find(SignPT.class)
+                .where()
+                .eq("x", l.getX())
+                .eq("y", l.getY())
+                .eq("z", l.getZ())
+                .ieq("world", l.getWorld().getName())
+                .findUnique();
+
+        ebeanServer.getDatabase().delete(st);
+    }
+
+    @Override
+    public ArrayList<LBData> buscaCarteles() {        
+        List<SignPT> plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
+        ArrayList<LBData> sd = new ArrayList();
+        
+        for (Iterator<SignPT> it = plClass.iterator(); it.hasNext();) {
+            SignPT st = it.next();
+
+            Location l = new Location(pt.getServer().getWorld(st.getWorld()), st.getX(), st.getY(), st.getZ());
+            LBData sdc = new LBData(st.getName(), st.getModel(), "", l);
+            sdc.setOrientacion(st.getOrientation());
+            sdc.setBlockface(st.getBlockface());
+
+            sd.add(sdc);
+        }
+
+        return sd;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
     public String getServerName(short id) {
         return this.pt.cm.params.getNameS();
@@ -535,11 +539,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
             UtilFile.delete(ruta);
 
         } catch (org.json.simple.parser.ParseException ex) {
-            if (pt.cm.params.isDebug()) {
-                PvpTitles.logger.severe(ex.getMessage());
-            }
+            PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return true;
     }
+    // </editor-fold>
 }

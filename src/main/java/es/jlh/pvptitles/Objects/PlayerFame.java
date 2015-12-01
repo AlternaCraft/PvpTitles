@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class PlayerFame implements Comparable {
     private String uuid = null;
@@ -45,11 +45,11 @@ public class PlayerFame implements Comparable {
     }
 
     public int getSeconds() {        
-        return plugin.cm.getDm().loadPlayedTime(UUID.fromString(uuid));
+        return plugin.cm.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
     }
     
     public int getRealSeconds() {
-        int actual = plugin.cm.getDm().loadPlayedTime(UUID.fromString(uuid));
+        int actual = plugin.cm.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         int session = plugin.getPlayerManager().getPlayer(Bukkit
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
@@ -65,7 +65,7 @@ public class PlayerFame implements Comparable {
     }
     
     public String getServerName() {
-        return plugin.cm.getDm().getServerName(this.server);
+        return plugin.cm.dbh.getDm().getServerName(this.server);
     }
     
     @Override

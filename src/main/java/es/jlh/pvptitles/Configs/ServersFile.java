@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class ServersFile {
     public File serversFile = new File("plugins/PvpTitles/servers.yml");        

@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class Utils {
 

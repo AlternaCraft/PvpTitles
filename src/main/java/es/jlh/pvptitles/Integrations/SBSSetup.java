@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class SBSSetup {
 
@@ -44,8 +44,8 @@ public class SBSSetup {
         replaceManager.register(new VariableReplacer() {
             @Override
             public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int puntos = plugin.cm.getDm().loadPlayerFame(player.getUniqueId(), null);
-                int seconds = plugin.cm.getDm().loadPlayedTime(player.getUniqueId());
+                int puntos = plugin.cm.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+                int seconds = plugin.cm.dbh.getDm().loadPlayedTime(player.getUniqueId());
 
                 /*
                  * La variable rank no funcionara hasta la proxima version del

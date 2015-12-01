@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 /**
  * 
- * @author julito
+ * @author AlternaCraft
  */
 public class LadderCommand implements CommandExecutor {    
     private final PvpTitles pvpTitles;
@@ -36,7 +36,7 @@ public class LadderCommand implements CommandExecutor {
         
         short top = this.pvpTitles.cm.params.getTop();
         
-        ArrayList<PlayerFame> rankedPlayers = pvpTitles.cm.getDm().getTopPlayers(top, "");                
+        ArrayList<PlayerFame> rankedPlayers = pvpTitles.cm.dbh.getDm().getTopPlayers(top, "");                
         
         sender.sendMessage("");
         sender.sendMessage(PLUGIN);

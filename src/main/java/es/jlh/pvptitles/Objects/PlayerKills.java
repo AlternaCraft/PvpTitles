@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class PlayerKills {
     private Map<String, Integer> victims = new HashMap();

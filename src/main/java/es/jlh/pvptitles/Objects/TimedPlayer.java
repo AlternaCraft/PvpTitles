@@ -10,7 +10,7 @@ import org.bukkit.OfflinePlayer;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class TimedPlayer {
 

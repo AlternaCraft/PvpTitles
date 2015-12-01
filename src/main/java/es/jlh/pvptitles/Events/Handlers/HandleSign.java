@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Handlers;
+package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.Manager;

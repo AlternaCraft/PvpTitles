@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 
 /**
  *
- * @author julito
+ * @author AlternaCraft
  */
 public class ConfigDataStore {
     /* METRICS && UPDATES */
@@ -18,8 +18,6 @@ public class ConfigDataStore {
     private boolean update = false;
     // Atributo para guardar si se va a avisar de las actualizaciones o no
     private boolean alert = true;
-    // Atributo para mostrar los mensajes de las excepciones
-    private boolean debug = false;
     
     /* PVPTITLES BRIDGE */
     // Ebean
@@ -199,10 +197,6 @@ public class ConfigDataStore {
         this.metrics = metrics;
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
     public void setChat(boolean chat) {
         this.chat = chat;
     }
@@ -346,10 +340,6 @@ public class ConfigDataStore {
 
     public boolean isMetrics() {
         return metrics;
-    }
-
-    public boolean isDebug() {
-        return debug;
     }
 
     public boolean isChat() {

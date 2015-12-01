@@ -3,7 +3,7 @@ version: 2.4
 description: Get epic titles in pvp
 database: true
 
-author: Julito
+author: AlternaCraft
 
 main: es.jlh.pvptitles.Main.PvpTitles
 softdepend: [ScoreBoardStats, Vault]
