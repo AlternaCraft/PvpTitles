@@ -56,7 +56,8 @@
 //  Ver. 2.4  01/12/2015  Añadida gestion de errores, soporte para mas idiomas
 //   personalizados.
 //  Ver. 2.4  07/12/2015  Cambiada la estructura del sistema de retrocompatibilidad
-//  Ver. 2.4  09/12/2015  Arreglado pequeño bug con los carteles en mysql
+//  Ver. 2.4  09/12/2015  Arreglado pequeño bug con los carteles en mysql, arreglado
+//   fallo al establecer fama sobre usuarios desconectados usando MySQL
 
 // </editor-fold>
 

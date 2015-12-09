@@ -142,15 +142,7 @@ public class RetroDMEbean {
             response.put(player, uuid);
         }
         
-        return response;        
-        /*UUIDFetcher fetcher = new UUIDFetcher(players);
-        try {
-            PvpTitles.logDebugInfo("Running UUIDFetcher...");
-            return fetcher.call();
-        } catch (Exception e) {
-            PvpTitles.logError("Exception while running UUIDFetcher", e);
-        }
-        return null;*/
+        return response;
     }
 
     public void exportarData(int status) {

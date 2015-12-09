@@ -133,18 +133,18 @@ public class DatabaseManagerMysql implements DatabaseManager {
             return;
         }
 
-        short id = checkPlayerExists(Bukkit.getPlayer(playerUUID));
+        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+        
+        short id = checkPlayerExists(pl);
 
         try {
-            Player pl = Bukkit.getServer().getPlayer(playerUUID);
-
-            if (pt.cm.params.isMw_enabled()) {
+            if (pt.cm.params.isMw_enabled() && pl.isOnline()) {
                 String setPoints = "update PlayerWorld set points=? where psid="
                         + id + " AND worldName=?";
 
                 PreparedStatement updateFame = mysql.prepareStatement(setPoints);
                 updateFame.setInt(1, fame);
-                updateFame.setString(2, pl.getWorld().getName());
+                updateFame.setString(2, Bukkit.getPlayer(playerUUID).getWorld().getName());
                 updateFame.executeUpdate();
             } else {
                 String setPoints = "update PlayerMeta set points=? where psid=" + id;
