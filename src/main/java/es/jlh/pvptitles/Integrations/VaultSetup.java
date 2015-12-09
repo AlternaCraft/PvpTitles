@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Integrations;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -31,14 +31,11 @@ public class VaultSetup {
         boolean econ = this.setupEconomy();        
 
         if (perms)
-            plugin.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.YELLOW
-                    + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
+            showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
         if (chat)
-            plugin.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.YELLOW
-                    + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
+            showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
         if (econ)
-            plugin.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.YELLOW
-                    + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
+            showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
     }
     
     private boolean setupPermissions() {

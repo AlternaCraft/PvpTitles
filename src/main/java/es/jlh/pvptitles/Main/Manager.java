@@ -6,7 +6,6 @@ import es.jlh.pvptitles.Configs.LangFile.LangType;
 import es.jlh.pvptitles.Configs.ModelsFile;
 import es.jlh.pvptitles.Configs.ServersFile;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Backend.DatabaseManager;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Backend.ConfigDataStore;
@@ -18,6 +17,8 @@ import es.jlh.pvptitles.Objects.TimedPlayer;
 import es.jlh.pvptitles.Main.Handlers.ConfigHandler;
 import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
+import es.jlh.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public final class Manager {
     public static Manager instance = new Manager();
     
     // Handlers
-    private ConfigHandler ch = null;
+    public ConfigHandler ch = null;
     public DBHandler dbh = null;
     
     // Gestor de leaderboards
@@ -108,26 +109,28 @@ public final class Manager {
         this.lbm = new LeaderBoardManager(plugin);
         
         this.ch = new ConfigHandler(this.pvpTitles);
-        this.ch.setup(params);
+        this.ch.loadConfig(params);
         
-        this.dbh = new DBHandler(pvpTitles, this.ch.getConfig());        
+        this.dbh = new DBHandler(pvpTitles, this.ch.getConfig());                  
         this.dbh.selectDB();
+        
+        // RCP
+        if (!new DBChecker(pvpTitles).setup()) {
+            return false;
+        }
+        
         this.dbh.autoExportData();
 
-        /* Signs */
+        this.loadLang();
         this.loadModels();
         this.loadSavedSigns();
-        this.loadActualizador();
-
+        this.loadCommands(); 
+        
         if (tipo == DBHandler.DBTYPE.MYSQL) {
             this.loadServers();
         }
         
-        // Idioma, comandos y servers
-        this.loadLang();
-        this.loadCommands();        
-        
-        /* Rank checker */
+        this.loadActualizador();
         this.loadRankChecker();
 
         return true;
@@ -151,10 +154,7 @@ public final class Manager {
             modelos = contenido.creaArchivo(this.pvpTitles);
         }
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + modelos.size() + " models "
-                + ChatColor.AQUA + "loaded correctly."
-        );
+        showMessage(ChatColor.YELLOW + "" + modelos.size() + " models " + ChatColor.AQUA + "loaded correctly.");
     }
 
     /**
@@ -163,13 +163,15 @@ public final class Manager {
     public void loadSavedSigns() {
         List<LBData> carteles = pvpTitles.cm.dbh.getDm().buscaCarteles();
 
+        lbm.vaciar(); // Evito duplicados
+        
         for (LBData cartel : carteles) {
             LBModel sm = pvpTitles.cm.searchModel(cartel.getModelo());
 
             if (sm == null) {
                 pvpTitles.cm.dbh.getDm().borraCartel(cartel.getL());
 
-                pvpTitles.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.RED + "Sign '" + cartel.getNombre()
+                showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                         + "' removed because the model has not been found...");
 
                 continue;
@@ -182,8 +184,7 @@ public final class Manager {
             lbm.loadSign(cs);
         }
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + this.lbm.getSigns().size()
+        showMessage(ChatColor.YELLOW + "" + this.lbm.getSigns().size()
                 + " scoreboards " + ChatColor.AQUA + "loaded correctly."
         );
     }
@@ -223,9 +224,7 @@ public final class Manager {
 
         LangFile.load();
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + "Locales " + ChatColor.AQUA + "loaded correctly."
-        );
+        showMessage(ChatColor.YELLOW + "Locales " + ChatColor.AQUA + "loaded correctly.");
     }
 
     /**
@@ -265,9 +264,7 @@ public final class Manager {
             }
         }
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly."
-        );
+        showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
 
     /**
@@ -292,20 +289,20 @@ public final class Manager {
 
             for (Iterator<Short> iterator1 = serverIDs.iterator(); iterator1.hasNext();) {
                 Short serverID = iterator1.next();
-                if (sf.get("Worlds." + serverID) != null) {
+                if (sf.get("Worlds." + next + "." + serverID) != null) {
+                    server.put(serverID, sf.getStringList("Worlds." + next + "." + serverID));
+                } else if (sf.get("Worlds." + serverID) != null) {
                     server.put(serverID, sf.getStringList("Worlds." + serverID));
                 } else {
                     server.put(serverID, new ArrayList());
                 }
             }
-
+            
             servers.put(next, server);
         }
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + servers.size() + " servers combined "
-                + ChatColor.AQUA + "loaded correctly."
-        );
+        showMessage(ChatColor.YELLOW + "" + servers.size() + " servers combined " 
+                + ChatColor.AQUA + "loaded correctly.");
     }
 
     /**
@@ -329,10 +326,8 @@ public final class Manager {
             }
         }, 20 * 5, 20 * (this.params.getLBRefresh() * 60));
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + "Refresh event ["
-                + this.params.getLBRefresh() + " min]"
-                + ChatColor.AQUA + " loaded correctly."
+        showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh() 
+                + " min]" + ChatColor.AQUA + " loaded correctly."
         );
     }
 
@@ -384,10 +379,8 @@ public final class Manager {
             }
         }, 20 * 5 /* Tiempo para prevenir fallos */, 20 * this.params.getRankChecker());
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + "Rank Checker event ["
-                + this.params.getRankChecker() + " sec]"
-                + ChatColor.AQUA + " loaded correctly."
+        showMessage(ChatColor.YELLOW + "Rank Checker event [" + this.params.getRankChecker() 
+                + " sec]" + ChatColor.AQUA + " loaded correctly."
         );
     }
     // </editor-fold>

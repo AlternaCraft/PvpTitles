@@ -5,7 +5,7 @@ import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Misc.Ranks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,8 +34,7 @@ public class SBSSetup {
                 replaceManager = sbs.getReplaceManager();
                 registerReplacerInterface(replaceManager);
 
-                plugin.getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.YELLOW
-                        + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
+               showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
             }
         }
     }

@@ -75,7 +75,7 @@ public class TagsClass {
 
             pt.setPlayerUUID((String) js.get(Player.uuid.toString()));
             pt.setPoints(((Long) js.get(Player.points.toString())).intValue());
-            pt.setPlayedTime(((Integer)js.get(Player.playedTime.toString())));
+            pt.setPlayedTime(((Long) js.get(Player.playedTime.toString())).intValue());
             pt.setLastLogin(getDate((String) js.get(Player.lastJoin.toString())));
 
             playersT.add(pt);

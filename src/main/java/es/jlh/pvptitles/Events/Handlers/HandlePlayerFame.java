@@ -64,6 +64,7 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
+        
         cm.dbh.getDm().PlayerConnection(player);
 
         // Time

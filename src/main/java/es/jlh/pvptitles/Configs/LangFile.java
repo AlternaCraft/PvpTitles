@@ -146,15 +146,15 @@ public enum LangFile {
     ),
     VETO_STARTED(
             "&4Has sido vetado y no conseguiras mas %tag% hasta dentro de %time%", 
-            "'&4You have been banned and not get more %tag% to within of %time%"
+            "&4You have been banned and not get more %tag% to within of %time%"
     ),
     VETO_FINISHED(
             "&cVeto finalizado", 
             "&cVeto has ended"
     ),
     RANK_INFO(
-            "&bRankUP: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%", 
-            "&fYou need %rankup% of %tag% and %timeup% played to achieve %nextRank%"
+            "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%", 
+            "&bRankUP: &fYou need %rankup% of %tag% and %timeup% played to achieve %nextRank%"
     ),
     COMPLETE_TELEPORT_PLAYER(
             "&6Has sido teletransportado correctamente", 

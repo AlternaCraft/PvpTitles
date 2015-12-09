@@ -1,10 +1,13 @@
 package es.jlh.pvptitles.Commands;
 
+import es.jlh.pvptitles.Backend.DatabaseManager;
 import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,23 +34,22 @@ public class DBCommand implements CommandExecutor {
             return false;
         }
         
+        DatabaseManager dm = pvpTitles.cm.getDbh().getDm();
+        
         if (args[0].equals("export")) {
-            pvpTitles.cm.dbh.getDm().DBExport();
+           dm.DBExport();
+           sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Exported correctly");
         }
         else if (args[0].equals("import")) {
-            if (pvpTitles.cm.dbh.getDm().DBImport()) {
-                sender.sendMessage(PLUGIN + "Imported correctly");
+            if (dm.DBImport(pvpTitles.cm.dbh.getDm().getDefaultFileName())) {
+                sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Imported correctly");
             }
             else {
-                sender.sendMessage(PLUGIN + "Filename has to be 'database'");
+                sender.sendMessage(PLUGIN + ChatColor.RED + "File 'database"
+                        + ((DBHandler.tipo==DBHandler.DBTYPE.EBEAN)?".json":".sql")+"' "
+                        + "not found...");
             }
         }
-
-        // Exportar (Segun db)
-        
-        // Importar
-        
-        // 
 
         return true;
     }

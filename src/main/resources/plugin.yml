@@ -94,7 +94,7 @@ permissions:
         default: op
     pvptitles.database:
         description: Access to /pvpdatabase command.
-        default: false
+        default: op
     pvptitles.managesign:
         description: Create/destroy scoreboards per signs.
         default: op

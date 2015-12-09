@@ -160,4 +160,8 @@ public class LeaderBoardManager {
     public List<CustomSign> getSigns() {
         return signs;
     }
+    
+    public void vaciar() {
+        this.signs.clear();
+    }
 }

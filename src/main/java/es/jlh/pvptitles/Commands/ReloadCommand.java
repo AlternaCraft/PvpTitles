@@ -7,6 +7,7 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.RetroCP.DBChecker;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,13 +34,15 @@ public class ReloadCommand implements CommandExecutor {
             return false;
         }
 
-        pvpTitles.cm.getCh().setup(pvpTitles.cm.params);
+        pvpTitles.cm.getCh().loadConfig(pvpTitles.cm.params);
         pvpTitles.cm.getDbh().selectDB();
+        new DBChecker(pvpTitles).setup();
         pvpTitles.cm.getDbh().autoExportData();
 
         pvpTitles.cm.loadLang();
-        pvpTitles.cm.loadCommands();
         pvpTitles.cm.loadModels();
+        pvpTitles.cm.loadSavedSigns();
+        pvpTitles.cm.loadCommands();
 
         if (tipo == DBTYPE.MYSQL) {
             pvpTitles.cm.loadServers();

@@ -102,7 +102,7 @@ public class CustomSign {
                         }
                     } else if (args.containSomeArg(smfc)) {
                         this.args.checkArgs(newSign, pf, smfc, this.getModel().isProgresivo());
-                    } else {
+                    } else {                        
                         // Primera fila caso especial
                         if (lineas.length > 0 && j == 0 && k == 0) {
                             lineas[l] = Utils.TranslateColor(smfc);
@@ -160,6 +160,8 @@ public class CustomSign {
 
             this.args.resetBooleans();
         }
+        
+        this.setLineas(new String[0]); // Evito problema con el cartel principal
     }
 
     public void delete(short jugadores) {

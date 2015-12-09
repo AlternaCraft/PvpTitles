@@ -38,13 +38,15 @@ public class ServersFile {
         newConfig.set("TwoServers", Arrays.asList(new Integer[]{1,2}));
         newConfig.set("AllServers", Arrays.asList(new Integer[]{-1}));
         
-        newConfig.set("Worlds.1", Arrays.asList(new String[]{"exampleWorld", "myWorld"}));
+        newConfig.set("Worlds.1", Arrays.asList(new String[]{"exampleWorld", "myWorld", "myOtherWorld"}));
+        newConfig.set("Worlds.2", Arrays.asList(new String[]{"myWorld"}));
+        newConfig.set("Worlds.OneServer.1", Arrays.asList(new String[]{"customWorld"}));
+        newConfig.set("Worlds.TwoServers.2", Arrays.asList(new String[]{"otherWorld", "myWorld"}));        
         
         try {
             newConfig.save(serversFile);
         } 
         catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }
 }

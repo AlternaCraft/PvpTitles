@@ -32,6 +32,8 @@ import org.json.simple.parser.JSONParser;
  */
 public class DatabaseManagerEbean implements DatabaseManager {
 
+    private final String FILENAME = "database.json";
+    
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt = null;
     private Ebean ebeanServer = null;
@@ -403,7 +405,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             for (int j = 0; j < plClass.size(); j++) {
                 PlayerPT next = plClass.get(j);
-
+                
                 String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
                 sql1 += "insert into PlayerServer(id, playerUUID, serverID) select "
@@ -441,8 +443,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
             for (Iterator<SignPT> iterator = stClass.iterator(); iterator.hasNext();) {
                 SignPT next = iterator.next();
                 sql += "('" + next.getName() + "', '" + next.getModel() + "', "
-                        + "'', " + serverID + ", '" + next.getOrientation() + "', "
-                        + next.getBlockface() + ", '" + next.getWorld() + "', "
+                        + "'', '" + next.getOrientation() + "', " + next.getBlockface()
+                        + ", "+ serverID +", '" + next.getWorld() + "', "
                         + next.getX() + ", " + next.getY() + ", " + next.getZ() + "),";
             }
 
@@ -455,11 +457,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public boolean DBImport() {
+    public boolean DBImport(String filename) {
         String ruta = new StringBuilder().append(
                 pt.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
-                        "database.json").toString();
+                        filename).toString();
 
         if (!UtilFile.exists(ruta)) {
             return false;
@@ -476,7 +478,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             JSONArray pworlds = (JSONArray) jsonObject.get("PlayersPerWorld");
 
             List<PlayerPT> playersJSON = TagsClass.getPlayers(players);
-            for (PlayerPT playersPT : playersJSON) {
+            for (PlayerPT playersPT : playersJSON) {                
                 PlayerPT ppt = ebeanServer.getDatabase().find(PlayerPT.class)
                         .where()
                         .ieq("playerUUID", playersPT.getPlayerUUID())
@@ -543,6 +545,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
 
         return true;
+    }
+    
+    @Override
+    public String getDefaultFileName() {
+        return this.FILENAME;
     }
     // </editor-fold>
 }

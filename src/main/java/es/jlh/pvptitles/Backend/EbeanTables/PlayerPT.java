@@ -59,4 +59,9 @@ public class PlayerPT implements Serializable {
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
+    
+    @Override
+    public String toString() {
+        return this.playerUUID + " ||| " + this.points;
+    }
 }

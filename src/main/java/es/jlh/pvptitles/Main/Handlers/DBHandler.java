@@ -10,7 +10,13 @@ import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import es.jlh.pvptitles.Backend.MySQLConnection;
 import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
+import es.jlh.pvptitles.Misc.UtilFile;
+import es.jlh.pvptitles.RetroCP.oldTables.PlayerTable;
+import es.jlh.pvptitles.RetroCP.oldTables.PlayerWTable;
+import es.jlh.pvptitles.RetroCP.oldTables.SignTable;
+import es.jlh.pvptitles.RetroCP.oldTables.TimeTable;
+import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +38,7 @@ public class DBHandler {
     }
 
     public Ebean ebeanServer = null;
-    private Connection mysql = null;
+    public Connection mysql = null;
 
     private PvpTitles pvpTitles = null;
     private FileConfiguration config = null;
@@ -40,7 +46,6 @@ public class DBHandler {
     public DBHandler(PvpTitles pvpTitles, FileConfiguration config) {
         this.pvpTitles = pvpTitles;
         this.config = config;
-        tipo = DBTYPE.EBEAN;
     }
 
     public void selectDB() {
@@ -72,7 +77,6 @@ public class DBHandler {
                 dm.DBExport();
             }
         } else if (tipo == DBTYPE.MYSQL) {
-            pvpTitles.cm.loadServers();
             if (pvpTitles.cm.params.isAuto_export_to_json()) {
                 dm.DBExport();
             }
@@ -101,6 +105,21 @@ public class DBHandler {
             @Override
             protected java.util.List<Class<?>> getDatabaseClasses() {
                 List<Class<?>> list = new ArrayList<>();
+                
+                String ruta = (new StringBuilder()).append(
+                        pvpTitles.getDataFolder()).append( // Ruta
+                                File.separator).append( // Separador
+                                "PvpTitles.db").toString();
+                
+                if (new File(ruta).length() > 0)  {
+                    /* OLD */
+                    list.add(PlayerTable.class);
+                    list.add(PlayerWTable.class);
+                    list.add(SignTable.class);
+                    list.add(TimeTable.class);
+                }
+                
+                /* NEW */
                 list.add(PlayerPT.class);
                 list.add(WorldPlayerPT.class);
                 list.add(SignPT.class);
@@ -120,9 +139,7 @@ public class DBHandler {
                 config.getBoolean("database.rebuild")
         );
 
-        this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                PLUGIN + ChatColor.YELLOW + "Ebean database " + ChatColor.AQUA + "loaded correctly."
-        );
+        showMessage(ChatColor.YELLOW + "Ebean database " + ChatColor.AQUA + "loaded correctly.");
     }
 
     /**
@@ -144,9 +161,7 @@ public class DBHandler {
 
             MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
 
-            this.pvpTitles.getServer().getConsoleSender().sendMessage(
-                    PLUGIN + ChatColor.YELLOW + "MySQL database " + ChatColor.AQUA + "loaded correctly."
-            );
+            showMessage(ChatColor.YELLOW + "MySQL database " + ChatColor.AQUA + "loaded correctly.");
         }
     }
 

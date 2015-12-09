@@ -6,7 +6,7 @@ import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import es.jlh.pvptitles.Main.Manager;
 import static es.jlh.pvptitles.Main.Manager.messages;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import java.io.File;
 import java.util.List;
 import java.util.ListIterator;
@@ -28,7 +28,7 @@ public class ConfigHandler {
         this.pvpTitles = pvpTitles;        
     }
     
-    public void setup(ConfigDataStore params) {
+    public void loadConfig(ConfigDataStore params) {
         createConfig();
         checkVersion();
         loadData(Manager.rankList(), Manager.reqFame(), Manager.reqTime(), params);
@@ -66,7 +66,7 @@ public class ConfigHandler {
                         "config.yml").toString());
 
         YamlConfiguration configV = YamlConfiguration.loadConfiguration(configFile);
-
+        
         if (!configV.contains("Version")
                 || !configV.getString("Version").equals(pvpTitles.getConfig().getDefaults().getString("Version"))) {
 
@@ -75,8 +75,7 @@ public class ConfigHandler {
             }
 
             configFile.renameTo(backupFile);
-            pvpTitles.getServer().getConsoleSender().sendMessage(
-                    PLUGIN + ChatColor.RED + "Mismatch config version, a new one has been created.");
+            showMessage(ChatColor.RED + "Mismatch config version, a new one has been created.");
 
             return false;
         } else {

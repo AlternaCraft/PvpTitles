@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -39,6 +40,8 @@ import org.json.simple.JSONObject;
  */
 public class DatabaseManagerMysql implements DatabaseManager {
 
+    private final String FILENAME = "database.sql";
+    
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt;
     private Connection mysql;
@@ -49,7 +52,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
-    private short checkPlayerExists(Player pl) {
+    private short checkPlayerExists(OfflinePlayer pl) {
         String uuid = pl.getUniqueId().toString();
 
         String playerExists = "select id from PlayerServer where playerUUID like '"
@@ -86,8 +89,8 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 modID.executeUpdate();
             }
 
-            if (pt.cm.params.isMw_enabled()) {
-                String world = pl.getWorld().getName();
+            if (pt.cm.params.isMw_enabled() && pl.isOnline()) {
+                String world = Bukkit.getPlayer(pl.getUniqueId()).getWorld().getName();
                 String MWPlayerExists = "select psid from PlayerWorld where psid=" + psid;
                 rs = mysql.createStatement().executeQuery(MWPlayerExists);
                 if (!rs.next()) {
@@ -163,13 +166,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             return fama;
         }
 
-        short id = checkPlayerExists(Bukkit.getPlayer(playerUUID));
+        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+        
+        short id = checkPlayerExists(pl);
 
         try {
-            Player pl = Bukkit.getServer().getPlayer(playerUUID);
-
-            if (pt.cm.params.isMw_enabled()) {
-                String selectedWorld = (world == null) ? pl.getWorld().getName() : world;
+            if (pt.cm.params.isMw_enabled() && pl.isOnline()) {
+                String selectedWorld = (world == null) ? 
+                        Bukkit.getPlayer(playerUUID).getWorld().getName() : world;
 
                 String points = "select points from PlayerWorld where psid=" + id
                         + " AND worldName like '" + selectedWorld + "'";
@@ -220,10 +224,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
             return time;
         }
 
-        short psid = checkPlayerExists(Bukkit.getPlayer(playerUUID));
-
-        String consulta = "select playedTime from PlayerMeta where psid=" + psid;
-
+        short psid = checkPlayerExists(Bukkit.getOfflinePlayer(playerUUID));
+        
+        String consulta = "select playedTime from PlayerMeta where psid =" + psid;
+        
         try {
             ResultSet rs = mysql.createStatement().executeQuery(consulta);
             if (rs.next()) {
@@ -575,11 +579,11 @@ public class DatabaseManagerMysql implements DatabaseManager {
     }
 
     @Override
-    public boolean DBImport() {
+    public boolean DBImport(String filename) {
         String ruta = new StringBuilder().append(
                 pt.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
-                        "database.sql").toString();
+                        filename).toString();
 
         if (!UtilFile.exists(ruta)) {
             return false;
@@ -596,7 +600,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
         }
         
+        UtilFile.delete(ruta);
+        
         return true;
+    }
+    
+    @Override
+    public String getDefaultFileName() {
+        return this.FILENAME;
     }
     //</editor-fold>
 }

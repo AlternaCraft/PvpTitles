@@ -127,6 +127,11 @@ public interface DatabaseManager {
 
     /**
      * Método para importar todos los datos desde un fichero
+     * 
+     * @param filename
+     * @return 
      */
-    public boolean DBImport();
+    public boolean DBImport(String filename);
+    
+    public String getDefaultFileName();
 }

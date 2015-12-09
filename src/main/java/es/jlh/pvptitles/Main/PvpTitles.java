@@ -1,5 +1,7 @@
+// <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
+
 // Proyect created: 15-02-2015
-// Last Change:     01-12-2015
+// Last Change:     07-12-2015
 // Author:          AlternaCraft;
 // 
 // History:
@@ -50,8 +52,13 @@
 //   un fallo en la extructura de la tabla PlayerWorld de MySQL (idServer)
 //  Ver. 2.4  16/11/2015  Arreglado fallo con la cuenta de servers.yml y cambiada
 //   la estructura de las bases de datos.
-//  Ver. 2.4  18/11/2015  Añadida nueva gestion de la base de datos
-//  Ver. 2.4  01/12/2015  Añadida gestion de errores
+//  Ver. 2.4  18/11/2015  Añadido comando para exportar los datos de la base de datos
+//  Ver. 2.4  01/12/2015  Añadida gestion de errores, soporte para mas idiomas
+//   personalizados.
+//  Ver. 2.4  07/12/2015  Cambiada la estructura del sistema de retrocompatibilidad
+//  Ver. 2.4  09/12/2015  Arreglado pequeño bug con los carteles en mysql
+
+// </editor-fold>
 
 package es.jlh.pvptitles.Main;
 
@@ -121,7 +128,8 @@ public class PvpTitles extends JavaPlugin {
          * Cargo el contenido del config principal, la gestion de la bd y el resto
          * de configuraciones.
          */
-        this.works = this.cm.setup(this);
+        works = this.cm.setup(this);
+        
         if (!works) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -200,8 +208,8 @@ public class PvpTitles extends JavaPlugin {
             // Times
             TimedPlayer tPlayer = this.getPlayerManager().hasPlayer(pl)
                     ? this.getPlayerManager().getPlayer(pl) : new TimedPlayer(this, pl);
-
             tPlayer.startSession();
+            
             this.getMovementManager().addLastMovement(pl);
 
             if (!this.getPlayerManager().hasPlayer(pl)) {
@@ -228,6 +236,11 @@ public class PvpTitles extends JavaPlugin {
         return playerManager;
     }
     
+    // Custom message
+    public static void showMessage(String msg) {
+        Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
+    }
+    
     /* ERROR MANAGEMENT */
     public static void logDebugInfo(String message) {
         logDebugInfo(Level.INFO, message);
@@ -245,5 +258,5 @@ public class PvpTitles extends JavaPlugin {
     
     public static void logError(String message, Exception ex) {
         PvpTitles.logger.log(Level.SEVERE, message, ex);
-    }       
+    }
 }

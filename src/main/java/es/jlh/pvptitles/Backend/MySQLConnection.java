@@ -49,11 +49,11 @@ public class MySQLConnection {
             conexion = DriverManager.getConnection("jdbc:mysql://" + ruta, user, pass);
             estado_conexion = Estado.CONECTADO;
         } catch (ClassNotFoundException ex) {
-            System.out.println("MySQL library not found");
+            PvpTitles.logError("MySQL library not found", null);
             estado_conexion = Estado.SIN_CONEXION;
         } catch (SQLException ex) {
-            PvpTitles.logError("[PvpTitles] " + ((ex.getErrorCode() == 0)
-                    ? "Could not connect to MySQL DB" : "Error MySQL") 
+            PvpTitles.logError(((ex.getErrorCode() == 0)
+                    ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode()) 
                     + "; Using Ebean per default...", null);
             estado_conexion = Estado.SIN_CONEXION;
         }

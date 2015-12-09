@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Libraries;
 
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -387,8 +387,7 @@ public class Updater {
             this.unzip(dFile.getAbsolutePath());
         }
         if (this.announce) {
-            this.plugin.getServer().getConsoleSender().sendMessage(PLUGIN + 
-                    ChatColor.YELLOW + "Finished updating. Do reload to load it.");
+            showMessage(ChatColor.YELLOW + "Finished updating. Do reload to load it.");
         }
     }
 
@@ -407,8 +406,7 @@ public class Updater {
             final byte[] data = new byte[Updater.BYTE_SIZE];
             int count;
             if (this.announce) {
-                this.plugin.getServer().getConsoleSender().sendMessage(PLUGIN + 
-                        ChatColor.AQUA + "About to download a new update: " + 
+                showMessage(ChatColor.AQUA + "About to download a new update: " + 
                         ChatColor.GREEN + this.versionName);
             }
             long downloaded = 0;
