@@ -44,7 +44,7 @@ commands:
         usage: /<command>        
         permission: pvptitles.reload
     pvpDatabase:
-        description: It allows to manage data of the database.
+        description: It allows to manage data from the database.
         usage: /<command> export|import
         aliases: pvpdb
         permission: pvptitles.database
