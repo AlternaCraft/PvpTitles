@@ -9,9 +9,9 @@ import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Backend.ConfigDataStore;
-import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
-import es.jlh.pvptitles.Objects.LBSigns.LBData;
-import es.jlh.pvptitles.Objects.LBSigns.LBModel;
+import es.jlh.pvptitles.Objects.Boards.CustomBoard;
+import es.jlh.pvptitles.Objects.Boards.BoardData;
+import es.jlh.pvptitles.Objects.Boards.BoardModel;
 import es.jlh.pvptitles.Managers.LeaderBoardManager;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import es.jlh.pvptitles.Main.Handlers.ConfigHandler;
@@ -22,6 +22,7 @@ import es.jlh.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,11 +44,11 @@ public final class Manager {
     private PvpTitles pvpTitles = null;
     // Instancia de la clase
     public static Manager instance = new Manager();
-    
+
     // Handlers
     public ConfigHandler ch = null;
     public DBHandler dbh = null;
-    
+
     // Gestor de leaderboards
     private LeaderBoardManager lbm = null;
 
@@ -58,11 +59,11 @@ public final class Manager {
 
     // Resto de parametros
     public ConfigDataStore params = null;
-    
+
     // Modelos
-    public ArrayList<LBModel> modelos = new ArrayList();
+    public ArrayList<BoardModel> modelos = new ArrayList();
     // Recompensas
-    public HashMap<String, HashMap<String, List<String>>> commandsRw = null;
+    public Map<String, Map<String, Map<String, List<String>>>> commandsRw = null;
     // Servers
     public HashMap<String, HashMap<Short, List<String>>> servers = null;
 
@@ -82,9 +83,9 @@ public final class Manager {
         modelos = new ArrayList();
         commandsRw = new HashMap();
         servers = new HashMap();
-        params = new ConfigDataStore();        
+        params = new ConfigDataStore();
     }
-    
+
     /**
      * Instancia de la clase
      * <p>
@@ -95,6 +96,7 @@ public final class Manager {
     public static Manager getInstance() {
         return instance;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SETUP...">
     /**
@@ -105,36 +107,37 @@ public final class Manager {
      */
     public boolean setup(PvpTitles plugin) {
         this.pvpTitles = plugin;
-        
+
         this.lbm = new LeaderBoardManager(plugin);
-        
+
         this.ch = new ConfigHandler(this.pvpTitles);
         this.ch.loadConfig(params);
-        
-        this.dbh = new DBHandler(pvpTitles, this.ch.getConfig());                  
+
+        this.dbh = new DBHandler(pvpTitles, this.ch.getConfig());
         this.dbh.selectDB();
-        
+
         // RCP
         if (!new DBChecker(pvpTitles).setup()) {
             return false;
         }
-        
+
         this.dbh.autoExportData();
 
         this.loadLang();
         this.loadModels();
         this.loadSavedSigns();
-        this.loadCommands(); 
-        
+        this.loadCommands();
+
         if (tipo == DBHandler.DBTYPE.MYSQL) {
             this.loadServers();
         }
-        
+
         this.loadActualizador();
         this.loadRankChecker();
 
         return true;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LOADING PLUGIN BASE...">   
     /**
@@ -161,12 +164,12 @@ public final class Manager {
      * Método para guardar en memoria los scoreboards
      */
     public void loadSavedSigns() {
-        List<LBData> carteles = pvpTitles.cm.dbh.getDm().buscaCarteles();
+        List<BoardData> carteles = pvpTitles.cm.dbh.getDm().buscaCarteles();
 
         lbm.vaciar(); // Evito duplicados
-        
-        for (LBData cartel : carteles) {
-            LBModel sm = pvpTitles.cm.searchModel(cartel.getModelo());
+
+        for (BoardData cartel : carteles) {
+            BoardModel sm = pvpTitles.cm.searchModel(cartel.getModelo());
 
             if (sm == null) {
                 pvpTitles.cm.dbh.getDm().borraCartel(cartel.getL());
@@ -177,11 +180,11 @@ public final class Manager {
                 continue;
             }
 
-            CustomSign cs = new CustomSign(cartel, sm);
+            CustomBoard cs = new CustomBoard(cartel, sm);
             cs.setLineas(new String[0]);
             cs.setMatSign(cartel.getSignMaterial());
 
-            lbm.loadSign(cs);
+            lbm.loadBoard(cs);
         }
 
         showMessage(ChatColor.YELLOW + "" + this.lbm.getSigns().size()
@@ -195,8 +198,8 @@ public final class Manager {
      * @param modelo String con el modelo a buscar
      * @return SignModel con los datos del modelo
      */
-    public LBModel searchModel(String modelo) {
-        for (LBModel smc : modelos) {
+    public BoardModel searchModel(String modelo) {
+        for (BoardModel smc : modelos) {
             if (smc.getNombre().compareToIgnoreCase(modelo) == 0) {
                 return smc;
             }
@@ -236,34 +239,41 @@ public final class Manager {
         YamlConfiguration lp = new CommandFile().load();
 
         List<String> activos = lp.getStringList("activeRewards");
+        List<String> types = new ArrayList(
+                Arrays.asList("onRank", "onFame", "onKillstreak", "onKill")
+        );
 
         for (Iterator<String> iterator = activos.iterator(); iterator.hasNext();) {
             String next = iterator.next();
 
-            String rango = lp.getString("Rewards." + next + ".onRank");
-            if (rango != null) {
-                if (commandsRw.get("onRank") == null) {
-                    commandsRw.put("onRank", new HashMap());
-                }
-                commandsRw.get("onRank").put(rango, lp.getStringList("Rewards." + next + ".command"));
-            }
+            boolean nulos = true;
 
-            String fama = lp.getString("Rewards." + next + ".onFame");
-            if (fama != null) {
-                if (commandsRw.get("onFame") == null) {
-                    commandsRw.put("onFame", new HashMap());
-                }
-                commandsRw.get("onFame").put(fama, lp.getStringList("Rewards." + next + ".command"));
-            }
+            for (String type : types) {
+                Map data = new HashMap();
+                
+                // Caso especial con onKill
+                String value = (type.equals("onKill")) ? "":lp.getString("Rewards." + next + "." + type);
+                
+                if (value != null || (type.equals("onKill") && nulos)) {
+                    nulos = false;
 
-            if (rango == null && fama == null) {
-                if (commandsRw.get("onKill") == null) {
-                    commandsRw.put("onKill", new HashMap());
+                    if (commandsRw.get(type) == null) {
+                        commandsRw.put(type, new HashMap());
+                    }
+
+                    // Valores de la recompensa
+                    if (lp.contains("Rewards." + next + ".money")) {
+                        data.put("money", Arrays.asList(lp.getInt("Rewards." + next + ".money")));
+                    }
+                    
+                    data.put("commands", lp.getStringList("Rewards." + next + ".command"));
+
+                    // Guardo en el mapa principal los valores para ese valor
+                    commandsRw.get(type).put(value, data);
                 }
-                commandsRw.get("onKill").put("", lp.getStringList("Rewards." + next + ".command"));
             }
         }
-
+        
         showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
 
@@ -297,11 +307,11 @@ public final class Manager {
                     server.put(serverID, new ArrayList());
                 }
             }
-            
+
             servers.put(next, server);
         }
 
-        showMessage(ChatColor.YELLOW + "" + servers.size() + " servers combined " 
+        showMessage(ChatColor.YELLOW + "" + servers.size() + " servers combined "
                 + ChatColor.AQUA + "loaded correctly.");
     }
 
@@ -322,11 +332,11 @@ public final class Manager {
         this.eventoActualizador = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                getLbm().updateSigns();
+                getLbm().updateBoard();
             }
         }, 20 * 5, 20 * (this.params.getLBRefresh() * 60));
 
-        showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh() 
+        showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh()
                 + " min]" + ChatColor.AQUA + " loaded correctly."
         );
     }
@@ -379,10 +389,11 @@ public final class Manager {
             }
         }, 20 * 5 /* Tiempo para prevenir fallos */, 20 * this.params.getRankChecker());
 
-        showMessage(ChatColor.YELLOW + "Rank Checker event [" + this.params.getRankChecker() 
+        showMessage(ChatColor.YELLOW + "Rank Checker event [" + this.params.getRankChecker()
                 + " sec]" + ChatColor.AQUA + " loaded correctly."
         );
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SOME GETTERS...">
     /**
@@ -423,7 +434,7 @@ public final class Manager {
 
     /**
      * Método para recibir el gestor de carteles
-     * 
+     *
      * @return LeaderBoardManager
      */
     public LeaderBoardManager getLbm() {
@@ -432,7 +443,7 @@ public final class Manager {
 
     /**
      * Método para devolver el handler del config principal
-     * 
+     *
      * @return ConfigHandler
      */
     public ConfigHandler getCh() {
@@ -441,7 +452,7 @@ public final class Manager {
 
     /**
      * Método para devolver el handler de la base de datos
-     * 
+     *
      * @return DBHandler
      */
     public DBHandler getDbh() {

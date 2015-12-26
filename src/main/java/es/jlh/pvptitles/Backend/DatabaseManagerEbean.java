@@ -4,7 +4,7 @@ import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilFile;
-import es.jlh.pvptitles.Objects.LBSigns.LBData;
+import es.jlh.pvptitles.Objects.Boards.BoardData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
@@ -296,15 +296,15 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public ArrayList<LBData> buscaCarteles() {        
+    public ArrayList<BoardData> buscaCarteles() {        
         List<SignPT> plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
-        ArrayList<LBData> sd = new ArrayList();
+        ArrayList<BoardData> sd = new ArrayList();
         
         for (Iterator<SignPT> it = plClass.iterator(); it.hasNext();) {
             SignPT st = it.next();
 
             Location l = new Location(pt.getServer().getWorld(st.getWorld()), st.getX(), st.getY(), st.getZ());
-            LBData sdc = new LBData(st.getName(), st.getModel(), "", l);
+            BoardData sdc = new BoardData(st.getName(), st.getModel(), "", l);
             sdc.setOrientacion(st.getOrientation());
             sdc.setBlockface(st.getBlockface());
 

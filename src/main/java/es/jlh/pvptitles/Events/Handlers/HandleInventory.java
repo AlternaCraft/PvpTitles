@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.EventExecutor;
 
@@ -25,17 +26,24 @@ import org.bukkit.plugin.EventExecutor;
  * @author AlternaCraft
  * @version 1.0
  */
-public class HandleInventoryClick implements Listener, EventExecutor {
+public class HandleInventory implements Listener, EventExecutor {
 
     public static final int TICKS = 20;
     public static final int TIME = 3;
 
     private final PvpTitles plugin;
 
-    public HandleInventoryClick(PvpTitles plugin) {
+    public HandleInventory(PvpTitles plugin) {
         this.plugin = plugin;
     }
 
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {   
+        if (Inventories.opened.contains(event.getInventory())) {
+            Inventories.opened.remove(event.getInventory());
+        }
+    }
+    
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();

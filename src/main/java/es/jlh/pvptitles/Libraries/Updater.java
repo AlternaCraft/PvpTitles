@@ -628,13 +628,8 @@ public class Updater {
             }            
         }
         
-        // Si sale quiere decir que en la longitud que recorre el bucle son iguales        
-        if (longR.length > longL.length) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        // Si sale quiere decir que, en la longitud que recorre el bucle, son iguales
+        return longR.length > longL.length;
     }
 
     /**

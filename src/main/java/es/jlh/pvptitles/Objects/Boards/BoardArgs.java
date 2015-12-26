@@ -1,22 +1,22 @@
-package es.jlh.pvptitles.Objects.LBSigns;
+package es.jlh.pvptitles.Objects.Boards;
 
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
 import es.jlh.pvptitles.Objects.PlayerFame;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.bukkit.block.Sign;
 
 /**
  *
  * @author AlternaCraft
  */
-public class LBArgs {
+public class BoardArgs {
 
     private final HashMap<ArgType, Integer> argsValues = new HashMap();
     private final HashMap<ArgType, Boolean> argsBooleans = new HashMap();
 
-    private enum ArgType {
+    public static enum ArgType {
 
         PLAYER,
         RANK,
@@ -26,7 +26,7 @@ public class LBArgs {
         WORLD;
     }
 
-    public LBArgs() {
+    public BoardArgs() {
         resetValues();
         resetBooleans();
     }    
@@ -53,7 +53,7 @@ public class LBArgs {
         return false;
     }
     
-    public void checkArgs(Sign s, ArrayList<PlayerFame> pf, String smfc, boolean progresivo) {
+    public void checkArgs(Sign s, List<PlayerFame> pf, String smfc, boolean progresivo) {
         boolean entro = false;
 
         // Colores para todos los datos        
@@ -125,7 +125,7 @@ public class LBArgs {
         }
     }
 
-    public boolean checkValues(ArrayList<PlayerFame> pf) {
+    public boolean checkValues(List<PlayerFame> pf) {
         return (argsValues.get(ArgType.PLAYER) > 0 && pf.size() > argsValues.get(ArgType.PLAYER));
     }
 }

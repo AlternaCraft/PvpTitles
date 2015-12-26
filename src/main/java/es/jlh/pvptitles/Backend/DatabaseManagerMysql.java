@@ -10,7 +10,7 @@ import es.jlh.pvptitles.Misc.UtilFile;
 import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
 import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
-import es.jlh.pvptitles.Objects.LBSigns.LBData;
+import es.jlh.pvptitles.Objects.Boards.BoardData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.io.File;
@@ -398,7 +398,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         }
 
         try {
-            LBData sdc;
+            BoardData sdc;
             for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); sd.add(sdc)) {
                 String nombre = rs.getString("name");
                 String modelo = rs.getString("signModel");
@@ -410,7 +410,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 int y = rs.getInt("y");
                 int z = rs.getInt("z");
                 Location l = new Location(pt.getServer().getWorld(world), x, y, z);
-                sdc = new LBData(nombre, modelo, server, l);
+                sdc = new BoardData(nombre, modelo, server, l);
                 sdc.setOrientacion(orientacion);
                 sdc.setBlockface(blockface);
             }

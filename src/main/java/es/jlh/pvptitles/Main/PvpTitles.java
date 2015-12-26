@@ -1,5 +1,4 @@
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
-
 // Proyect created: 15-02-2015
 // Last Change:     09-12-2015
 // Author:          AlternaCraft;
@@ -58,9 +57,11 @@
 //  Ver. 2.4  07/12/2015  Cambiada la estructura del sistema de retrocompatibilidad
 //  Ver. 2.4  09/12/2015  Arreglado pequeño bug con los carteles en mysql, arreglado
 //   fallo al establecer fama sobre usuarios desconectados usando MySQL
-
+//  Ver. 2.4.1  22/12/2015  Añadido recompensa por racha de bajas, recompensa 
+//   directa de dinero. Añadido los comandos pvpfame [time|killstreak] y mejorado
+//   el gestor de los tableros de puntuacion.
+//  Ver. 2.4.1  26/12/2015  Arreglado pequeño fallo con /pvbsign en reload.
 // </editor-fold>
-
 package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Commands.DBCommand;
@@ -73,7 +74,7 @@ import es.jlh.pvptitles.Commands.ReloadCommand;
 import es.jlh.pvptitles.Commands.SignCommand;
 import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Events.Handlers.HandleFame;
-import es.jlh.pvptitles.Events.Handlers.HandleInventoryClick;
+import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerPrefix;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
@@ -83,8 +84,8 @@ import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
 import es.jlh.pvptitles.Managers.PlayerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
+import static es.jlh.pvptitles.Misc.Inventories.reloadInventories;
 import es.jlh.pvptitles.Objects.TimedPlayer;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,6 +100,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class PvpTitles extends JavaPlugin {
 
+    private static PvpTitles plugin = null;
+    
     public static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "] ";
 
@@ -120,17 +123,21 @@ public class PvpTitles extends JavaPlugin {
     public static void main(String[] args) {
     }
 
+    public PvpTitles() {
+        PvpTitles.plugin = this;
+    }
+
     @Override
     public void onEnable() {
         this.cm = Manager.getInstance();
-        this.logger = this.getLogger();
+        PvpTitles.logger = this.getLogger();
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
          * de configuraciones.
          */
         works = this.cm.setup(this);
-        
+
         if (!works) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -141,7 +148,7 @@ public class PvpTitles extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
         getServer().getPluginManager().registerEvents(new HandleFame(this), this);
         getServer().getPluginManager().registerEvents(new HandleSign(this), this);
-        getServer().getPluginManager().registerEvents(new HandleInventoryClick(this), this);
+        getServer().getPluginManager().registerEvents(new HandleInventory(this), this);
 
         // Registro los comandos
         getCommand("pvpRank").setExecutor(new RankCommand(this));
@@ -156,7 +163,7 @@ public class PvpTitles extends JavaPlugin {
         // Registro los managers del timing
         movementManager = new MovementManager(this);
         playerManager = new PlayerManager(this);
-        
+
         checkOnlinePlayers();
 
         // Tareas posteriores
@@ -192,16 +199,19 @@ public class PvpTitles extends JavaPlugin {
             this.playerManager.stopSessions();
             Set<TimedPlayer> players = this.playerManager.getTimedPlayers();
 
-            for (Iterator<TimedPlayer> iterator = players.iterator(); iterator.hasNext();) {
-                TimedPlayer next = iterator.next();
+            for (TimedPlayer next : players) {
                 this.cm.dbh.getDm().savePlayedTime(next);
             }
+
+            // Inventories
+            reloadInventories();
         }
+
         logDebugInfo(LangFile.PLUGIN_DISABLED.getText(Manager.messages));
     }
 
     private void checkOnlinePlayers() {
-        // Creo las sesiones en caso de reload y gestiono la fama
+        // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : Bukkit.getOnlinePlayers()) {
             // Fama
             this.cm.dbh.getDm().PlayerConnection(pl);
@@ -210,7 +220,7 @@ public class PvpTitles extends JavaPlugin {
             TimedPlayer tPlayer = this.getPlayerManager().hasPlayer(pl)
                     ? this.getPlayerManager().getPlayer(pl) : new TimedPlayer(this, pl);
             tPlayer.startSession();
-            
+
             this.getMovementManager().addLastMovement(pl);
 
             if (!this.getPlayerManager().hasPlayer(pl)) {
@@ -236,12 +246,12 @@ public class PvpTitles extends JavaPlugin {
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
-    
+
     // Custom message
     public static void showMessage(String msg) {
         Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
     }
-    
+
     /* ERROR MANAGEMENT */
     public static void logDebugInfo(String message) {
         logDebugInfo(Level.INFO, message);
@@ -256,8 +266,12 @@ public class PvpTitles extends JavaPlugin {
             PvpTitles.logger.log(level, message, ex);
         }
     }
-    
+
     public static void logError(String message, Exception ex) {
         PvpTitles.logger.log(Level.SEVERE, message, ex);
     }
+
+    public static PvpTitles getInstance() {
+        return plugin;
+    }    
 }

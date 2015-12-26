@@ -1,12 +1,15 @@
-package es.jlh.pvptitles.Objects.LBSigns;
+package es.jlh.pvptitles.Objects.Boards;
 
+import es.jlh.pvptitles.Objects.Boards.BoardArgs.ArgType;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author AlternaCraft
  */
-public class LBModel {    
+public class BoardModel {    
     private String nombre = null;    
     private short cantidad = 0;
     
@@ -17,7 +20,7 @@ public class LBModel {
     
     private boolean progresivo = false;
 
-    public LBModel(String n, short c, ArrayList formato) {
+    public BoardModel(String n, short c, ArrayList formato) {
         this.nombre = n;
         this.cantidad = c;
         this.params = formato;
@@ -42,30 +45,22 @@ public class LBModel {
     public final void setDivisorFilas() {
         short attFilas = 1;
         
-        int repePlayer = 0;
-        int repeRank = 0;
-        int repeFame = 0;
-        int repePos = 0;
+        Map<ArgType, Integer> vars = new HashMap();
                 
         /* FIX PARA EVITAR QUE BORRE MAS FILAS DE LAS QUE DEBE */
         for (ArrayList<ArrayList<String>> param : params) {
             for (ArrayList<String> param1 : param) {
-                for (String variable : param1) {                    
-                    if (variable.contains("<player>")) {                                
-                        repePlayer++;                     
-                    }                
-                    else if (variable.contains("<rank>")) {
-                        repeRank++;
-                    }
-                    else if (variable.contains("<fame>")) {
-                        repeFame++;
-                    }
-                    else if (variable.contains("<pos>")) {
-                        repePos++;
+                for (String variable : param1) {    
+                    for (ArgType argType : ArgType.values()) {
+                        if (variable.contains("<" + argType.name().toLowerCase() + ">")) {
+                            if (!vars.containsKey(argType))
+                                vars.put(argType, 0);
+                            vars.put(argType, vars.get(argType)+1);
+                        }
                     }
                 }
 
-                if (repePlayer >= 2 || repeRank >= 2 || repeFame >= 2 || repePos >= 2) {                                            
+                if (vars.containsValue(2)) {
                     attFilas = 2;                    
                     break;
                 }                                                

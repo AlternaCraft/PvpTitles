@@ -1,8 +1,9 @@
-package es.jlh.pvptitles.Objects.LBSigns;
+package es.jlh.pvptitles.Objects.Boards;
 
 import es.jlh.pvptitles.Misc.Utils;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,19 +14,19 @@ import org.bukkit.block.Sign;
  *
  * @author AlternaCraft
  */
-public class CustomSign {
+public class CustomBoard implements CustomBoard_ {
 
     private String[] lineas = null;
     private org.bukkit.material.Sign matSign = null;
 
-    private LBData info = null;
-    private LBModel model = null;
-    private LBArgs args = null;
+    private BoardData info = null;
+    private BoardModel model = null;
+    private BoardArgs args = null;
 
-    public CustomSign(LBData info, LBModel model) {
+    public CustomBoard(BoardData info, BoardModel model) {
         this.info = info;
         this.model = model;
-        this.args = new LBArgs();
+        this.args = new BoardArgs();
     }
 
     public void setLineas(String[] lineas) {
@@ -36,19 +37,56 @@ public class CustomSign {
         this.matSign = matSign;
     }
 
-    public LBData getInfo() {
+    public BoardData getInfo() {
         return info;
     }
 
-    public LBModel getModel() {
+    public BoardModel getModel() {
         return model;
     }
 
-    public LBArgs getArgs() {
+    public BoardArgs getArgs() {
         return args;
     }
 
-    public void create(ArrayList<PlayerFame> pf) {
+    @Override
+    public boolean isMaterializable(short jugadores) {
+        int filas = getModel().getFilas(jugadores);
+        int cols = getModel().getCols();
+
+        Location thisblock = getInfo().getL();
+
+        Location locblock = new Location(thisblock.getWorld(),
+                thisblock.getX(), thisblock.getY(), thisblock.getZ());
+
+        // Comprobar por ambos lados
+        for (int j = 0; j < filas; j++) {
+            for (int k = 0; k < cols; k++) {
+                if (getInfo().isXn()) {
+                    locblock.setX(locblock.getX() - k);
+                } else if (getInfo().isXp()) {
+                    locblock.setX(locblock.getX() + k);
+                } else if (getInfo().isZn()) {
+                    locblock.setZ(locblock.getZ() - k);
+                } else if (getInfo().isZp()) {
+                    locblock.setZ(locblock.getZ() + k);
+                }
+
+                if (!locblock.equals(thisblock) && !locblock.getBlock().isEmpty()) {
+                    return false;
+                }
+            }
+
+            locblock.setX(thisblock.getX());
+            locblock.setY(locblock.getY() - 1);
+            locblock.setZ(thisblock.getZ());
+        }
+
+        return true;
+    }
+
+    @Override
+    public void materialize(List<PlayerFame> pf) {
         Location base = this.info.getL();
         Location locSign = new Location(base.getWorld(),
                 base.getX(), base.getY(), base.getZ());
@@ -79,7 +117,7 @@ public class CustomSign {
                 // Recorro cada fila del cartel
                 for (int l = 0; l < smc.size(); l++) {
                     String smfc = smc.get(l);
-                    
+
                     if (smfc.compareToIgnoreCase("<main>") == 0) {
                         if (lineas.length == 0) {
                             newSign.setLine(0, "PvPTitles");
@@ -87,8 +125,7 @@ public class CustomSign {
                             newSign.setLine(2, "# TOP " + this.model.getCantidad() + " #");
                             newSign.setLine(3, "---------");
                         } else // Primera fila caso especial
-                        {
-                            if (j == 0 && k == 0) {
+                         if (j == 0 && k == 0) {
                                 lineas[0] = "PvPTitles";
                                 lineas[1] = "---------";
                                 lineas[2] = "# TOP " + this.model.getCantidad() + " #";
@@ -99,16 +136,13 @@ public class CustomSign {
                                 newSign.setLine(2, "# TOP " + this.model.getCantidad() + " #");
                                 newSign.setLine(3, "---------");
                             }
-                        }
                     } else if (args.containSomeArg(smfc)) {
                         this.args.checkArgs(newSign, pf, smfc, this.getModel().isProgresivo());
-                    } else {                        
-                        // Primera fila caso especial
-                        if (lineas.length > 0 && j == 0 && k == 0) {
-                            lineas[l] = Utils.TranslateColor(smfc);
-                        } else {
-                            newSign.setLine(l, Utils.TranslateColor(smfc));
-                        }
+                    } else // Primera fila caso especial
+                    if (lineas.length > 0 && j == 0 && k == 0) {
+                        lineas[l] = Utils.TranslateColor(smfc);
+                    } else {
+                        newSign.setLine(l, Utils.TranslateColor(smfc));
                     }
                 }
 
@@ -160,11 +194,12 @@ public class CustomSign {
 
             this.args.resetBooleans();
         }
-        
+
         this.setLineas(new String[0]); // Evito problema con el cartel principal
     }
 
-    public void delete(short jugadores) {
+    @Override
+    public void dematerialize(short jugadores) {
         int filas = model.getFilas(jugadores);
         int cols = model.getCols();
 
@@ -198,9 +233,10 @@ public class CustomSign {
         }
     }
 
+    // Custom methods
     private void checkBehind(Location locSign) {
         // Compruebo bloque de detras
-        Location behindBlock = new Location(locSign.getWorld(), 
+        Location behindBlock = new Location(locSign.getWorld(),
                 locSign.getX(), locSign.getY(), locSign.getZ());
 
         // Según hacia donde mire cojo un bloque u otro

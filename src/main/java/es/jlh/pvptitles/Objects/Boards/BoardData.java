@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects.LBSigns;
+package es.jlh.pvptitles.Objects.Boards;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,7 +9,7 @@ import org.bukkit.material.Sign;
  *
  * @author AlternaCraft
  */
-public class LBData {
+public class BoardData {
     private final Sign matSign = new Sign(Material.WALL_SIGN);
     
     private static final String XP = "X+";
@@ -37,7 +37,7 @@ public class LBData {
     
     private Location l = null;
 
-    public LBData(String nombre, String modelo, String server, Location l) {
+    public BoardData(String nombre, String modelo, String server, Location l) {
         this.nombre = nombre;
         this.modelo = modelo;
         this.server = server;

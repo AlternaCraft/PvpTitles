@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Configs;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Objects.LBSigns.LBModel;
+import es.jlh.pvptitles.Objects.Boards.BoardModel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -75,8 +75,8 @@ public class ModelsFile {
      * @return Lista de objetos
      * @throws java.io.IOException
      */
-    public ArrayList<LBModel> leeArchivo(String ruta) throws IOException {
-        ArrayList<LBModel> sm = new ArrayList();
+    public ArrayList<BoardModel> leeArchivo(String ruta) throws IOException {
+        ArrayList<BoardModel> sm = new ArrayList();
         BufferedReader br = null;
 
         ArrayList<String> al;
@@ -139,7 +139,7 @@ public class ModelsFile {
                 params.add(contenido);
             }
 
-            sm.add(new LBModel(nombre, cant, params));
+            sm.add(new BoardModel(nombre, cant, params));
         }
 
         return sm;
@@ -151,7 +151,7 @@ public class ModelsFile {
      * @param pl Plugin
      * @return Contenido del archivo
      */
-    public ArrayList<LBModel> creaArchivo(PvpTitles pl) {
+    public ArrayList<BoardModel> creaArchivo(PvpTitles pl) {
         String ruta = new StringBuilder().append(
                 pl.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
@@ -179,7 +179,7 @@ public class ModelsFile {
             }
         }
 
-        ArrayList<LBModel> signmodels = null;
+        ArrayList<BoardModel> signmodels = null;
 
         try {
             signmodels = this.leeArchivo(ruta);

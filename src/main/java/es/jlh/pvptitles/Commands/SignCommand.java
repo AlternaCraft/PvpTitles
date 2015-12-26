@@ -5,7 +5,7 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Inventories;
-import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
+import es.jlh.pvptitles.Objects.Boards.CustomBoard;
 import es.jlh.pvptitles.Misc.Localizer;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -42,7 +42,7 @@ public class SignCommand implements CommandExecutor {
         }
 
         Player pl = (Player)sender;
-        List<CustomSign> css = pt.cm.getLbm().getSigns();
+        List<CustomBoard> css = pt.cm.getLbm().getSigns();
         
         pl.openInventory(Inventories.createInventory(css, Localizer.getLocale(pl)).get(0));
         

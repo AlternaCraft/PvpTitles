@@ -4,14 +4,14 @@ import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
+import es.jlh.pvptitles.Objects.Boards.CustomBoard;
 import es.jlh.pvptitles.Misc.Localizer;
-import es.jlh.pvptitles.Objects.LBSigns.LBData;
-import static es.jlh.pvptitles.Objects.LBSigns.LBData.EAST;
-import static es.jlh.pvptitles.Objects.LBSigns.LBData.NORTH;
-import static es.jlh.pvptitles.Objects.LBSigns.LBData.SOUTH;
-import static es.jlh.pvptitles.Objects.LBSigns.LBData.WEST;
-import es.jlh.pvptitles.Objects.LBSigns.LBModel;
+import es.jlh.pvptitles.Objects.Boards.BoardData;
+import static es.jlh.pvptitles.Objects.Boards.BoardData.EAST;
+import static es.jlh.pvptitles.Objects.Boards.BoardData.NORTH;
+import static es.jlh.pvptitles.Objects.Boards.BoardData.SOUTH;
+import static es.jlh.pvptitles.Objects.Boards.BoardData.WEST;
+import es.jlh.pvptitles.Objects.Boards.BoardModel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -61,7 +61,7 @@ public class HandleSign implements Listener {
                 return;
             }
 
-            LBModel sm = cm.searchModel(lineas[1]);
+            BoardModel sm = cm.searchModel(lineas[1]);
             
             if (sm != null) {
                 modelo = sm.getNombre();
@@ -96,15 +96,15 @@ public class HandleSign implements Listener {
 
                 matSign.setFacingDirection(bf);
 
-                LBData data = new LBData(nombre, modelo, server, locSign);
+                BoardData data = new BoardData(nombre, modelo, server, locSign);
                 data.setBlockface(blockface);
                 data.setOrientacion(orientacion);
 
-                CustomSign cs = new CustomSign(data, sm);
+                CustomBoard cs = new CustomBoard(data, sm);
                 cs.setLineas(lineas);
                 cs.setMatSign(matSign);
 
-                if (pt.cm.getLbm().addSign(cs, pl)) {
+                if (pt.cm.getLbm().addBoard(cs, pl)) {
                     pl.sendMessage(PLUGIN + LangFile.SIGN_CREATED_CORRECTLY.
                             getText(Localizer.getLocale(pl)).replace("%name%", nombre));
                 }

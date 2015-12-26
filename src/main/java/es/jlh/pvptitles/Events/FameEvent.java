@@ -17,6 +17,7 @@ public class FameEvent extends Event implements Cancellable {
     
     private final int fame;
     private final int fameIncr;
+    private int killstreak = 0;
     
     private boolean cancelled;
 
@@ -50,6 +51,14 @@ public class FameEvent extends Event implements Cancellable {
         int total = ((this.fame+this.fameIncr) < 0) ? 0 : this.fame+this.fameIncr;
         return total;
     } 
+
+    public int getKillstreak() {
+        return killstreak;
+    }
+
+    public void setKillstreak(int killstreak) {
+        this.killstreak = killstreak;
+    }
     
     @Override
     public HandlerList getHandlers() {

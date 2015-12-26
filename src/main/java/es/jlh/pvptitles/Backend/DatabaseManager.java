@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Backend;
 
-import es.jlh.pvptitles.Objects.LBSigns.LBData;
+import es.jlh.pvptitles.Objects.Boards.BoardData;
 import es.jlh.pvptitles.Objects.PlayerFame;
 import es.jlh.pvptitles.Objects.TimedPlayer;
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public interface DatabaseManager {
      *
      * @return ArrayList con todas ellas
      */
-    public ArrayList<LBData> buscaCarteles();
+    public ArrayList<BoardData> buscaCarteles();
 
     /**
      * Método para recibir el nombre del servidor según su ID

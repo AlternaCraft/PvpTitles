@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
+import es.jlh.pvptitles.Objects.Boards.CustomBoard;
 import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -20,36 +20,32 @@ import org.bukkit.event.block.BlockBreakEvent;
 public class LeaderBoardManager {
 
     private PvpTitles pt = null;
-    private List<CustomSign> signs = null;
+    private List<CustomBoard> boards = null;
 
     public LeaderBoardManager(PvpTitles pt) {
-        this.signs = new ArrayList();
+        this.boards = new ArrayList();
         this.pt = pt;
     }
 
-    public boolean addSign(CustomSign cs, Player pl) {
-        if (!signs.contains(cs)) {
+    public boolean addBoard(CustomBoard cb, Player pl) {
+        if (!boards.contains(cb)) {
             // Compruebo si ya hay algo ocupando el sitio            
-            ArrayList<PlayerFame> pf = this.pt.cm.dbh.getDm().getTopPlayers(cs.getModel().getCantidad(), cs.getInfo().getServer());
+            ArrayList<PlayerFame> pf = this.pt.cm.dbh.getDm().getTopPlayers(cb.getModel().getCantidad(), cb.getInfo().getServer());
             short jugadores = (short)pf.size();
             
-            if (isOccupied(cs, jugadores)) {
-                int filas = cs.getModel().getFilas(jugadores);
-                int cols = cs.getModel().getCols();
-                
-                pl.sendMessage(PLUGIN + LangFile.SIGN_CANT_BE_PLACED.getText(Localizer.getLocale(pl))
-                        + " (" + filas + "x" + cols + ")");
-
+            if (!cb.isMaterializable(jugadores)) {
+                pl.sendMessage(PLUGIN + LangFile.SIGN_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
+                // Borradas coordenadas
                 return false;
             }
 
-            createSign(cs);
-            signs.add(cs);
+            createSign(cb);
+            boards.add(cb);
 
-            pt.cm.dbh.getDm().registraCartel(cs.getInfo().getNombre(),
-                    cs.getModel().getNombre(), cs.getInfo().getServer(),
-                    cs.getInfo().getL(), cs.getInfo().getOrientacion(),
-                    cs.getInfo().getPrimitiveBlockface());
+            pt.cm.dbh.getDm().registraCartel(cb.getInfo().getNombre(),
+                    cb.getModel().getNombre(), cb.getInfo().getServer(),
+                    cb.getInfo().getL(), cb.getInfo().getOrientacion(),
+                    cb.getInfo().getPrimitiveBlockface());
         }
         else {
             return false;
@@ -58,65 +54,30 @@ public class LeaderBoardManager {
         return true;
     }
     
-    public void loadSign(CustomSign cs) {        
-        if (!signs.contains(cs)) {
+    public void loadBoard(CustomBoard cs) {        
+        if (!boards.contains(cs)) {
             createSign(cs);            
-            signs.add(cs);
+            boards.add(cs);
         }
     }
     
-    public void updateSigns() {
-        for (CustomSign sign : signs) {
+    public void updateBoard() {
+        for (CustomBoard sign : boards) {
             createSign(sign);
         }
     }
 
-    private boolean isOccupied(CustomSign cs, short jugadores) {
-        int filas = cs.getModel().getFilas(jugadores);
-        int cols = cs.getModel().getCols();
-
-        Location thisblock = cs.getInfo().getL();
-
-        Location locblock = new Location(thisblock.getWorld(),
-                thisblock.getX(), thisblock.getY(), thisblock.getZ());
-
-        // Comprobar por ambos lados
-        for (int j = 0; j < filas; j++) {
-            for (int k = 0; k < cols; k++) {
-                if (cs.getInfo().isXn()) {
-                    locblock.setX(locblock.getX() - k);
-                } else if (cs.getInfo().isXp()) {
-                    locblock.setX(locblock.getX() + k);
-                } else if (cs.getInfo().isZn()) {
-                    locblock.setZ(locblock.getZ() - k);
-                } else if (cs.getInfo().isZp()) {
-                    locblock.setZ(locblock.getZ() + k);
-                }
-
-                if (!locblock.equals(thisblock) && !locblock.getBlock().isEmpty()) {
-                    return true;
-                }
-            }
-
-            locblock.setX(thisblock.getX());
-            locblock.setY(locblock.getY() - 1);
-            locblock.setZ(thisblock.getZ());
-        }
-
-        return false;
-    }
-
     public void deleteSign(Location l) {
-        for (Iterator<CustomSign> it = signs.iterator(); it.hasNext();) {
-            CustomSign sign = it.next();
+        for (Iterator<CustomBoard> it = boards.iterator(); it.hasNext();) {
+            CustomBoard sign = it.next();
             if (sign.getInfo().getL().equals(l)) {
                 short jugadores = (short)pt.cm.dbh.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
 
-                sign.delete(jugadores);
+                sign.dematerialize(jugadores);
 
                 pt.cm.dbh.getDm().borraCartel(sign.getInfo().getL());
-                signs.remove(sign);
+                boards.remove(sign);
 
                 break;
             }
@@ -124,7 +85,7 @@ public class LeaderBoardManager {
     }
 
     public void deleteSign(Location l, BlockBreakEvent event) {
-        for (CustomSign sign : signs) {
+        for (CustomBoard sign : boards) {
             if (sign.getInfo().getL().equals(l)) {
                 short jugadores = (short)pt.cm.dbh.getDm().getTopPlayers(
                         sign.getModel().getCantidad(), sign.getInfo().getServer()).size();
@@ -138,30 +99,30 @@ public class LeaderBoardManager {
                     return;
                 }
 
-                sign.delete(jugadores);
+                sign.dematerialize(jugadores);
 
                 pl.sendMessage(PLUGIN + LangFile.SIGN_DELETED.getText(Localizer.getLocale(pl)));
 
                 pt.cm.dbh.getDm().borraCartel(sign.getInfo().getL());
-                signs.remove(sign);
+                boards.remove(sign);
 
                 break;
             }
         }
     }
 
-    private void createSign(CustomSign cs) {
+    private void createSign(CustomBoard cs) {
         ArrayList<PlayerFame> pf = pt.cm.dbh.getDm().getTopPlayers(
                 cs.getModel().getCantidad(), cs.getInfo().getServer());
 
-        cs.create(pf);
+        cs.materialize(pf);
     }
 
-    public List<CustomSign> getSigns() {
-        return signs;
+    public List<CustomBoard> getSigns() {
+        return boards;
     }
     
     public void vaciar() {
-        this.signs.clear();
+        this.boards.clear();
     }
 }

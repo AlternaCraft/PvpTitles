@@ -328,6 +328,11 @@ public class Metrics {
     private void postPlugin(final boolean isPing) throws IOException {
         // Server software specific section
         PluginDescriptionFile description = plugin.getDescription();
+        
+        /**
+         * Changed var 'pluginName' on July 7th 2015
+         *   - Added "JL-" in order to avoid name problems
+         */
         String pluginName = "JL-" + description.getName();
         boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if online mode is enabled
         String pluginVersion = description.getVersion();

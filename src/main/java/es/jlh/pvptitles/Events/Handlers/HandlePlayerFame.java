@@ -168,8 +168,8 @@ public class HandlePlayerFame implements Listener {
             // Aniado el nuevo valor de kills
             int fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
 
-            this.calculateRank(victim, killer, fame, kills);
             kills++;
+            this.calculateRank(victim, killer, fame, kills);            
             HandlePlayerFame.racha.put(killer.getName(), kills);
         }
     }
@@ -243,7 +243,7 @@ public class HandlePlayerFame implements Listener {
         String tag = this.cm.params.getTag();
         double mod = Math.abs(this.cm.params.getMod());
 
-        int fameRec = (int) Math.ceil((kills * mod) + 1);
+        int fameRec = (int) Math.ceil((kills-1 * mod) + 1);
 
         player.sendMessage(PLUGIN + LangFile.PLAYER_KILLED.getText(Localizer.getLocale(player))
                 .replace("%killed%", killed)
@@ -263,6 +263,8 @@ public class HandlePlayerFame implements Listener {
         }
 
         FameEvent event = new FameEvent(player, fameAntes, fameRec);
+        event.setKillstreak(kills); // Nueva baja
+        
         Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }

@@ -2,7 +2,7 @@ package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Configs.LangFile;
 import es.jlh.pvptitles.Configs.LangFile.LangType;
-import es.jlh.pvptitles.Objects.LBSigns.CustomSign;
+import es.jlh.pvptitles.Objects.Boards.CustomBoard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +10,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,9 +21,19 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class Inventories {
 
+    public static List<Inventory> opened = new ArrayList();
+
     public static final int MAX_SIGNS_PER_PAGE = 18;
 
-    public static Map<Integer, Inventory> createInventory(List<CustomSign> cs, LangType lt) {
+    public static void reloadInventories() {
+        for (Inventory inv : Inventories.opened) {
+            while (!inv.getViewers().isEmpty()) {
+                ((HumanEntity) inv.getViewers().get(0)).closeInventory();
+            }
+        }
+    }
+
+    public static Map<Integer, Inventory> createInventory(List<CustomBoard> cs, LangType lt) {
         Map<Integer, Inventory> inventories = new HashMap();
 
         int cont = 0;
@@ -37,7 +48,7 @@ public class Inventories {
                     LangFile.SIGN_INVENTORY_TITLE.getText(lt));
 
             for (int j = 0; cont < cs.size() && j < (MAX_SIGNS_PER_PAGE * (vuelta + 1)); j++, cont++) {
-                CustomSign customSign = cs.get(cont);
+                CustomBoard customSign = cs.get(cont);
 
                 ItemStack item = new ItemStack(Material.SIGN);
                 String[] lore = null;
@@ -61,6 +72,8 @@ public class Inventories {
             inventories.put(vuelta, inventory);
 
             vuelta++;
+
+            opened.add(inventory); // To close it on reload
         }
 
         return inventories;
