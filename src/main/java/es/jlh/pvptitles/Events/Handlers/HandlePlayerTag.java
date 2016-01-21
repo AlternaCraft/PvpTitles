@@ -72,8 +72,6 @@ public class HandlePlayerTag implements Listener {
                     || perm.groupHas(wp, group, IGNORED_CHAT_PERM)) {
                 return false;
             }
-        } else if (!pl.isOp() && pl.hasPermission(IGNORED_CHAT_PERM)) {
-            return false;
         }
 
         return true;
@@ -200,7 +198,8 @@ public class HandlePlayerTag implements Listener {
 
                 if (!isHologramEmpty(h) && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                     h.clearLines();
-                } else if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY) && !player.isSneaking()) {
+                } else if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY) 
+                        && !player.isSneaking() && !player.isDead()) {
                     int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                     int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                     int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();

@@ -44,9 +44,9 @@ public class Ranks {
                 for (int j = i; j >= 0; j--) {
                     if (seconds >= reqTime.get(j)) {
                         nextRankFame = reqFame.get(j + 1) - fame;
-                        nextRankTitle = Utils.translateColor(rankList.get(j + 1));
+                        nextRankTitle = rankList.get(j + 1);
                         nextRankTime = reqTime.get(j + 1) - seconds;
-                        return Utils.translateColor(rankList.get(j));
+                        return rankList.get(j);
                     }
                 }
             }

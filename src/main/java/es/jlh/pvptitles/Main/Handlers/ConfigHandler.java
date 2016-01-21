@@ -6,6 +6,7 @@ import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import es.jlh.pvptitles.Main.Manager;
 import static es.jlh.pvptitles.Main.Manager.messages;
 import es.jlh.pvptitles.Main.PvpTitles;
+import es.jlh.pvptitles.Misc.Utils;
 import es.jlh.pvptitles.Objects.FileConfig;
 import java.util.List;
 import java.util.ListIterator;
@@ -50,7 +51,7 @@ public class ConfigHandler {
         List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
 
         for (int i = 0; i < configList.size(); i++) {
-            rankList.put(i, configList.get(i));
+            rankList.put(i, Utils.translateColor(configList.get(i)));
         }
 
         for (int i = 0; i < requFame.size(); i++) {

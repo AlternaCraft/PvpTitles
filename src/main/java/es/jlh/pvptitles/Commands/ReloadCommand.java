@@ -2,6 +2,7 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Integrations.HolographicSetup;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.RANK_LINE;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
@@ -52,6 +53,7 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.cm.loadRankTimeChecker();
         
         if (HolographicSetup.isHDEnable && pvpTitles.cm.params.displayLikeHolo()) {
+            RANK_LINE = pvpTitles.cm.params.getHolotagformat();
             HolographicSetup.loadPlayersInServer();
         }
 

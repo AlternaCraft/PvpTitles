@@ -112,7 +112,10 @@ public class HolographicSetup {
 
     // Player prefix
     public static Hologram createHoloTag(Player pl, String rank) {
-        Hologram h = HologramsAPI.createHologram(plugin, pl.getLocation().add(0.0, TITLE_HEIGHT, 0.0));
+        Location l = new Location(pl.getLocation().getWorld(), pl.getLocation().getX(), 
+                    pl.getLocation().getY() + TITLE_HEIGHT, pl.getLocation().getZ());
+        
+        Hologram h = HologramsAPI.createHologram(plugin, l);
         h.appendTextLine(RANK_LINE.replace("%rank%", rank));
 
         VisibilityManager visiblityManager = h.getVisibilityManager();
@@ -132,10 +135,9 @@ public class HolographicSetup {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
         //ItemStack icon = new ItemStack(Material.DIAMOND_HELMET);
-        String divisor = Utils.translateColor("&6&l+&r----------&6&l+");
-        h.appendTextLine(divisor);
-        h.appendTextLine("| " + ChatColor.GOLD + "" + ChatColor.BOLD + "PvpTitles" + ChatColor.RESET + " |");
-        h.appendTextLine(divisor);
+        h.appendTextLine(Utils.translateColor("&6&l+&r----------&6&l+"));
+        h.appendTextLine(Utils.translateColor("| &6&lPvpTitles&r |"));
+        h.appendTextLine(Utils.translateColor("&6&l+&r----------&6&l+"));
         h.appendTextLine("");
         //h.appendItemLine(icon);
     }
