@@ -2,7 +2,7 @@ package es.jlh.pvptitles.RetroCP;
 
 import es.jlh.pvptitles.Backend.MySQLConnection;
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Misc.UtilFile;
+import es.jlh.pvptitles.Misc.UtilsFile;
 import static es.jlh.pvptitles.RetroCP.DBChecker.MYSQL_TIME_CREATED;
 import java.io.File;
 import java.sql.Connection;
@@ -110,6 +110,6 @@ public class RetroDMMysql {
             PvpTitles.logError(ex.getMessage(), ex);
         }
 
-        UtilFile.writeFile(ruta, sql);
+        UtilsFile.writeFile(ruta, sql);
     }
 }

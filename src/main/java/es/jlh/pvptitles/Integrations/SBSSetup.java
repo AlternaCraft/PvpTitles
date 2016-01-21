@@ -55,7 +55,7 @@ public class SBSSetup {
                         replaceEvent.setScore(puntos);
                         break;
                     case "rank":
-                        replaceEvent.setScoreOrText(Ranks.GetRank(puntos, seconds));
+                        replaceEvent.setScoreOrText(Ranks.getRank(puntos, seconds));
                         break;
                 }
             }

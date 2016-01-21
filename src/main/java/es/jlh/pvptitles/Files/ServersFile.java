@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Configs;
+package es.jlh.pvptitles.Files;
 
 import java.io.File;
 import java.io.IOException;

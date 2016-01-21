@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Managers.Timer;
 
 /**
  *

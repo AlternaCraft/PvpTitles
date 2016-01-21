@@ -7,6 +7,8 @@ import es.jlh.pvptitles.RetroCP.oldTables.TimeTable;
 import es.jlh.pvptitles.RetroCP.oldTables.PlayerWTable;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
+import es.jlh.pvptitles.Misc.UtilsFile;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +29,7 @@ public class DBChecker {
     public static final short MYSQL_NEW_STRUCTURE_CREATED = 3;
     public static final short MYSQL_TIME_CREATED = 2;
     public static final short MYSQL_OLD_VERSION = 1;
-    
+
     private PvpTitles plugin = null;
 
     public DBChecker(PvpTitles plugin) {
@@ -63,7 +65,7 @@ public class DBChecker {
                 status = EBEAN_TIME_CREATED;
             } catch (Exception e) {
             }
-            
+
             rdm.exportarData(status);
 
             showMessage(ChatColor.RED + "Ebean database structure has changed...");
@@ -75,8 +77,10 @@ public class DBChecker {
 
         rdm.conversor();
         rdm.conversorUUID();
-        
+
         plugin.cm.getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
+        UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
+                File.separator).append(RetroDMEbean.FILENAME).toString());
 
         return true;
     }
@@ -86,19 +90,21 @@ public class DBChecker {
         RetroDMMysql rdm = new RetroDMMysql(plugin, mysql);
 
         int status = MYSQL_OLD_VERSION;
-        
+
         try {
             ResultSet rs = mysql.createStatement().executeQuery("show tables like 'SignsServer'");
             if (rs.next()) {
                 rs = mysql.createStatement().executeQuery("show tables like 'PlayersTime'");
-                if (rs.next()) {               
+                if (rs.next()) {
                     status = MYSQL_TIME_CREATED;
                 }
                 rdm.exportarData(status);
-            }    
+            }
         } catch (SQLException ex) {
         }
 
         plugin.cm.getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
+        UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
+                File.separator).append(RetroDMMysql.FILENAME).toString());
     }
 }

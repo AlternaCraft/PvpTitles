@@ -60,7 +60,22 @@
 //  Ver. 2.4.1  22/12/2015  Añadido recompensa por racha de bajas, recompensa 
 //   directa de dinero. Añadido los comandos pvpfame [time|killstreak] y mejorado
 //   el gestor de los tableros de puntuacion.
-//  Ver. 2.4.1  26/12/2015  Arreglado pequeño fallo con /pvbsign en reload.
+//  Ver. 2.4.1  26/12/2015  Arreglado pequeño fallo con /pvpsign en reload.
+//  Ver. 2.4.1  30/12/2015  Añadida compatibilidad con hologramas, modificado el
+//   comando pvpsign por pvpboard con nuevas mejoras. Eliminados parametros
+//   auto export del config y añadida nueva funcionalidad para autoactualizacion
+//   durante el backup del config.
+//  Ver. 2.4.1  11/01/2016  Arreglados algunos fallos de la version anterior, 
+//  Ver. 2.4.1  13/01/2016  Añadida opcion para operar sobre jugadores que no 
+//   han entrado al server aún con MW activado mediante el comando pvpfame
+//  Ver. 2.4.1  16/01/2016  Mejorada la gestión de errores en la base de datos y
+//   arreglado fallo de orden en la exportacion de ebean a sql
+//  Ver. 2.4.1  18/01/2016  Modificado pvpsign por pvpboard, con funcionalidad para
+//   gestionar tableros, añadido argumento '-silent' en el comando pvpfame para
+//   evitar que el jugador recibe una alerta cuando le modifiquen la fama.
+//  Ver. 2.4.1  20/01/2016  Optimizadas las clases del proyecto, arreglado fallo
+//   con el timer que comprueba el tiempo AFK si CheckAFK es false y añadido
+//   mensaje de veto en el comando /pvprank
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -71,21 +86,22 @@ import es.jlh.pvptitles.Commands.LadderCommand;
 import es.jlh.pvptitles.Commands.PurgeCommand;
 import es.jlh.pvptitles.Commands.RankCommand;
 import es.jlh.pvptitles.Commands.ReloadCommand;
-import es.jlh.pvptitles.Commands.SignCommand;
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Commands.BoardCommand;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Events.Handlers.HandleFame;
 import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
-import es.jlh.pvptitles.Events.Handlers.HandlePlayerPrefix;
+import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
+import es.jlh.pvptitles.Integrations.HolographicSetup;
 import es.jlh.pvptitles.Integrations.SBSSetup;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
 import es.jlh.pvptitles.Managers.PlayerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
-import static es.jlh.pvptitles.Misc.Inventories.reloadInventories;
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Misc.Inventories;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,11 +117,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class PvpTitles extends JavaPlugin {
 
     private static PvpTitles plugin = null;
-    
+
     public static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "] ";
 
-    public static Logger logger = null;
+    public static Logger LOGGER = null;
     public static boolean debugMode = false;
 
     public Manager cm = null;
@@ -123,14 +139,12 @@ public class PvpTitles extends JavaPlugin {
     public static void main(String[] args) {
     }
 
-    public PvpTitles() {
-        PvpTitles.plugin = this;
-    }
-
     @Override
     public void onEnable() {
+        plugin = this;
+        
         this.cm = Manager.getInstance();
-        PvpTitles.logger = this.getLogger();
+        PvpTitles.LOGGER = this.getLogger();
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
@@ -143,9 +157,12 @@ public class PvpTitles extends JavaPlugin {
             return;
         }
 
+        // Instancio la clase para evitar problemas en el reload
+        new Inventories().setup();
+
         // Registro los handlers de los eventos
-        getServer().getPluginManager().registerEvents(new HandlePlayerPrefix(this), this);
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
+        getServer().getPluginManager().registerEvents(new HandlePlayerTag(this), this);        
         getServer().getPluginManager().registerEvents(new HandleFame(this), this);
         getServer().getPluginManager().registerEvents(new HandleSign(this), this);
         getServer().getPluginManager().registerEvents(new HandleInventory(this), this);
@@ -153,7 +170,7 @@ public class PvpTitles extends JavaPlugin {
         // Registro los comandos
         getCommand("pvpRank").setExecutor(new RankCommand(this));
         getCommand("pvpFame").setExecutor(new FameCommand(this));
-        getCommand("pvpSign").setExecutor(new SignCommand(this));
+        getCommand("pvpBoard").setExecutor(new BoardCommand(this));
         getCommand("pvpPurge").setExecutor(new PurgeCommand(this));
         getCommand("pvpLadder").setExecutor(new LadderCommand(this));
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
@@ -183,12 +200,11 @@ public class PvpTitles extends JavaPlugin {
 
                 getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
                         + "# ENDING AUTOINTEGRATION MODULE #");
-
                 /*
                  * -> Fin integraciones <-
                  */
             }
-        }, 5);
+        }, 5L);
 
         logDebugInfo(LangFile.PLUGIN_ENABLED.getText(Manager.messages));
     }
@@ -200,11 +216,19 @@ public class PvpTitles extends JavaPlugin {
             Set<TimedPlayer> players = this.playerManager.getTimedPlayers();
 
             for (TimedPlayer next : players) {
-                this.cm.dbh.getDm().savePlayedTime(next);
+                if (!this.cm.dbh.getDm().savePlayedTime(next)) {
+                    PvpTitles.logError("Error saving played time to " + 
+                            next.getOfflinePlayer().getName(), null);
+                }
+            }
+
+            // Holograms
+            if (HolographicSetup.isHDEnable) {
+                HolographicSetup.deleteHolograms();
             }
 
             // Inventories
-            reloadInventories();
+            Inventories.closeInventories();
         }
 
         logDebugInfo(LangFile.PLUGIN_DISABLED.getText(Manager.messages));
@@ -214,7 +238,10 @@ public class PvpTitles extends JavaPlugin {
         // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : Bukkit.getOnlinePlayers()) {
             // Fama
-            this.cm.dbh.getDm().PlayerConnection(pl);
+            if (!cm.dbh.getDm().playerConnection(pl)) {
+                PvpTitles.logError("Error checking online player " + pl.getName(), null);
+                return;
+            }
 
             // Times
             TimedPlayer tPlayer = this.getPlayerManager().hasPlayer(pl)
@@ -236,6 +263,9 @@ public class PvpTitles extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             new VaultSetup(this).setupVault();
         }
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            new HolographicSetup(this).setup();
+        }
     }
 
     /* PLAYER TIME */
@@ -249,12 +279,14 @@ public class PvpTitles extends JavaPlugin {
 
     // Custom message
     public static void showMessage(String msg) {
-        Bukkit.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
+        plugin.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
     }
 
-    /* ERROR MANAGEMENT */
-    public static void logDebugInfo(String message) {
-        logDebugInfo(Level.INFO, message);
+    private static final String MYSQL_CRAP_REGEX = "com.*: ";
+    
+    /* DEBUG MANAGEMENT */
+    public static void logDebugInfo(String message) {        
+        logDebugInfo(Level.INFO, message.replaceFirst(MYSQL_CRAP_REGEX, ""));
     }
 
     public static void logDebugInfo(Level level, String message) {
@@ -263,15 +295,16 @@ public class PvpTitles extends JavaPlugin {
 
     public static void logDebugInfo(Level level, String message, Exception ex) {
         if (debugMode) {
-            PvpTitles.logger.log(level, message, ex);
+            PvpTitles.LOGGER.log(level, message, ex);
         }
     }
 
+    /* ERROR MANAGEMENT */
     public static void logError(String message, Exception ex) {
-        PvpTitles.logger.log(Level.SEVERE, message, ex);
+        PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
     }
 
     public static PvpTitles getInstance() {
         return plugin;
-    }    
+    }
 }

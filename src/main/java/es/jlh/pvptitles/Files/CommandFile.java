@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Configs;
+package es.jlh.pvptitles.Files;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class CommandFile {
         );
         newConfig.options().copyHeader(true);
         
-        String[] activos = {"Rank", "Fame", "EachKill", "Killstreak"};
+        String[] activos = {"Rank", "Fame", "Killstreak"};
         
         // Comandos de ejemplo
         String[] commands1 = {"say Congratulations <Player>, now you are God"};
@@ -51,21 +51,21 @@ public class CommandFile {
         newConfig.set("Rewards.Rank.command", Arrays.asList(commands1));
         
         // filtro por fama
-        newConfig.set("Rewards.Fame.onFame", 1000);
+        newConfig.set("Rewards.Fame.onFame", 1000000);
         newConfig.set("Rewards.Fame.money", 100);
         newConfig.set("Rewards.Fame.command", Arrays.asList(commands2));
 
         // filtro por racha
-        newConfig.set("Rewards.Killstreak.onKillstreak", 15);
+        newConfig.set("Rewards.Killstreak.onKillstreak", 1500);
         newConfig.set("Rewards.Killstreak.command", Arrays.asList(commands5));
+        
+        // filtro por varias condiciones
+        newConfig.set("Rewards.Multi.onFame", 100);
+        newConfig.set("Rewards.Multi.onKillstreak", 1500);
+        newConfig.set("Rewards.Multi.command", Arrays.asList(commands4));
         
         // Sin filtro, por rank up
         newConfig.set("Rewards.EachKill.command", Arrays.asList(commands3));
-        
-        // Sin activar
-        newConfig.set("Rewards.NoActive.onRank", "Test");
-        newConfig.set("Rewards.NoActive.onFame", 500);
-        newConfig.set("Rewards.NoActive.command", Arrays.asList(commands4));
         
         try {
             newConfig.save(commandsFile);

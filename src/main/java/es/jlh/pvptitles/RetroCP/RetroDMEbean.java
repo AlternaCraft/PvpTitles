@@ -11,7 +11,7 @@ import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Misc.TagsClass;
-import es.jlh.pvptitles.Misc.UtilFile;
+import es.jlh.pvptitles.Misc.UtilsFile;
 import static es.jlh.pvptitles.RetroCP.DBChecker.EBEAN_MW_CREATED;
 import static es.jlh.pvptitles.RetroCP.DBChecker.EBEAN_TIME_CREATED;
 import es.jlh.pvptitles.RetroCP.oldTables.PlayerTable;
@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,7 +66,7 @@ public class RetroDMEbean {
                 // Fama del jugador
                 FileConfiguration yaml = YamlConfiguration.loadConfiguration(item);
 
-                String nPlayer = item.getName().substring(0, item.getName().indexOf("."));
+                String nPlayer = item.getName().substring(0, item.getName().indexOf('.'));
                 int fame = yaml.getInt("Fame");
                 
                 Map<String, UUID> response = getUUID(Arrays.asList(nPlayer));
@@ -123,11 +122,10 @@ public class RetroDMEbean {
             return;
         }
 
-        for (Iterator<PlayerPT> iterator = plClass.iterator(); iterator.hasNext();) {
-            PlayerPT next = iterator.next();
-            if (!next.getPlayerUUID().matches(UUID_REGEX)) {
-                Map<String, UUID> response = getUUID(Arrays.asList(next.getPlayerUUID()));
-                next.setPlayerUUID(response.get(next.getPlayerUUID()).toString());
+        for (PlayerPT player : plClass) {
+            if (!player.getPlayerUUID().matches(UUID_REGEX)) {
+                Map<String, UUID> response = getUUID(Arrays.asList(player.getPlayerUUID()));
+                player.setPlayerUUID(response.get(player.getPlayerUUID()).toString());
             }
         }
 
@@ -186,8 +184,7 @@ public class RetroDMEbean {
             pltClass.setLastLogin(next.getUltMod());
 
             if (status >= EBEAN_TIME_CREATED) {
-                for (Iterator<TimeTable> iterator = ttClass.iterator(); iterator.hasNext();) {
-                    TimeTable pltime = iterator.next();
+                for (TimeTable pltime : ttClass) {
                     if (pltime.getPlayerName().equals(pltClass.getPlayerUUID())) {
                         pltClass.setPlayedTime(pltime.getPlayedTime());
                         ttClass.remove(pltime);
@@ -228,6 +225,6 @@ public class RetroDMEbean {
 
         // Escribo el fichero
         JsonElement el = parser.parse(jo.toJSONString());
-        UtilFile.writeFile(ruta, gson.toJson(el));
+        UtilsFile.writeFile(ruta, gson.toJson(el));
     }
 }

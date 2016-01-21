@@ -3,14 +3,15 @@ package es.jlh.pvptitles.Events.Handlers;
 import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Events.RankChangedEvent;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.milkbowl.vault.economy.Economy;
@@ -40,15 +41,18 @@ public class HandleFame implements Listener {
 
     @EventHandler
     public void onFame(FameEvent e) {
+        // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             Map<String, Map<String, List<String>>> kills = pt.cm.commandsRw.get("onKill");
-            setValues(kills.get(""), e.getOfflinePlayer());
+            if (kills != null) {
+                setValues(kills.get(null), e.getOfflinePlayer());
+            }
         }
 
         Map<String, Map<String, List<String>>> fame = pt.cm.commandsRw.get("onFame");
         if (fame != null) {
             for (String cantidad : fame.keySet()) {
-                if (e.getFame() < Integer.valueOf(cantidad)
+                if (e.getFame() < Integer.parseInt(cantidad)
                         && (e.getFameTotal()) >= Integer.valueOf(cantidad)) {
                     setValues(fame.get(cantidad), e.getOfflinePlayer());
                     break;
@@ -60,8 +64,8 @@ public class HandleFame implements Listener {
         if (rank != null) {
             for (String rango : rank.keySet()) {
                 int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
-                String lastRank = Ranks.GetRank(e.getFame(), seconds);
-                if (rango.equals(Ranks.GetRank(e.getFameTotal(), seconds)) && !rango.equals(lastRank)) {
+                String lastRank = Ranks.getRank(e.getFame(), seconds);
+                if (rango.equals(Ranks.getRank(e.getFameTotal(), seconds)) && !rango.equals(lastRank)) {
                     setValues(rank.get(rango), e.getOfflinePlayer());
                     break;
                 }
@@ -77,6 +81,27 @@ public class HandleFame implements Listener {
                 }
             }
         }
+
+        if (e.getOfflinePlayer().isOnline()) {
+            Player pl = (Player) e.getOfflinePlayer();
+            
+            // Nuevo rango
+            int fameA = e.getFame();
+            int fameD = e.getFameTotal();
+
+            int oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
+            TimedPlayer tp = pt.getPlayerManager().getPlayer(pl);
+            int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
+
+            String actualRank = Ranks.getRank(fameA, totalTime);
+            String newRank = Ranks.getRank(fameD, totalTime);
+
+            // Ha conseguido otro rango
+            if (!actualRank.equalsIgnoreCase(newRank)) {
+                pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
+                        pl, actualRank, newRank));
+            }
+        }
     }
 
     private void setValues(Map<String, List<String>> data, OfflinePlayer pl) {
@@ -89,8 +114,7 @@ public class HandleFame implements Listener {
             }
         }
         if (data.containsKey("commands")) {
-            for (Iterator<String> it = data.get("commands").iterator(); it.hasNext();) {
-                String cmd = it.next();
+            for (String cmd : data.get("commands")) {
                 cmd = cmd.replaceAll("<[pP]layer>", pl.getName());
                 pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
             }
@@ -99,15 +123,15 @@ public class HandleFame implements Listener {
 
     @EventHandler
     public void onSetFame(FameSetEvent e) {
-        if (!e.isOnline()) {
+        if (!e.getOfflinePlayer().isOnline()) {
             return;
         }
 
-        Player pl = e.getPlayer();
+        Player pl = (Player) e.getOfflinePlayer();
         int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
-        if (pl != null) {
-            String rank = Ranks.GetRank(e.getFameTotal(), seconds);
+        if (pl != null && !e.isSilent()) {
+            String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl)).
                     replace("%fame%", String.valueOf(e.getFameTotal())).
@@ -121,15 +145,15 @@ public class HandleFame implements Listener {
 
     @EventHandler
     public void onAddFame(FameAddEvent e) {
-        if (!e.isOnline()) {
+        if (!e.getOfflinePlayer().isOnline()) {
             return;
         }
 
-        Player pl = e.getPlayer();
+        Player pl = (Player) e.getOfflinePlayer();
         int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
-        if (pl != null) {
-            String rank = Ranks.GetRank(e.getFameTotal(), seconds);
+        if (pl != null && !e.isSilent()) {
+            String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl)).
                     replace("%fame%", String.valueOf(e.getFameTotal())).

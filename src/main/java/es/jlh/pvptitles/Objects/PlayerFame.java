@@ -12,13 +12,15 @@ import org.bukkit.ChatColor;
 public class PlayerFame implements Comparable {
     private String uuid = null;
     private int fame = 0;
+    private int seconds = 0;
     private short server = 0;
     private String world = "";
     private PvpTitles plugin = null;
     
-    public PlayerFame(String name, int fame, PvpTitles pl) {
+    public PlayerFame(String name, int fame, int seconds, PvpTitles pl) {
         this.uuid = name;
         this.fame = fame;
+        this.seconds = seconds;
         this.plugin = pl;
     }
     
@@ -45,7 +47,7 @@ public class PlayerFame implements Comparable {
     }
 
     public int getSeconds() {        
-        return plugin.cm.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+        return this.seconds;
     }
     
     public int getRealSeconds() {

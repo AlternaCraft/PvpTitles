@@ -5,9 +5,9 @@
  */
 package es.jlh.pvptitles.Libraries;
 
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -40,7 +40,7 @@ public class NMS {
         }
     }
 
-    private static final String packageName = Bukkit.getServer().getClass().getPackage().getName();
+    private static final String packageName = PvpTitles.getInstance().getServer().getClass().getPackage().getName();
     public static final String version = packageName.substring(packageName.lastIndexOf(".") + 1);
     public static final Version compatibilityVersion = Version.fromString(version);
     private static Class<?> craftPlayer, packet;

@@ -1,7 +1,6 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Managers.Timer;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Managers.MovementManager;
 import es.jlh.pvptitles.Managers.MovementManager;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +52,7 @@ public class TimedPlayer {
             setAFKTime(getAFKTime() + movementManager.getAFKTime(player));
         }
         
-        session.setStopTime(System.currentTimeMillis() - getAFKTime() * 1000);
+        session.setStopTime(System.currentTimeMillis() - getAFKTime() * 1000L);
         setActiveSession(null);
         setAFKTime(0);
         return true;

@@ -11,7 +11,7 @@ import java.io.IOException;
  *
  * @author AlternaCraft
  */
-public class UtilFile {
+public class UtilsFile {
 
     public static boolean exists(String ruta) {
         return new File(ruta).exists();
@@ -67,6 +67,9 @@ public class UtilFile {
     }
     
     public static void delete(String ruta) {
-        new File(ruta).delete();
+        File todelete = new File(ruta);
+        if (!todelete.delete()) {
+            todelete.deleteOnExit();
+        }
     }
 }

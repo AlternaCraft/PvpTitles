@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class MovementManager {
         long currTime = System.currentTimeMillis();
         int timeDiff = (int) ((currTime - lastMove) / 1000L);       
         
-        return timeDiff - this.timeThreshold;
+        return (plugin.cm.params.isCheckAFK()) ? timeDiff - this.timeThreshold:0;
     }
 
     public boolean hasLastMovement(OfflinePlayer player) {
@@ -50,9 +50,6 @@ public class MovementManager {
     }
 
     public void addLastMovement(OfflinePlayer player) {
-        if (!this.plugin.cm.params.isCheckAFK()) {
-            return;
-        }
         if (isAFK(player)) {
             TimedPlayer tPlayer = this.plugin.getPlayerManager().getPlayer(player);
             tPlayer.setAFKTime(tPlayer.getAFKTime() + getAFKTime(player));

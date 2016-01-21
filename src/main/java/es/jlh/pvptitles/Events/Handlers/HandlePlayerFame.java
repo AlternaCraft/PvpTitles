@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Events.FameEvent;
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -10,10 +10,9 @@ import es.jlh.pvptitles.Misc.Localizer;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import es.jlh.pvptitles.Managers.AntiFarmManager;
 import es.jlh.pvptitles.Managers.CleanTaskManager;
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,13 +35,13 @@ public class HandlePlayerFame implements Listener {
     private static final int TICKS = 20;
 
     // Variable temporal
-    public static final Map<String, Integer> racha = new HashMap();
+    public static final Map<String, Integer> KILLSTREAK = new HashMap();
 
     private Manager cm = null;
-    private AntiFarmManager afm = null;
-    private Map<String, CleanTaskManager> csKiller = new HashMap();
+    private static AntiFarmManager afm = null;
+    private final Map<String, CleanTaskManager> csKiller = new HashMap();
 
-    private final PvpTitles pvpTitles;
+    private PvpTitles pvpTitles = null;
 
     /**
      * Contructor de la clase
@@ -64,8 +63,11 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        
-        cm.dbh.getDm().PlayerConnection(player);
+
+        if (!cm.dbh.getDm().playerConnection(player)) {
+            PvpTitles.logError("Error on player login " + player.getName(), null);
+            return;
+        }
 
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().hasPlayer(player)
@@ -78,11 +80,22 @@ public class HandlePlayerFame implements Listener {
         if (!this.pvpTitles.getPlayerManager().hasPlayer(player)) {
             this.pvpTitles.getPlayerManager().addPlayer(tPlayer);
         }
+
+        HandlePlayerTag.holoPlayerLogin(player);
     }
-    
+
+    /**
+     *
+     * @param event
+     */
+    @EventHandler
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        cm.dbh.getDm().PlayerConnection(player);
+
+        if (!cm.dbh.getDm().playerConnection(player)) {
+            PvpTitles.logError("Error on player change world " + player.getName(), null);
+            return;
+        }
     }
 
     /**
@@ -93,28 +106,35 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        cm.dbh.getDm().PlayerConnection(player);
-        HandlePlayerFame.racha.put(player.getName(), 0);
+        if (!cm.dbh.getDm().playerConnection(player)) {
+            PvpTitles.logError("Error on player quit " + player.getName(), null);
+            return;
+        }
+        HandlePlayerFame.KILLSTREAK.put(player.getName(), 0);
 
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().getPlayer(player);
-
         tPlayer.stopSession();
-
         this.pvpTitles.getMovementManager().removeLastMovement(player);
     }
 
+    /**
+     *
+     * @param event
+     */
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Location from = event.getFrom();
-        Location to = event.getTo();
+        if (cm.params.isCheckAFK()) { // Optimizacion
+            Player player = event.getPlayer();
+            Location from = event.getFrom();
+            Location to = event.getTo();
 
-        if ((from.getX() == to.getX()) && (from.getY() == to.getY()) && (from.getZ() == to.getZ())) {
-            return;
+            if ((from.getX() == to.getX()) && (from.getY() == to.getY()) && (from.getZ() == to.getZ())) {
+                return;
+            }
+
+            this.pvpTitles.getMovementManager().addLastMovement(player);
         }
-
-        this.pvpTitles.getMovementManager().addLastMovement(player);
     }
 
     /**
@@ -156,21 +176,21 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Si ya esta en el mapa guardo sus bajas
-            if (racha.containsKey(killer.getName())) {
-                kills = racha.get(killer.getName());
+            if (KILLSTREAK.containsKey(killer.getName())) {
+                kills = KILLSTREAK.get(killer.getName());
             }
 
-            // Final de la racha de bajas
-            if (HandlePlayerFame.racha.containsKey(victim)) {
-                HandlePlayerFame.racha.put(victim, 0);
+            // Final de la KILLSTREAK de bajas
+            if (HandlePlayerFame.KILLSTREAK.containsKey(victim)) {
+                HandlePlayerFame.KILLSTREAK.put(victim, 0);
             }
 
             // Aniado el nuevo valor de kills
             int fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
 
-            kills++;
-            this.calculateRank(victim, killer, fame, kills);            
-            HandlePlayerFame.racha.put(killer.getName(), kills);
+            kills += 1;
+            this.calculateRank(victim, killer, fame, kills);
+            HandlePlayerFame.KILLSTREAK.put(killer.getName(), kills);
         }
     }
 
@@ -196,7 +216,7 @@ public class HandlePlayerFame implements Listener {
                             .replace("%tag%", this.cm.params.getTag())
                             .replace("%time%", splitToComponentTimes(this.cm.params.getTimeV())));
 
-                    Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, new Runnable() {
+                    pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, new Runnable() {
                         @Override
                         public void run() {
                             afm.cleanVeto(killer.getName());
@@ -243,7 +263,7 @@ public class HandlePlayerFame implements Listener {
         String tag = this.cm.params.getTag();
         double mod = Math.abs(this.cm.params.getMod());
 
-        int fameRec = (int) Math.ceil((kills-1 * mod) + 1);
+        int fameRec = (int) Math.ceil((kills - 1 * mod) + 1);
 
         player.sendMessage(PLUGIN + LangFile.PLAYER_KILLED.getText(Localizer.getLocale(player))
                 .replace("%killed%", killed)
@@ -252,10 +272,13 @@ public class HandlePlayerFame implements Listener {
 
         int fameDespues = fameAntes + fameRec;
 
-        this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues);
+        if (!this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null)) {
+            PvpTitles.logError("Error saving player fame to " + player.getName(), null);
+            return;
+        }
 
-        String currentRank = Ranks.GetRank(fameAntes, seconds);
-        String newRank = Ranks.GetRank(fameDespues, seconds);
+        String currentRank = Ranks.getRank(fameAntes, seconds);
+        String newRank = Ranks.getRank(fameDespues, seconds);
 
         if (!currentRank.equalsIgnoreCase(newRank)) {
             player.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(player))
@@ -264,7 +287,12 @@ public class HandlePlayerFame implements Listener {
 
         FameEvent event = new FameEvent(player, fameAntes, fameRec);
         event.setKillstreak(kills); // Nueva baja
-        
-        Bukkit.getServer().getPluginManager().callEvent(event);
+
+        pvpTitles.getServer().getPluginManager().callEvent(event);
     }
+
+    public static AntiFarmManager getAfm() {
+        return afm;
+    }
+    
 }

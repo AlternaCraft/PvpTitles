@@ -20,11 +20,11 @@ public class SignPT implements Serializable {
     private int id = 0;
     
     @NotNull
-    public String world = "";
+    private String world = "";
     
-    public int x = 0;
-    public int y = 0;
-    public int z = 0;
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
 
     @NotNull
     private String name = "";

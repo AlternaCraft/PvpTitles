@@ -1,5 +1,6 @@
 package es.jlh.pvptitles.Managers;
 
+import es.jlh.pvptitles.Backend.DatabaseManagerEbean;
 import es.jlh.pvptitles.Libraries.Metrics;
 import es.jlh.pvptitles.Libraries.Metrics.Graph;
 import es.jlh.pvptitles.Main.Manager;
@@ -30,9 +31,8 @@ public class MetricsManager {
                 
                 boolean timeUsed = false;  
                 
-                for (Iterator<Integer> iterator = Manager.reqTime().values().iterator(); iterator.hasNext();) {
-                    Integer next = iterator.next();
-                    if (next > 0) {
+                for (Integer value : Manager.reqTime().values()) {
+                    if (value > 0) {
                         timeUsed = true;
                         break;
                     }
@@ -45,9 +45,32 @@ public class MetricsManager {
                     addPlotter(timeUsageGraph, "Disabled", 1);
                 }
                 
+                Graph preferreddb = metrics.createGraph("Preferred DB");
+                
+                if (plugin.cm.dbh.getDm() instanceof DatabaseManagerEbean) {
+                    addPlotter(preferreddb, "Ebean", 1);
+                }
+                else {
+                    addPlotter(preferreddb, "MySQL", 1);
+                }
+                
+                Graph displayMode = metrics.createGraph("Display mode");
+                
+                if (plugin.cm.params.displayInChat()) {
+                    addPlotter(displayMode, "Chat", 1);
+                }
+                if (plugin.cm.params.displayLikeHolo()) {
+                    addPlotter(displayMode, "Holograms", 1);
+                }
+
+                Graph defaultLang = metrics.createGraph("Default lang");
+                
+                addPlotter(defaultLang, Manager.messages.name(), 1);                
+                
                 metrics.start();
             }
         } catch (IOException e) {
+            PvpTitles.logError(e.getMessage(), null);
         }
     }
 

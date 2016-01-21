@@ -1,8 +1,9 @@
 package es.jlh.pvptitles.Backend;
 
-import es.jlh.pvptitles.Objects.Boards.BoardData;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Objects.PlayerFame;
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -18,21 +19,29 @@ public interface DatabaseManager {
      * Método para gestionar los jugadores cuando entran y cuando salen del
      * server
      * <p>
-     * Registra el jugador en la bd</p>
+     * Registra el jugador en la bd
+     * </p>
      *
-     * @param player
+     * @param player Player
+     *
+     * @return False si no se pudo completar
      */
-    public void PlayerConnection(Player player);
+    public boolean playerConnection(Player player);
 
     /**
      * Método para guardar la fama obtenida por un jugador
      * <p>
-     * Guarda los puntos del jugador</p>
+     * Guarda los puntos del jugador
+     * </p>
      *
-     * @param playerUUID
-     * @param fame Puntos pvp
+     * @param playerUUID UUID
+     * @param fame Entero con los puntos PvP
+     * @param world En caso de MW activado, opción para establecer puntos en un
+     * mundo específico
+     *
+     * @return False si no se pudo completar
      */
-    public void savePlayerFame(UUID playerUUID, int fame);
+    public boolean savePlayerFame(UUID playerUUID, int fame, String world);
 
     /**
      * Método para cargar los puntos pvp de un jugador
@@ -48,15 +57,18 @@ public interface DatabaseManager {
     /**
      * Método para crear o añadir el tiempo de juego de un jugador
      *
-     * @param tPlayer
+     * @param tPlayer TimedPlayer
+     *
+     * @return False si no se pudo completar
      */
-    public void savePlayedTime(TimedPlayer tPlayer);
+    public boolean savePlayedTime(TimedPlayer tPlayer);
 
     /**
      * Método para recibir los dias que lleva el jugador en el servidor con el
      * plugin activado.
      *
-     * @param playerUUID
+     * @param playerUUID UUID
+     *
      * @return Entero con los minutos transcurridos
      */
     public int loadPlayedTime(UUID playerUUID);
@@ -65,50 +77,51 @@ public interface DatabaseManager {
      * Método para recibir el top deseado de jugadores ordenado de mejor a peor
      *
      * @param cant Cantidad de jugadores a mostrarng w,
-     * @param server
+     * @param server String
+     *
      * @return ArrayList con los jugadores
      */
     public ArrayList<PlayerFame> getTopPlayers(short cant, String server);
-    
+
     /**
      * Método para registrar un cartel en la base de datos
      *
-     * @param nombre String con el nombre de la tabla de puntuaciones
-     * @param modelo String con el nombre de modelo utilizado
-     * @param server
-     * @param l Location con la posicion del cartel base
-     * @param orientacion String con la orientacion de la tabla de puntuaciones
-     * @param blockface Entero que indica el eje cardinal usado en la creacion
-     * de la tabla de pùntuaciones
+     * @param sb SignBoard
+     *
+     * @return False si no se pudo completar
      */
-    public void registraCartel(String nombre, String modelo, String server,
-            Location l, String orientacion, short blockface);
+    public boolean registraBoard(SignBoard sb);
 
     /**
      * Método para modificar la id del server de un cartel
      *
      * @param l Location
+     *
+     * @return False si no se pudo completar
      */
-    public void modificaCartel(Location l);
+    public boolean modificaBoard(Location l);
 
     /**
      * Método para borrar un cartel de la base de datos
      *
      * @param l Localicación del cartel base
+     *
+     * @return False si no se pudo completar
      */
-    public void borraCartel(Location l);
+    public boolean borraBoard(Location l);
 
     /**
      * Método para buscar las tablas de puntuaciones de la base de datos
      *
      * @return ArrayList con todas ellas
      */
-    public ArrayList<BoardData> buscaCarteles();
+    public ArrayList<SignBoardData> buscaBoards();
 
     /**
      * Método para recibir el nombre del servidor según su ID
      *
      * @param id int
+     * 
      * @return String
      */
     public String getServerName(short id);
@@ -122,16 +135,31 @@ public interface DatabaseManager {
 
     /**
      * Método para exportar todos los datos de la base de datos
+     * 
+     * @param filename String
      */
-    public void DBExport();
+    public void DBExport(String filename);
 
     /**
      * Método para importar todos los datos desde un fichero
-     * 
-     * @param filename
-     * @return 
+     *
+     * @param filename String
+     *
+     * @return False si no se pudo importar
      */
     public boolean DBImport(String filename);
-    
-    public String getDefaultFileName();
+
+    /**
+     * Método para recibir el nombre del fichero por defecto para importar
+     *
+     * @return String
+     */
+    public String getDefaultFImport();
+
+    /**
+     * Método para recibir el nombre del fichero por defecto para exportar
+     *
+     * @return String
+     */
+    public String getDefaultFExport();
 }

@@ -1,5 +1,6 @@
-package es.jlh.pvptitles.Objects.Boards;
+package es.jlh.pvptitles.Managers.BoardsCustom;
 
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -9,22 +10,19 @@ import org.bukkit.material.Sign;
  *
  * @author AlternaCraft
  */
-public class BoardData {
+public class SignBoardData extends BoardData {
+
     private final Sign matSign = new Sign(Material.WALL_SIGN);
-    
+
     private static final String XP = "X+";
     private static final String XN = "X-";
     private static final String ZP = "Z+";
     private static final String ZN = "Z-";
-    
+
     public static final short NORTH = 1;
     public static final short SOUTH = 2;
     public static final short EAST = 3;
     public static final short WEST = 4;
-    
-    private String nombre = null;
-    private String modelo = null;
-    private String server = null;
     
     // Orientacion
     private boolean xp = false;
@@ -33,31 +31,13 @@ public class BoardData {
     private boolean zn = false;
     
     // BlockFace
-    private short blockface = 0;
-    
-    private Location l = null;
+    private short blockface = 0;    
 
-    public BoardData(String nombre, String modelo, String server, Location l) {
+    public SignBoardData(String nombre, String modelo, String server, Location l) {
+        super(l);
         this.nombre = nombre;
         this.modelo = modelo;
         this.server = server;
-        this.l = l;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public Location getL() {
-        return l;
     }
     
     public void setOrientacion(String o) {
@@ -73,6 +53,8 @@ public class BoardData {
                 break;
             case ZN:
                 zn = true;
+            default:
+                break;
         }
     }
     

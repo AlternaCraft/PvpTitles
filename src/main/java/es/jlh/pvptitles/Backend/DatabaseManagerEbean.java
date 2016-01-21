@@ -3,13 +3,14 @@ package es.jlh.pvptitles.Backend;
 import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.TagsClass;
-import es.jlh.pvptitles.Misc.UtilFile;
-import es.jlh.pvptitles.Objects.Boards.BoardData;
+import es.jlh.pvptitles.Misc.UtilsFile;
 import es.jlh.pvptitles.Objects.PlayerFame;
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
 import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,8 +34,9 @@ import org.json.simple.parser.JSONParser;
  */
 public class DatabaseManagerEbean implements DatabaseManager {
 
-    private final String FILENAME = "database.json";
-    
+    private static final String FILENAME_IMPORT = "database.json";
+    private static final String FILENAME_EXPORT = "database.sql";
+
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt = null;
     private Ebean ebeanServer = null;
@@ -42,15 +45,21 @@ public class DatabaseManagerEbean implements DatabaseManager {
         this.pt = pt;
         this.ebeanServer = ebeanServer;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     @Override
-    public void PlayerConnection(Player player) {
+    public boolean playerConnection(Player player) {
         PlayerPT plClass = null;
+
+        if (player == null) {
+            return false;
+        }
 
         UUID playerUUID = player.getUniqueId();
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                .select("playerUUID")
                 .where()
                 .ieq("playerUUID", playerUUID.toString())
                 .findUnique();
@@ -67,6 +76,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         // MultiWorld   
         if (pt.cm.params.isMw_enabled()) {
             WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                    .select("playerUUID, world")
                     .where()
                     .ieq("playerUUID", playerUUID.toString())
                     .ieq("world", player.getWorld().getName())
@@ -81,88 +91,120 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(plwClass);
             }
         }
+
+        return true;
     }
 
     /* TABLA PLAYERS */
     @Override
-    public void savePlayerFame(UUID playerUUID, int fame) {
+    public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
+        // Multiworld + mundo permitido
+        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+
         PlayerPT plClass = null;
 
+        // Base
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                .select("playerUUID")
                 .where()
                 .ieq("playerUUID", playerUUID.toString())
                 .findUnique();
 
         if (plClass == null) {
             plClass = new PlayerPT();
-            plClass.setPlayerUUID(playerUUID.toString());
-        }
 
-        // Multiworld + mundo permitido
-        Player pl = Bukkit.getPlayer(playerUUID);
+            plClass.setPlayerUUID(playerUUID.toString());
+            plClass.setLastLogin(new Date());
+
+            ebeanServer.getDatabase().save(plClass);
+        }
 
         WorldPlayerPT plwClass = null;
 
         if (pt.cm.params.isMw_enabled()) {
+            if (w == null && !pl.isOnline()) {
+                return false;
+            }
+
+            String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
+
             plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                    .select("playerUUID, world")
                     .where()
                     .ieq("playerUUID", playerUUID.toString())
-                    .ieq("world", pl.getWorld().getName())
+                    .ieq("world", world)
                     .findUnique();
 
             if (plwClass == null) {
                 plwClass = new WorldPlayerPT();
 
                 plwClass.setPlayerUUID(playerUUID.toString());
-                plwClass.setWorld(pl.getWorld().getName());
+                plwClass.setWorld(world);
             }
-        }
 
-        if (plwClass != null) {
             plwClass.setPoints(fame);
             ebeanServer.getDatabase().save(plwClass);
         } else {
+
             plClass.setPoints(fame);
             ebeanServer.getDatabase().save(plClass);
         }
+
+        return true;
     }
 
     @Override
-    public int loadPlayerFame(UUID playerUUID, String world) {
-        PlayerPT plClass = null;
+    public int loadPlayerFame(UUID playerUUID, String w) {
         int points = 0;
 
-        Player pl = Bukkit.getServer().getPlayer(playerUUID);
+        OfflinePlayer pl = pt.getServer().getOfflinePlayer(playerUUID);
 
-        plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                .where()
-                .ieq("playerUUID", playerUUID.toString())
-                .findUnique();
+        if (pl == null) {
+            return points;
+        }
 
         if (pt.cm.params.isMw_enabled()) {
-            String world_selected = (world == null) ? pl.getWorld().getName() : world;
+            if (w == null && !pl.isOnline()) {
+                return points;
+            }
+
+            String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
             WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                    .select("playerUUID, world, points")
                     .where()
                     .ieq("playerUUID", playerUUID.toString())
-                    .ieq("world", world_selected)
+                    .ieq("world", world)
                     .findUnique();
 
             if (plwClass != null) {
                 points = plwClass.getPoints();
             }
-        } else if (plClass != null) {
-            points = plClass.getPoints();
+        } else {
+            PlayerPT plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID, points")
+                    .where()
+                    .ieq("playerUUID", playerUUID.toString())
+                    .findUnique();
+
+            if (plClass != null) {
+                points = plClass.getPoints();
+            }
         }
 
         return points;
     }
 
     @Override
-    public void savePlayedTime(TimedPlayer tPlayer) {
+    public boolean savePlayedTime(TimedPlayer tPlayer) {
         PlayerPT plClass = null;
 
+        if (tPlayer == null) {
+            return false;
+        }
+
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                .select("playerUUID")
                 .where()
                 .ieq("playerUUID", tPlayer.getUniqueId().toString())
                 .findUnique();
@@ -176,6 +218,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
 
         ebeanServer.getDatabase().save(plClass);
+
+        return true;
     }
 
     @Override
@@ -184,6 +228,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         int time = 0;
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                .select("playerUUID, playedTime")
                 .where()
                 .ieq("playerUUID", playerUUID.toString())
                 .findUnique();
@@ -194,7 +239,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         return time;
     }
-    
+
     /* OTROS */
     @Override
     public ArrayList<PlayerFame> getTopPlayers(short cant, String server) {
@@ -208,12 +253,13 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 if (allServers.containsKey(pt.cm.params.getMultiS())) {
                     List<String> worlds = allServers.get(pt.cm.params.getMultiS());
 
+                    StringBuilder buf = new StringBuilder();
                     for (String world : worlds) {
-                        mundos += "world = '" + world + "' OR ";
+                        buf.append("world = '").append(world).append("' OR ");
                     }
 
                     if (!worlds.isEmpty()) {
-                        mundos = mundos.substring(0, mundos.length() - 4);
+                        mundos = buf.toString().substring(0, mundos.length() - 4);
                     }
 
                     break;
@@ -229,7 +275,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         } else {
             allPlayers = ebeanServer.getDatabase().find(PlayerPT.class)
-                    .select("playerUUID, points")
+                    .select("playerUUID, points, playedTime")
                     .orderBy("points desc")
                     .setMaxRows(cant)
                     .findList();
@@ -245,45 +291,55 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     continue;
                 }
 
+                PlayerPT time = ebeanServer.getDatabase().find(PlayerPT.class)
+                        .select("playerUUID, playedTime")
+                        .where()
+                        .ieq("playerUUID", allPlayersW.get(i).getPlayerUUID())
+                        .findUnique();
+
                 PlayerFame pf = new PlayerFame(allPlayersW.get(i).getPlayerUUID(),
-                        allPlayersW.get(i).getPoints(), this.pt);
+                        allPlayersW.get(i).getPoints(), time.getPlayedTime(),
+                        this.pt);
+
                 pf.setWorld(allPlayersW.get(i).getWorld());
                 rankedPlayers.add(pf);
             }
         } else {
             for (int i = 0; i < allPlayers.size(); i++) {
                 PlayerFame pf = new PlayerFame(allPlayers.get(i).getPlayerUUID(),
-                        allPlayers.get(i).getPoints(), this.pt);
+                        allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime(),
+                        this.pt);
                 rankedPlayers.add(pf);
             }
         }
 
         return rankedPlayers;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SIGNS...">
     /* TABLA CARTELES */
     @Override
-    public void registraCartel(String nombre, String modelo, String server,
-            Location l, String orientacion, short blockface) {
+    public boolean registraBoard(SignBoard sb) {
         SignPT st = new SignPT();
-
-        st.setName(nombre);
-        st.setModel(modelo);
-        st.setLocation(l);
-        st.setOrientation(orientacion);
-        st.setBlockface(blockface);
+        st.setName(sb.getData().getNombre());
+        st.setModel(sb.getData().getModelo());
+        st.setLocation(sb.getData().getLocation());
+        st.setOrientation(sb.getData().getOrientacion());
+        st.setBlockface(sb.getData().getPrimitiveBlockface());
 
         ebeanServer.getDatabase().save(st);
+        return true;
     }
 
     @Override
-    public void modificaCartel(Location l) {
+    public boolean modificaBoard(Location l) {
         // Nothing yet
+        return false;
     }
 
     @Override
-    public void borraCartel(Location l) {
+    public boolean borraBoard(Location l) {
         SignPT st = ebeanServer.getDatabase().find(SignPT.class)
                 .where()
                 .eq("x", l.getX())
@@ -293,26 +349,26 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findUnique();
 
         ebeanServer.getDatabase().delete(st);
+        return true;
     }
 
     @Override
-    public ArrayList<BoardData> buscaCarteles() {        
+    public ArrayList<SignBoardData> buscaBoards() {
         List<SignPT> plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
-        ArrayList<BoardData> sd = new ArrayList();
-        
-        for (Iterator<SignPT> it = plClass.iterator(); it.hasNext();) {
-            SignPT st = it.next();
+        ArrayList<SignBoardData> sbd = new ArrayList();
 
-            Location l = new Location(pt.getServer().getWorld(st.getWorld()), st.getX(), st.getY(), st.getZ());
-            BoardData sdc = new BoardData(st.getName(), st.getModel(), "", l);
-            sdc.setOrientacion(st.getOrientation());
-            sdc.setBlockface(st.getBlockface());
+        for (SignPT signPT : plClass) {
+            Location l = new Location(pt.getServer().getWorld(signPT.getWorld()), signPT.getX(), signPT.getY(), signPT.getZ());
+            SignBoardData bds = new SignBoardData(signPT.getName(), signPT.getModel(), "", l);
+            bds.setOrientacion(signPT.getOrientation());
+            bds.setBlockface(signPT.getBlockface());
 
-            sd.add(sdc);
+            sbd.add(bds);
         }
 
-        return sd;
+        return sbd;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
@@ -369,11 +425,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public void DBExport() {
+    public void DBExport(String filename) {
         String ruta = new StringBuilder().append(
                 pt.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
-                        "database.sql").toString();
+                        filename).toString();
 
         short serverID = pt.cm.params.getMultiS();
 
@@ -381,7 +437,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         sql += MySQLConnection.getTableServers() + "\n";
         sql += MySQLConnection.getTablePlayerServer() + "\n";
         sql += MySQLConnection.getTablePlayerMeta() + "\n";
-        sql += MySQLConnection.getTablePlayerWorld() + "\n";        
+        sql += MySQLConnection.getTablePlayerWorld() + "\n";
         sql += MySQLConnection.getTableSigns() + "\n";
 
         List<PlayerPT> plClass = (List<PlayerPT>) ebeanServer.getDatabase().
@@ -399,19 +455,15 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 + " ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
 
         if (plClass != null && plClass.size() > 0) {
-            String sql1 = "";
-            String sql2 = "";
-            String sql3 = "";
-
             for (int j = 0; j < plClass.size(); j++) {
                 PlayerPT next = plClass.get(j);
-                
+
                 String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
-                sql1 += "insert into PlayerServer(id, playerUUID, serverID) select "
+                sql += "insert into PlayerServer(id, playerUUID, serverID) select "
                         + "max(id)+1, '" + next.getPlayerUUID() + "', "
                         + serverID + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
-                sql2 += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                sql += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
                         + "max(id), " + next.getPoints() + ", "
                         + next.getPlayedTime() + ", '" + fecha + "' from PlayerServer "
                         + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
@@ -421,9 +473,9 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     for (int k = 0; k < pwClass.size(); k++) {
                         WorldPlayerPT nextW = pwClass.get(k);
                         if (nextW.getPlayerUUID().equals(next.getPlayerUUID())) {
-                            sql3 += "insert into PlayerWorld(psid, worldName, points) select "
-                                    + "max(id), '" + nextW.getWorld() + "', " + 
-                                    nextW.getPoints() + " from PlayerServer "
+                            sql += "insert into PlayerWorld(psid, worldName, points) select "
+                                    + "max(id), '" + nextW.getWorld() + "', "
+                                    + nextW.getPoints() + " from PlayerServer "
                                     + "ON DUPLICATE KEY UPDATE worldName=VALUES"
                                     + "(worldName),points=VALUES(points);\n";
                             // optimizacion
@@ -433,19 +485,16 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     }
                 }
             }
-
-            sql += sql1 + sql2 + sql3;
         }
 
         if (stClass != null && stClass.size() > 0) {
             sql += "insert into Signs values";
 
-            for (Iterator<SignPT> iterator = stClass.iterator(); iterator.hasNext();) {
-                SignPT next = iterator.next();
-                sql += "('" + next.getName() + "', '" + next.getModel() + "', "
-                        + "'', '" + next.getOrientation() + "', " + next.getBlockface()
-                        + ", "+ serverID +", '" + next.getWorld() + "', "
-                        + next.getX() + ", " + next.getY() + ", " + next.getZ() + "),";
+            for (SignPT sPT : stClass) {
+                sql += "('" + sPT.getName() + "', '" + sPT.getModel() + "', "
+                        + "'', '" + sPT.getOrientation() + "', " + sPT.getBlockface()
+                        + ", " + serverID + ", '" + sPT.getWorld() + "', "
+                        + sPT.getX() + ", " + sPT.getY() + ", " + sPT.getZ() + "),";
             }
 
             sql = sql.substring(0, sql.length() - 1); // Quito la coma sobrante
@@ -453,7 +502,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     + "orientation=VALUES(orientation),blockface=VALUES(blockface);";
         }
 
-        UtilFile.writeFile(ruta, sql);
+        UtilsFile.writeFile(ruta, sql);
     }
 
     @Override
@@ -463,14 +512,14 @@ public class DatabaseManagerEbean implements DatabaseManager {
                         File.separator).append( // Separador
                         filename).toString();
 
-        if (!UtilFile.exists(ruta)) {
+        if (!UtilsFile.exists(ruta)) {
             return false;
         }
 
         JSONParser parser = new JSONParser();
 
         try {
-            Object obj = parser.parse(UtilFile.readFile(ruta));
+            Object obj = parser.parse(UtilsFile.readFile(ruta));
             JSONObject jsonObject = (JSONObject) obj;
 
             JSONArray players = (JSONArray) jsonObject.get("Players");
@@ -478,7 +527,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             JSONArray pworlds = (JSONArray) jsonObject.get("PlayersPerWorld");
 
             List<PlayerPT> playersJSON = TagsClass.getPlayers(players);
-            for (PlayerPT playersPT : playersJSON) {                
+            for (PlayerPT playersPT : playersJSON) {
                 PlayerPT ppt = ebeanServer.getDatabase().find(PlayerPT.class)
                         .where()
                         .ieq("playerUUID", playersPT.getPlayerUUID())
@@ -538,18 +587,22 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(wppt);
             }
 
-            UtilFile.delete(ruta);
-
         } catch (org.json.simple.parser.ParseException ex) {
             PvpTitles.logError(ex.getMessage(), ex);
         }
 
         return true;
     }
-    
+
     @Override
-    public String getDefaultFileName() {
-        return this.FILENAME;
+    public String getDefaultFImport() {
+        return this.FILENAME_IMPORT;
+    }
+
+    @Override
+    public String getDefaultFExport() {
+        return this.FILENAME_EXPORT;
     }
     // </editor-fold>
+
 }

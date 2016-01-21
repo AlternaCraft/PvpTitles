@@ -1,7 +1,6 @@
 package es.jlh.pvptitles.Events;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,7 +10,7 @@ import org.bukkit.event.HandlerList;
  * @author AlternaCraft
  */
 public class FameEvent extends Event implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
     private final OfflinePlayer player;
     
@@ -19,6 +18,7 @@ public class FameEvent extends Event implements Cancellable {
     private final int fameIncr;
     private int killstreak = 0;
     
+    private boolean silent = false;
     private boolean cancelled;
 
     public FameEvent(OfflinePlayer player, int fame, int fameIncr) {
@@ -29,14 +29,6 @@ public class FameEvent extends Event implements Cancellable {
     
     public OfflinePlayer getOfflinePlayer() {
         return player;
-    }
-    
-    public Player getPlayer() {
-        return player.getPlayer();
-    }
-
-    public boolean isOnline() {
-        return this.player.isOnline();
     }
     
     public int getFame() {
@@ -59,14 +51,22 @@ public class FameEvent extends Event implements Cancellable {
     public void setKillstreak(int killstreak) {
         this.killstreak = killstreak;
     }
+
+    public boolean isSilent() {
+        return silent;
+    }
+
+    public void setSilent(boolean silent) {
+        this.silent = silent;
+    }
     
     @Override
     public HandlerList getHandlers() {
-        return handlers;
+        return HANDLERS;
     }
 
     public static HandlerList getHandlerList() {
-        return handlers;
+        return HANDLERS;
     }    
 
     @Override

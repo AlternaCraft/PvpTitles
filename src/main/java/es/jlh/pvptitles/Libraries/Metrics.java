@@ -27,6 +27,7 @@
  */
 package es.jlh.pvptitles.Libraries;
 
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -334,7 +335,7 @@ public class Metrics {
          *   - Added "JL-" in order to avoid name problems
          */
         String pluginName = "JL-" + description.getName();
-        boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if online mode is enabled
+        boolean onlineMode = PvpTitles.getInstance().getServer().getOnlineMode(); // TRUE if online mode is enabled
         String pluginVersion = description.getVersion();
         String serverVersion = Bukkit.getVersion();
         int playersOnline = Bukkit.getOnlinePlayers().size();

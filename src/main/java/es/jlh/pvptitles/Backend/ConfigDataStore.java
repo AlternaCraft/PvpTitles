@@ -1,8 +1,8 @@
 package es.jlh.pvptitles.Backend;
 
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 /**
@@ -20,10 +20,6 @@ public class ConfigDataStore {
     private boolean alert = true;
     
     /* PVPTITLES BRIDGE */
-    // Ebean
-    private boolean auto_export_to_sql = false;
-    // MySQL
-    private boolean auto_export_to_json = false;
     private boolean PvpTitles_Bridge = false;
     // Datos de la conexion a MySQL
     private String host = "localhost";
@@ -48,7 +44,7 @@ public class ConfigDataStore {
     // Atributo para mostrar los jugadores en la tabla de puntuaciones
     private boolean leaderboard = false;
 
-    /* LEADERBOARD (SIGN) */
+    /* LEADERBOARD */
     // Tiempo de actualizacion de los carteles (Minutos)
     private short LBRefresh = 0;
     
@@ -77,7 +73,15 @@ public class ConfigDataStore {
     /* KILLSTREAKS */
     // Modificador de los puntos ganados en una racha de bajas
     private float mod = 0;
+    
     /* CHAT */
+    // Mostrar el titulo del jugador en el chat
+    private boolean displayInChat = true;
+    // Mostrar el titulo del jugador sobre su cabeza
+    private boolean displayLikeHolo = false;
+    // Formato para el titulo como holograma
+    private String holotagformat = null;
+    
     // Color del titulo en el chat
     private ChatColor prefixColor = null;
     // Nombre de los puntos
@@ -95,15 +99,7 @@ public class ConfigDataStore {
 
     // ** SETTERS ** \\
     public void setPrefixColor(String color) {
-        this.prefixColor = this.GetPrefixColor(color);
-    }
-
-    public void setAuto_export_to_sql(boolean auto_export_to_sql) {
-        this.auto_export_to_sql = auto_export_to_sql;
-    }
-
-    public void setAuto_export_to_json(boolean auto_export_to_json) {
-        this.auto_export_to_json = auto_export_to_json;
+        this.prefixColor = this.getPrefixColor(color);
     }
 
     public void setPvpTitles_Bridge(boolean PvpTitles_Bridge) {
@@ -136,7 +132,7 @@ public class ConfigDataStore {
 
     public void setNameS(String nameS) {
         if ("".equals(nameS) || "Custom".equals(nameS)) {
-            nameS = Bukkit.getServer().getServerName();
+            nameS = PvpTitles.getInstance().getServer().getServerName();
         }
         this.nameS = nameS;
     }
@@ -201,6 +197,18 @@ public class ConfigDataStore {
         this.chat = chat;
     }
 
+    public void displayInChat(boolean chatTitle) {
+        this.displayInChat = chatTitle;
+    }
+
+    public void displayLikeHolo(boolean holoTitle) {
+        this.displayLikeHolo = holoTitle;
+    }
+
+    public void setHolotagformat(String holotagformat) {
+        this.holotagformat = holotagformat;
+    }
+
     public void setMw_enabled(boolean mw_enabled) {
         this.mw_enabled = mw_enabled;
     }
@@ -220,14 +228,6 @@ public class ConfigDataStore {
     // ** GETTERS ** \\ 
     public ChatColor getPrefixColor() {
         return prefixColor;
-    }
-
-    public boolean isAuto_export_to_sql() {
-        return auto_export_to_sql;
-    }
-
-    public boolean isAuto_export_to_json() {
-        return auto_export_to_json;
     }
 
     public boolean isPvpTitles_Bridge() {
@@ -346,6 +346,18 @@ public class ConfigDataStore {
         return chat;
     }
 
+    public boolean displayInChat() {
+        return displayInChat;
+    }
+
+    public boolean displayLikeHolo() {
+        return displayLikeHolo;
+    }
+
+    public String getHolotagformat() {
+        return holotagformat;
+    }
+    
     // ** COMPROBACIONES ** \\
     public short compNum(short valor) {
         if (valor < 0 || valor > 1000) {
@@ -369,7 +381,7 @@ public class ConfigDataStore {
      *
      * @param color String con el nombre del color
      */
-    private ChatColor GetPrefixColor(String color) {
+    private ChatColor getPrefixColor(String color) {
         return ChatColor.valueOf(color.toUpperCase());
     }
 }

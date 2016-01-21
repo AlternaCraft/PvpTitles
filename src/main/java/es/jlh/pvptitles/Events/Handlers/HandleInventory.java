@@ -1,10 +1,11 @@
 package es.jlh.pvptitles.Events.Handlers;
 
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Events.BoardEvent;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Misc.Inventories;
-import static es.jlh.pvptitles.Misc.Inventories.MAX_SIGNS_PER_PAGE;
 import es.jlh.pvptitles.Misc.Localizer;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,6 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.EventExecutor;
+import static es.jlh.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
 
 /**
  * Clase evento para comprobar los jugadores que pulsan click en el inv virtual
@@ -38,12 +40,17 @@ public class HandleInventory implements Listener, EventExecutor {
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {   
+    public void onInventoryClose(InventoryCloseEvent event) {
         if (Inventories.opened.contains(event.getInventory())) {
             Inventories.opened.remove(event.getInventory());
         }
     }
-    
+
+    @EventHandler
+    public void onBoardChanged(BoardEvent event) {
+        Inventories.reloadInventories(Inventories.closeInventories());
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
@@ -51,9 +58,9 @@ public class HandleInventory implements Listener, EventExecutor {
 
         int page;
 
-        if (inventory.getName().equals(LangFile.SIGN_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
+        if (inventory.getName().equals(LangFile.BOARD_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
             Map<Integer, Inventory> inventories = Inventories
-                    .createInventory(plugin.cm.getLbm().getSigns(), Localizer.getLocale(pl));
+                    .createInventory(plugin.cm.getLbm().getBoards(), Localizer.getLocale(pl));
 
             event.setCancelled(true);
 
@@ -87,38 +94,39 @@ public class HandleInventory implements Listener, EventExecutor {
                 return;
             }
 
-            Location loc = getLocation(event.getSlot() + (MAX_SIGNS_PER_PAGE * page));
+            Location loc = getLocation(event.getSlot() + (MAX_BOARDS_PER_PAGE * page));
 
             if (event.getClick() == ClickType.LEFT) {
-                if (loc != null) {
-                    pl.closeInventory();
-                    pl.teleport(loc);
+                pl.closeInventory();
+                pl.teleport(loc);
 
-                    pl.sendMessage(PLUGIN + LangFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
-                }
+                pl.sendMessage(PLUGIN + LangFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
 
             } else if (event.getClick() == ClickType.RIGHT) {
                 // Caso para cambiar de pagina               
-                plugin.cm.getLbm().deleteSign(loc);
-                pl.sendMessage(PLUGIN + LangFile.SIGN_DELETED.getText(Localizer.getLocale(pl)));
+                plugin.cm.getLbm().deleteBoard(loc, pl);
 
                 // 'Actualizacion' del inventario
                 pl.closeInventory();
 
                 inventories = Inventories.createInventory(
-                        plugin.cm.getLbm().getSigns(), Localizer.getLocale(pl)
+                        plugin.cm.getLbm().getBoards(), Localizer.getLocale(pl)
                 );
-                
+
                 page = getPageNumber(inventory, inventories);
-                
+
                 pl.openInventory(inventories.get(page));
 
             }
         }
     }
 
+    public BoardData getBoard(int pos) {
+        return this.plugin.cm.getLbm().getBoards().get(pos).getData();
+    }
+
     public Location getLocation(int pos) {
-        return this.plugin.cm.dbh.getDm().buscaCarteles().get(pos).getL();
+        return this.getBoard(pos).getLocation();
     }
 
     public int getPageNumber(Inventory inventory, Map<Integer, Inventory> inventories) {

@@ -1,12 +1,12 @@
 name: PvpTitles
-version: 2.4
+version: 2.4.1
 description: Get epic titles in pvp
 database: true
 
 author: AlternaCraft
 
 main: es.jlh.pvptitles.Main.PvpTitles
-softdepend: [ScoreBoardStats, Vault]
+softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib]
 
 commands:
     pvpTitles:
@@ -15,20 +15,20 @@ commands:
         aliases: pvptitulos
         permission: pvptitles.help
     pvpRank:
-        description: It shows info about your rank.
+        description: It shows info about your rank and about your penalties.
         usage: /<command>
         aliases: pvprango
         permission: pvptitles.rank
     pvpFame:
         description: Add, view or set player fame in game.
-        usage: /<command> add|see|set <player> [<world_name>] [<famepoints>]
+        usage: /<command> add|see|set <player> [<world_name>] [<famepoints>] [-silent]
         aliases: pvpfama
         permission: pvptitles.setRank
-    pvpSign:
-        description: It shows the scoreboards per signs created in the server.
-        usage: /<command>
-        aliases: pvpCartel
-        permission: pvptitles.sign
+    pvpBoard:
+        description: Manage scoreboards.
+        usage: /<command> [create|remove <board_type> <name> <board_model>]
+        aliases: pvpTablero
+        permission: pvptitles.board
     pvpPurge:
         description: It cleans inactive users.
         usage: /<command>
@@ -45,7 +45,7 @@ commands:
         permission: pvptitles.reload
     pvpDatabase:
         description: It allows to manage data from the database.
-        usage: /<command> export|import
+        usage: /<command> export|import [<filename>]
         aliases: pvpdb
         permission: pvptitles.database
         
@@ -56,7 +56,7 @@ permissions:
             - pvptitles.help: true            
             - pvptitles.rank: true
             - pvptitles.setRank: true
-            - pvptitles.sign: true
+            - pvptitles.board: true
             - pvptitles.purge: true
             - pvptitles.ladder: true
             - pvptitles.reload: true
@@ -66,7 +66,7 @@ permissions:
         description: Access to staff commands
         children:
             - pvptitles.setRank: true
-            - pvptitles.sign: true
+            - pvptitles.board: true
             - pvptitles.purge: true
             - pvptitles.reload: true
             - pvptitles.database: true
@@ -83,8 +83,8 @@ permissions:
     pvptitles.setRank:
         description: Access to /pvpfame command.
         default: op
-    pvptitles.sign:
-        description: Access to /pvpsign command.
+    pvptitles.board:
+        description: Access to /pvpboard command.
         default: op
     pvptitles.purge:
         description: Access to /pvppurge command.
@@ -99,5 +99,5 @@ permissions:
         description: Create/destroy scoreboards per signs.
         default: op
     pvptitles.hideprefix:
-        description: Doesn't display your title in the chat.
+        description: Doesn't display your title.
         default: false

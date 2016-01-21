@@ -17,12 +17,12 @@ public class WorldPlayerPT implements Serializable {
 
     @Id
     private int id = 0;
-    
+
     @NotNull
-    String playerUUID = null;
+    private String playerUUID = null;
     @NotNull
-    String world = null;
-    
+    private String world = null;
+
     @NotNull
     private int points = 0;
 

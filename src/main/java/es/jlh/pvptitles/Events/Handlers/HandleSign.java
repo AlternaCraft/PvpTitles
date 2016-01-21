@@ -1,17 +1,18 @@
 package es.jlh.pvptitles.Events.Handlers;
 
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Objects.Boards.CustomBoard;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import static es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData.EAST;
+import static es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData.NORTH;
+import static es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData.SOUTH;
+import static es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData.WEST;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Misc.Localizer;
-import es.jlh.pvptitles.Objects.Boards.BoardData;
-import static es.jlh.pvptitles.Objects.Boards.BoardData.EAST;
-import static es.jlh.pvptitles.Objects.Boards.BoardData.NORTH;
-import static es.jlh.pvptitles.Objects.Boards.BoardData.SOUTH;
-import static es.jlh.pvptitles.Objects.Boards.BoardData.WEST;
-import es.jlh.pvptitles.Objects.Boards.BoardModel;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
+import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -26,7 +27,7 @@ import org.bukkit.event.block.SignChangeEvent;
 
 public class HandleSign implements Listener {
 
-    private static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+    private static final BlockFace[] AXIS = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private final org.bukkit.material.Sign matSign = new org.bukkit.material.Sign(Material.WALL_SIGN);
 
     private PvpTitles pt = null;
@@ -38,7 +39,7 @@ public class HandleSign implements Listener {
     }
 
     @EventHandler
-    public void OnCreateSign(SignChangeEvent event) {
+    public void onCreateSign(SignChangeEvent event) {
         Sign sign = (Sign) event.getBlock().getState();
         String[] lineas = event.getLines();
 
@@ -96,23 +97,22 @@ public class HandleSign implements Listener {
 
                 matSign.setFacingDirection(bf);
 
-                BoardData data = new BoardData(nombre, modelo, server, locSign);
+                SignBoardData data = new SignBoardData(nombre, modelo, server, locSign);
                 data.setBlockface(blockface);
                 data.setOrientacion(orientacion);
 
-                CustomBoard cs = new CustomBoard(data, sm);
+                ModelController mc = new ModelController();
+                mc.preprocessUnit(sm.getParams());
+                
+                SignBoard cs = new SignBoard(data, sm, mc);
                 cs.setLineas(lineas);
                 cs.setMatSign(matSign);
 
-                if (pt.cm.getLbm().addBoard(cs, pl)) {
-                    pl.sendMessage(PLUGIN + LangFile.SIGN_CREATED_CORRECTLY.
-                            getText(Localizer.getLocale(pl)).replace("%name%", nombre));
-                }
-                else {
+                if (!pt.cm.getLbm().addBoard(cs, pl)) {                
                     event.setCancelled(true);
                 }
             } else {
-                pl.sendMessage(PLUGIN + LangFile.SIGN_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(PLUGIN + LangFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                 event.setCancelled(true);
             }
         }
@@ -120,20 +120,29 @@ public class HandleSign implements Listener {
 
     @EventHandler
     public void onDeleteSign(BlockBreakEvent event) {
+        Integer[] coords = new Integer[]{1,-1};
+        
         Block b = event.getBlock();
         Location locblock = b.getLocation();
         World world = locblock.getWorld();
 
         // Caso especial en caso de que rompa el bloque que sostiene a un cartel
         if (world.getBlockAt(locblock).getType() != Material.WALL_SIGN) {
-            // Compruebo si el bloque adyacente es un cartel
-            for (BlockFace f : BlockFace.values()) {
-                if (b.getRelative(f).getType() == Material.WALL_SIGN) {
-                    pt.cm.getLbm().deleteSign(locblock, event);
+            for (Integer coord : coords) {
+                Block b2 = new Location(b.getWorld(), b.getX() + coord, b.getY(), b.getZ()).getBlock();
+                if (b2.getType() == Material.WALL_SIGN) {
+                    pt.cm.getLbm().deleteBoard(b2.getLocation(), event);
+                }
+            }
+            
+            for (Integer coord : coords) {
+                Block b2 = new Location(b.getWorld(), b.getX(), b.getY(), b.getZ() + coord).getBlock();
+                if (b2.getType() == Material.WALL_SIGN) {
+                    pt.cm.getLbm().deleteBoard(b2.getLocation(), event);
                 }
             }
         } else {
-            pt.cm.getLbm().deleteSign(locblock, event);
+            pt.cm.getLbm().deleteBoard(locblock, event);
         }
     }
 
@@ -144,6 +153,6 @@ public class HandleSign implements Listener {
      * @return La cara del bloque
      */
     private BlockFace yawToFace(float yaw) {
-        return axis[Math.round(yaw / 90f) & 0x3];
+        return AXIS[Math.round(yaw / 90f) & 0x3];
     }
 }

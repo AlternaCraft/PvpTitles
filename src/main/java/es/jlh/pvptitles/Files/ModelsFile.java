@@ -1,7 +1,7 @@
-package es.jlh.pvptitles.Configs;
+package es.jlh.pvptitles.Files;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Objects.Boards.BoardModel;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public class ModelsFile {
 
-    private static final String defaultModels = ""
+    private static final String DEFAULTMODELS = ""
             + "// (En) http://dev.bukkit.org/bukkit-plugins/pvptitles/pages/signs/\n"
             + "//\n"
             + "// -------------------\n"
@@ -41,7 +41,7 @@ public class ModelsFile {
             + "// Utiles\n"
             + "// ------\n"
             + "// | -> indica nuevo cartel\n"
-            + "// / -> indica salto de linea en el cartel\n"
+            + "// / -> indica salto de linea (Nueva fila)\n"
             + "//\n"
             + "// $spacing=<valor> -> <valor> Indica que elemento sera reemplazado por espacio\n"
             + "//\n"
@@ -64,9 +64,9 @@ public class ModelsFile {
             + "\n"
             + "#Avanzado(10)\n"
             + "<main>\n"
-            + "<player>[<rank>] | <player>[<rank>]";
+            + "<player>[<rank>] | &e<player>&r[<rank>]";
 
-    private static final Charset cs = Charset.forName("UTF-8");
+    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * Método para cargar un fichero en una variable
@@ -82,36 +82,36 @@ public class ModelsFile {
         ArrayList<String> al;
 
         /* Esta la propago porque es un error al abrir el archivo */
-        br = Files.newBufferedReader(Paths.get(ruta), cs);
+        br = Files.newBufferedReader(Paths.get(ruta), CHARSET);
 
         // Lectura del fichero
         String linea;
         String modelos = "";
 
+        StringBuilder buf = new StringBuilder();
+        
+        // Filtro comentarios
         while ((linea = br.readLine()) != null) {
             if (linea.length() > 0 && linea.charAt(0) == '#') {
-                modelos += linea + "&&";
+                buf.append(linea).append("&&");
                 break;
             }
         }
-
+        
         while ((linea = br.readLine()) != null) {
-            modelos += linea + "&&";
+            buf.append(linea).append("&&");
         }
 
         // Limpieza de caracteres
-        modelos = modelos.replace(" ", "");
+        modelos = buf.toString().replace(" ", "");
 
-        // Convertir en espacios
-        //modelos = modelos.replace(".", " ");
         al = new ArrayList<>(Arrays.asList(modelos.split("#")));
-
         // Modelos partidos
         for (int i = 1; i < al.size(); i++) {
             String[] datos = al.get(i).split("&&");
 
-            String nombre = datos[0].substring(0, datos[0].indexOf("("));
-            short cant = Short.valueOf(datos[0].substring(datos[0].indexOf("(") + 1, datos[0].indexOf(")")));
+            String nombre = datos[0].substring(0, datos[0].indexOf('('));
+            short cant = Short.valueOf(datos[0].substring(datos[0].indexOf('(') + 1, datos[0].indexOf(')')));
 
             ArrayList<ArrayList<ArrayList<String>>> params = new ArrayList();
 
@@ -122,7 +122,19 @@ public class ModelsFile {
                     datos[j] = datos[j].replace(spacing, " ");
                 }
 
-                String[] datosPartidos = datos[j].split("\\|");
+                // Fix para evitar que no coja la ultima columna
+                boolean b = false;
+                String fixcols = datos[j];
+                
+                if (fixcols.charAt(datos[j].length()-1) == '|') {
+                    datos[j] += " ";
+                    b = true;
+                }      
+                
+                String[] datosPartidos = datos[j].split("\\|");                
+                if (b) datosPartidos[datosPartidos.length-1] = "";                
+                // FIN DEL FIX
+                
                 ArrayList<ArrayList<String>> contenido = new ArrayList();
 
                 // Columnas partidas
@@ -163,7 +175,7 @@ public class ModelsFile {
             fichero = new FileWriter(ruta);
             pw = new PrintWriter(fichero);
 
-            String[] exampleModels = ModelsFile.defaultModels.split("\n");
+            String[] exampleModels = ModelsFile.DEFAULTMODELS.split("\n");
             for (String modelo : exampleModels) {
                 pw.println(modelo);
             }

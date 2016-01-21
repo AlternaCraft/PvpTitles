@@ -11,7 +11,6 @@ import es.jlh.pvptitles.Backend.MySQLConnection;
 import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
-import es.jlh.pvptitles.Misc.UtilFile;
 import es.jlh.pvptitles.RetroCP.oldTables.PlayerTable;
 import es.jlh.pvptitles.RetroCP.oldTables.PlayerWTable;
 import es.jlh.pvptitles.RetroCP.oldTables.SignTable;
@@ -70,18 +69,6 @@ public class DBHandler {
                 break;
         }
     }
-    
-    public void autoExportData() {
-        if (tipo == DBTYPE.EBEAN) {
-            if (pvpTitles.cm.params.isAuto_export_to_sql()) {
-                dm.DBExport();
-            }
-        } else if (tipo == DBTYPE.MYSQL) {
-            if (pvpTitles.cm.params.isAuto_export_to_json()) {
-                dm.DBExport();
-            }
-        }
-    }
 
     // Ebean
     /**
@@ -93,7 +80,7 @@ public class DBHandler {
         config.set("database.username", config.getString("database.username", "root"));
         config.set("database.password", config.getString("database.password", ""));
         config.set("database.isolation", config.getString("database.isolation", "SERIALIZABLE"));
-        config.set("database.logging", config.getBoolean("database.logging", PvpTitles.debugMode));
+        //config.set("database.logging", config.getBoolean("database.logging", PvpTitles.debugMode));
         config.set("database.rebuild", config.getBoolean("database.rebuild", false)); // false
     }
 
@@ -135,7 +122,7 @@ public class DBHandler {
                 config.getString("database.username"),
                 config.getString("database.password"),
                 config.getString("database.isolation"),
-                config.getBoolean("database.logging"),
+                PvpTitles.debugMode,
                 config.getBoolean("database.rebuild")
         );
 

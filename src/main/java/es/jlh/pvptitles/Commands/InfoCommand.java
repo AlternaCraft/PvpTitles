@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Commands;
 
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -41,8 +41,8 @@ public class InfoCommand implements CommandExecutor {
         String pvpfame = pvpTitles.getDescription().getCommands().get("pvpFame")
                 .get("usage").toString().replace("<command>", "pvpfame");
 
-        String pvpsign = pvpTitles.getDescription().getCommands().get("pvpSign")
-                .get("usage").toString().replace("<command>", "pvpsign");
+        String pvpBoard = pvpTitles.getDescription().getCommands().get("pvpBoard")
+                .get("usage").toString().replace("<command>", "pvpboard");
 
         String pvppurge = pvpTitles.getDescription().getCommands().get("pvpPurge")
                 .get("usage").toString().replace("<command>", "pvppurge");
@@ -68,9 +68,9 @@ public class InfoCommand implements CommandExecutor {
                     + ChatColor.RESET + " [" + LangFile.COMMAND_FAME_INFO.getText(messages) + "]");
         }
 
-        if (sender.hasPermission("pvptitles.sign")) {
-            sender.sendMessage("  " + ChatColor.AQUA + pvpsign
-                    + ChatColor.RESET + " [" + LangFile.COMMAND_SIGN_INFO.getText(messages) + "]");
+        if (sender.hasPermission("pvptitles.board")) {
+            sender.sendMessage("  " + ChatColor.AQUA + pvpBoard
+                    + ChatColor.RESET + " [" + LangFile.COMMAND_BOARD_INFO.getText(messages) + "]");
         }
 
         if (sender.hasPermission("pvptitles.purge")) {

@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Libraries.NMS;
-import es.jlh.pvptitles.Configs.LangFile.LangType;
+import es.jlh.pvptitles.Files.LangFile.LangType;
 import es.jlh.pvptitles.Main.Manager;
 import java.lang.reflect.Field;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public enum Localizer {
         return code;
     }
 
-    private static Field field;
+    private static Field field = null;
 
     public static LangType getLocale(Player inPlayer) {
         try {

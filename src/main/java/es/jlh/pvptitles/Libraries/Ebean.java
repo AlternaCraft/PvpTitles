@@ -71,6 +71,9 @@ public abstract class Ebean {
             //Prepare the database
             prepareDatabase(driver, url, username, password, isolation);
 
+            //Enable/Disable debug mode (Show queries on console)
+            enableDebug(logging);
+            
             //Load the database
             loadDatabase();
 
@@ -132,6 +135,10 @@ public abstract class Ebean {
         serverConfig = sc;
     }
 
+    public void enableDebug(boolean b) {
+        serverConfig.setDebugSql(b);
+    }
+    
     private void loadDatabase() {
         //Declare a few local variables for later use
         ClassLoader currentClassLoader = null;

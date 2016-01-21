@@ -1,6 +1,7 @@
 package es.jlh.pvptitles.Commands;
 
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Integrations.HolographicSetup;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
@@ -37,11 +38,10 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.cm.getCh().loadConfig(pvpTitles.cm.params);
         pvpTitles.cm.getDbh().selectDB();
         new DBChecker(pvpTitles).setup();
-        pvpTitles.cm.getDbh().autoExportData();
 
         pvpTitles.cm.loadLang();
         pvpTitles.cm.loadModels();
-        pvpTitles.cm.loadSavedSigns();
+        pvpTitles.cm.loadSavedBoards();
         pvpTitles.cm.loadCommands();
 
         if (tipo == DBTYPE.MYSQL) {
@@ -49,7 +49,11 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         pvpTitles.cm.loadActualizador();
-        pvpTitles.cm.loadRankChecker();
+        pvpTitles.cm.loadRankTimeChecker();
+        
+        if (HolographicSetup.isHDEnable && pvpTitles.cm.params.displayLikeHolo()) {
+            HolographicSetup.loadPlayersInServer();
+        }
 
         sender.sendMessage(PLUGIN + LangFile.PLUGIN_RELOAD.getText(messages));
 

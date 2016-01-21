@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Configs;
+package es.jlh.pvptitles.Files;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Utils;
@@ -23,7 +23,8 @@ public enum LangFile {
     ),
     PLUGIN_RELOAD(
             "&6Plugin recargado correctamente",
-            "&6Plugin recharged properly"),
+            "&6Plugin recharged properly"
+    ),
     FAME_ADD(
             "&e%tag% sumada correctamente",
             "&e%tag% added correctly"
@@ -37,127 +38,135 @@ public enum LangFile {
             "&e%tag% set correctly"
     ),
     FAME_MODIFY_ERROR(
-            "&4No has podido modificar la %tag% del jugador %player%", 
+            "&4No has podido modificar la %tag% del jugador %player%",
             "&4You could not change the %tag% player %player%"
     ),
     FAME_EDIT_PLAYER(
-            "&eTe han establecido tu %tag% a %fame%, tu rango ahora es %rank%", 
+            "&eTe han establecido tu %tag% a %fame%, tu rango ahora es %rank%",
             "&eYour %tag% has been established to %fame%, Your rank is now %rank%"
     ),
     COMMAND_FORBIDDEN(
-            "&4No puedes ejecutar ese comando", 
+            "&4No puedes ejecutar ese comando",
             "&4You can not execute that command"
     ),
     COMMAND_NO_PERMISSIONS(
-            "&4No tienes permiso para hacer eso", 
+            "&4No tienes permiso para hacer eso",
             "&4You are not allowed to do that"
     ),
     COMMAND_ARGUMENTS(
-            "&4Te faltan/sobran argumentos!", 
+            "&4Te faltan/sobran argumentos!",
             "&4Your spare arguments!"
     ),
     COMMAND_RANK_INFO(
-            "Para visualizar datos sobre tu fama", 
+            "Para visualizar datos sobre tu fama",
             "Display information about your fame"
     ),
     COMMAND_LADDER_INFO(
-            "Ranking de los mejores jugadores PvP", 
+            "Ranking de los mejores jugadores PvP",
             "Ranking of the best players in PvP"
     ),
     COMMAND_FAME_INFO(
-            "Ver/modificar el rango de un jugador", 
+            "Ver/modificar el rango de un jugador",
             "View/modify the range of a player"
     ),
-    COMMAND_SIGN_INFO(
-            "Interactuar con los carteles registrados en el server", 
-            "Interact with signs registered in the server"
+    COMMAND_BOARD_INFO(
+            "Interactuar con los tableros registrados en el server",
+            "Interact with boards registered in the server"
     ),
     COMMAND_PURGE_INFO(
-            "Limpia los usuarios inactivos", 
+            "Limpia los usuarios inactivos",
             "Clean inactive users"
     ),
     COMMAND_RELOAD_INFO(
-            "Recarga las funciones principales del plugin", 
+            "Recarga las funciones principales del plugin",
             "Recharge the main config"
     ),
     COMMAND_DATABASE_INFO(
-            "Gestiona los datos de la base de datos", 
+            "Gestiona los datos de la base de datos",
             "Manage data of the database"
     ),
-    SIGN_INVENTORY_TITLE(
-            "Tablero de puntuaciones", 
-            "LeaderBoard Per Signs"
+    BOARD_INVENTORY_TITLE(
+            "Tablero de puntuaciones",
+            "LeaderBoard"
     ),
-    SIGN_INVENTORY_ACTION1(
-            "&b[INFO] &fTeletransporte", 
+    BOARD_INVENTORY_ACTION1(
+            "&b[INFO] &fTeletransporte",
             "&b[INFO] &fTeleportation"
     ),
-    SIGN_INVENTORY_INFO1(
-            "Click izquierdo", 
+    BOARD_INVENTORY_INFO1(
+            "Click izquierdo",
             "Left click"
     ),
-    SIGN_INVENTORY_ACTION2(
-            "&b[INFO] &fBorrar Cartel", 
-            "&b[INFO] &fRemove sign"
+    BOARD_INVENTORY_ACTION2(
+            "&b[INFO] &fBorrar tablero",
+            "&b[INFO] &fRemove board"
     ),
-    SIGN_INVENTORY_INFO2(
-            "Click derecho", 
+    BOARD_INVENTORY_INFO2(
+            "Click derecho",
             "Right click"
-    ),    
-    SIGN_INVENTORY_ACTION3_1(
-            "Siguiente pagina | Click derecho", 
+    ),
+    BOARD_INVENTORY_ACTION3_1(
+            "Siguiente pagina | Click derecho",
             "Next page | Right click"
     ),
-    SIGN_INVENTORY_ACTION3_2(
-            "Pagina anterior | Click izquierdo", 
+    BOARD_INVENTORY_ACTION3_2(
+            "Pagina anterior | Click izquierdo",
             "Previous page | Left click"
     ),
-    SIGN_INVENTORY_INFO3(
-            "&b[INFO] Pagina %pageNumber%", 
+    BOARD_INVENTORY_INFO3(
+            "&b[INFO] Pagina %pageNumber%",
             "&b[INFO] Page %pageNumber%"
     ),
-    SIGN_DELETED(
-            "&aHas eliminado el cartel correctamente", 
-            "&aYou have removed the sign correctly"
+    BOARD_CREATED_CORRECTLY(
+            "&aTablero %name% registrado correctamente",
+            "&aBoard %name% registered correctly"
     ),
-    SIGN_MODEL_NOT_EXISTS(
-            "&4Ese modelo no existe", 
+    BOARD_DELETED(
+            "&aHas eliminado el tablero correctamente",
+            "&aYou have removed the board correctly"
+    ),
+    BOARD_NAME_ALREADY_EXISTS(
+            "&4Ese tablero ya existe",
+            "&4That board already exists"
+    ),
+    BOARD_NAME_NOT_EXISTS(
+            "&4Ese tablero no existe",
+            "&4That board does not exist"
+    ),
+    BOARD_MODEL_NOT_EXISTS(
+            "&4Ese modelo no existe",
             "&4That model does not exist"
     ),
-    SIGN_CREATED_CORRECTLY(
-            "&aCartel %name% registrado correctamente", 
-            "&aSign %name% registered correctly"
-    ),
-    SIGN_CANT_BE_PLACED(
-            "&4No puedes definirlo en una zona con los bloques ocupados", 
-            "&4You can not create a sign in an area occupied with other blocks"
+    BOARD_CANT_BE_PLACED(
+            "&4No puedes definirlo en una zona con los bloques ocupados",
+            "&4You can not create it in an area occupied with other blocks"
     ),
     PURGE_RESULT(
-            "&aSe han eliminado %cant% registros", 
+            "&aSe han eliminado %cant% registros",
             "&aHave been removed %cant% users"
     ),
     PLAYER_KILLED(
-            "&aHas matado a %killed% y has recibido %fameRec% de %tag%", 
+            "&aHas matado a %killed% y has recibido %fameRec% de %tag%",
             "&aYou killed %killed% and have received %fameRec% of %tag%"
     ),
     PLAYER_NEW_RANK(
-            "&bFelicidades! Ahora eres: %newRank%", 
+            "&bFelicidades! Ahora eres: %newRank%",
             "&bCongratulations! You are now: %newRank%"
     ),
     VETO_STARTED(
-            "&4Has sido vetado y no conseguiras mas %tag% hasta dentro de %time%", 
-            "&4You have been banned and not get more %tag% to within of %time%"
+            "&cHas sido vetado y no conseguiras mas %tag% hasta dentro de %time%",
+            "&cYou have been banned and not get more %tag% to within of %time%"
     ),
     VETO_FINISHED(
-            "&cVeto finalizado", 
+            "&cVeto finalizado",
             "&cVeto has ended"
     ),
     RANK_INFO(
-            "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%", 
+            "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%",
             "&bRankUP: &fYou need %rankup% of %tag% and %timeup% played to achieve %nextRank%"
     ),
     COMPLETE_TELEPORT_PLAYER(
-            "&6Has sido teletransportado correctamente", 
+            "&6Has sido teletransportado correctamente",
             "&6You have been teleported correctly"
     );
 
@@ -197,7 +206,7 @@ public enum LangFile {
      * @return String
      */
     public String getText(LangType lang) {
-        return Utils.TranslateColor(getDefaultText(lang));
+        return Utils.translateColor(getDefaultText(lang));
     }
 
     /**

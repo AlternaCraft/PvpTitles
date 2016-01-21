@@ -1,7 +1,6 @@
 package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Main.Manager;
-import es.jlh.pvptitles.Misc.Utils;
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ public class Ranks {
      * @param seconds Cantidad de dias
      * @return String con el nombre del titulo
      */
-    public static String GetRank(int fame, int seconds) {
+    public static String getRank(int fame, int seconds) {
         String rank = "";
 
         Map<Integer, String> rankList = Manager.rankList();
@@ -45,9 +44,9 @@ public class Ranks {
                 for (int j = i; j >= 0; j--) {
                     if (seconds >= reqTime.get(j)) {
                         nextRankFame = reqFame.get(j + 1) - fame;
-                        nextRankTitle = Utils.TranslateColor(rankList.get(j + 1));
+                        nextRankTitle = Utils.translateColor(rankList.get(j + 1));
                         nextRankTime = reqTime.get(j + 1) - seconds;
-                        return Utils.TranslateColor(rankList.get(j));
+                        return Utils.translateColor(rankList.get(j));
                     }
                 }
             }
@@ -61,7 +60,7 @@ public class Ranks {
      *
      * @return Entero con los puntos
      */
-    public static int FameToRankUp() {
+    public static int fameToRankUp() {
         return (nextRankFame < 0) ? 0 : nextRankFame;
     }
 

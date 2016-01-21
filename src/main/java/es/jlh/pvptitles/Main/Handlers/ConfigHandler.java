@@ -1,19 +1,16 @@
 package es.jlh.pvptitles.Main.Handlers;
 
 import es.jlh.pvptitles.Backend.ConfigDataStore;
-import es.jlh.pvptitles.Configs.LangFile;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import es.jlh.pvptitles.Main.Manager;
 import static es.jlh.pvptitles.Main.Manager.messages;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
-import java.io.File;
+import es.jlh.pvptitles.Objects.FileConfig;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  *
@@ -21,7 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class ConfigHandler {
     // Configuracion del config principal
-    private FileConfiguration config = null;
+    private FileConfig customConfig = null;
     private PvpTitles pvpTitles = null;
     
     public ConfigHandler(PvpTitles pvpTitles) {
@@ -29,58 +26,8 @@ public class ConfigHandler {
     }
     
     public void loadConfig(ConfigDataStore params) {
-        createConfig();
-        checkVersion();
+        customConfig = new FileConfig(pvpTitles);        
         loadData(Manager.rankList(), Manager.reqFame(), Manager.reqTime(), params);
-    }
-    
-    /**
-     * Método para crear el config en caso de que no exista
-     */
-    protected void createConfig() {
-        if (!new File(new StringBuilder().append(
-                pvpTitles.getDataFolder()).append(
-                        File.separator).append(
-                        "config.yml").toString()).exists() || !checkVersion()) {
-            pvpTitles.saveDefaultConfig();
-        }
-
-        pvpTitles.reloadConfig();
-        config = pvpTitles.getConfig();
-    }
-
-    /**
-     * Método para comprobar la version del config
-     *
-     * @return Si la version es la correcta o no
-     */
-    protected boolean checkVersion() {
-        File backupFile = new File(new StringBuilder().append(
-                pvpTitles.getDataFolder()).append(
-                        File.separator).append(
-                        "config.backup.yml").toString());
-
-        File configFile = new File(new StringBuilder().append(
-                pvpTitles.getDataFolder()).append(
-                        File.separator).append(
-                        "config.yml").toString());
-
-        YamlConfiguration configV = YamlConfiguration.loadConfiguration(configFile);
-        
-        if (!configV.contains("Version")
-                || !configV.getString("Version").equals(pvpTitles.getConfig().getDefaults().getString("Version"))) {
-
-            if (backupFile.exists()) {
-                backupFile.delete();
-            }
-
-            configFile.renameTo(backupFile);
-            showMessage(ChatColor.RED + "Mismatch config version, a new one has been created.");
-
-            return false;
-        } else {
-            return true;
-        }
     }
     
     /**
@@ -94,8 +41,10 @@ public class ConfigHandler {
     protected void loadData(Map<Integer, String> rankList, Map<Integer, Integer> reqFame, 
             Map<Integer, Integer> reqTime, ConfigDataStore params) {
         // Set debug mode
-        PvpTitles.debugMode = config.getBoolean("Debug");
+        FileConfiguration config = getConfig();
         
+        PvpTitles.debugMode = config.getBoolean("Debug");
+
         List<String> configList = (List<String>) config.getList("RankNames");
         List<Integer> requFame = (List<Integer>) config.getList("ReqFame");
         List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
@@ -128,9 +77,6 @@ public class ConfigHandler {
 
         params.getNoPurge().addAll(config.getStringList("NoPurge"));
 
-        params.setAuto_export_to_sql(config.getBoolean("Ebean.exportToSQL"));
-        params.setAuto_export_to_json(config.getBoolean("Mysql.exportToJSON"));
-
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
         if (params.isPvpTitles_Bridge()) {
             DBHandler.tipo = DBTYPE.MYSQL;
@@ -162,6 +108,9 @@ public class ConfigHandler {
             messages = LangFile.LangType.EN;
         }
 
+        params.displayInChat(config.getBoolean("DisplayTitleInChat"));
+        params.displayLikeHolo(config.getBoolean("DisplayTitleOverPlayer"));
+        params.setHolotagformat(config.getString("HoloTitleFormat"));
         params.setPrefixColor(config.getString("PrefixColor"));
         params.setTag(config.getString("Tag"));
         params.setPrefix(config.getString("Prefix"));
@@ -191,6 +140,6 @@ public class ConfigHandler {
     }    
 
     public FileConfiguration getConfig() {
-        return config;
+        return customConfig.getConfig();
     }
 }

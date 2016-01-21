@@ -1,8 +1,8 @@
 package es.jlh.pvptitles.Managers;
 
+import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Bukkit;
 
 /**
  *
@@ -13,7 +13,7 @@ public class CleanTaskManager {
     /**
      * contante TICKS para saber el tiempo en segundos
      */
-    public static final int TICKS = 20;
+    public static final long TICKS = 20L;
 
     private String killer = null;
     private AntiFarmManager afm = null;  
@@ -26,20 +26,20 @@ public class CleanTaskManager {
     }
 
     public void addVictim(final String victim) {
-        cleanKills.put(victim, Bukkit.getServer().getScheduler().
+        cleanKills.put(victim, PvpTitles.getInstance().getServer().getScheduler().
                 scheduleSyncDelayedTask(afm.getPlugin(), new Runnable() {
                     @Override
                     public void run() {
                         afm.cleanKillsOnVictim(killer, victim);
                         cleanKills.remove(victim);
                     }
-                }, afm.getPlugin().cm.params.getTimeL() * TICKS)
+                }, afm.getPlugin().cm.params.getTimeL() * TICKS * 1L)
         );
     }
 
     public void cleanVictim(String victim) {
         int task = cleanKills.get(victim);
-        Bukkit.getServer().getScheduler().cancelTask(task);
+        PvpTitles.getInstance().getServer().getScheduler().cancelTask(task);
         cleanKills.remove(victim);
     }
     

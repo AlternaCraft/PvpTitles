@@ -1,23 +1,27 @@
 package es.jlh.pvptitles.Main;
 
-import es.jlh.pvptitles.Configs.CommandFile;
-import es.jlh.pvptitles.Configs.LangFile;
-import es.jlh.pvptitles.Configs.LangFile.LangType;
-import es.jlh.pvptitles.Configs.ModelsFile;
-import es.jlh.pvptitles.Configs.ServersFile;
+import es.jlh.pvptitles.Files.CommandFile;
+import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Files.ModelsFile;
+import es.jlh.pvptitles.Files.ServersFile;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Backend.ConfigDataStore;
-import es.jlh.pvptitles.Objects.Boards.CustomBoard;
-import es.jlh.pvptitles.Objects.Boards.BoardData;
-import es.jlh.pvptitles.Objects.Boards.BoardModel;
+import es.jlh.pvptitles.Integrations.HolographicSetup;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.LeaderBoardManager;
-import es.jlh.pvptitles.Objects.TimedPlayer;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Main.Handlers.ConfigHandler;
 import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
+import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
+import static es.jlh.pvptitles.Managers.CleanTaskManager.TICKS;
 import es.jlh.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +47,7 @@ public final class Manager {
     // Variable que almacena el plugin
     private PvpTitles pvpTitles = null;
     // Instancia de la clase
-    public static Manager instance = new Manager();
+    public static final Manager instance = new Manager();
 
     // Handlers
     public ConfigHandler ch = null;
@@ -53,10 +57,10 @@ public final class Manager {
     private LeaderBoardManager lbm = null;
 
     // Objetos para guardar los Titulos con sus respectivos puntos    
-    private static final Map<Integer, String> rankList = new HashMap();
-    private static final Map<Integer, Integer> reqFame = new HashMap();
-    private static final Map<Integer, Integer> reqTime = new HashMap();
-
+    private static final Map<Integer, String> RANKLIST = new HashMap();
+    private static final Map<Integer, Integer> REQFAME = new HashMap();
+    private static final Map<Integer, Integer> REQTIME = new HashMap();
+    
     // Resto de parametros
     public ConfigDataStore params = null;
 
@@ -72,7 +76,6 @@ public final class Manager {
 
     // Entero con el numero del evento
     private int eventoActualizador = -1;
-
     // Entero con el numero del evento
     private int eventoChecker = -1;
 
@@ -121,11 +124,9 @@ public final class Manager {
             return false;
         }
 
-        this.dbh.autoExportData();
-
         this.loadLang();
         this.loadModels();
-        this.loadSavedSigns();
+        this.loadSavedBoards();
         this.loadCommands();
 
         if (tipo == DBHandler.DBTYPE.MYSQL) {
@@ -133,7 +134,7 @@ public final class Manager {
         }
 
         this.loadActualizador();
-        this.loadRankChecker();
+        this.loadRankTimeChecker();
 
         return true;
     }
@@ -163,32 +164,45 @@ public final class Manager {
     /**
      * Método para guardar en memoria los scoreboards
      */
-    public void loadSavedSigns() {
-        List<BoardData> carteles = pvpTitles.cm.dbh.getDm().buscaCarteles();
+    public void loadSavedBoards() {
+        List<SignBoardData> carteles = pvpTitles.cm.dbh.getDm().buscaBoards();
 
         lbm.vaciar(); // Evito duplicados
 
+        // Signs
         for (BoardData cartel : carteles) {
-            BoardModel sm = pvpTitles.cm.searchModel(cartel.getModelo());
+            BoardModel bm = searchModel(cartel.getModelo());
 
-            if (sm == null) {
-                pvpTitles.cm.dbh.getDm().borraCartel(cartel.getL());
-
-                showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
-                        + "' removed because the model has not been found...");
-
+            if (bm == null) {
+                if (!pvpTitles.cm.dbh.getDm().borraBoard(cartel.getLocation())) {
+                    PvpTitles.logError("Error deleting board", null);
+                }
+                else {
+                    showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
+                            + "' removed because the model has not been found...");
+                }
                 continue;
             }
 
-            CustomBoard cs = new CustomBoard(cartel, sm);
+            ModelController mc = new ModelController();
+            mc.preprocessUnit(bm.getParams());
+            
+            SignBoard cs = new SignBoard(cartel, bm, mc);
+            
             cs.setLineas(new String[0]);
-            cs.setMatSign(cartel.getSignMaterial());
+            cs.setMatSign(((SignBoardData) cartel).getSignMaterial());
 
             lbm.loadBoard(cs);
         }
 
-        showMessage(ChatColor.YELLOW + "" + this.lbm.getSigns().size()
-                + " scoreboards " + ChatColor.AQUA + "loaded correctly."
+        // Holograms
+        if (HolographicSetup.isHDEnable) {
+            HolographicSetup.loadHolograms();
+        }
+        
+        showMessage(ChatColor.YELLOW + "" + this.lbm.getBoards().size()
+                + " scoreboards "+((HolographicSetup.isHDEnable)?"":"per signs ") 
+                + ChatColor.AQUA + "loaded correctly."
         );
     }
 
@@ -196,7 +210,7 @@ public final class Manager {
      * Método para buscar un modelo de tabla de puntuaciones
      *
      * @param modelo String con el modelo a buscar
-     * @return SignModel con los datos del modelo
+     * @return BoardModel con los datos del modelo
      */
     public BoardModel searchModel(String modelo) {
         for (BoardModel smc : modelos) {
@@ -243,17 +257,14 @@ public final class Manager {
                 Arrays.asList("onRank", "onFame", "onKillstreak", "onKill")
         );
 
-        for (Iterator<String> iterator = activos.iterator(); iterator.hasNext();) {
-            String next = iterator.next();
-
-            boolean nulos = true;
+        for (String reward : activos) {
+            boolean nulos = true; // No entro en ninguno ergo es en onkill
 
             for (String type : types) {
                 Map data = new HashMap();
                 
-                // Caso especial con onKill
-                String value = (type.equals("onKill")) ? "":lp.getString("Rewards." + next + "." + type);
-                
+                String value = lp.getString("Rewards." + reward + "." + type);
+
                 if (value != null || (type.equals("onKill") && nulos)) {
                     nulos = false;
 
@@ -262,18 +273,18 @@ public final class Manager {
                     }
 
                     // Valores de la recompensa
-                    if (lp.contains("Rewards." + next + ".money")) {
-                        data.put("money", Arrays.asList(lp.getInt("Rewards." + next + ".money")));
+                    if (lp.contains("Rewards." + reward + ".money")) {
+                        data.put("money", Arrays.asList(lp.getInt("Rewards." + reward + ".money")));
                     }
-                    
-                    data.put("commands", lp.getStringList("Rewards." + next + ".command"));
+
+                    data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
 
                     // Guardo en el mapa principal los valores para ese valor
                     commandsRw.get(type).put(value, data);
                 }
             }
         }
-        
+
         showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
 
@@ -283,24 +294,21 @@ public final class Manager {
     public void loadServers() {
         YamlConfiguration sf = new ServersFile().load();
 
-        Set<String> sfk = sf.getKeys(true);
+        Set<String> sfk = sf.getKeys(false);
 
-        for (Iterator<String> iterator = sfk.iterator(); iterator.hasNext();) {
-            String next = iterator.next();
-
+        for (String srv : sfk) {
             // Fix para evitar campos innecesarios
-            if (next.equals("Worlds")) {
+            if (srv.equals("Worlds")) {
                 break;
             }
 
-            List<Short> serverIDs = sf.getShortList(next);
+            List<Short> serverIDs = sf.getShortList(srv);
 
             HashMap<Short, List<String>> server = new HashMap();
 
-            for (Iterator<Short> iterator1 = serverIDs.iterator(); iterator1.hasNext();) {
-                Short serverID = iterator1.next();
-                if (sf.get("Worlds." + next + "." + serverID) != null) {
-                    server.put(serverID, sf.getStringList("Worlds." + next + "." + serverID));
+            for (Short serverID : serverIDs) {
+                if (sf.get("Worlds." + srv + "." + serverID) != null) {
+                    server.put(serverID, sf.getStringList("Worlds." + srv + "." + serverID));
                 } else if (sf.get("Worlds." + serverID) != null) {
                     server.put(serverID, sf.getStringList("Worlds." + serverID));
                 } else {
@@ -308,7 +316,7 @@ public final class Manager {
                 }
             }
 
-            servers.put(next, server);
+            servers.put(srv, server);
         }
 
         showMessage(ChatColor.YELLOW + "" + servers.size() + " servers combined "
@@ -321,7 +329,7 @@ public final class Manager {
     public void loadActualizador() {
         // Elimino el evento en caso de que estuviera ya creado
         if (this.eventoActualizador != -1) {
-            Bukkit.getServer().getScheduler().cancelTask(eventoActualizador);
+            pvpTitles.getServer().getScheduler().cancelTask(eventoActualizador);
         }
 
         // Optimizador
@@ -329,12 +337,12 @@ public final class Manager {
             return;
         }
 
-        this.eventoActualizador = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
+        this.eventoActualizador = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                getLbm().updateBoard();
+                getLbm().updateBoards();
             }
-        }, 20 * 5, 20 * (this.params.getLBRefresh() * 60));
+        }, TICKS * 5L, TICKS * (this.params.getLBRefresh() * 60L));
 
         showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh()
                 + " min]" + ChatColor.AQUA + " loaded correctly."
@@ -344,10 +352,10 @@ public final class Manager {
     /**
      * Método para comprobar el rango según el tiempo
      */
-    public void loadRankChecker() {
+    public void loadRankTimeChecker() {
         // Elimino el evento en caso de que estuviera ya creado
         if (this.eventoChecker != -1) {
-            Bukkit.getServer().getScheduler().cancelTask(eventoChecker);
+            pvpTitles.getServer().getScheduler().cancelTask(eventoChecker);
         }
 
         // Optimizador
@@ -355,45 +363,48 @@ public final class Manager {
             return;
         }
 
-        this.eventoChecker = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
+        this.eventoChecker = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
                 Set<TimedPlayer> tp = pvpTitles.getPlayerManager().getTimedPlayers();
 
-                for (Iterator<TimedPlayer> iterator = tp.iterator(); iterator.hasNext();) {
-                    TimedPlayer next = iterator.next();
-
-                    if (!next.hasSession()) {
+                for (TimedPlayer timedPlayer : tp) {
+                    // Fix para evitar nullpointerexception
+                    if (!timedPlayer.hasSession() || !timedPlayer.getOfflinePlayer().isOnline()) {
                         continue;
                     }
 
-                    int actualFame = dbh.getDm().loadPlayerFame(next.getUniqueId(), null);
-                    int savedTimeB = dbh.getDm().loadPlayedTime(next.getUniqueId());
+                    int actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
+                    int savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
 
-                    String rankB = Ranks.GetRank(actualFame, savedTimeB);
-                    int savedTimeA = savedTimeB + next.getTotalOnline();
-                    String rankA = Ranks.GetRank(actualFame, savedTimeA);
+                    String rankB = Ranks.getRank(actualFame, savedTimeB);
+                    int savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
+                    String rankA = Ranks.getRank(actualFame, savedTimeA);
 
+                    // Actualizo el tiempo del jugador en el server
                     if (!rankB.equals(rankA)) {
-                        dbh.getDm().savePlayedTime(next); // Actualizo el tiempo del jugador en el server
-                        next.removeSessions(); // Reinicio el tiempo a cero
-                        next.startSession(); // Nueva sesion                        
+                        if (!dbh.getDm().savePlayedTime(timedPlayer)) {
+                            PvpTitles.logError("Error saving played time to " + 
+                                    timedPlayer.getOfflinePlayer().getName(), null);
+                            continue;
+                        }
+                        timedPlayer.removeSessions(); // Reinicio el tiempo a cero
+                        timedPlayer.startSession(); // Nueva sesion
 
-                        if (next.getOfflinePlayer().isOnline()) {
-                            Player pl = Bukkit.getPlayer(next.getUniqueId());
+                        if (timedPlayer.getOfflinePlayer().isOnline()) {
+                            Player pl = Bukkit.getPlayer(timedPlayer.getUniqueId());
                             pl.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.
                                     getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
                         }
                     }
                 }
             }
-        }, 20 * 5 /* Tiempo para prevenir fallos */, 20 * this.params.getRankChecker());
+        }, TICKS * 5L /* Tiempo para prevenir fallos */, TICKS * this.params.getRankChecker());
 
         showMessage(ChatColor.YELLOW + "Rank Checker event [" + this.params.getRankChecker()
                 + " sec]" + ChatColor.AQUA + " loaded correctly."
         );
     }
-
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SOME GETTERS...">
     /**
@@ -402,7 +413,7 @@ public final class Manager {
      * @return Objeto que almacena la lista de titulos
      */
     public static Map<Integer, String> rankList() {
-        return rankList;
+        return RANKLIST;
     }
 
     /**
@@ -411,7 +422,7 @@ public final class Manager {
      * @return Objeto que almacena la lista de puntos de fama
      */
     public static Map<Integer, Integer> reqFame() {
-        return reqFame;
+        return REQFAME;
     }
 
     /**
@@ -420,7 +431,7 @@ public final class Manager {
      * @return Objeto que almacena la lista de dias
      */
     public static Map<Integer, Integer> reqTime() {
-        return reqTime;
+        return REQTIME;
     }
 
     /**
