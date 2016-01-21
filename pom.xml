@@ -105,7 +105,7 @@
     </properties>
     
     <build>
-        <finalName>PvpTitles-${project.version}</finalName>
+        <finalName>PvpTitles</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
         
