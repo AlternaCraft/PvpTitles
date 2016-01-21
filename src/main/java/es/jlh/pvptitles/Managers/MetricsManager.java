@@ -6,7 +6,6 @@ import es.jlh.pvptitles.Libraries.Metrics.Graph;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  *

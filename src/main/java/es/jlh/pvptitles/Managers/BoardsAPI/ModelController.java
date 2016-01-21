@@ -1,6 +1,5 @@
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
-import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
 import es.jlh.pvptitles.Objects.Params;
