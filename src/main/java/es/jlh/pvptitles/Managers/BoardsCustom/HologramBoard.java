@@ -17,12 +17,12 @@ import org.bukkit.Location;
  */
 public class HologramBoard extends Board {
 
-    private static final double BLOCKSPERCARACTER = 0.153;
-    private static final double BLOCKSPERROW = 0.25;
-    private static final double HEADER = 0.85;
-    private static final double SEPARATOR = 0.3;
-    
-    public static final double DEFAULT_POSITION = 1.5;
+    private static final double BLOCKSPERCARACTER = 0.153D;
+    private static final double BLOCKSPERROW = 0.25D;
+    private static final double HEADER = 0.85D;
+    private static final double SEPARATOR = 0.3D;
+
+    public static final double DEFAULT_POSITION = 1.5D;
 
     private final List<Double> xpos = new ArrayList();
 
@@ -61,10 +61,8 @@ public class HologramBoard extends Board {
                 this.model.getFilasJugadores(pf.size()), 1, this.getModel().isProgresivo());
 
         Location l = getData().getCustomL();
-        HolographicSetup.createHoloHead(l);
-        
         Location newL = new Location(l.getWorld(), l.getX(), l.getY(), l.getZ());
-        newL.setY(newL.getY()-HEADER);
+        newL.setY(newL.getY() - HEADER);
 
         int anchomaximo = 0;
         int c = 0;
@@ -82,15 +80,19 @@ public class HologramBoard extends Board {
                     if (cs.length <= c) {
                         continue;
                     }
-                    
-                    String param = (cs[c] != null && cs[c].contains("<main>") ? "Top " + 
-                            this.getModel().getCantidad():cs[c]);
 
-                    // Longitud para colocar las columnas de la tabla
+                    String param = cs[c];
+                    
                     if (param != null) {
-                        String fix = Utils.removeColors(param);
-                        if (fix.length() > maxlength) {
-                            maxlength = fix.length();
+                        if (param.contains("<main>"))  {
+                            HolographicSetup.createHoloHead(l, getModel().getCantidad());
+                            param = "";
+                        } else {
+                            // Longitud para colocar las columnas de la tabla
+                            String fix = Utils.removeColors(param);
+                            if (fix.length() > maxlength) {
+                                maxlength = fix.length();
+                            }
                         }
                     }
 

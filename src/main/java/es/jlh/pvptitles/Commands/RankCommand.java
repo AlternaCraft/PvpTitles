@@ -57,9 +57,12 @@ public class RankCommand implements CommandExecutor {
         int racha = (HandlePlayerFame.KILLSTREAK.containsKey(player.getName())) ? HandlePlayerFame.KILLSTREAK.get(player.getName()) : 0;
         int seconds = pt.cm.dbh.getDm().loadPlayedTime(player.getUniqueId())
                 + pt.getPlayerManager().getPlayer(Bukkit.getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+        
         String rank = Ranks.getRank(fame, seconds);
+        
         int rankup = Ranks.fameToRankUp();
         int timeup = Ranks.nextRankTime();
+        
         String nextRank = Ranks.nextRankTitle();
         String tag = pt.cm.params.getTag();
 
@@ -76,10 +79,10 @@ public class RankCommand implements CommandExecutor {
                     .replace("%tag%", tag).replace("%nextRank%", nextRank));
         }
 
-        if (HandlePlayerFame.getAfm().isVetado(player.getName())) {
+        if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
             player.sendMessage("  * " + LangFile.VETO_STARTED.getText(Localizer.getLocale(player))
                     .replace("%tag%", pt.cm.params.getTag())
-                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(player.getName()))));
+                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(player.getUniqueId().toString()))));
         }
     }
 }

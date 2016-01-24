@@ -110,7 +110,10 @@ public class HandleFame implements Listener {
         if (data.containsKey("money")) {
             if (economy != null) {
                 List<String> money = data.get("money");
-                economy.depositPlayer(pl, Integer.valueOf(money.get(money.size() - 1)));
+                if (money != null && !money.isEmpty()) {
+                    Double cant = Double.valueOf(money.get(0));
+                    economy.depositPlayer(pl, cant);
+                }
             }
         }
         if (data.containsKey("commands")) {

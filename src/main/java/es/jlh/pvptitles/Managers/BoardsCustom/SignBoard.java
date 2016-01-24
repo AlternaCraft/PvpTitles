@@ -124,7 +124,7 @@ public class SignBoard extends Board {
                     cleanLines(newSign);
 
                     for (int l = 0; l < col.length; l++) {
-                        String v = col[l];
+                        String v = (col[l] == null) ? "":col[l];
                         if (i == 0 && j == 0 && k == 0) { // Caso main
                             if (col[0].contains("<main>")) {
                                 if (lineas != null && lineas.length > 0) {
@@ -306,7 +306,7 @@ public class SignBoard extends Board {
                     for (int j = antj; j < rows.length; j++) {
                         if (j - antj > 3) { // Siguiente cartel
                             rep = true;
-                            antj = 4;
+                            antj = j; // Guardo la ultima fila recorrida
                             break;
                         }
 

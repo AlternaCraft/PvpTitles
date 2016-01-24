@@ -273,7 +273,7 @@ public final class Manager {
 
                     // Valores de la recompensa
                     if (lp.contains("Rewards." + reward + ".money")) {
-                        data.put("money", Arrays.asList(lp.getInt("Rewards." + reward + ".money")));
+                        data.put("money", Arrays.asList(lp.getString("Rewards." + reward + ".money")));
                     }
 
                     data.put("commands", lp.getStringList("Rewards." + reward + ".command"));

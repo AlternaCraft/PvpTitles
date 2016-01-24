@@ -103,6 +103,11 @@ public class BoardModel {
         return columnas;
     }
 
+    /**
+     * Método para recibir las filas por el bloque
+     * 
+     * @return Integer[]
+     */
     private Integer[] getFilasPerBloque() {
         int total = this.params.size();
         Integer[] values = new Integer[total - 1];
@@ -127,6 +132,13 @@ public class BoardModel {
         return values;
     }
 
+    /**
+     * Método para recibir las filas de títulos
+     * 
+     * @param divisor Entero con el divisor
+     * 
+     * @return Entero con el número de filas
+     */
     public int getFilasSinJugadores(int divisor) {
         Integer[] values = getFilasPerBloque();
         int filas = 0;

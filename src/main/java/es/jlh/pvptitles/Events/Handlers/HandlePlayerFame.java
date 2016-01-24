@@ -155,14 +155,15 @@ public class HandlePlayerFame implements Listener {
             int kills = 0;
 
             Player killer = death.getEntity().getKiller();
-            String victim = death.getEntity().getName();
+            String killername = killer.getUniqueId().toString();
+            String victim = death.getEntity().getUniqueId().toString();
             
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
-            if (afm.isVetado(killer.getName()) || killer.getName().equalsIgnoreCase(victim)) {
-                if (afm.isVetado(killer.getName())) {
+            if (afm.isVetado(killername) || killername.equalsIgnoreCase(victim)) {
+                if (afm.isVetado(killername)) {
                     killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
                             .replace("%tag%", this.cm.params.getTag())
-                            .replace("%time%", splitToComponentTimes(afm.getVetoTime(killer.getName()))));
+                            .replace("%time%", splitToComponentTimes(afm.getVetoTime(killername))));
                 }
                 return;
             }
@@ -171,13 +172,13 @@ public class HandlePlayerFame implements Listener {
             antiFarm(killer, victim);
 
             // Lo compruebo de nuevo por si le acaban de vetar
-            if (afm.isVetado(killer.getName())) {
+            if (afm.isVetado(killername)) {
                 return;
             }
 
             // Si ya esta en el mapa guardo sus bajas
-            if (KILLSTREAK.containsKey(killer.getName())) {
-                kills = KILLSTREAK.get(killer.getName());
+            if (KILLSTREAK.containsKey(killername)) {
+                kills = KILLSTREAK.get(killername);
             }
 
             // Final de la KILLSTREAK de bajas
@@ -189,8 +190,8 @@ public class HandlePlayerFame implements Listener {
             int fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
 
             kills += 1;
-            this.calculateRank(victim, killer, fame, kills);
-            HandlePlayerFame.KILLSTREAK.put(killer.getName(), kills);
+            this.calculateRank(death.getEntity().getName(), killer, fame, kills);
+            HandlePlayerFame.KILLSTREAK.put(killername, kills);
         }
     }
 
@@ -201,15 +202,17 @@ public class HandlePlayerFame implements Listener {
      * @param victim String con el nombre del asesinado
      */
     private void antiFarm(final Player killer, String victim) {
-        if (afm.hasKiller(killer.getName())) {
-            CleanTaskManager ck = csKiller.get(killer.getName());
+        final String killername = killer.getUniqueId().toString();
+        
+        if (afm.hasKiller(killername)) {
+            CleanTaskManager ck = csKiller.get(killername);
 
             // Ya lo ha matado antes
-            if (afm.hasVictim(killer.getName(), victim)) {
+            if (afm.hasVictim(killername, victim)) {
                 ck.cleanVictim(victim); // Cancel task
 
-                if (afm.getKillsOnVictim(killer.getName(), victim) > this.cm.params.getKills() - 1) {
-                    afm.vetar(killer.getName(), System.currentTimeMillis());
+                if (afm.getKillsOnVictim(killername, victim) > this.cm.params.getKills() - 1) {
+                    afm.vetar(killername, System.currentTimeMillis());
                     ck.cleanAll(); // Cancel all tasks
 
                     killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
@@ -219,10 +222,10 @@ public class HandlePlayerFame implements Listener {
                     pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, new Runnable() {
                         @Override
                         public void run() {
-                            afm.cleanVeto(killer.getName());
+                            afm.cleanVeto(killername);
 
                             // Limpio su historial
-                            afm.cleanAllVictims(killer.getName());
+                            afm.cleanAllVictims(killername);
 
                             killer.sendMessage(PLUGIN + LangFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
                         }
@@ -233,25 +236,25 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Si llega aqui no ha abusado, de momento...
-            afm.addKillOnVictim(killer.getName(), victim);
+            afm.addKillOnVictim(killername, victim);
             // Evento de limpieza...
             ck.addVictim(victim);
 
         } else {
-            CleanTaskManager ck = new CleanTaskManager(afm, killer.getName());
+            CleanTaskManager ck = new CleanTaskManager(afm, killername);
 
-            afm.addKiller(killer.getName());
-            afm.addKillOnVictim(killer.getName(), victim);
+            afm.addKiller(killername);
+            afm.addKillOnVictim(killername, victim);
             ck.addVictim(victim);
 
-            csKiller.put(killer.getName(), ck);
+            csKiller.put(killername, ck);
         }
     }
 
     /**
      * Método para calcular los puntos que ha ganado y si mantiene o no el rango
      *
-     * @param killed Jugador eliminado
+     * @param killed Nombre del jugador eliminado
      * @param player Jugador superviviente
      * @param fame Puntos pvp
      * @param kills Racha de bajas

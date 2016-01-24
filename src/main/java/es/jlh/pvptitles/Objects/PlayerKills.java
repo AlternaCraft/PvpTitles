@@ -8,7 +8,7 @@ import java.util.Map;
  * @author AlternaCraft
  */
 public class PlayerKills {
-    private Map<String, Integer> victims = new HashMap();
+    private final Map<String, Integer> victims = new HashMap();
 
     public PlayerKills() {
     }
@@ -32,6 +32,6 @@ public class PlayerKills {
     }
     
     public void cleanAll() {
-        victims = new HashMap();
+        victims.clear();
     }
 }

@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.4.1
+Version: 2.4.2
 ################
 
 ############################################################
@@ -16,7 +16,7 @@ Alert: true
 # Automatic updates
 Update: false
 
-# Debug mode (Shows database queries)
+# Debug mode (Shows database queries in console)
 Debug: false
 
 ############################################################
@@ -150,9 +150,9 @@ DisplayTitleInChat: true
 ## HOLOGRAMS ##
 # Display the player title over his head (EXPERIMENTAL)
 DisplayTitleOverPlayer: false
-# TitleFormat Holographic (For all ranks)
+# Holographic title's format (For all ranks)
 HoloTitleFormat: "[%rank%]"
-# This requires that HolographicDisplays be enabled
+# This requires that HolographicDisplays be loaded
 ## -- ##
 
 # Pss, you can use color codes in the title names to get custom colors per rank (Use double quotes)

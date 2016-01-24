@@ -76,6 +76,11 @@
 //  Ver. 2.4.1  20/01/2016  Optimizadas las clases del proyecto, arreglado fallo
 //   con el timer que comprueba el tiempo AFK si CheckAFK es false y añadido
 //   mensaje de veto en el comando /pvprank
+//  Ver. 2.4.2  22/01/2016  Añadida opcion para incluir lineas vacios en tableros, 
+//   nuevas variables para los tableros y main opcional en los hologramas. Arreglado
+//   fallo al intentar otorgar premio de economia (money)
+//  Ver. 2.4.2  24/01/2016  Optimizada la clase antifarm para usar uuid en vez del
+//   nombre del jugador
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 

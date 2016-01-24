@@ -144,6 +144,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
             plwClass.setPoints(fame);
             ebeanServer.getDatabase().save(plwClass);
         } else {
+            // Base
+            plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID")
+                    .where()
+                    .ieq("playerUUID", playerUUID.toString())
+                    .findUnique();
 
             plClass.setPoints(fame);
             ebeanServer.getDatabase().save(plClass);

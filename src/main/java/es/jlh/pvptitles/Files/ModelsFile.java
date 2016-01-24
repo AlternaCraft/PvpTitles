@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -20,7 +22,7 @@ import java.util.Arrays;
 public class ModelsFile {
 
     private static final String DEFAULTMODELS = ""
-            + "// (En) http://dev.bukkit.org/bukkit-plugins/pvptitles/pages/signs/\n"
+            + "// (En) http://dev.bukkit.org/bukkit-plugins/pvptitles/pages/boards/\n"
             + "//\n"
             + "// -------------------\n"
             + "// Lista de variables\n"
@@ -43,17 +45,22 @@ public class ModelsFile {
             + "// | -> indica nuevo cartel\n"
             + "// / -> indica salto de linea (Nueva fila)\n"
             + "//\n"
-            + "// $spacing=<valor> -> <valor> Indica que elemento sera reemplazado por espacio\n"
+            + "// $spacing=<caracter> -> Indica que caracter sera reemplazado por espacio\n"
+            + "// $fwslash=<caracter> -> Indica que caracter sera reemplazado por /\n"
+            + "// $vcbar=<caracter> -> Indica que caracter sera reemplazado por |\n"
             + "//\n"
+            + "// Como usar:\n"
+            + "// ----------\n"
+            + "// La ultima linea del cartel tienen que ser la que contenga las variables\n"
+            + "// Ademas, las variables usan todas las lineas del cartel\n"
+            + "// Puedes repetir todas las variables en diferentes columnas para repartir el contenido\n"
             + "// Recuerda que puedes usar codigos de colores (&)\n"
-            + "// Las variables usan todas las lineas del cartel\n"
-            + "// Puedes repetir variables en diferentes carteles\n"            
+            + "// Puedes usar lineas vacias para indicar una fila vacia\n"
             + "//\n"
             + "//\n"
             + "// ----------------------------------------------------------------\n"
             + "// Tipos prehechos (Recuerda poner '#' antes del nombre del modelo)\n"
             + "// ----------------------------------------------------------------\n"
-            + "\n\n"
             + "#Basico1(3)$spacing=.\n"
             + "<main>\n"
             + "<pos>.<player>[<fame>]\n"
@@ -67,6 +74,34 @@ public class ModelsFile {
             + "<player>[<rank>] | &e<player>&r[<rank>]";
 
     private static final Charset CHARSET = Charset.forName("UTF-8");
+
+    private static final String FIRST_CHAR_MODEL = "#";
+    private static final String SPLIT_MODELS = "&&";
+
+    private static final String NEW_LINE = "\\/";
+    private static final String NEW_COLUMN = "\\|";
+
+    enum UTILS {
+        SPACING("$spacing=", " "),
+        FORWARD_SLASH("$fwslash=", "/"),
+        VERTICAL_BAR("$vcbar=", "|");
+
+        private String var = null;
+        private String value = null;
+
+        UTILS(String var, String value) {
+            this.var = var;
+            this.value = value;
+        }
+
+        public String getVar() {
+            return var;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 
     /**
      * Método para cargar un fichero en una variable
@@ -85,65 +120,85 @@ public class ModelsFile {
         br = Files.newBufferedReader(Paths.get(ruta), CHARSET);
 
         // Lectura del fichero
-        String linea;
-        String modelos = "";
+        String linea, modelos;
 
         StringBuilder buf = new StringBuilder();
-        
+
         // Filtro comentarios
         while ((linea = br.readLine()) != null) {
-            if (linea.length() > 0 && linea.charAt(0) == '#') {
-                buf.append(linea).append("&&");
+            if (linea.length() > 0 && linea.charAt(0) == FIRST_CHAR_MODEL.charAt(0)) {
+                buf.append(linea).append(SPLIT_MODELS);
                 break;
             }
         }
-        
+
         while ((linea = br.readLine()) != null) {
-            buf.append(linea).append("&&");
+            buf.append(linea).append(SPLIT_MODELS);
         }
 
         // Limpieza de caracteres
         modelos = buf.toString().replace(" ", "");
 
-        al = new ArrayList<>(Arrays.asList(modelos.split("#")));
+        al = new ArrayList<>(Arrays.asList(modelos.split(FIRST_CHAR_MODEL)));
         // Modelos partidos
         for (int i = 1; i < al.size(); i++) {
-            String[] datos = al.get(i).split("&&");
+            String[] datos = al.get(i).split(SPLIT_MODELS);
 
             String nombre = datos[0].substring(0, datos[0].indexOf('('));
             short cant = Short.valueOf(datos[0].substring(datos[0].indexOf('(') + 1, datos[0].indexOf(')')));
 
             ArrayList<ArrayList<ArrayList<String>>> params = new ArrayList();
 
+            Map<UTILS, String> replazator = new HashMap();
             // Filas partidas
             for (int j = 1; j < datos.length; j++) {
-                if (datos[0].contains("$spacing=")) {
-                    String spacing = datos[0].substring(datos[0].indexOf("$spacing=") + 9, datos[0].length());
-                    datos[j] = datos[j].replace(spacing, " ");
+                for (UTILS var : UTILS.values()) { // Almaceno datos para cambiarlos posteriormente
+                    if (datos[0].contains(var.getVar())) {
+                        int start = datos[0].indexOf(var.getVar());
+                        int end = var.getVar().length();
+                        String spacing = datos[0].substring(start + end, start + end + 1);
+                        replazator.put(var, spacing);
+                    }
                 }
 
                 // Fix para evitar que no coja la ultima columna
                 boolean b = false;
                 String fixcols = datos[j];
-                
-                if (fixcols.charAt(datos[j].length()-1) == '|') {
+
+                if (fixcols.length() > 0 && fixcols.charAt(fixcols.length() - 1) == '|') {
                     datos[j] += " ";
                     b = true;
-                }      
-                
-                String[] datosPartidos = datos[j].split("\\|");                
-                if (b) datosPartidos[datosPartidos.length-1] = "";                
+                }
+
+                String[] datosPartidos = datos[j].split(NEW_COLUMN);
+                if (b) {
+                    datosPartidos[datosPartidos.length - 1] = "";
+                }
                 // FIN DEL FIX
-                
+
                 ArrayList<ArrayList<String>> contenido = new ArrayList();
 
                 // Columnas partidas
                 for (String datosPartido : datosPartidos) {
                     ArrayList<String> fc = new ArrayList();
-                    String[] dp = datosPartido.split("\\/");
+                    String[] dp = datosPartido.split(NEW_LINE);
 
                     // Filas de las columnas partidas
                     fc.addAll(Arrays.asList(dp));
+
+                    for (int k = 0; k < fc.size(); k++) {
+                        String next = fc.get(k);
+                        
+                        // Cambio los valores guardados anteriormente por los nuevos
+                        for (Map.Entry<UTILS, String> entry : replazator.entrySet()) {
+                            UTILS key = entry.getKey();
+                            String value = entry.getValue();
+                            
+                            next = next.replace(value, key.getValue());
+                        }
+                        
+                        fc.set(k, next);
+                    }
 
                     contenido.add(fc);
                 }
@@ -187,7 +242,7 @@ public class ModelsFile {
                 if (null != fichero) {
                     fichero.close();
                 }
-            } catch (Exception e2) {
+            } catch (Exception ex) {
             }
         }
 

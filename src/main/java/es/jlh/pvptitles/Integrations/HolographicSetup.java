@@ -30,8 +30,8 @@ public class HolographicSetup {
 
     public static String RANK_LINE = null;
 
-    public static final double TITLE_HEIGHT = 2.6;
-    public static final double CROUCH_HEIGHT = 2.2;
+    public static final double TITLE_HEIGHT = 2.6D;
+    public static final double CROUCH_HEIGHT = 2.2D;
     public static boolean isHDEnable = false;
 
     public static final Map<String, Hologram> HOLOPLAYERS = new HashMap();
@@ -110,9 +110,9 @@ public class HolographicSetup {
 
     // Player prefix
     public static Hologram createHoloTag(Player pl, String rank) {
-        Location l = new Location(pl.getLocation().getWorld(), pl.getLocation().getX(), 
-                    pl.getLocation().getY() + TITLE_HEIGHT, pl.getLocation().getZ());
-        
+        Location l = new Location(pl.getLocation().getWorld(), pl.getLocation().getX(),
+                pl.getLocation().getY() + TITLE_HEIGHT, pl.getLocation().getZ());
+
         Hologram h = HologramsAPI.createHologram(plugin, l);
         h.appendTextLine(RANK_LINE.replace("%rank%", rank));
 
@@ -127,27 +127,22 @@ public class HolographicSetup {
         h.delete();
     }
     // End Player Prefix    
-    
+
     // Crear
-    public static void createHoloHead(Location l) {
+    public static void createHoloHead(Location l, short top) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
-        //ItemStack icon = new ItemStack(Material.DIAMOND_HELMET);
-        h.appendTextLine(Utils.translateColor("&6&l+&r----------&6&l+"));
-        h.appendTextLine(Utils.translateColor("| &6&lPvpTitles&r |"));
-        h.appendTextLine(Utils.translateColor("&6&l+&r----------&6&l+"));
-        h.appendTextLine("");
-        //h.appendItemLine(icon);
+        h.appendTextLine(Utils.translateColor("&6&lPvpTitles"));
+        h.appendTextLine(Utils.translateColor("&6&l+&r------&6&l+"));
+        h.appendTextLine(Utils.translateColor("| &e&lTop " + top + "&r |"));
+        h.appendTextLine(Utils.translateColor("&6&l+&r------&6&l+"));
     }
 
     public static void createHologram(List<String> contenido, Location l) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
         for (String string : contenido) {
-            if (string == null) {
-                continue;
-            }
-            h.appendTextLine(string + ChatColor.RESET);
+            h.appendTextLine(string); // ChatColor.RESET
         }
     }
 

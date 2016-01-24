@@ -77,13 +77,13 @@ public class FameCommand implements CommandExecutor {
                     // Evitar nullpointerexception
                     int fameIncr = 0;
                     String world = null;
-                    
+
                     if (dm.params.isMw_enabled()) {
                         if (args.length < 4) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame add <player> <world_name> <famepoints>'");
                             return true;
                         }
-                        
+
                         world = args[2];
                         if (Bukkit.getWorld(world) == null) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
@@ -94,14 +94,20 @@ public class FameCommand implements CommandExecutor {
                         fameIncr = Integer.parseInt(args[2]);
                     }
                     //
-                    
+
                     int fameA = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
-                    
+
                     FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
-                    if (args.length >= 5 && args[4].contains("-s")) event.setSilent(true);
-                    
+                    if (dm.params.isMw_enabled()) {
+                        if (args.length >= 5 && args[4].contains("-s")) {
+                            event.setSilent(true);
+                        }
+                    } else if (args.length >= 4 && args[3].contains("-s")) {
+                        event.setSilent(true);
+                    }
+
                     pt.getServer().getPluginManager().callEvent(event);
-                    
+
                     if (!event.isCancelled()) {
                         if (!this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world)) {
                             PvpTitles.logError("Error saving player fame to " + opl.getName(), null);
@@ -121,21 +127,21 @@ public class FameCommand implements CommandExecutor {
                     sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame add <player> [<world_name>] <famepoints>'");
                 }
                 return true;
-                // </editor-fold>
+            // </editor-fold>
             case "see":
                 // <editor-fold defaultstate="collapsed" desc="SEE">
                 if (args.length == 2 || args.length == 3) {
                     int fameTotal = 0;
-                    
+
                     if (dm.params.isMw_enabled()) {
                         if (args.length == 2) {
                             String world = pt.getServer().getWorlds().get(0).getName();
-                            
+
                             if (sender instanceof Player) {
                                 Player pl = (Player) sender;
                                 world = pl.getWorld().getName();
                             }
-                            
+
                             fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                         } else {
                             fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
@@ -143,7 +149,7 @@ public class FameCommand implements CommandExecutor {
                     } else {
                         fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                     }
-                    
+
                     sender.sendMessage(PLUGIN + LangFile.FAME_SEE.getText(messages).
                             replace("%player%", args[1]).
                             replace("%fame%", String.valueOf(fameTotal)).
@@ -153,20 +159,20 @@ public class FameCommand implements CommandExecutor {
                     sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame see <player> [<world_name>]'");
                 }
                 return true;
-                // </editor-fold>
+            // </editor-fold>
             case "set":
                 // <editor-fold defaultstate="collapsed" desc="SET">
                 if (args.length >= 3) {
                     // Evitar nullpointerexception
                     int fameTotal = 0;
                     String world = null;
-                    
+
                     if (dm.params.isMw_enabled()) {
                         if (args.length < 4) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame set <player> <world_name> <famepoints>'");
                             return true;
                         }
-                        
+
                         world = args[2];
                         if (Bukkit.getWorld(world) == null) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
@@ -177,16 +183,22 @@ public class FameCommand implements CommandExecutor {
                         fameTotal = Integer.valueOf(args[2]);
                     }
                     //
-                    
+
                     int fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
-                    
+
                     fameTotal = (fameTotal < 0) ? 0 : fameTotal;
-                    
+
                     FameSetEvent event = new FameSetEvent(opl, fame, fameTotal);
-                    if (args.length >= 5 && args[4].contains("-s")) event.setSilent(true);
-                    
+                    if (dm.params.isMw_enabled()) {
+                        if (args.length >= 5 && args[4].contains("-s")) {
+                            event.setSilent(true);
+                        }
+                    } else if (args.length >= 4 && args[3].contains("-s")) {
+                        event.setSilent(true);
+                    }
+
                     pt.getServer().getPluginManager().callEvent(event);
-                    
+
                     if (!event.isCancelled()) {
                         if (!this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world)) {
                             PvpTitles.logError("Error saving player fame to " + opl.getName(), null);
@@ -205,7 +217,7 @@ public class FameCommand implements CommandExecutor {
                     sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <famepoints>'");
                 }
                 return true;
-                // </editor-fold>
+            // </editor-fold>
             default:
                 break;
         }
