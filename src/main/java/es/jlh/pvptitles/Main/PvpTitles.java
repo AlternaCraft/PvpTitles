@@ -81,6 +81,10 @@
 //   fallo al intentar otorgar premio de economia (money)
 //  Ver. 2.4.2  24/01/2016  Optimizada la clase antifarm para usar uuid en vez del
 //   nombre del jugador
+//  Ver. 2.4.3  25/01/2016  Arreglado fallo con pvpreload mientras carga las listas
+//   del config principal
+//  Ver. 2.4.3  26/01/2016  Añadida variable 'world' al mensaje FAME_EDIT_PLAYER,
+//   arreglado fallo con los jugadores mostrados en boards mientras MW esta activado
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -285,6 +289,10 @@ public class PvpTitles extends JavaPlugin {
     // Custom message
     public static void showMessage(String msg) {
         plugin.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
+    }
+    
+    public static void logMessage(String msg) {
+        LOGGER.info(msg);
     }
 
     private static final String MYSQL_CRAP_REGEX = "com.*: ";

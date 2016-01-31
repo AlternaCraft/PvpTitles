@@ -74,10 +74,11 @@ public class BoardCommand implements CommandExecutor {
                     if (args.length >= 4) {
                         String name = args[2];
                         String model = args[3];
-                        create(name, model, pl);
+                        String filter = (args.length >= 5) ? args[4] : "";
+                        create(name, model, filter, pl);
                     } else {
                         pl.sendMessage(PLUGIN + ChatColor.RED
-                                + "Syntax: 'pvpboard create <board_type> <name> <board_model>'");
+                                + "Syntax: 'pvpboard create <board_type> <name> <board_model> [<server_name>]'");
                     }
                     break;
                 case "remove":
@@ -105,7 +106,7 @@ public class BoardCommand implements CommandExecutor {
         return true;
     }
 
-    private void create(String name, String model, Player pl) {
+    private void create(String name, String model, String filter, Player pl) {
         BoardData bda = HologramsFile.loadHologram(name);
         if (bda != null) {
             pl.sendMessage(PLUGIN + LangFile.BOARD_NAME_ALREADY_EXISTS.getText(Localizer.getLocale(pl)));
@@ -125,6 +126,7 @@ public class BoardCommand implements CommandExecutor {
         BoardData bd = new BoardData(l);
         bd.setNombre(name);
         bd.setModelo(model);
+        bd.setServer(filter);
 
         ModelController mc = new ModelController();
         mc.preprocessUnit(bm.getParams());

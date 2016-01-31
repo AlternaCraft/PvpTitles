@@ -42,7 +42,7 @@ public class Utils {
     }
 
     public static int dividirEntero(int v, int div) {
-        return (v % div == 0) ? v / div : ((int) v / div) + 1;
+        return (v % div == 0 && v != 0) ? v / div : ((int) v / div) + 1;
     }
 
     public static String getHologramText(String str) {

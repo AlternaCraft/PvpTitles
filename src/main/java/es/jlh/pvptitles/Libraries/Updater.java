@@ -37,7 +37,7 @@ import org.json.simple.JSONValue;
  * <br>
  * If you are unsure about these rules, please read the plugin submission guidelines: http://goo.gl/8iU5l
  *
- * @author AlternaCraft
+ * @author Gravity
  * @version 2.3
  */
 
@@ -564,9 +564,9 @@ public class Updater {
         final String title = this.versionName;
         if (this.type != UpdateType.NO_VERSION_CHECK) {
             final String localVersion = this.plugin.getDescription().getVersion();
-            if (title.split(DELIMETER).length == 2) {
+            if (title.split(DELIMETER).length >= 2) {
                 // Get the newest file's version number
-                final String remoteVersion = title.split(DELIMETER)[1].split(" ")[0];
+                final String remoteVersion = title.split(DELIMETER)[title.split(DELIMETER).length - 1].split(" ")[0];
 
                 if (this.hasTag(localVersion) || !this.shouldUpdate(localVersion, remoteVersion)) {
                     // We already have the latest version, or this build is tagged for no-update

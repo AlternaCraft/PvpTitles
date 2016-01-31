@@ -99,6 +99,7 @@ public class FameCommand implements CommandExecutor {
 
                     FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
                     if (dm.params.isMw_enabled()) {
+                        event.setWorldname(world);
                         if (args.length >= 5 && args[4].contains("-s")) {
                             event.setSilent(true);
                         }
@@ -188,8 +189,9 @@ public class FameCommand implements CommandExecutor {
 
                     fameTotal = (fameTotal < 0) ? 0 : fameTotal;
 
-                    FameSetEvent event = new FameSetEvent(opl, fame, fameTotal);
+                    FameSetEvent event = new FameSetEvent(opl, fame, fameTotal);                    
                     if (dm.params.isMw_enabled()) {
+                        event.setWorldname(world);
                         if (args.length >= 5 && args[4].contains("-s")) {
                             event.setSilent(true);
                         }

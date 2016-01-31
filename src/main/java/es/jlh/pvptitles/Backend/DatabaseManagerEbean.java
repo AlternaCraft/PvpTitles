@@ -248,26 +248,24 @@ public class DatabaseManagerEbean implements DatabaseManager {
     /* OTROS */
     @Override
     public ArrayList<PlayerFame> getTopPlayers(short cant, String server) {
-        List<WorldPlayerPT> allPlayersW = new ArrayList();
-        List<PlayerPT> allPlayers = new ArrayList();
+        List<WorldPlayerPT> allPlayersW;
+        List<PlayerPT> allPlayers;
+
+        ArrayList<PlayerFame> rankedPlayers = new ArrayList();
 
         if (pt.cm.params.isMw_enabled()) {
             String mundos = "";
 
-            for (HashMap<Short, List<String>> allServers : pt.cm.servers.values()) {
-                if (allServers.containsKey(pt.cm.params.getMultiS())) {
-                    List<String> worlds = allServers.get(pt.cm.params.getMultiS());
-
-                    StringBuilder buf = new StringBuilder();
-                    for (String world : worlds) {
-                        buf.append("world = '").append(world).append("' OR ");
-                    }
-
-                    if (!worlds.isEmpty()) {
-                        mundos = buf.toString().substring(0, mundos.length() - 4);
-                    }
-
-                    break;
+            if (!pt.cm.params.showOnLeaderBoard()) {
+                List<String> worlds_disabled = pt.cm.params.getAffectedWorlds();
+                
+                StringBuilder buf = new StringBuilder();
+                for (String world : worlds_disabled) {
+                    buf.append("world != '").append(world).append("' AND ");
+                }
+                if (!worlds_disabled.isEmpty()) {
+                    mundos = buf.toString();
+                    mundos = mundos.substring(0, mundos.length() - 5);
                 }
             }
 
@@ -278,24 +276,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     .setMaxRows(cant)
                     .findList();
 
-        } else {
-            allPlayers = ebeanServer.getDatabase().find(PlayerPT.class)
-                    .select("playerUUID, points, playedTime")
-                    .orderBy("points desc")
-                    .setMaxRows(cant)
-                    .findList();
-        }
-
-        ArrayList<PlayerFame> rankedPlayers = new ArrayList();
-
-        if (pt.cm.params.isMw_enabled()) {
-            List<String> worlds_disabled = pt.cm.params.getAffectedWorlds();
-
             for (int i = 0; i < allPlayersW.size(); i++) {
-                if (!pt.cm.params.showOnLeaderBoard() && worlds_disabled.contains(allPlayersW.get(i).getWorld())) {
-                    continue;
-                }
-
                 PlayerPT time = ebeanServer.getDatabase().find(PlayerPT.class)
                         .select("playerUUID, playedTime")
                         .where()
@@ -310,6 +291,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 rankedPlayers.add(pf);
             }
         } else {
+            allPlayers = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID, points, playedTime")
+                    .orderBy("points desc")
+                    .setMaxRows(cant)
+                    .findList();
+
             for (int i = 0; i < allPlayers.size(); i++) {
                 PlayerFame pf = new PlayerFame(allPlayers.get(i).getPlayerUUID(),
                         allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime(),

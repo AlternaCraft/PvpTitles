@@ -13,9 +13,11 @@ public class FameEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final OfflinePlayer player;
-    
+        
     private final int fame;
     private final int fameIncr;
+    
+    private String worldname = null;
     private int killstreak = 0;
     
     private boolean silent = false;
@@ -58,6 +60,14 @@ public class FameEvent extends Event implements Cancellable {
 
     public void setSilent(boolean silent) {
         this.silent = silent;
+    }
+
+    public String getWorldname() {
+        return worldname;
+    }
+
+    public void setWorldname(String worldname) {
+        this.worldname = worldname;
     }
     
     @Override

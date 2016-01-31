@@ -1,5 +1,5 @@
 name: PvpTitles
-version: 2.4.2
+version: 2.4.3
 description: Get epic titles in pvp
 database: true
 
@@ -26,7 +26,7 @@ commands:
         permission: pvptitles.setRank
     pvpBoard:
         description: Manage scoreboards.
-        usage: /<command> [create|remove <board_type> <name> <board_model>]
+        usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
         aliases: pvpTablero
         permission: pvptitles.board
     pvpPurge:

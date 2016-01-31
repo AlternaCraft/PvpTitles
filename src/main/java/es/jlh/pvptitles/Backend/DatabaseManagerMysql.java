@@ -51,14 +51,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
     private static final String PLAYER_POINTS = "select points from PlayerMeta where psid=?";
     private static final String MWPLAYER_POINTS = "select points from PlayerWorld "
             + "where psid=? AND worldName like ?";
-    
+
     private static final String PLAYEDTIME = "select playedTime from PlayerMeta where psid=?";
-    
+
     private static final String TOPPLAYERS = "select serverID, playerUUID, points, playedTime "
             + "from PlayerServer inner join PlayerMeta on id=psid";
     private static final String TOPMWPLAYERS = "select serverID, playerUUID, PlayerWorld.points, worldName, playedTime "
             + "from PlayerServer inner join PlayerWorld on id=PlayerWorld.psid inner join PlayerMeta on id=PlayerMeta.psid";
-    
+
     private static final String CREATE_PLAYER = "insert into PlayerServer(playerUUID, serverID) values (?,?)";
     private static final String CREATE_MWPLAYER = "insert into PlayerWorld(psid, worldName) values (?,?)";
     private static final String CREATE_PLAYERMETA = "insert into PlayerMeta(psid) values (?)";
@@ -73,16 +73,16 @@ public class DatabaseManagerMysql implements DatabaseManager {
             + "points=? where psid=?";
     private static final String UPDATE_MWPLAYER_POINTS = "update PlayerWorld set "
             + "points=? where psid=? AND worldName=?";
-    
+
     // Signs
     private static final String CREATE_BOARD = "insert into Signs(name, signModel, dataModel, orientation, "
-                + "blockface, serverID, world, x, y, z) values (?,?,?,?,?,?,?,?,?,?)";
+            + "blockface, serverID, world, x, y, z) values (?,?,?,?,?,?,?,?,?,?)";
     private static final String SAVE_BOARD = "update Signs set serverID=? where serverID=-1 "
-                + "AND world=? AND x=? AND y=? AND z=?";
+            + "AND world=? AND x=? AND y=? AND z=?";
     private static final String DELETE_BOARD = "delete from Signs where serverID=? AND world=? "
-                + "AND x=? AND y=? AND z=?";
+            + "AND x=? AND y=? AND z=?";
     private static final String SEARCH_BOARDS = "select * from Signs where serverID=?";
-    
+
     // Others
     private static final String SERVER_NAME = "select name from Servers where id=?";
 
@@ -92,9 +92,9 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     /**
      * Constructor de la clase
-     * 
+     *
      * @param plugin Plugin
-     * @param mysql 
+     * @param mysql
      */
     public DatabaseManagerMysql(PvpTitles plugin, Connection mysql) {
         this.plugin = plugin;
@@ -115,13 +115,13 @@ public class DatabaseManagerMysql implements DatabaseManager {
             playerExists.setString(1, uuid);
             playerExists.setInt(2, plugin.cm.params.getMultiS());
             ResultSet rs = playerExists.executeQuery();
-            
+
             if (!rs.next()) { // No existe
                 PreparedStatement registraPlayer = mysql.prepareStatement(CREATE_PLAYER);
                 registraPlayer.setString(1, uuid);
                 registraPlayer.setInt(2, plugin.cm.params.getMultiS());
                 registraPlayer.executeUpdate();
-                
+
                 rs = playerExists.executeQuery();
                 if (rs.next()) {
                     psid = rs.getShort("id");
@@ -141,13 +141,15 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
 
             if (plugin.cm.params.isMw_enabled()) {
-                if (w == null && !pl.isOnline()) return -1;
+                if (w == null && !pl.isOnline()) {
+                    return -1;
+                }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 PreparedStatement mwplayerExists = mysql.prepareStatement(MWPLAYER_EXISTS);
                 mwplayerExists.setInt(1, psid);
                 rs = mwplayerExists.executeQuery();
-                
+
                 if (!rs.next()) {
                     PreparedStatement registraMWPlayer = mysql.prepareStatement(CREATE_MWPLAYER);
                     registraMWPlayer.setInt(1, psid);
@@ -168,7 +170,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         if (psid == -1) {
             return false;
         }
-        
+
         try {
             java.util.Date utilDate = new java.util.Date();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
@@ -182,7 +184,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
@@ -190,14 +192,16 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
         OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
 
-        short psid = checkPlayerExists(pl, w);        
+        short psid = checkPlayerExists(pl, w);
         if (psid == -1) {
             return false;
         }
 
         try {
             if (plugin.cm.params.isMw_enabled()) {
-                if (w == null && !pl.isOnline()) return false;                
+                if (w == null && !pl.isOnline()) {
+                    return false;
+                }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 PreparedStatement updateFame = mysql.prepareStatement(UPDATE_MWPLAYER_POINTS);
@@ -217,7 +221,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
@@ -232,7 +236,9 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         try {
             if (plugin.cm.params.isMw_enabled()) {
-                if (w == null && !pl.isOnline()) return fama;
+                if (w == null && !pl.isOnline()) {
+                    return fama;
+                }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 PreparedStatement getFame = mysql.prepareStatement(MWPLAYER_POINTS);
@@ -240,7 +246,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 getFame.setString(2, world);
                 ResultSet rs = getFame.executeQuery();
                 PvpTitles.logDebugInfo("Get mwplayer fame: " + getFame.toString());
-                
+
                 if (rs.next()) {
                     fama = rs.getInt("points");
                 }
@@ -249,7 +255,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 getFame.setInt(1, psid);
                 ResultSet rs = getFame.executeQuery();
                 PvpTitles.logDebugInfo("Get player fame: " + getFame.toString());
-                
+
                 if (rs.next()) {
                     fama = rs.getInt("points");
                 }
@@ -267,7 +273,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         if (psid == -1) {
             return false;
         }
-        
+
         try {
             int time = player.getTotalOnline();
             PreparedStatement playedTime = mysql.prepareStatement(UPDATE_PLAYERMETA_PLAYEDTIME);
@@ -275,19 +281,19 @@ public class DatabaseManagerMysql implements DatabaseManager {
             playedTime.setInt(2, psid);
             playedTime.executeUpdate();
             PvpTitles.logDebugInfo("Save played time: " + playedTime.toString());
-            
+
         } catch (SQLException ex) {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
     @Override
     public int loadPlayedTime(UUID playerUUID) {
         int time = 0;
-        
+
         short psid = checkPlayerExists(Bukkit.getOfflinePlayer(playerUUID), null);
         if (psid == -1) {
             return time;
@@ -298,7 +304,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             playedTime.setInt(1, psid);
             ResultSet rs = playedTime.executeQuery();
             PvpTitles.logDebugInfo("Load played time: " + playedTime.toString());
-            
+
             if (rs.next()) {
                 time = rs.getInt("playedTime");
             }
@@ -327,7 +333,21 @@ public class DatabaseManagerMysql implements DatabaseManager {
         }
 
         // <editor-fold defaultstate="collapsed" desc="QUERY MAKER">
-        if (!"".equals(server) && servidores != null && plugin.cm.servers.containsKey(server)) {
+        // Checker mw-filter        
+        String mundos = "";        
+        if (plugin.cm.params.isMw_enabled() && !plugin.cm.params.showOnLeaderBoard()) {
+            List<String> worlds_disabled = plugin.cm.params.getAffectedWorlds();
+
+            StringBuilder buf = new StringBuilder();
+            for (String world : worlds_disabled) {
+                buf.append(" AND ").append("worldName != '").append(world).append('\'');
+            }
+            if (!worlds_disabled.isEmpty()) {
+                mundos = buf.toString();
+            }
+        }
+
+        if (!server.equals("") && servidores != null && plugin.cm.servers.containsKey(server)) {
             // Si hay un '-1' recojo los jugadores de todos los servers
             if (servidores.size() > 0 && !servidores.containsKey(-1)) {
                 sql += " where";
@@ -335,11 +355,11 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     sql += " (serverID = " + serverID;
 
                     if (plugin.cm.params.isMw_enabled() && !servidores.get(serverID).isEmpty()) {
-                        sql += " AND";
+                        sql += " AND (";
                         for (String mundoElegido : servidores.get(serverID)) {
-                            sql += " worldName like '" + mundoElegido + "' OR";
+                            sql += "worldName like '" + mundoElegido + "' OR ";
                         }
-                        sql = sql.substring(0, sql.length() - 3);
+                        sql = sql.substring(0, sql.length() - 4) + ')';
                     }
 
                     sql += ") OR";
@@ -350,48 +370,43 @@ public class DatabaseManagerMysql implements DatabaseManager {
             sql += " where serverID=" + plugin.cm.params.getMultiS();
 
             if (plugin.cm.params.isMw_enabled() && servidores != null && servidores.get(plugin.cm.params.getMultiS()) != null) {
-                sql += " AND";
+                sql += " AND (";
                 for (String mundoElegido : servidores.get(plugin.cm.params.getMultiS())) {
-                    sql += " worldName like '" + mundoElegido + "' OR";
+                    sql += "worldName like '" + mundoElegido + "' OR ";
                 }
-                sql = sql.substring(0, sql.length() - 3);
+                sql = sql.substring(0, sql.length() - 4) + ')';
             }
         }
-        
-        sql += " order by points DESC limit " + cant;
+
+        sql += mundos + " order by points DESC limit " + cant;
         // </editor-fold>
         PvpTitles.logDebugInfo("Top players: " + sql);
-        
+
         try {
-            List<String> worlds_disabled = plugin.cm.params.getAffectedWorlds();
             PlayerFame pf;
-            
+
             for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); rankedPlayers.add(pf)) {
                 if (plugin.cm.params.isMw_enabled()) {
-                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("PlayerWorld.points"), 
+                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("PlayerWorld.points"),
+                            rs.getInt("playedTime"), this.plugin);
+                } else {
+                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"),
                             rs.getInt("playedTime"), this.plugin);
                 }
-                else {
-                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"), 
-                            rs.getInt("playedTime"), this.plugin);
-                }
-                
+
                 pf.setServer(rs.getShort("serverID"));
 
                 if (plugin.cm.params.isMw_enabled()) {
-                    if (!plugin.cm.params.showOnLeaderBoard() && worlds_disabled.contains(rs.getString("worldName"))) {
-                        continue;
-                    }
-
                     pf.setWorld(rs.getString("worldName"));
                 }
             }
         } catch (SQLException ex) {
             PvpTitles.logError(ex.getMessage(), ex);
         }
-        
+
         return rankedPlayers;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SIGNS...">  
     @Override
@@ -400,7 +415,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         if (!MySQLConnection.isConnected()) {
             return false;
         }
-        
+
         Location l = sb.getData().getLocation();
 
         try {
@@ -422,7 +437,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
@@ -445,7 +460,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
@@ -468,7 +483,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logError(ex.getMessage(), ex);
             return false;
         }
-        
+
         return true;
     }
 
@@ -485,7 +500,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             searchBoards.setInt(1, plugin.cm.params.getMultiS());
             ResultSet rs = searchBoards.executeQuery();
             PvpTitles.logDebugInfo("Search boards: " + searchBoards.toString());
-            
+
             SignBoardData sdc;
 
             for (; rs.next(); sbd.add(sdc)) {
@@ -509,9 +524,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
         } catch (SQLException ex) {
             PvpTitles.logError(ex.getMessage(), ex);
         }
-        
+
         return sbd;
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">  
     @Override
@@ -527,7 +543,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             serverName.setInt(1, id);
             ResultSet rs = serverName.executeQuery();
             PvpTitles.logDebugInfo("Server name: " + serverName.toString());
-            
+
             while (rs.next()) {
                 nombre = rs.getString("nombreS");
                 break;
@@ -585,7 +601,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     @Override
     public void DBExport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         short serverID = plugin.cm.params.getMultiS();
@@ -674,7 +690,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     @Override
     public boolean DBImport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         if (!UtilsFile.exists(ruta)) {

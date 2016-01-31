@@ -50,14 +50,17 @@ public class ConfigHandler {
         List<Integer> requFame = (List<Integer>) config.getList("ReqFame");
         List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
 
+        rankList.clear();
         for (int i = 0; i < configList.size(); i++) {
             rankList.put(i, Utils.translateColor(configList.get(i)));
         }
 
+        reqFame.clear();
         for (int i = 0; i < requFame.size(); i++) {
             reqFame.put(i, requFame.get(i));
         }
 
+        reqTime.clear();
         for (int i = 0; i < configList.size(); i++) {
             int seconds = 0;
 
@@ -68,6 +71,7 @@ public class ConfigHandler {
             reqTime.put(i, seconds);
         }
 
+        params.getAffectedWorlds().clear();
         params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
 
         // Todos los mundos a minusculas
@@ -76,6 +80,7 @@ public class ConfigHandler {
             iterator.set(iterator.next().toLowerCase());
         }
 
+        params.getNoPurge().clear();
         params.getNoPurge().addAll(config.getStringList("NoPurge"));
 
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));

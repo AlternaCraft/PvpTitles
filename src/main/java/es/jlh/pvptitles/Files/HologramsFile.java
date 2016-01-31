@@ -56,6 +56,7 @@ public class HologramsFile {
 
     public static void saveHologram(BoardData hol) {
         holosConf.set("Holograms." + hol.getNombre() + ".model", hol.getModelo());
+        holosConf.set("Holograms." + hol.getNombre() + ".filter", hol.getServer());
         holosConf.set("Holograms." + hol.getNombre() + ".location.world", hol.getLocation().getWorld().getName());
         holosConf.set("Holograms." + hol.getNombre() + ".location.x", hol.getLocation().getX());
         holosConf.set("Holograms." + hol.getNombre() + ".location.y", hol.getLocation().getY());
@@ -88,10 +89,12 @@ public class HologramsFile {
             Location l = new Location(Bukkit.getWorld(world), x, y, z);
             String nombre = holo;
             String modelo = cs.getString(holo + ".model");
+            String server = cs.getString(holo + ".filter");
 
             BoardData holos = new BoardData(l);
             holos.setNombre(nombre);
             holos.setModelo(modelo);
+            holos.setServer(server);
 
             bds.add(holos);
         }
@@ -108,6 +111,7 @@ public class HologramsFile {
 
         String nombre = name;
         String modelo = holosConf.getString("Holograms." + nombre + ".model");
+        String server = holosConf.getString("Holograms." + nombre + ".filter");
         String world = holosConf.getString("Holograms." + nombre + ".location.world");
         double x = holosConf.getDouble("Holograms." + nombre + ".location.x");
         double y = holosConf.getDouble("Holograms." + nombre + ".location.y");
@@ -116,6 +120,7 @@ public class HologramsFile {
         bd = new BoardData(new Location(Bukkit.getWorld(world), x, y, z));
         bd.setNombre(nombre);
         bd.setModelo(modelo);
+        bd.setServer(server);
 
         return bd;
     }
