@@ -164,6 +164,19 @@ public class HandlePlayerTag implements Listener {
             if (HolographicSetup.HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
                 Hologram h = HolographicSetup.HOLOPLAYERS.get(player.getUniqueId().toString());
 
+                // Actualizar rango al cambiar de mundo
+                if (cm.params.isMw_enabled()) {
+                    int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                    int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                    int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+
+                    String rank = Ranks.getRank(fame, totalTime);
+                    if (!h.getLine(0).toString().contains(rank)) {
+                        h.clearLines();
+                        h.appendTextLine(HolographicSetup.RANK_LINE.replace("%rank%", rank));
+                    }
+                }
+                
                 Location l = new Location(player.getLocation().getWorld(),
                         player.getLocation().getX(),
                         player.getLocation().getY() + TITLE_HEIGHT,

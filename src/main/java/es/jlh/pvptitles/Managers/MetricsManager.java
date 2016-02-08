@@ -55,11 +55,16 @@ public class MetricsManager {
                 
                 Graph displayMode = metrics.createGraph("Display mode");
                 
-                if (plugin.cm.params.displayInChat()) {
-                    addPlotter(displayMode, "Chat", 1);
+                if (plugin.cm.params.displayInChat() && plugin.cm.params.displayLikeHolo()) {
+                    addPlotter(displayMode, "Both", 1);
                 }
-                if (plugin.cm.params.displayLikeHolo()) {
-                    addPlotter(displayMode, "Holograms", 1);
+                else {                
+                    if (plugin.cm.params.displayInChat()) {
+                        addPlotter(displayMode, "Chat", 1);
+                    }
+                    if (plugin.cm.params.displayLikeHolo()) {
+                        addPlotter(displayMode, "Holograms", 1);
+                    }
                 }
 
                 Graph defaultLang = metrics.createGraph("Default lang");
