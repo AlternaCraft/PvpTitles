@@ -137,14 +137,14 @@ public class HandleFame implements Listener {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             if (e.getWorldname() != null) {
-                pl.sendMessage(PLUGIN + LangFile.FAME_MW_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(PLUGIN + LangFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%world%", e.getWorldname())
                         .replace("%tag%", this.dm.params.getTag())
                 );
             } else {
-                pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(PLUGIN + LangFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%tag%", this.dm.params.getTag())
@@ -168,14 +168,14 @@ public class HandleFame implements Listener {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             if (e.getWorldname() != null) {
-                pl.sendMessage(PLUGIN + LangFile.FAME_MW_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(PLUGIN + LangFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%world%", e.getWorldname())
                         .replace("%tag%", this.dm.params.getTag())
                 );
             } else {
-                pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(PLUGIN + LangFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%tag%", this.dm.params.getTag())

@@ -83,7 +83,7 @@
 //   nombre del jugador
 //  Ver. 2.4.3  25/01/2016  Arreglado fallo con pvpreload mientras carga las listas
 //   del config principal
-//  Ver. 2.4.3  26/01/2016  Añadida variable 'world' al mensaje FAME_EDIT_PLAYER,
+//  Ver. 2.4.3  26/01/2016  Añadida variable 'world' al mensaje FAME_CHANGE_PLAYER,
 //   arreglado fallo con los jugadores mostrados en boards mientras MW esta activado
 //  Ver. 2.4.4  08/02/2016  Añadidos nuevos parametros a las metricas, añadido detector
 //   de titulo al cambiar de mundo con multiworld activado.

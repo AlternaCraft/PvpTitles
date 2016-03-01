@@ -41,11 +41,11 @@ public enum LangFile {
             "&4No has podido modificar la %tag% del jugador %player%",
             "&4You could not change the %tag% player %player%"
     ),
-    FAME_EDIT_PLAYER(
+    FAME_CHANGE_PLAYER(
             "&eTe han establecido tu %tag% a %fame%, tu rango ahora es %rank%",
             "&eYour %tag% has been established to %fame%, Your rank is now %rank%"
     ),
-    FAME_MW_EDIT_PLAYER(
+    FAME_MW_CHANGE_PLAYER(
             "&eTe han establecido tu %tag% a %fame% en el mundo %world%, tu rango ahora es %rank%",
             "&eYour %tag% has been established to %fame% in %world%, Your rank is now %rank%"
     ),    
