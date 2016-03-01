@@ -530,7 +530,7 @@ public class Metrics {
     }
 
     /**
-     * Appends a json encoded key/value pair to the given string builder.
+     * Appends a json encoded key/value pair to the given string BuilderReloaded.
      *
      * @param json
      * @param key
@@ -570,43 +570,43 @@ public class Metrics {
      * @return
      */
     private static String escapeJSON(String text) {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder BuilderReloaded = new StringBuilder();
 
-        builder.append('"');
+        BuilderReloaded.append('"');
         for (int index = 0; index < text.length(); index++) {
             char chr = text.charAt(index);
 
             switch (chr) {
                 case '"':
                 case '\\':
-                    builder.append('\\');
-                    builder.append(chr);
+                    BuilderReloaded.append('\\');
+                    BuilderReloaded.append(chr);
                     break;
                 case '\b':
-                    builder.append("\\b");
+                    BuilderReloaded.append("\\b");
                     break;
                 case '\t':
-                    builder.append("\\t");
+                    BuilderReloaded.append("\\t");
                     break;
                 case '\n':
-                    builder.append("\\n");
+                    BuilderReloaded.append("\\n");
                     break;
                 case '\r':
-                    builder.append("\\r");
+                    BuilderReloaded.append("\\r");
                     break;
                 default:
                     if (chr < ' ') {
                         String t = "000" + Integer.toHexString(chr);
-                        builder.append("\\u" + t.substring(t.length() - 4));
+                        BuilderReloaded.append("\\u" + t.substring(t.length() - 4));
                     } else {
-                        builder.append(chr);
+                        BuilderReloaded.append(chr);
                     }
                     break;
             }
         }
-        builder.append('"');
+        BuilderReloaded.append('"');
 
-        return builder.toString();
+        return BuilderReloaded.toString();
     }
 
     /**

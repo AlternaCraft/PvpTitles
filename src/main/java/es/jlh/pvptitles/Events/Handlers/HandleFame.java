@@ -136,12 +136,20 @@ public class HandleFame implements Listener {
         if (pl != null && !e.isSilent()) {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
-            pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
-                    .replace("%fame%", String.valueOf(e.getFameTotal()))
-                    .replace("%rank%", rank)
-                    .replace("%world%", e.getWorldname())
-                    .replace("%tag%", this.dm.params.getTag())
-            );
+            if (e.getWorldname() != null) {
+                pl.sendMessage(PLUGIN + LangFile.FAME_MW_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                        .replace("%fame%", String.valueOf(e.getFameTotal()))
+                        .replace("%rank%", rank)
+                        .replace("%world%", e.getWorldname())
+                        .replace("%tag%", this.dm.params.getTag())
+                );
+            } else {
+                pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                        .replace("%fame%", String.valueOf(e.getFameTotal()))
+                        .replace("%rank%", rank)
+                        .replace("%tag%", this.dm.params.getTag())
+                );
+            }
         } else {
             //e.setCancelled(true);
         }
@@ -159,12 +167,20 @@ public class HandleFame implements Listener {
         if (pl != null && !e.isSilent()) {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
-            pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
-                    .replace("%fame%", String.valueOf(e.getFameTotal()))
-                    .replace("%world%", e.getWorldname())
-                    .replace("%rank%", rank)
-                    .replace("%tag%", this.dm.params.getTag())
-            );
+            if (e.getWorldname() != null) {
+                pl.sendMessage(PLUGIN + LangFile.FAME_MW_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                        .replace("%fame%", String.valueOf(e.getFameTotal()))
+                        .replace("%rank%", rank)
+                        .replace("%world%", e.getWorldname())
+                        .replace("%tag%", this.dm.params.getTag())
+                );
+            } else {
+                pl.sendMessage(PLUGIN + LangFile.FAME_EDIT_PLAYER.getText(Localizer.getLocale(pl))
+                        .replace("%fame%", String.valueOf(e.getFameTotal()))
+                        .replace("%rank%", rank)
+                        .replace("%tag%", this.dm.params.getTag())
+                );
+            }
         } else {
             //e.setCancelled(true);
         }

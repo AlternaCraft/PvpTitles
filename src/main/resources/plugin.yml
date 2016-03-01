@@ -1,5 +1,5 @@
 name: PvpTitles
-version: 2.4.3
+version: 2.5
 description: Get epic titles in pvp
 database: true
 
@@ -27,7 +27,7 @@ commands:
     pvpBoard:
         description: Manage scoreboards.
         usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
-        aliases: pvpTablero
+        aliases: pvpSign
         permission: pvptitles.board
     pvpPurge:
         description: It cleans inactive users.

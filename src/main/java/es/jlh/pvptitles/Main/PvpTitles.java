@@ -87,6 +87,8 @@
 //   arreglado fallo con los jugadores mostrados en boards mientras MW esta activado
 //  Ver. 2.4.4  08/02/2016  Añadidos nuevos parametros a las metricas, añadido detector
 //   de titulo al cambiar de mundo con multiworld activado.
+//  Ver. 2.5  01/03/2016  Compilado con la version 1.9 de spigot, arreglado fallo
+//   con los mensajes al usar el comando de la fama (add/set).
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
