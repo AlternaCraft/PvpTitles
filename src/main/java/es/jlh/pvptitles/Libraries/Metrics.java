@@ -27,7 +27,15 @@
  */
 package es.jlh.pvptitles.Libraries;
 
-import es.jlh.pvptitles.Main.PvpTitles;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,10 +43,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,12 +57,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.scheduler.BukkitTask;
 
 public class Metrics {
 
@@ -202,7 +206,6 @@ public class Metrics {
 
                 private boolean firstPost = true;
 
-                @Override
                 public void run() {
                     try {
                         // This has to be synchronized or it can collide with the disable method.
@@ -322,6 +325,28 @@ public class Metrics {
         // return => base/plugins/PluginMetrics/config.yml
         return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
     }
+    
+    /**
+     * Gets the online player (backwards compatibility)
+     * 
+     * @return online player amount
+     */
+    private int getOnlinePlayers() {
+        try {
+            Method onlinePlayerMethod = Server.class.getMethod("getOnlinePlayers");
+            if(onlinePlayerMethod.getReturnType().equals(Collection.class)) {
+                return ((Collection<?>)onlinePlayerMethod.invoke(Bukkit.getServer())).size();
+            } else {
+                return ((Player[])onlinePlayerMethod.invoke(Bukkit.getServer())).length;
+            }
+        } catch (Exception ex) {
+            if (debug) {
+                Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+            }
+        }
+        
+        return 0;
+    }
 
     /**
      * Generic method that posts a plugin to the metrics website
@@ -329,16 +354,11 @@ public class Metrics {
     private void postPlugin(final boolean isPing) throws IOException {
         // Server software specific section
         PluginDescriptionFile description = plugin.getDescription();
-        
-        /**
-         * Changed var 'pluginName' on July 7th 2015
-         *   - Added "JL-" in order to avoid name problems
-         */
         String pluginName = "JL-" + description.getName();
-        boolean onlineMode = PvpTitles.getInstance().getServer().getOnlineMode(); // TRUE if online mode is enabled
+        boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if online mode is enabled
         String pluginVersion = description.getVersion();
         String serverVersion = Bukkit.getVersion();
-        int playersOnline = Bukkit.getOnlinePlayers().size();
+        int playersOnline = this.getOnlinePlayers();
 
         // END server software specific section -- all code below does not use any code outside of this class / Java
 
@@ -530,7 +550,7 @@ public class Metrics {
     }
 
     /**
-     * Appends a json encoded key/value pair to the given string BuilderReloaded.
+     * Appends a json encoded key/value pair to the given string builder.
      *
      * @param json
      * @param key
@@ -570,43 +590,43 @@ public class Metrics {
      * @return
      */
     private static String escapeJSON(String text) {
-        StringBuilder BuilderReloaded = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
 
-        BuilderReloaded.append('"');
+        builder.append('"');
         for (int index = 0; index < text.length(); index++) {
             char chr = text.charAt(index);
 
             switch (chr) {
                 case '"':
                 case '\\':
-                    BuilderReloaded.append('\\');
-                    BuilderReloaded.append(chr);
+                    builder.append('\\');
+                    builder.append(chr);
                     break;
                 case '\b':
-                    BuilderReloaded.append("\\b");
+                    builder.append("\\b");
                     break;
                 case '\t':
-                    BuilderReloaded.append("\\t");
+                    builder.append("\\t");
                     break;
                 case '\n':
-                    BuilderReloaded.append("\\n");
+                    builder.append("\\n");
                     break;
                 case '\r':
-                    BuilderReloaded.append("\\r");
+                    builder.append("\\r");
                     break;
                 default:
                     if (chr < ' ') {
                         String t = "000" + Integer.toHexString(chr);
-                        BuilderReloaded.append("\\u" + t.substring(t.length() - 4));
+                        builder.append("\\u" + t.substring(t.length() - 4));
                     } else {
-                        BuilderReloaded.append(chr);
+                        builder.append(chr);
                     }
                     break;
             }
         }
-        BuilderReloaded.append('"');
+        builder.append('"');
 
-        return BuilderReloaded.toString();
+        return builder.toString();
     }
 
     /**

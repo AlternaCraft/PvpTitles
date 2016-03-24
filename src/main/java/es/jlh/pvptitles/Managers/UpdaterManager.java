@@ -1,12 +1,13 @@
 package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Libraries.Updater;
-import es.jlh.pvptitles.Libraries.Updater.UpdateResult;
-import es.jlh.pvptitles.Libraries.Updater.UpdateType;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import static es.jlh.pvptitles.Main.PvpTitles.logMessage;
 import java.io.File;
+import java.util.regex.Pattern;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
+import net.gravitydevelopment.updater.Updater.UpdateResult;
 import org.bukkit.ChatColor;
 
 /**
@@ -24,13 +25,34 @@ public class UpdaterManager {
         }
 
         UpdateType ut = (shouldupdate) ? UpdateType.DEFAULT : UpdateType.NO_DOWNLOAD;
-        Updater updater = new Updater(plugin, 89518, file, ut, shouldalert);
+        
+        Updater updater = new Updater(plugin, 89518, file, ut, shouldalert) {
+            @Override
+            public boolean shouldUpdate(String localVersion, String remoteVersion) {
+                String[] longL = localVersion.split(Pattern.quote("."));
+                String[] longR = remoteVersion.split(Pattern.quote("."));
+
+                int longitud = (longL.length <= longR.length) ? longL.length : longR.length;
+
+                for (int i = 0; i < longitud; i++) {
+                    if (Integer.valueOf(longL[i]) < Integer.valueOf(longR[i])) {
+                        return true;
+                    }
+                    else if (Integer.valueOf(longL[i]) > Integer.valueOf(longR[i])) {
+                        return false;
+                    }            
+                }
+
+                // Si sale quiere decir que, en la longitud que recorre el bucle, son iguales
+                return longR.length > longL.length;
+            }
+        };
 
         if (shouldalert) {
             UpdateResult result = updater.getResult();
             switch (result) {
                 case SUCCESS:
-                    // Success: The updater found an update, and has readied it to be loaded the next time the server restarts/reloads
+                    showMessage(ChatColor.YELLOW + "Update finished. Do reload to load it.");
                     break;
                 case NO_UPDATE:
                     logMessage("No update was found.");

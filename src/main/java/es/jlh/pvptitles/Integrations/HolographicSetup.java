@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -44,7 +43,7 @@ public class HolographicSetup {
     }
 
     public void setup() {
-        isHDEnable = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
+        isHDEnable = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
         if (isHDEnable) {
             PvpTitles.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
             PvpTitles.showMessage(ChatColor.YELLOW + "" + loadHolograms()
@@ -60,7 +59,7 @@ public class HolographicSetup {
     public static void loadPlayersInServer() {
         HOLOPLAYERS.clear();
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (!HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
                 int fame = plugin.cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 int oldTime = plugin.cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());

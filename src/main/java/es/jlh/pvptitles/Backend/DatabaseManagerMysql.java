@@ -26,7 +26,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -190,7 +189,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     @Override
     public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
-        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+        OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         short psid = checkPlayerExists(pl, w);
         if (psid == -1) {
@@ -228,7 +227,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     @Override
     public int loadPlayerFame(UUID playerUUID, String w) {
         int fama = 0;
-        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+        OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
         short psid = checkPlayerExists(pl, w);
         if (psid == -1) {
             return fama;
@@ -269,7 +268,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     @Override
     public boolean savePlayedTime(TimedPlayer player) {
-        short psid = checkPlayerExists(Bukkit.getPlayer(player.getUniqueId()), null);
+        short psid = checkPlayerExists(plugin.getServer().getPlayer(player.getUniqueId()), null);
         if (psid == -1) {
             return false;
         }
@@ -294,7 +293,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public int loadPlayedTime(UUID playerUUID) {
         int time = 0;
 
-        short psid = checkPlayerExists(Bukkit.getOfflinePlayer(playerUUID), null);
+        short psid = checkPlayerExists(plugin.getServer().getOfflinePlayer(playerUUID), null);
         if (psid == -1) {
             return time;
         }
@@ -640,7 +639,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             rs = mysql.createStatement().executeQuery(signs);
 
             while (rs.next()) {
-                World w = Bukkit.getWorld(rs.getString("world"));
+                World w = plugin.getServer().getWorld(rs.getString("world"));
                 int x = rs.getInt("x");
                 int y = rs.getInt("y");
                 int z = rs.getInt("z");

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -136,7 +135,7 @@ public class RetroDMEbean {
         Map<String, UUID> response = new HashMap();
         
         for (String player : players) {
-            UUID uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
+            UUID uuid = pt.getServer().getOfflinePlayer(player).getUniqueId();
             response.put(player, uuid);
         }
         

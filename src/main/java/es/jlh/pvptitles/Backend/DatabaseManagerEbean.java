@@ -16,10 +16,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -98,7 +96,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     @Override
     public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
         // Multiworld + mundo permitido
-        OfflinePlayer pl = Bukkit.getOfflinePlayer(playerUUID);
+        OfflinePlayer pl = pt.getServer().getOfflinePlayer(playerUUID);
 
         PlayerPT plClass = null;
 
@@ -549,7 +547,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                 if (spt == null) {
                     spt = new SignPT();
-                    spt.setLocation(new Location(Bukkit.getWorld(signsPT.getWorld()),
+                    spt.setLocation(new Location(pt.getServer().getWorld(signsPT.getWorld()),
                             signsPT.getX(), signsPT.getY(), signsPT.getZ()));
                 }
 

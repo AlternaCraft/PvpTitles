@@ -30,14 +30,13 @@ public class HologramBoard extends Board {
         super(info, bm, mc);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="IMPLEMENTED METHODS">
+    // <editor-fold defaultstate="collapsed" desc="LEGACY METHODS">
     @Override
     public boolean isMaterializable(short jugadores) {
         Location l = this.getData().getLocation();
 
         List<BoardData> holos = HolographicSetup.getHolograms();
         for (BoardData holo : holos) {
-
             if (l.equals(holo.getLocation())) {
                 return false;
             }
@@ -82,9 +81,9 @@ public class HologramBoard extends Board {
                     }
 
                     String param = cs[c];
-                    
+
                     if (param != null) {
-                        if (param.contains("<main>"))  {
+                        if (param.contains("<main>")) {
                             HolographicSetup.createHoloHead(l, getModel().getCantidad());
                             param = "";
                         } else {
@@ -110,12 +109,14 @@ public class HologramBoard extends Board {
             xpos.add(newL.getX());
             HolographicSetup.createHologram(columnacompleta.get(0), newL);
         } else {
+            // Datos para sacar punto de partida
             double separador = (maxcol - 1) * SEPARATOR;
             double anchobloques = BLOCKSPERCARACTER * anchomaximo + separador;
             double temp = anchobloques / 2;
 
             newL.setX(newL.getX() - temp);
 
+            // Voy incrementando el tamaño al punto de partida para cada columna
             for (int i = 0; i < columnacompleta.size(); i++) {
                 double ant = (i > 0) ? (blockspercolumn[i - 1] / 2) + SEPARATOR : 0;
                 newL.setX(newL.getX() + ant + blockspercolumn[i] / 2);

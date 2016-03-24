@@ -5,6 +5,15 @@ import java.util.List;
 
 /**
  *
+ * <b>Limitaciones del objeto</b>
+ * <ul>
+ *  <li>
+ *      El último bloque es el de las variables, y en el mismo, sólo se 
+ *      puede usar la primera fila de cada columna.
+ *  </li>
+ *  <li>No se puede combinar normal + progresivo</li>
+ * </ul>
+ * 
  * @author AlternaCraft
  */
 public abstract class Board {

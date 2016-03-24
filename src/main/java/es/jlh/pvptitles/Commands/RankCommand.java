@@ -9,7 +9,6 @@ import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.Utils;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -56,7 +55,7 @@ public class RankCommand implements CommandExecutor {
         int fame = pt.cm.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         int racha = (HandlePlayerFame.KILLSTREAK.containsKey(player.getName())) ? HandlePlayerFame.KILLSTREAK.get(player.getName()) : 0;
         int seconds = pt.cm.dbh.getDm().loadPlayedTime(player.getUniqueId())
-                + pt.getPlayerManager().getPlayer(Bukkit.getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+                + pt.getPlayerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         
         String rank = Ranks.getRank(fame, seconds);
         

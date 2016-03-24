@@ -100,7 +100,6 @@ public class ModelController {
 
                 for (int k = 0; k < cols.length; k++) {
                     String str = cols[k];
-                    str = (str == null) ? "" : str;
                     resul[i][j][k] = str;
                 }
             }
@@ -133,7 +132,7 @@ public class ModelController {
 
             for (int j = 0; j < cols.length; j++) {
                 String param = processParam(pf, cols[j], j);
-                resul[resul.length - 1][i][j] = (param.equals("") ? null : param); // Estilo
+                resul[resul.length - 1][i][j] = param;
             }
         }
 
@@ -150,12 +149,17 @@ public class ModelController {
      * @return String con el parámetro procesado
      */
     protected String processParam(List<PlayerFame> pf, String str, int col) {
-        String base = str;
+        if (str == null) {
+            return str; // Optimizacion
+        }
+        
+        String temp = str;
 
         for (Params.Vars arg : Params.Vars.values()) {
             if (str.toUpperCase().contains("<" + arg.name() + ">")) {
                 int value = params.getNext(arg, col);
 
+                // Esa columna esta completa
                 if (value >= pf.size()) {
                     params.addOne(arg, col);
                     continue;
@@ -186,7 +190,7 @@ public class ModelController {
             }
         }
 
-        return (str.equals(base) ? "" : str);
+        return (str.equals(temp) ? null : str); // Estilo
     }
 
     public String[][][] getTable() {

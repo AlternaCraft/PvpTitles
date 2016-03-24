@@ -230,7 +230,7 @@ public class SignBoard extends Board {
                             locblock.getY(), locblock.getZ() + j).getBlock();
                 }
 
-                if (block.getType() == Material.WALL_SIGN) {
+                if (block != null && block.getType() == Material.WALL_SIGN) {
                     block.setType(Material.AIR);
                 }
             }

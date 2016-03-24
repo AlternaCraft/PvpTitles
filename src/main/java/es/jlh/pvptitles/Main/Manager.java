@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -391,7 +390,7 @@ public final class Manager {
                         timedPlayer.startSession(); // Nueva sesion
 
                         if (timedPlayer.getOfflinePlayer().isOnline()) {
-                            Player pl = Bukkit.getPlayer(timedPlayer.getUniqueId());
+                            Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
                             pl.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.
                                     getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
                         }

@@ -63,7 +63,6 @@ public class LeaderBoardManager {
 
             if (!b.isMaterializable(jugadores)) {
                 pl.sendMessage(PLUGIN + LangFile.BOARD_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
-                // Borradas coordenadas
                 return false;
             }
 
@@ -117,6 +116,7 @@ public class LeaderBoardManager {
 
                 Player pl = null;
 
+                // Modulo Signs
                 if (o != null) {
                     if (o instanceof BlockBreakEvent) {
                         BlockBreakEvent event = (BlockBreakEvent) o;

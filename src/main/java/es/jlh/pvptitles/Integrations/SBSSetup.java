@@ -7,7 +7,6 @@ import com.github.games647.scoreboardstats.variables.VariableReplacer;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Misc.Ranks;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,7 +26,7 @@ public class SBSSetup {
     }
 
     public void setupSBS() {
-        if (Bukkit.getPluginManager().isPluginEnabled("ScoreboardStats")) {
+        if (plugin.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
             sbs = JavaPlugin.getPlugin(ScoreboardStats.class);
 
             if (sbs != null) {

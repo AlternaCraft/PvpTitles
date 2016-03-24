@@ -18,6 +18,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 /**
@@ -39,8 +40,13 @@ public class HandleFame implements Listener {
         this.dm = pt.cm;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onFame(FameEvent e) {
+        if (e.getOfflinePlayer() == null) {
+            e.setCancelled(true);
+            return;
+        }
+        
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             Map<String, Map<String, List<String>>> kills = pt.cm.commandsRw.get("onKill");
@@ -82,10 +88,10 @@ public class HandleFame implements Listener {
             }
         }
 
+        // Nuevo rango
         if (e.getOfflinePlayer().isOnline()) {
             Player pl = (Player) e.getOfflinePlayer();
-
-            // Nuevo rango
+           
             int fameA = e.getFame();
             int fameD = e.getFameTotal();
 
@@ -124,47 +130,25 @@ public class HandleFame implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSetFame(FameSetEvent e) {
-        if (!e.getOfflinePlayer().isOnline()) {
-            return;
-        }
-
-        Player pl = (Player) e.getOfflinePlayer();
-        int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
-
-        if (pl != null && !e.isSilent()) {
-            String rank = Ranks.getRank(e.getFameTotal(), seconds);
-
-            if (e.getWorldname() != null) {
-                pl.sendMessage(PLUGIN + LangFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
-                        .replace("%fame%", String.valueOf(e.getFameTotal()))
-                        .replace("%rank%", rank)
-                        .replace("%world%", e.getWorldname())
-                        .replace("%tag%", this.dm.params.getTag())
-                );
-            } else {
-                pl.sendMessage(PLUGIN + LangFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
-                        .replace("%fame%", String.valueOf(e.getFameTotal()))
-                        .replace("%rank%", rank)
-                        .replace("%tag%", this.dm.params.getTag())
-                );
-            }
-        } else {
-            //e.setCancelled(true);
-        }
+        fameLogic(e);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onAddFame(FameAddEvent e) {
-        if (!e.getOfflinePlayer().isOnline()) {
+        fameLogic(e);
+    }
+
+    private void fameLogic(FameEvent e) {
+        if (e.isCancelled() || !e.getOfflinePlayer().isOnline()) {
             return;
         }
 
         Player pl = (Player) e.getOfflinePlayer();
         int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
 
-        if (pl != null && !e.isSilent()) {
+        if (!e.isSilent()) {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             if (e.getWorldname() != null) {
@@ -181,8 +165,6 @@ public class HandleFame implements Listener {
                         .replace("%tag%", this.dm.params.getTag())
                 );
             }
-        } else {
-            //e.setCancelled(true);
         }
     }
 }

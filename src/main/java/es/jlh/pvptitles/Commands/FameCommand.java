@@ -8,7 +8,6 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -85,7 +84,7 @@ public class FameCommand implements CommandExecutor {
                         }
 
                         world = args[2];
-                        if (Bukkit.getWorld(world) == null) {
+                        if (pt.getServer().getWorld(world) == null) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
                             return true;
                         }
@@ -175,7 +174,7 @@ public class FameCommand implements CommandExecutor {
                         }
 
                         world = args[2];
-                        if (Bukkit.getWorld(world) == null) {
+                        if (pt.getServer().getWorld(world) == null) {
                             sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
                             return true;
                         }

@@ -2,7 +2,6 @@ package es.jlh.pvptitles.Objects;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 /**
@@ -26,7 +25,7 @@ public class PlayerFame implements Comparable {
     
     public String getName() {
         UUID playerUUID = UUID.fromString(this.uuid);
-        String nombre = Bukkit.getOfflinePlayer(playerUUID).getName();
+        String nombre = plugin.getServer().getOfflinePlayer(playerUUID).getName();
         return (nombre == null) ? "<?>":nombre;
     }
     
@@ -52,7 +51,7 @@ public class PlayerFame implements Comparable {
     
     public int getRealSeconds() {
         int actual = plugin.cm.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
-        int session = plugin.getPlayerManager().getPlayer(Bukkit
+        int session = plugin.getPlayerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
         return actual+session;
