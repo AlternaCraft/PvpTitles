@@ -59,16 +59,15 @@ public final class Manager {
     private static final Map<Integer, Integer> REQFAME = new HashMap();
     private static final Map<Integer, Integer> REQTIME = new HashMap();
     
-    // Resto de parametros
-    public ConfigDataStore params = null;
-
     // Modelos
-    public ArrayList<BoardModel> modelos = new ArrayList();
+    public ArrayList<BoardModel> modelos = null;
     // Recompensas
     public Map<String, Map<String, Map<String, List<String>>>> commandsRw = null;
     // Servers
     public HashMap<String, HashMap<Short, List<String>>> servers = null;
-
+    // Configuracion
+    public ConfigDataStore params = null;
+    
     // Chat
     public static LangType messages = null;
 
@@ -195,7 +194,7 @@ public final class Manager {
 
         // Holograms
         if (HolographicSetup.isHDEnable) {
-            HolographicSetup.loadHolograms();
+            HolographicSetup.loadHoloBoards();
         }
         
         showMessage(ChatColor.YELLOW + "" + this.lbm.getBoards().size()

@@ -2,7 +2,6 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Integrations.HolographicSetup;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.RANK_LINE;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
@@ -53,8 +52,15 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.cm.loadRankTimeChecker();
         
         if (HolographicSetup.isHDEnable && pvpTitles.cm.params.displayLikeHolo()) {
-            RANK_LINE = pvpTitles.cm.params.getHolotagformat();
+            HolographicSetup.RANK_LINE = pvpTitles.cm.params.getHolotagformat();
             HolographicSetup.loadPlayersInServer();
+        }
+        else if (HolographicSetup.isHDEnable && HolographicSetup.HOLOPLAYERS.size() > 0) {
+            /*
+             * En caso de hacer un pvpreload habiendo desactivado los hologramas en
+             * el config, borro los que haya en el server creados anteriormente.
+             */
+            HolographicSetup.deleteHoloPlayers();         
         }
 
         sender.sendMessage(PLUGIN + LangFile.PLUGIN_RELOAD.getText(messages));

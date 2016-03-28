@@ -48,7 +48,7 @@ public class SignBoard extends Board {
         this.matSign = matSign;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="IMPLEMENTED METHODS">
+    // <editor-fold defaultstate="collapsed" desc="LEGACY METHODS">
     @Override
     public boolean isMaterializable(short jugadores) {
         int jug = this.getModel().getFilasJugadores(jugadores);

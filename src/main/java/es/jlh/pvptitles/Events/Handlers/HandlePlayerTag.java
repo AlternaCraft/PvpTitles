@@ -2,9 +2,10 @@ package es.jlh.pvptitles.Events.Handlers;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import es.jlh.pvptitles.Events.RankChangedEvent;
-import es.jlh.pvptitles.Integrations.HolographicSetup;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.HOLOPLAYERS;
 import static es.jlh.pvptitles.Integrations.HolographicSetup.RANK_LINE;
 import static es.jlh.pvptitles.Integrations.HolographicSetup.TITLE_HEIGHT;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.isHDEnable;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -28,9 +29,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.removeHoloTag;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.createHoloTag;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.HOLOPLAYERS;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.createHoloPlayer;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.removeHoloPlayer;
 
 /**
  *
@@ -49,10 +49,10 @@ public class HandlePlayerTag implements Listener {
         cm = pt.cm;
     }
 
-    public boolean validWorld(String w) {
-        // Compruebo si el mundo esta en la lista de los vetados
+    private static boolean validWorld(String w) {
+        // Compruebo si el mundo esta en la lista de los vetados        
         if (HandlePlayerTag.cm.params.getAffectedWorlds().contains(w.toLowerCase())) {
-            if (!HandlePlayerTag.cm.params.isChat()) {
+            if (!HandlePlayerTag.cm.params.isTitleShown()) {
                 return false;
             }
         }
@@ -60,17 +60,20 @@ public class HandlePlayerTag implements Listener {
         return true;
     }
 
-    public static boolean hasPermissions(Player pl) {
+    public static boolean canDisplayRank(Player pl) {
         // Fix prefix
         Permission perm = VaultSetup.permission;
-        if (perm != null) {
-            String group = perm.getPrimaryGroup(pl);
-            World w = null;
-            World wp = pl.getWorld();
+        if (perm != null) { // Vault en el server
+            if (perm.hasGroupSupport() && perm.getPlayerGroups(pl).length != 0) {
+                String group = perm.getPrimaryGroup(pl);
+                
+                World w = null;
+                World wp = pl.getWorld();
 
-            if (perm.groupHas(w, group, IGNORED_CHAT_PERM)
-                    || perm.groupHas(wp, group, IGNORED_CHAT_PERM)) {
-                return false;
+                return !(perm.groupHas(w, group, IGNORED_CHAT_PERM)
+                        || perm.groupHas(wp, group, IGNORED_CHAT_PERM));
+            } else {
+                return !perm.has(pl, IGNORED_CHAT_PERM);
             }
         }
 
@@ -79,9 +82,9 @@ public class HandlePlayerTag implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (!validWorld(event.getPlayer().getWorld().getName()) 
+        if (!validWorld(event.getPlayer().getWorld().getName())
                 || !HandlePlayerTag.cm.params.displayInChat()
-                || !hasPermissions(event.getPlayer())) {
+                || !canDisplayRank(event.getPlayer())) {
             return;
         }
 
@@ -118,21 +121,42 @@ public class HandlePlayerTag implements Listener {
      * Método para establecer el titulo como holograma al jugador
      * <i>No funciona como handler porque es necesario que primero se ejecute el
      * handler de la clase HandlePlayerFame para evitar un error</i>
-     * 
+     *
      * @param player Player
      */
     public static void holoPlayerLogin(Player player) {
-        // Holograms
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
+        if (isHDEnable && HandlePlayerTag.cm.params.displayLikeHolo()) {
+            String uuid = player.getUniqueId().toString();
+
+            // Holograms
             int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
-            HolographicSetup.HOLOPLAYERS.put(player.getUniqueId().toString(),
-                    HolographicSetup.createHoloTag(player, rank)
-            );
+            HOLOPLAYERS.put(uuid, createHoloPlayer(player, rank));
+
+            // Fix reload
+            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) 
+                    || player.isSneaking()
+                    || rank.equalsIgnoreCase(IGNORED_RANK)
+                    || !canDisplayRank(player)
+                    || !validWorld(player.getWorld().getName())) {
+                HOLOPLAYERS.get(uuid).removeLine(0);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        String uuid = player.getUniqueId().toString();
+
+        // Holograms
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            removeHoloPlayer(HOLOPLAYERS.get(uuid));
+            HOLOPLAYERS.remove(uuid);
         }
     }
 
@@ -140,62 +164,43 @@ public class HandlePlayerTag implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
 
-        // Holograms
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HolographicSetup.HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-                Hologram h = HolographicSetup.HOLOPLAYERS.get(player.getUniqueId().toString());
+        if (HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
+            Hologram h = HOLOPLAYERS.get(player.getUniqueId().toString());
 
-                Location l = new Location(event.getTo().getWorld(),
-                        event.getTo().getX(),
-                        event.getTo().getY() + TITLE_HEIGHT,
-                        event.getTo().getZ());
+            Location l = new Location(event.getTo().getWorld(),
+                    event.getTo().getX(),
+                    event.getTo().getY() + TITLE_HEIGHT,
+                    event.getTo().getZ());
 
-                h.teleport(l);
-            }
+            h.teleport(l);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
+        String uuid = player.getUniqueId().toString();
 
-        // Holograms
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HolographicSetup.HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-                Hologram h = HolographicSetup.HOLOPLAYERS.get(player.getUniqueId().toString());
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            Hologram h = HOLOPLAYERS.get(uuid);
+            h.removeLine(0);
 
-                // Actualizar rango al cambiar de mundo
-                if (cm.params.isMw_enabled()) {
-                    int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                    int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                    int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            Location l = new Location(player.getLocation().getWorld(),
+                    player.getLocation().getX(),
+                    player.getLocation().getY() + TITLE_HEIGHT,
+                    player.getLocation().getZ());
+            h.teleport(l);
 
-                    String rank = Ranks.getRank(fame, totalTime);
-                    if (!h.getLine(0).toString().contains(rank)) {
-                        h.clearLines();
-                        h.appendTextLine(HolographicSetup.RANK_LINE.replace("%rank%", rank));
-                    }
-                }
-                
-                Location l = new Location(player.getLocation().getWorld(),
-                        player.getLocation().getX(),
-                        player.getLocation().getY() + TITLE_HEIGHT,
-                        player.getLocation().getZ());
+            int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
 
-                h.teleport(l);
-            }
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
+            String rank = Ranks.getRank(fame, totalTime);
 
-        // Holograms
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HolographicSetup.HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-                HolographicSetup.removeHoloTag(HolographicSetup.HOLOPLAYERS.get(player.getUniqueId().toString()));
-                HolographicSetup.HOLOPLAYERS.remove(player.getUniqueId().toString());
+            if (!rank.equals(IGNORED_RANK)
+                    && validWorld(player.getWorld().getName())
+                    && canDisplayRank(player)) {
+                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
             }
         }
     }
@@ -203,53 +208,46 @@ public class HandlePlayerTag implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        Location to = event.getTo();
+        String uuid = player.getUniqueId().toString();
 
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HolographicSetup.HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-                Hologram h = HolographicSetup.HOLOPLAYERS.get(player.getUniqueId().toString());
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            Location to = event.getTo();
 
-                if (!isHologramEmpty(h) && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                    h.clearLines();
-                } else if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY) 
-                        && !player.isSneaking() && !player.isDead()) {
-                    int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                    int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                    int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            Hologram h = HOLOPLAYERS.get(uuid);
+            h.teleport(new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ()));
 
-                    String rank = Ranks.getRank(fame, totalTime);
-                    h.appendTextLine(HolographicSetup.RANK_LINE.replace("%rank%", rank));
+            if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                    && !player.isSneaking() && !player.isDead()) {
+                int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+
+                String rank = Ranks.getRank(fame, totalTime);
+
+                // Rango <> none y mundo valido
+                if (!rank.equals(IGNORED_RANK)
+                        && validWorld(player.getWorld().getName())
+                        && canDisplayRank(player)) {
+                    h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
-
-                Location l;
-                l = new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ());
-                h.teleport(l);
+            } else if (!isHologramEmpty(h) && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                h.removeLine(0);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChangeRank(RankChangedEvent event) {
-        // Holograms
-        if (HolographicSetup.isHDEnable && cm.params.displayLikeHolo()) {
-            String uuid = event.getPlayer().getUniqueId().toString();
+        Player player = (Player) event.getPlayer();
+        String uuid = player.getUniqueId().toString();
 
-            if (!HOLOPLAYERS.containsKey(uuid)) {
-                Hologram h = createHoloTag((Player) event.getPlayer(),
-                        event.getNewRank());
-                HOLOPLAYERS.put(uuid, h);
-            }
-
-            if (event.getNewRank().equalsIgnoreCase(IGNORED_RANK)) {
-                removeHoloTag(HOLOPLAYERS.get(uuid));
-                HOLOPLAYERS.remove(uuid);
-                return;
-            }
-
+        if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
+            h.removeLine(0);
 
-            h.appendTextLine(RANK_LINE.replace("%rank%", event.getNewRank()));
+            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && canDisplayRank(player)) {
+                h.insertTextLine(0, RANK_LINE.replace("%rank%", event.getNewRank()));
+            }
         }
     }
 
@@ -259,38 +257,36 @@ public class HandlePlayerTag implements Listener {
         String uuid = player.getUniqueId().toString();
 
         // Holograms
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HOLOPLAYERS.containsKey(uuid)) {
-                HOLOPLAYERS.get(uuid).clearLines();
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            Hologram h = HOLOPLAYERS.get(uuid);
 
-                int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            Location l = new Location(event.getRespawnLocation().getWorld(),
+                    event.getRespawnLocation().getX(),
+                    event.getRespawnLocation().getY() + TITLE_HEIGHT,
+                    event.getRespawnLocation().getZ());
 
-                String rank = Ranks.getRank(fame, totalTime);
+            h.teleport(l);
 
-                Location l = new Location(event.getRespawnLocation().getWorld(),
-                        event.getRespawnLocation().getX(),
-                        event.getRespawnLocation().getY() + TITLE_HEIGHT,
-                        event.getRespawnLocation().getZ());
+            int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
 
-                HOLOPLAYERS.get(uuid).teleport(l);
-                HOLOPLAYERS.get(uuid).appendTextLine(
-                        HolographicSetup.RANK_LINE.replace("%rank%", rank)
-                );
+            String rank = Ranks.getRank(fame, totalTime);
+
+            if (!rank.equalsIgnoreCase(IGNORED_RANK)
+                    && validWorld(player.getWorld().getName())
+                    && canDisplayRank(player)) {
+                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
             }
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        // Holograms
-        if (HolographicSetup.isHDEnable && cm.params.displayLikeHolo()) {
-            String uuid = event.getEntity().getUniqueId().toString();
+        String uuid = event.getEntity().getUniqueId().toString();
 
-            if (HOLOPLAYERS.containsKey(uuid)) {
-                HOLOPLAYERS.get(uuid).clearLines();
-            }
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            HOLOPLAYERS.get(uuid).removeLine(0);
         }
     }
 
@@ -299,19 +295,25 @@ public class HandlePlayerTag implements Listener {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
 
-        if (cm.params.displayLikeHolo() && HolographicSetup.isHDEnable) {
-            if (HolographicSetup.HOLOPLAYERS.containsKey(uuid)) {
-                Hologram h = HolographicSetup.HOLOPLAYERS.get(uuid);
-                if (!Utils.isHologramEmpty(h) && event.isSneaking()) {
-                    h.clearLines();
-                } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                    int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                    int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                    int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            Hologram h = HOLOPLAYERS.get(uuid);
 
-                    String rank = Ranks.getRank(fame, totalTime);
+            if (event.isSneaking()) {
+                if (!Utils.isHologramEmpty(h)) {
+                    h.removeLine(0);
+                }
+            } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
 
-                    h.appendTextLine(HolographicSetup.RANK_LINE.replace("%rank%", rank));
+                String rank = Ranks.getRank(fame, totalTime);
+
+                // Rango <> none y mundo valido
+                if (!rank.equalsIgnoreCase(IGNORED_RANK)
+                        && validWorld(player.getWorld().getName())
+                        && canDisplayRank(player)) {
+                    h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
             }
         }

@@ -1,5 +1,6 @@
 package es.jlh.pvptitles.Managers.BoardsCustom;
 
+import es.jlh.pvptitles.Files.HologramsFile;
 import es.jlh.pvptitles.Integrations.HolographicSetup;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
@@ -35,7 +36,7 @@ public class HologramBoard extends Board {
     public boolean isMaterializable(short jugadores) {
         Location l = this.getData().getLocation();
 
-        List<BoardData> holos = HolographicSetup.getHolograms();
+        List<BoardData> holos = HologramsFile.loadHolograms();
         for (BoardData holo : holos) {
             if (l.equals(holo.getLocation())) {
                 return false;
@@ -84,7 +85,7 @@ public class HologramBoard extends Board {
 
                     if (param != null) {
                         if (param.contains("<main>")) {
-                            HolographicSetup.createHoloHead(l, getModel().getCantidad());
+                            HolographicSetup.createHoloBoardHead(l, getModel().getCantidad());
                             param = "";
                         } else {
                             // Longitud para colocar las columnas de la tabla
@@ -107,7 +108,7 @@ public class HologramBoard extends Board {
         // Posicion de los hologramas
         if (c == 1) {
             xpos.add(newL.getX());
-            HolographicSetup.createHologram(columnacompleta.get(0), newL);
+            HolographicSetup.createHoloBoard(columnacompleta.get(0), newL);
         } else {
             // Datos para sacar punto de partida
             double separador = (maxcol - 1) * SEPARATOR;
@@ -121,7 +122,7 @@ public class HologramBoard extends Board {
                 double ant = (i > 0) ? (blockspercolumn[i - 1] / 2) + SEPARATOR : 0;
                 newL.setX(newL.getX() + ant + blockspercolumn[i] / 2);
                 xpos.add(newL.getX());
-                HolographicSetup.createHologram(columnacompleta.get(i), newL);
+                HolographicSetup.createHoloBoard(columnacompleta.get(i), newL);
             }
         }
     }
@@ -129,10 +130,10 @@ public class HologramBoard extends Board {
     @Override
     public void dematerialize(short jugadores) {
         Location l = this.getData().getCustomL();
-        HolographicSetup.deleteHologram(l); // Elimino el header
+        HolographicSetup.deleteHoloBoard(l); // Elimino el header
         for (Double xpo : xpos) {
             // Elimino los hologramas con los datos
-            HolographicSetup.deleteHologram(new Location(l.getWorld(), xpo, l.getY() - HEADER, l.getZ()));
+            HolographicSetup.deleteHoloBoard(new Location(l.getWorld(), xpo, l.getY() - HEADER, l.getZ()));
         }
         xpos.clear();
     }

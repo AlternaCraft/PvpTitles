@@ -10,9 +10,7 @@ import es.jlh.pvptitles.Managers.BoardsCustom.HologramBoard;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
-import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +42,14 @@ public class HolographicSetup {
 
     public void setup() {
         isHDEnable = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
+        
         if (isHDEnable) {
             PvpTitles.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
-            PvpTitles.showMessage(ChatColor.YELLOW + "" + loadHolograms()
+            PvpTitles.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
                     + " scoreboards per holograms " + ChatColor.AQUA + "loaded correctly."
             );
-
+            
+            // Ranks
             if (plugin.cm.params.displayLikeHolo()) {
                 loadPlayersInServer();
             }
@@ -57,39 +57,49 @@ public class HolographicSetup {
     }
 
     public static void loadPlayersInServer() {
-        HOLOPLAYERS.clear();
-
+        deleteHoloPlayers();
         for (Player player : plugin.getServer().getOnlinePlayers()) {
-            if (!HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-                int fame = plugin.cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                int oldTime = plugin.cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
-
-                String rank = Ranks.getRank(fame, totalTime);
-
-                // Rank ignored
-                if (rank.equalsIgnoreCase(HandlePlayerTag.IGNORED_RANK)) {
-                    continue;
-                }
-
-                // Fix prefix
-                if (!HandlePlayerTag.hasPermissions(player)) {
-                    continue;
-                }
-
-                Hologram h = createHoloTag(player, rank);
-
-                HOLOPLAYERS.put(player.getUniqueId().toString(), h);
-            }
+            HandlePlayerTag.holoPlayerLogin(player);
         }
     }
 
-    public static int loadHolograms() {
-        // Fix para evitar duplicados
-        HolographicSetup.deleteHolograms();
+    // Player prefix
+    public static Hologram createHoloPlayer(Player pl, String rank) {
+        Location l = new Location(pl.getLocation().getWorld(), pl.getLocation().getX(),
+                pl.getLocation().getY() + TITLE_HEIGHT, pl.getLocation().getZ());
 
-        new HologramsFile().load();
+        Hologram h = HologramsAPI.createHologram(plugin, l);
+        h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
 
+        VisibilityManager visiblityManager = h.getVisibilityManager();
+        visiblityManager.setVisibleByDefault(true);
+        visiblityManager.hideTo(pl);
+
+        return h;
+    }
+
+    public static void removeHoloPlayer(Hologram h) {
+        if (!h.isDeleted())
+            h.delete();
+    }
+
+    public static void deleteHoloPlayers() {
+        // Optimizacion para borrar hologramas si se desactivo la opcion
+        for (Map.Entry<String, Hologram> entry : HOLOPLAYERS.entrySet()) {
+            Hologram holo = entry.getValue();
+            if (holo.isDeleted()) {
+                continue;
+            }
+            holo.delete();
+        }
+        HOLOPLAYERS.clear();
+    }
+    // End Player Prefix    
+
+    // Boards
+    public static int loadHoloBoards() {
+        HologramsFile.load();
+        deleteHolograms(); // Fix duplicados, borra todos
         int t = 0;
 
         for (BoardData holo : HologramsFile.loadHolograms()) {
@@ -107,28 +117,7 @@ public class HolographicSetup {
         return t;
     }
 
-    // Player prefix
-    public static Hologram createHoloTag(Player pl, String rank) {
-        Location l = new Location(pl.getLocation().getWorld(), pl.getLocation().getX(),
-                pl.getLocation().getY() + TITLE_HEIGHT, pl.getLocation().getZ());
-
-        Hologram h = HologramsAPI.createHologram(plugin, l);
-        h.appendTextLine(RANK_LINE.replace("%rank%", rank));
-
-        VisibilityManager visiblityManager = h.getVisibilityManager();
-        visiblityManager.setVisibleByDefault(true);
-        visiblityManager.hideTo(pl);
-
-        return h;
-    }
-
-    public static void removeHoloTag(Hologram h) {
-        h.delete();
-    }
-    // End Player Prefix    
-
-    // Crear
-    public static void createHoloHead(Location l, short top) {
+    public static void createHoloBoardHead(Location l, short top) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
         h.appendTextLine(Utils.translateColor("&6&lPvpTitles"));
@@ -137,7 +126,7 @@ public class HolographicSetup {
         h.appendTextLine(Utils.translateColor("&6&l+&r------&6&l+"));
     }
 
-    public static void createHologram(List<String> contenido, Location l) {
+    public static void createHoloBoard(List<String> contenido, Location l) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
         for (String string : contenido) {
@@ -145,42 +134,29 @@ public class HolographicSetup {
         }
     }
 
-    public static List<BoardData> getHolograms() {
-        List<BoardData> infoholos = new ArrayList<>();
-        Collection<Hologram> hs = HologramsAPI.getHolograms(plugin);
-
-        for (Hologram holo : hs) {
-            infoholos.add(new BoardData(holo.getLocation()));
-        }
-
-        return infoholos;
-    }
-
-    // Borrar
-    public static void deleteHologram(Location l) {
+    public static void deleteHoloBoard(Location l) {
         Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
         for (Hologram holo : holograms) {
             if (holo.isDeleted()) {
                 continue;
             }
-
             if (l.equals(holo.getLocation())) {
                 holo.delete();
                 break;
             }
         }
     }
+    // End boards
 
-    // Borrar
+    // Todos
     public static void deleteHolograms() {
         Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
         for (Hologram holo : holograms) {
             if (holo.isDeleted()) {
                 continue;
             }
-
             holo.delete();
         }
     }
-
+    // Fin todos
 }

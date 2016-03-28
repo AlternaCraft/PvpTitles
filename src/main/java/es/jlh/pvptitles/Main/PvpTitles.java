@@ -1,6 +1,6 @@
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     24-03-2016
+// Last Change:     28-03-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -90,6 +90,9 @@
 //  Ver. 2.5    01/03/2016   Compilado con la version 1.9 de spigot, arreglado fallo
 //   con los mensajes al usar el comando de la fama (add/set).
 //  Ver. 2.5.1  24/03/2016   Mejorado el rendimiento del plugin y optimizado el código.
+//   Arreglado fallo con el permiso para evitar mostrar el titulo.
+//  Ver. 2.5.1  28/03/2016   Mejorado sistema de titulos por holograma, integrado
+//   con las mismas condiciones que el mostrado en el chat (MW-filter y permisos).
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 

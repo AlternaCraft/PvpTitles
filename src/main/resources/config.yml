@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.4.2
+Version: 2.5.1
 ################
 
 ############################################################
@@ -55,7 +55,7 @@ MW:
 # Manage some plugin features between worlds
 MW-filter:
     # It shows the titles on the worlds listed below.
-    chat: false
+    title: false
     # Awards points for fame on the worlds listed below.
     points: false
     # It shows the players, who played in the worlds listed below, on the leaderboard (pvpladder and boards)
@@ -150,7 +150,7 @@ DisplayTitleInChat: true
 ## HOLOGRAMS ##
 # Display the player title over his head (EXPERIMENTAL)
 DisplayTitleOverPlayer: false
-# Holographic title's format (For all ranks)
+# Holographic title's format (For all ranks) [Supports colors]
 HoloTitleFormat: "[%rank%]"
 # This requires that HolographicDisplays be loaded
 ## -- ##

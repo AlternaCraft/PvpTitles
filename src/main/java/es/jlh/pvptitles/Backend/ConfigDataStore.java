@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
  * @author AlternaCraft
  */
 public class ConfigDataStore {
+
     /* METRICS && UPDATES */
 
     // Atributo para guardar si se van a usar las metricas
@@ -18,7 +19,7 @@ public class ConfigDataStore {
     private boolean update = false;
     // Atributo para guardar si se va a avisar de las actualizaciones o no
     private boolean alert = true;
-    
+
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
     // Datos de la conexion a MySQL
@@ -33,12 +34,12 @@ public class ConfigDataStore {
     private String nameS = "";
 
     /* MULTIWORLD */
-    private boolean mw_enabled = false;    
+    private boolean mw_enabled = false;
 
     // Atributo con los mundos
     private final List<String> mundos = new ArrayList();
     // Atributo para mostrar o no los titulos en el chat de los mundos escritos
-    private boolean chat = false;
+    private boolean title = false;
     // Atributo para permitir ganar puntos de fama a los jugadores en los mundos escritos
     private boolean points = false;
     // Atributo para mostrar los jugadores en la tabla de puntuaciones
@@ -47,7 +48,7 @@ public class ConfigDataStore {
     /* LEADERBOARD */
     // Tiempo de actualizacion de los carteles (Minutos)
     private short LBRefresh = 0;
-    
+
     /* RANK CHECKER */
     // Tiempo para comprobar si tiene un nuevo rango
     private short rankChecker = 0;
@@ -64,16 +65,16 @@ public class ConfigDataStore {
     // Tiempo para volver a matar una vez superado el limite de bajas
     private short timeV = 0;
     // Tiempo para limpiar las bajas realizadas a un jugador
-    private short timeL = 0;    
+    private short timeL = 0;
     // Comprueba AFK
     private boolean checkAFK = false;
     // Tiempo AFK
     private short AFKTime = 0;
-    
+
     /* KILLSTREAKS */
     // Modificador de los puntos ganados en una racha de bajas
     private float mod = 0;
-    
+
     /* CHAT */
     // Mostrar el titulo del jugador en el chat
     private boolean displayInChat = true;
@@ -81,7 +82,7 @@ public class ConfigDataStore {
     private boolean displayLikeHolo = false;
     // Formato para el titulo como holograma
     private String holotagformat = null;
-    
+
     // Color del titulo en el chat
     private ChatColor prefixColor = null;
     // Nombre de los puntos
@@ -193,8 +194,8 @@ public class ConfigDataStore {
         this.metrics = metrics;
     }
 
-    public void setChat(boolean chat) {
-        this.chat = chat;
+    public void setTitle(boolean title) {
+        this.title = title;
     }
 
     public void displayInChat(boolean chatTitle) {
@@ -314,6 +315,14 @@ public class ConfigDataStore {
         return mw_enabled;
     }
 
+    public boolean isTitleShown() {
+        return title;
+    }
+
+    public boolean isPoints() {
+        return points;
+    }
+
     public boolean showOnLeaderBoard() {
         return leaderboard;
     }
@@ -334,16 +343,8 @@ public class ConfigDataStore {
         return alert;
     }
 
-    public boolean isPoints() {
-        return points;
-    }
-
     public boolean isMetrics() {
         return metrics;
-    }
-
-    public boolean isChat() {
-        return chat;
     }
 
     public boolean displayInChat() {
@@ -357,7 +358,7 @@ public class ConfigDataStore {
     public String getHolotagformat() {
         return holotagformat;
     }
-    
+
     // ** COMPROBACIONES ** \\
     public short compNum(short valor) {
         if (valor < 0 || valor > 1000) {

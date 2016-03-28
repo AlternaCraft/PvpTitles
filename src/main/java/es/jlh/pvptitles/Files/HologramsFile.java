@@ -22,10 +22,7 @@ public class HologramsFile {
     private static final File HOLOSFILE = new File("plugins/PvpTitles/holograms.yml");
     private static YamlConfiguration holosConf = null;
 
-    public HologramsFile() {
-    }
-
-    public YamlConfiguration load() {
+    public static YamlConfiguration load() {
         if (!HOLOSFILE.exists()) {
             createConfig();
         }
@@ -35,7 +32,7 @@ public class HologramsFile {
         return holosConf;
     }
 
-    private void createConfig() {
+    private static void createConfig() {
         YamlConfiguration newConfig = new YamlConfiguration();
 
         newConfig.options().header(

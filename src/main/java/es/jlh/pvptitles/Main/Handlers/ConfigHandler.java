@@ -116,7 +116,7 @@ public class ConfigHandler {
 
         params.displayInChat(config.getBoolean("DisplayTitleInChat"));
         params.displayLikeHolo(config.getBoolean("DisplayTitleOverPlayer"));
-        params.setHolotagformat(config.getString("HoloTitleFormat"));
+        params.setHolotagformat(Utils.translateColor(config.getString("HoloTitleFormat")));
         params.setPrefixColor(config.getString("PrefixColor"));
         params.setTag(config.getString("Tag"));
         params.setPrefix(config.getString("Prefix"));
@@ -134,7 +134,7 @@ public class ConfigHandler {
         params.setAlert(config.getBoolean("Alert"));
         params.setMetrics(config.getBoolean("Metrics"));        
         params.setMw_enabled(config.getBoolean("MW.enable"));
-        params.setChat(config.getBoolean("MW-filter.chat"));
+        params.setTitle(config.getBoolean("MW-filter.title"));
         params.setPoints(config.getBoolean("MW-filter.points"));
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
