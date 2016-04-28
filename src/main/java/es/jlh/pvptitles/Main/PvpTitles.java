@@ -211,12 +211,12 @@ public class PvpTitles extends JavaPlugin {
                  * -> Integraciones <-
                  */
                 getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
-                        + "# STARTING AUTOINTEGRATION MODULE #");
+                        + "# STARTING INTEGRATION MODULE #");
 
                 checkExternalPlugins();
 
                 getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
-                        + "# ENDING AUTOINTEGRATION MODULE #");
+                        + "# ENDING INTEGRATION MODULE #");
                 /*
                  * -> Fin integraciones <-
                  */
