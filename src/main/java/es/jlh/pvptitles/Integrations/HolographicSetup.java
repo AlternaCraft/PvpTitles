@@ -37,7 +37,7 @@ public class HolographicSetup {
 
     public HolographicSetup(PvpTitles pt) {
         HolographicSetup.plugin = pt;
-        RANK_LINE = pt.cm.params.getHolotagformat();
+        RANK_LINE = pt.manager.params.getHolotagformat();
     }
 
     public void setup() {
@@ -50,7 +50,7 @@ public class HolographicSetup {
             );
             
             // Ranks
-            if (plugin.cm.params.displayLikeHolo()) {
+            if (plugin.manager.params.displayLikeHolo()) {
                 loadPlayersInServer();
             }
         }
@@ -103,14 +103,14 @@ public class HolographicSetup {
         int t = 0;
 
         for (BoardData holo : HologramsFile.loadHolograms()) {
-            BoardModel sm = plugin.cm.searchModel(holo.getModelo());
+            BoardModel sm = plugin.manager.searchModel(holo.getModelo());
 
             ModelController mc = new ModelController();
             mc.preprocessUnit(sm.getParams());
 
             HologramBoard hb = new HologramBoard(holo, sm, mc);
 
-            plugin.cm.getLbm().loadBoard(hb);
+            plugin.manager.getLbm().loadBoard(hb);
             t++;
         }
 

@@ -37,7 +37,7 @@ public class BoardCommand implements CommandExecutor {
 
     public BoardCommand(PvpTitles pvpTitles) {
         this.pt = pvpTitles;
-        this.cm = pvpTitles.cm;
+        this.cm = pvpTitles.manager;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class BoardCommand implements CommandExecutor {
                     return false;
             }
         } else {
-            List<Board> boards = pt.cm.getLbm().getBoards();
+            List<Board> boards = pt.manager.getLbm().getBoards();
             pl.openInventory(Inventories.createInventory(boards, Localizer.getLocale(pl)).get(0));
         }
 

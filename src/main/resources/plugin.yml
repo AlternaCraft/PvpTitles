@@ -1,5 +1,5 @@
 name: PvpTitles
-version: 2.5.1
+version: 2.5.2
 description: Get epic titles in pvp
 database: true
 
@@ -61,7 +61,7 @@ permissions:
             - pvptitles.ladder: true
             - pvptitles.reload: true
             - pvptitles.database: true
-            - pvptitles.managesign: true
+            - pvptitles.manageboard: true
     pvptitles.admin:
         description: Access to staff commands
         children:
@@ -70,7 +70,7 @@ permissions:
             - pvptitles.purge: true
             - pvptitles.reload: true
             - pvptitles.database: true
-            - pvptitles.managesign: true
+            - pvptitles.manageboard: true
     pvptitles.help:
         description: Access to /pvptitles command.
         default: true
@@ -95,8 +95,8 @@ permissions:
     pvptitles.database:
         description: Access to /pvpdatabase command.
         default: op
-    pvptitles.managesign:
-        description: Create/destroy scoreboards per signs.
+    pvptitles.manageboard:
+        description: Create/destroy scoreboards per boards.
         default: op
     pvptitles.hideprefix:
         description: Doesn't display your title.

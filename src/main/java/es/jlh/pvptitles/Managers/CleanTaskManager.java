@@ -33,7 +33,7 @@ public class CleanTaskManager {
                         afm.cleanKillsOnVictim(killer, victim);
                         cleanKills.remove(victim);
                     }
-                }, afm.getPlugin().cm.params.getTimeL() * TICKS * 1L)
+                }, afm.getPlugin().manager.params.getTimeL() * TICKS * 1L)
         );
     }
 

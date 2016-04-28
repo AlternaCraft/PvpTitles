@@ -133,7 +133,7 @@ public class DBHandler {
      * Conexion a MySQL
      */
     public void mysqlConnect() {
-        ConfigDataStore params = pvpTitles.cm.params;
+        ConfigDataStore params = pvpTitles.manager.params;
 
         MySQLConnection.connectDB(params.getHost() + ":" + params.getPort()
                 + "/" + params.getDb(), params.getUser(), params.getPass());

@@ -64,7 +64,7 @@ public class AntiFarmManager {
     }
     
     public int getVetoTime(String killer) {
-        return (int) ((vetados.get(killer)+(plugin.cm.params.getTimeV()*1000L) - System.currentTimeMillis()) / 1000L);
+        return (int) ((vetados.get(killer)+(plugin.manager.params.getTimeV()*1000L) - System.currentTimeMillis()) / 1000L);
     }
     
     public PvpTitles getPlugin() {

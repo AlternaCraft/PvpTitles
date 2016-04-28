@@ -46,7 +46,7 @@ public class HandlePlayerTag implements Listener {
 
     public HandlePlayerTag(PvpTitles pt) {
         plugin = pt;
-        cm = pt.cm;
+        cm = pt.manager;
     }
 
     private static boolean validWorld(String w) {

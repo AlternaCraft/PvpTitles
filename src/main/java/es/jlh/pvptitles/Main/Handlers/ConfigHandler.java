@@ -139,9 +139,9 @@ public class ConfigHandler {
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
         if (configList.size() != requFame.size()) {
-            PvpTitles.logDebugInfo("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            PvpTitles.logDebugInfo("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            PvpTitles.logDebugInfo("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
         }
     }    
 

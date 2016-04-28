@@ -42,8 +42,8 @@ public class SBSSetup {
         replaceManager.register(new VariableReplacer() {
             @Override
             public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int puntos = plugin.cm.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                int seconds = plugin.cm.dbh.getDm().loadPlayedTime(player.getUniqueId());
+                int puntos = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+                int seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
 
                 /*
                  * La variable rank no funcionara hasta la proxima version del

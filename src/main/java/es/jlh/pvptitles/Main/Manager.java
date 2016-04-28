@@ -162,7 +162,7 @@ public final class Manager {
      * Método para guardar en memoria los scoreboards
      */
     public void loadSavedBoards() {
-        List<SignBoardData> carteles = pvpTitles.cm.dbh.getDm().buscaBoards();
+        List<SignBoardData> carteles = pvpTitles.manager.dbh.getDm().buscaBoards();
 
         lbm.vaciar(); // Evito duplicados
 
@@ -171,7 +171,7 @@ public final class Manager {
             BoardModel bm = searchModel(cartel.getModelo());
 
             if (bm == null) {
-                if (!pvpTitles.cm.dbh.getDm().borraBoard(cartel.getLocation())) {
+                if (!pvpTitles.manager.dbh.getDm().borraBoard(cartel.getLocation())) {
                     PvpTitles.logError("Error deleting board", null);
                 }
                 else {

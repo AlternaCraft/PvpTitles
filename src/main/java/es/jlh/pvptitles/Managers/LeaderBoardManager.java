@@ -7,6 +7,7 @@ import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
+import es.jlh.pvptitles.Managers.BoardsCustom.HologramBoard;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Objects.CustomLocation;
 import es.jlh.pvptitles.Objects.PlayerFame;
@@ -58,7 +59,7 @@ public class LeaderBoardManager {
     public boolean addBoard(Board b, Player pl) {
         if (!boards.contains(b)) {
             // Compruebo si ya hay algo ocupando el sitio            
-            ArrayList<PlayerFame> pf = this.pt.cm.dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
+            ArrayList<PlayerFame> pf = this.pt.manager.dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
             short jugadores = (short) pf.size();
 
             if (!b.isMaterializable(jugadores)) {
@@ -66,12 +67,13 @@ public class LeaderBoardManager {
                 return false;
             }
 
+            // Tipos predefinidos
             if (b instanceof SignBoard) {
-                if (!pt.cm.dbh.getDm().registraBoard((SignBoard) b)) {
+                if (!pt.manager.dbh.getDm().registraBoard((SignBoard) b)) {
                     PvpTitles.logError("Error saving sign board", null);
                     return false;
                 }
-            } else {
+            } else if (b instanceof HologramBoard) {
                 HologramsFile.saveHologram(b.getData());
             }
 
@@ -91,7 +93,7 @@ public class LeaderBoardManager {
 
     public void loadBoard(Board cs) {
         if (!boards.contains(cs)) {
-            cs.materialize(pt.cm.dbh.getDm().getTopPlayers(
+            cs.materialize(pt.manager.dbh.getDm().getTopPlayers(
                     cs.getModel().getCantidad(), cs.getData().getServer()
             ));
             boards.add(cs);
@@ -100,7 +102,7 @@ public class LeaderBoardManager {
 
     public void updateBoards() {
         for (Board board : boards) {
-            ArrayList<PlayerFame> pf = pt.cm.dbh.getDm().getTopPlayers(
+            ArrayList<PlayerFame> pf = pt.manager.dbh.getDm().getTopPlayers(
                     board.getModel().getCantidad(), board.getData().getServer());
             
             board.dematerialize((short) pf.size());
@@ -111,7 +113,7 @@ public class LeaderBoardManager {
     public void deleteBoard(Location l, Object o) {
         for (Board bo : boards) {
             if (bo.getData().getLocation().equals(CustomLocation.toCustomLocation(l))) {
-                short jugadores = (short) pt.cm.dbh.getDm().getTopPlayers(
+                short jugadores = (short) pt.manager.dbh.getDm().getTopPlayers(
                         bo.getModel().getCantidad(), bo.getData().getServer()).size();
 
                 Player pl = null;
@@ -122,7 +124,7 @@ public class LeaderBoardManager {
                         BlockBreakEvent event = (BlockBreakEvent) o;
                         pl = event.getPlayer();
 
-                        if (!pl.hasPermission("pvptitles.managesign")) {
+                        if (!pl.hasPermission("pvptitles.manageboard")) {
                             pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             event.setCancelled(true);
                             return;
@@ -130,19 +132,20 @@ public class LeaderBoardManager {
                     } else {
                         pl = (Player) o;
 
-                        if (!pl.hasPermission("pvptitles.managesign")) {
+                        if (!pl.hasPermission("pvptitles.manageboard")) {
                             pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             return;
                         }
                     }
                 }
 
+                // Tipos predefinidos
                 if (bo instanceof SignBoard) {
-                    if (!pt.cm.dbh.getDm().borraBoard(bo.getData().getLocation())) {
+                    if (!pt.manager.dbh.getDm().borraBoard(bo.getData().getLocation())) {
                         PvpTitles.logError("Error deleting sign board", null);
                         return;
                     }
-                } else {
+                } else if (bo instanceof HologramBoard) {
                     HologramsFile.removeHologram(bo.getData().getLocation());
                 }
 

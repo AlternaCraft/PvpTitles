@@ -49,7 +49,7 @@ public class DBChecker {
 
     @SuppressWarnings("UnusedAssignment")
     public boolean checkEbeanDB() {
-        Ebean ebeanserver = plugin.cm.dbh.ebeanServer;
+        Ebean ebeanserver = plugin.manager.dbh.ebeanServer;
         RetroDMEbean rdm = new RetroDMEbean(plugin, ebeanserver);
 
         int status = EBEAN_OLD_VERSION;
@@ -78,7 +78,7 @@ public class DBChecker {
         rdm.conversor();
         rdm.conversorUUID();
 
-        plugin.cm.getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
+        plugin.manager.getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
         UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                 File.separator).append(RetroDMEbean.FILENAME).toString());
 
@@ -86,7 +86,7 @@ public class DBChecker {
     }
 
     public void checkMySQLDB() {
-        Connection mysql = plugin.cm.dbh.mysql;
+        Connection mysql = plugin.manager.dbh.mysql;
         RetroDMMysql rdm = new RetroDMMysql(plugin, mysql);
 
         int status = MYSQL_OLD_VERSION;
@@ -103,7 +103,7 @@ public class DBChecker {
         } catch (SQLException ex) {
         }
 
-        plugin.cm.getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
+        plugin.manager.getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
         UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                 File.separator).append(RetroDMMysql.FILENAME).toString());
     }

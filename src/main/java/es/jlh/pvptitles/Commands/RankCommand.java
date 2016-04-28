@@ -52,9 +52,9 @@ public class RankCommand implements CommandExecutor {
      * @param player Jugador que consulta los datos
      */
     private void HandleRankCmd(Player player) {
-        int fame = pt.cm.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+        int fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         int racha = (HandlePlayerFame.KILLSTREAK.containsKey(player.getName())) ? HandlePlayerFame.KILLSTREAK.get(player.getName()) : 0;
-        int seconds = pt.cm.dbh.getDm().loadPlayedTime(player.getUniqueId())
+        int seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
                 + pt.getPlayerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         
         String rank = Ranks.getRank(fame, seconds);
@@ -63,7 +63,7 @@ public class RankCommand implements CommandExecutor {
         int timeup = Ranks.nextRankTime();
         
         String nextRank = Ranks.nextRankTitle();
-        String tag = pt.cm.params.getTag();
+        String tag = pt.manager.params.getTag();
 
         player.sendMessage("");
         player.sendMessage(PLUGIN);
@@ -80,7 +80,7 @@ public class RankCommand implements CommandExecutor {
 
         if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
             player.sendMessage("  * " + LangFile.VETO_STARTED.getText(Localizer.getLocale(player))
-                    .replace("%tag%", pt.cm.params.getTag())
+                    .replace("%tag%", pt.manager.params.getTag())
                     .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(player.getUniqueId().toString()))));
         }
     }

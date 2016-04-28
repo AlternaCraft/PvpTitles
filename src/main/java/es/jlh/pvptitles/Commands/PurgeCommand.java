@@ -20,7 +20,7 @@ public class PurgeCommand implements CommandExecutor {
 
     public PurgeCommand(PvpTitles pvpTitles) {
         this.pvpTitles = pvpTitles;
-        this.dh = this.pvpTitles.cm;
+        this.dh = this.pvpTitles.manager;
     }
     
     @Override

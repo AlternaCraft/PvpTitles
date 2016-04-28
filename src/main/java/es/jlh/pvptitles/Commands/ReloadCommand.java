@@ -35,24 +35,24 @@ public class ReloadCommand implements CommandExecutor {
             return false;
         }
 
-        pvpTitles.cm.getCh().loadConfig(pvpTitles.cm.params);
-        pvpTitles.cm.getDbh().selectDB();
+        pvpTitles.manager.getCh().loadConfig(pvpTitles.manager.params);
+        pvpTitles.manager.getDbh().selectDB();
         new DBChecker(pvpTitles).setup();
 
-        pvpTitles.cm.loadLang();
-        pvpTitles.cm.loadModels();
-        pvpTitles.cm.loadSavedBoards();
-        pvpTitles.cm.loadCommands();
+        pvpTitles.manager.loadLang();
+        pvpTitles.manager.loadModels();
+        pvpTitles.manager.loadSavedBoards();
+        pvpTitles.manager.loadCommands();
 
         if (tipo == DBTYPE.MYSQL) {
-            pvpTitles.cm.loadServers();
+            pvpTitles.manager.loadServers();
         }
 
-        pvpTitles.cm.loadActualizador();
-        pvpTitles.cm.loadRankTimeChecker();
+        pvpTitles.manager.loadActualizador();
+        pvpTitles.manager.loadRankTimeChecker();
         
-        if (HolographicSetup.isHDEnable && pvpTitles.cm.params.displayLikeHolo()) {
-            HolographicSetup.RANK_LINE = pvpTitles.cm.params.getHolotagformat();
+        if (HolographicSetup.isHDEnable && pvpTitles.manager.params.displayLikeHolo()) {
+            HolographicSetup.RANK_LINE = pvpTitles.manager.params.getHolotagformat();
             HolographicSetup.loadPlayersInServer();
         }
         else if (HolographicSetup.isHDEnable && HolographicSetup.HOLOPLAYERS.size() > 0) {

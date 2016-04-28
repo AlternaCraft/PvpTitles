@@ -34,7 +34,7 @@ public class DBCommand implements CommandExecutor {
             return false;
         }
 
-        DatabaseManager dm = pvpTitles.cm.getDbh().getDm();
+        DatabaseManager dm = pvpTitles.manager.getDbh().getDm();
 
         String filename;
 
@@ -43,7 +43,7 @@ public class DBCommand implements CommandExecutor {
                 if (args.length > 1) {
                     filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".sql" : ".json");
                 } else {
-                    filename = pvpTitles.cm.dbh.getDm().getDefaultFExport();
+                    filename = pvpTitles.manager.dbh.getDm().getDefaultFExport();
                 }
                 dm.DBExport(filename);
                 sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Exported correctly");
@@ -52,7 +52,7 @@ public class DBCommand implements CommandExecutor {
                 if (args.length > 1) {
                     filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".json" : ".sql");
                 } else {
-                    filename = pvpTitles.cm.dbh.getDm().getDefaultFImport();
+                    filename = pvpTitles.manager.dbh.getDm().getDefaultFImport();
                 }
                 if (dm.DBImport(filename)) {
                     sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Imported correctly");

@@ -50,7 +50,7 @@ public class PlayerFame implements Comparable {
     }
     
     public int getRealSeconds() {
-        int actual = plugin.cm.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+        int actual = plugin.manager.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         int session = plugin.getPlayerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
@@ -66,7 +66,7 @@ public class PlayerFame implements Comparable {
     }
     
     public String getServerName() {
-        return plugin.cm.dbh.getDm().getServerName(this.server);
+        return plugin.manager.dbh.getDm().getServerName(this.server);
     }
     
     @Override

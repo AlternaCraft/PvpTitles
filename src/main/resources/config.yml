@@ -70,7 +70,7 @@ MW-filter:
 # +------------------------------------------------------+ #
 ############################################################
 
-# Update Time for leaderboard per boards (IN MINUTES)
+# Update Time for leaderboards (IN MINUTES)
 LBRefresh: 1
 
 # Time to check new Rank (Time requierement) (IN SECONDS)
@@ -140,7 +140,7 @@ PrefixColor: green
 # Number of the top players that will be shown in chat with the pvpladder command
 Top: 5
 
-# Prefix in the chat replace (Use double quotes to work)
+# Prefix in the chat to replace (Use double quotes to work)
 Prefix: "{PVPTITLE}"
 # If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat
 

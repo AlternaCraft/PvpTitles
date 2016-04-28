@@ -49,7 +49,7 @@ public class HandlePlayerFame implements Listener {
      * @param pt Plugin
      */
     public HandlePlayerFame(PvpTitles pt) {
-        this.cm = pt.cm;
+        this.cm = pt.manager;
         this.pvpTitles = pt;
 
         afm = new AntiFarmManager(pvpTitles);
@@ -260,7 +260,7 @@ public class HandlePlayerFame implements Listener {
      * @param kills Racha de bajas
      */
     private void calculateRank(String killed, Player player, int fame, int kills) {
-        int seconds = pvpTitles.cm.dbh.getDm().loadPlayedTime(player.getUniqueId());
+        int seconds = pvpTitles.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
 
         int fameAntes = fame;
         String tag = this.cm.params.getTag();

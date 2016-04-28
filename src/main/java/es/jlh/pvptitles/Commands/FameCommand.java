@@ -26,7 +26,7 @@ public class FameCommand implements CommandExecutor {
 
     public FameCommand(PvpTitles pt) {
         this.pt = pt;
-        this.dm = pt.cm;
+        this.dm = pt.manager;
     }
 
     @Override

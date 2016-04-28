@@ -35,7 +35,7 @@ public class HandleSign implements Listener {
 
     public HandleSign(PvpTitles plugin) {
         this.pt = plugin;
-        this.cm = plugin.cm;
+        this.cm = plugin.manager;
     }
 
     @EventHandler
@@ -57,7 +57,7 @@ public class HandleSign implements Listener {
                 || lineas[0].compareToIgnoreCase("[pvptitles]") == 0) {
 
             // Compruebo permisos
-            if (!event.getPlayer().hasPermission("pvptitles.managesign")) {
+            if (!event.getPlayer().hasPermission("pvptitles.manageboard")) {
                 pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                 return;
             }
@@ -108,7 +108,7 @@ public class HandleSign implements Listener {
                 cs.setLineas(lineas);
                 cs.setMatSign(matSign);
 
-                if (!pt.cm.getLbm().addBoard(cs, pl)) {                
+                if (!pt.manager.getLbm().addBoard(cs, pl)) {                
                     event.setCancelled(true);
                 }
             } else {
@@ -131,18 +131,18 @@ public class HandleSign implements Listener {
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX() + coord, b.getY(), b.getZ()).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.cm.getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.manager.getLbm().deleteBoard(b2.getLocation(), event);
                 }
             }
             
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX(), b.getY(), b.getZ() + coord).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.cm.getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.manager.getLbm().deleteBoard(b2.getLocation(), event);
                 }
             }
         } else {
-            pt.cm.getLbm().deleteBoard(locblock, event);
+            pt.manager.getLbm().deleteBoard(locblock, event);
         }
     }
 

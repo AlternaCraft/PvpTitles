@@ -34,9 +34,9 @@ public class LadderCommand implements CommandExecutor {
             return false;
         }
         
-        short top = this.pvpTitles.cm.params.getTop();
+        short top = this.pvpTitles.manager.params.getTop();
         
-        ArrayList<PlayerFame> rankedPlayers = pvpTitles.cm.dbh.getDm().getTopPlayers(top, "");                
+        ArrayList<PlayerFame> rankedPlayers = pvpTitles.manager.dbh.getDm().getTopPlayers(top, "");                
         
         sender.sendMessage("");
         sender.sendMessage(PLUGIN);

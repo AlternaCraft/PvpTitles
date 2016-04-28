@@ -59,7 +59,7 @@ public class UtilsFile {
         } finally {
             try {                
                 br.close();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
             }
         }
 

@@ -20,7 +20,7 @@ public class MovementManager {
     public MovementManager(PvpTitles plugin) {
         this.plugin = plugin;
         this.lastMovement = new HashMap();        
-        this.timeThreshold = plugin.cm.params.getAFKTime() * 60;
+        this.timeThreshold = plugin.manager.params.getAFKTime() * 60;
     }
 
     public boolean isAFK(OfflinePlayer player) {
@@ -35,7 +35,8 @@ public class MovementManager {
         long currTime = System.currentTimeMillis();
         int timeDiff = (int) ((currTime - lastMove) / 1000L);       
         
-        return (plugin.cm.params.isCheckAFK()) ? timeDiff - this.timeThreshold:0;
+        // 0 para evitar lios
+        return (plugin.manager.params.isCheckAFK()) ? timeDiff - this.timeThreshold:0;
     }
 
     public boolean hasLastMovement(OfflinePlayer player) {

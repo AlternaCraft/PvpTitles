@@ -10,12 +10,12 @@ import org.bukkit.OfflinePlayer;
  *
  * @author AlternaCraft
  */
-public class PlayerManager {
+public class TimerManager {
 
     private PvpTitles plugin = null;
     private Set<TimedPlayer> players = null;
 
-    public PlayerManager(PvpTitles plugin) {
+    public TimerManager(PvpTitles plugin) {
         this.plugin = plugin;
         this.players = new HashSet();
     }

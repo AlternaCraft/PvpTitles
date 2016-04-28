@@ -93,6 +93,7 @@
 //   Arreglado fallo con el permiso para evitar mostrar el titulo.
 //  Ver. 2.5.1  28/03/2016   Mejorado sistema de titulos por holograma, integrado
 //   con las mismas condiciones que el mostrado en el chat (MW-filter y permisos).
+//  Ver. 2.5.2  17/04/2016   Renombradas algunas variables y actualizadas las dependencias.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -115,7 +116,7 @@ import es.jlh.pvptitles.Integrations.SBSSetup;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
-import es.jlh.pvptitles.Managers.PlayerManager;
+import es.jlh.pvptitles.Managers.TimerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
 import es.jlh.pvptitles.Misc.Inventories;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
@@ -140,10 +141,10 @@ public class PvpTitles extends JavaPlugin {
     public static Logger LOGGER = null;
     public static boolean debugMode = false;
 
-    public Manager cm = null;
+    public Manager manager = null;
 
     private MovementManager movementManager = null;
-    private PlayerManager playerManager = null;
+    private TimerManager timerManager = null;
 
     private boolean works = true;
 
@@ -159,14 +160,14 @@ public class PvpTitles extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         
-        this.cm = Manager.getInstance();
+        this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
          * de configuraciones.
          */
-        works = this.cm.setup(this);
+        works = this.manager.setup(this);
 
         if (!works) {
             this.getServer().getPluginManager().disablePlugin(this);
@@ -195,7 +196,7 @@ public class PvpTitles extends JavaPlugin {
 
         // Registro los managers del timing
         movementManager = new MovementManager(this);
-        playerManager = new PlayerManager(this);
+        timerManager = new TimerManager(this);
 
         checkOnlinePlayers();
 
@@ -203,8 +204,8 @@ public class PvpTitles extends JavaPlugin {
         this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                new MetricsManager().sendData(cm.getPvpTitles());
-                new UpdaterManager().testUpdate(cm.getPvpTitles(), getFile());
+                new MetricsManager().sendData(manager.getPvpTitles());
+                new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
 
                 /* 
                  * -> Integraciones <-
@@ -222,17 +223,17 @@ public class PvpTitles extends JavaPlugin {
             }
         }, 5L);
 
-        logDebugInfo(LangFile.PLUGIN_ENABLED.getText(Manager.messages));
+        logMessage(LangFile.PLUGIN_ENABLED.getText(Manager.messages));
     }
 
     @Override
     public void onDisable() {
         if (works) {
-            this.playerManager.stopSessions();
-            Set<TimedPlayer> players = this.playerManager.getTimedPlayers();
+            this.timerManager.stopSessions();
+            Set<TimedPlayer> players = this.timerManager.getTimedPlayers();
 
             for (TimedPlayer next : players) {
-                if (!this.cm.dbh.getDm().savePlayedTime(next)) {
+                if (!this.manager.dbh.getDm().savePlayedTime(next)) {
                     PvpTitles.logError("Error saving played time to " + 
                             next.getOfflinePlayer().getName(), null);
                 }
@@ -247,14 +248,14 @@ public class PvpTitles extends JavaPlugin {
             Inventories.closeInventories();
         }
 
-        logDebugInfo(LangFile.PLUGIN_DISABLED.getText(Manager.messages));
+        logMessage(LangFile.PLUGIN_DISABLED.getText(Manager.messages));
     }
 
     private void checkOnlinePlayers() {
         // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : this.getServer().getOnlinePlayers()) {
             // Fama
-            if (!cm.dbh.getDm().playerConnection(pl)) {
+            if (!manager.dbh.getDm().playerConnection(pl)) {
                 PvpTitles.logError("Error checking online player " + pl.getName(), null);
                 return;
             }
@@ -289,8 +290,8 @@ public class PvpTitles extends JavaPlugin {
         return movementManager;
     }
 
-    public PlayerManager getPlayerManager() {
-        return playerManager;
+    public TimerManager getPlayerManager() {
+        return timerManager;
     }
 
     // Custom message

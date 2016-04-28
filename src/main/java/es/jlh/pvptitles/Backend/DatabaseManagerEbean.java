@@ -71,7 +71,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         ebeanServer.getDatabase().save(plClass);
 
         // MultiWorld   
-        if (pt.cm.params.isMw_enabled()) {
+        if (pt.manager.params.isMw_enabled()) {
             WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                     .select("playerUUID, world")
                     .where()
@@ -118,7 +118,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         WorldPlayerPT plwClass = null;
 
-        if (pt.cm.params.isMw_enabled()) {
+        if (pt.manager.params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
                 return false;
             }
@@ -166,7 +166,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             return points;
         }
 
-        if (pt.cm.params.isMw_enabled()) {
+        if (pt.manager.params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
                 return points;
             }
@@ -251,11 +251,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         ArrayList<PlayerFame> rankedPlayers = new ArrayList();
 
-        if (pt.cm.params.isMw_enabled()) {
+        if (pt.manager.params.isMw_enabled()) {
             String mundos = "";
 
-            if (!pt.cm.params.showOnLeaderBoard()) {
-                List<String> worlds_disabled = pt.cm.params.getAffectedWorlds();
+            if (!pt.manager.params.showOnLeaderBoard()) {
+                List<String> worlds_disabled = pt.manager.params.getAffectedWorlds();
                 
                 StringBuilder buf = new StringBuilder();
                 for (String world : worlds_disabled) {
@@ -363,7 +363,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
     public String getServerName(short id) {
-        return this.pt.cm.params.getNameS();
+        return this.pt.manager.params.getNameS();
     }
 
     @Override
@@ -377,7 +377,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findList();
 
         for (PlayerPT player : allDates) {
-            if (pt.cm.params.getNoPurge().contains(player.getPlayerUUID())) {
+            if (pt.manager.params.getNoPurge().contains(player.getPlayerUUID())) {
                 continue;
             }
 
@@ -386,7 +386,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             cFile.setTime(fechaFile);
 
             // Tiempo en config
-            cFile.add(GregorianCalendar.DAY_OF_YEAR, pt.cm.params.getTimeP());
+            cFile.add(GregorianCalendar.DAY_OF_YEAR, pt.manager.params.getTimeP());
 
             Date hoy = new Date();
             Calendar cHoy = new GregorianCalendar();
@@ -394,7 +394,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             // cFile + timePurga < hoy
             if (cFile.before(cHoy)) {
-                if (pt.cm.params.isMw_enabled()) {
+                if (pt.manager.params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
                             .lt("playerUUID", player.getPlayerUUID())
@@ -421,7 +421,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                         File.separator).append( // Separador
                         filename).toString();
 
-        short serverID = pt.cm.params.getMultiS();
+        short serverID = pt.manager.params.getMultiS();
 
         String sql = "";
         sql += MySQLConnection.getTableServers() + "\n";
@@ -441,7 +441,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         boolean mw = pwClass != null && pwClass.size() > 0;
 
-        sql += "insert into Servers values (" + serverID + ", '" + pt.cm.params.getNameS() + "')"
+        sql += "insert into Servers values (" + serverID + ", '" + pt.manager.params.getNameS() + "')"
                 + " ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
 
         if (plClass != null && plClass.size() > 0) {

@@ -37,7 +37,7 @@ public class HandleFame implements Listener {
      */
     public HandleFame(PvpTitles pt) {
         this.pt = pt;
-        this.dm = pt.cm;
+        this.dm = pt.manager;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -49,13 +49,13 @@ public class HandleFame implements Listener {
         
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
-            Map<String, Map<String, List<String>>> kills = pt.cm.commandsRw.get("onKill");
+            Map<String, Map<String, List<String>>> kills = pt.manager.commandsRw.get("onKill");
             if (kills != null) {
                 setValues(kills.get(null), e.getOfflinePlayer());
             }
         }
 
-        Map<String, Map<String, List<String>>> fame = pt.cm.commandsRw.get("onFame");
+        Map<String, Map<String, List<String>>> fame = pt.manager.commandsRw.get("onFame");
         if (fame != null) {
             for (String cantidad : fame.keySet()) {
                 if (e.getFame() < Integer.parseInt(cantidad)
@@ -66,7 +66,7 @@ public class HandleFame implements Listener {
             }
         }
 
-        Map<String, Map<String, List<String>>> rank = pt.cm.commandsRw.get("onRank");
+        Map<String, Map<String, List<String>>> rank = pt.manager.commandsRw.get("onRank");
         if (rank != null) {
             for (String rango : rank.keySet()) {
                 int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
@@ -78,7 +78,7 @@ public class HandleFame implements Listener {
             }
         }
 
-        Map<String, Map<String, List<String>>> killstreak = pt.cm.commandsRw.get("onKillstreak");
+        Map<String, Map<String, List<String>>> killstreak = pt.manager.commandsRw.get("onKillstreak");
         if (killstreak != null) {
             for (String ks : killstreak.keySet()) {
                 if (e.getKillstreak() == Integer.valueOf(ks)) {
