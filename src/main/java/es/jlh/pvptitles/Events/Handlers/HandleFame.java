@@ -96,7 +96,7 @@ public class HandleFame implements Listener {
             int fameD = e.getFameTotal();
 
             int oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
-            TimedPlayer tp = pt.getPlayerManager().getPlayer(pl);
+            TimedPlayer tp = pt.getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
 
             String actualRank = Ranks.getRank(fameA, totalTime);

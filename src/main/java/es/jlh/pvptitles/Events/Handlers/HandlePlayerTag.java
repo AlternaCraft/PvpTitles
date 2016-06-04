@@ -131,7 +131,7 @@ public class HandlePlayerTag implements Listener {
             // Holograms
             int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
@@ -193,7 +193,7 @@ public class HandlePlayerTag implements Listener {
 
             int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
@@ -220,7 +220,7 @@ public class HandlePlayerTag implements Listener {
                     && !player.isSneaking() && !player.isDead()) {
                 int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+                int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = Ranks.getRank(fame, totalTime);
 
@@ -243,7 +243,7 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
-            h.removeLine(0);
+            h.clearLines();
 
             if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && canDisplayRank(player)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", event.getNewRank()));
@@ -269,7 +269,7 @@ public class HandlePlayerTag implements Listener {
 
             int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
@@ -305,7 +305,7 @@ public class HandlePlayerTag implements Listener {
             } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-                int totalTime = oldTime + plugin.getPlayerManager().getPlayer(player).getTotalOnline();
+                int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = Ranks.getRank(fame, totalTime);
 

@@ -11,20 +11,33 @@ import org.bukkit.entity.Player;
  */
 public enum Localizer {
 
-    ENGLISH(LangType.EN, "en_US"),
+    ENGLISH(LangType.EN, "en_US"),    
     SPANISH(LangType.ES, "es_ES"),
     ARGENTINEAN_SPANISH(LangType.ES, "es_AR"),
     MEXICO_SPANISH(LangType.ES, "es_MX"),
     URUGUAY_SPANISH(LangType.ES, "es_UY"),
-    VENEZUELA_SPANISH(LangType.ES, "es_VE"),
-    
+    VENEZUELA_SPANISH(LangType.ES, "es_VE"),    
+    CZECH(LangType.CUSTOM_CS, "cs_CZ"),
+    EUSKARA(LangType.CUSTOM_EU, "eu_ES"),
+    GALICIAN(LangType.CUSTOM_GL, "gl_ES"),
+    CATALAN(LangType.CUSTOM_CA, "ca_ES"),
+    CROATIAN(LangType.CUSTOM_HR, "hr_HR"),
+    KOREAN(LangType.CUSTOM_KO, "ko_KR"),
+    UKRAINIAN(LangType.CUSTOM_UK, "uk_UA"),
+    POLISH(LangType.CUSTOM_PL, "pl_PL"),
+    SLOVENIAN(LangType.CUSTOM_SL, "sl_SI"),
+    SERBIAN(LangType.CUSTOM_SR, "sr_SP"),
+    ROMANIAN(LangType.CUSTOM_RO, "ro_RO"),    
+    SWEDISH(LangType.CUSTOM_SV, "sv_SE"),
+    PORTUGUESE_BR(LangType.CUSTOM_PT, "pt_BR"),
+    PORTUGUESE_PT(LangType.CUSTOM_PT, "pt_PT"),
     DEUTSCH(LangType.CUSTOM_DE, "de_DE"),
     GREEK(LangType.CUSTOM_GR, "el_GR"),
     FRENCH_CA(LangType.CUSTOM_FR, "fr_CA"), 
     FRENCH(LangType.CUSTOM_FR, "fr_FR"),
     JAPANESE(LangType.CUSTOM_JP, "ja_JP"),
-    SIMPLIFIED_CHINESE(LangType.CUSTOM_CH, "zh_CN"), 
-    TRADITIONAL_CHINESE(LangType.CUSTOM_CH, "zh_TW"),
+    SIMPLIFIED_CHINESE(LangType.CUSTOM_CN, "zh_CN"),    
+    TRADITIONAL_CHINESE(LangType.CUSTOM_CH, "zh_TW"),    
     RUSSIAN(LangType.CUSTOM_RU, "ru_RU");
 
     private final LangType type;

@@ -103,7 +103,7 @@ public class FileConfig {
         temp.renameTo(outFile);
         showMessage(ChatColor.GREEN + "Previous file settings have been established "
                 + "into the new one.");
-        showMessage(ChatColor.GREEN + "This functionality could fail, check the result.");
+        showMessage(ChatColor.GREEN + "Just in case, check the result.");
     }
 
     private String replace(String linea, YamlConfiguration newFile, YamlConfiguration oldFile) {

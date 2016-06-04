@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author AlternaCraft
  */
 public enum LangFile {
-
+    // <editor-fold defaultstate="collapsed" desc="MESSAGES">
     PLUGIN_ENABLED(
             "Plugin activado correctamente",
             "Plugin activated successfully"
@@ -173,18 +173,29 @@ public enum LangFile {
             "&6Has sido teletransportado correctamente",
             "&6You have been teleported correctly"
     );
-
+    // </editor-fold> 
     public static enum LangType {
-
-        // Default languages
         ES,
         EN,
-        // Other languages not include in the plugin
+        CUSTOM_CS,
+        CUSTOM_EU,
+        CUSTOM_GL,
+        CUSTOM_CA,
+        CUSTOM_HR,
+        CUSTOM_KO,
+        CUSTOM_UK,
+        CUSTOM_PL,
+        CUSTOM_SL,
+        CUSTOM_SR,
+        CUSTOM_RO,        
+        CUSTOM_SV,
+        CUSTOM_PT,        
         CUSTOM_DE,
         CUSTOM_GR,
         CUSTOM_FR,
         CUSTOM_JP,
         CUSTOM_CH,
+        CUSTOM_CN,
         CUSTOM_RU;
     }
 

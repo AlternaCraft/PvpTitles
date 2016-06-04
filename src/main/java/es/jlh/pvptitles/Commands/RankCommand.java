@@ -55,7 +55,7 @@ public class RankCommand implements CommandExecutor {
         int fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         int racha = (HandlePlayerFame.KILLSTREAK.containsKey(player.getName())) ? HandlePlayerFame.KILLSTREAK.get(player.getName()) : 0;
         int seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
-                + pt.getPlayerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+                + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         
         String rank = Ranks.getRank(fame, seconds);
         

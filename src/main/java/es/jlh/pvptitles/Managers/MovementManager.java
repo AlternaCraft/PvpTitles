@@ -27,7 +27,7 @@ public class MovementManager {
         if (!hasLastMovement(player)) {
             return false;
         }
-        return getAFKTime(player) >= 0;
+        return getAFKTime(player) > 0; // Devuelve '0' si el comprobador esta desactivado
     }
 
     public int getAFKTime(OfflinePlayer player) {
@@ -52,7 +52,7 @@ public class MovementManager {
 
     public void addLastMovement(OfflinePlayer player) {
         if (isAFK(player)) {
-            TimedPlayer tPlayer = this.plugin.getPlayerManager().getPlayer(player);
+            TimedPlayer tPlayer = this.plugin.getTimerManager().getPlayer(player);
             tPlayer.setAFKTime(tPlayer.getAFKTime() + getAFKTime(player));
         }
         this.lastMovement.put(player.getUniqueId(), System.currentTimeMillis());

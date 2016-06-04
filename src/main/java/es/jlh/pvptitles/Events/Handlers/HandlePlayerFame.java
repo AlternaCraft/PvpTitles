@@ -70,16 +70,15 @@ public class HandlePlayerFame implements Listener {
         }
 
         // Time
-        TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().hasPlayer(player)
-                ? this.pvpTitles.getPlayerManager().getPlayer(player) : new TimedPlayer(this.pvpTitles, player);
-
+        TimedPlayer tPlayer = this.pvpTitles.getTimerManager().hasPlayer(player)
+                ? this.pvpTitles.getTimerManager().getPlayer(player) : new TimedPlayer(this.pvpTitles, player);
         tPlayer.startSession();
 
-        this.pvpTitles.getMovementManager().addLastMovement(player);
-
-        if (!this.pvpTitles.getPlayerManager().hasPlayer(player)) {
-            this.pvpTitles.getPlayerManager().addPlayer(tPlayer);
+        if (!this.pvpTitles.getTimerManager().hasPlayer(player)) {
+            this.pvpTitles.getTimerManager().addPlayer(tPlayer);
         }
+        
+        this.pvpTitles.getMovementManager().addLastMovement(player);
 
         HandlePlayerTag.holoPlayerLogin(player);
     }
@@ -113,7 +112,7 @@ public class HandlePlayerFame implements Listener {
         HandlePlayerFame.KILLSTREAK.put(player.getName(), 0);
 
         // Time
-        TimedPlayer tPlayer = this.pvpTitles.getPlayerManager().getPlayer(player);
+        TimedPlayer tPlayer = this.pvpTitles.getTimerManager().getPlayer(player);
         tPlayer.stopSession();
         this.pvpTitles.getMovementManager().removeLastMovement(player);
     }

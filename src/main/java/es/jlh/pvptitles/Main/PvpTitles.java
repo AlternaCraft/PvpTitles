@@ -94,6 +94,9 @@
 //  Ver. 2.5.1  28/03/2016   Mejorado sistema de titulos por holograma, integrado
 //   con las mismas condiciones que el mostrado en el chat (MW-filter y permisos).
 //  Ver. 2.5.2  17/04/2016   Renombradas algunas variables y actualizadas las dependencias.
+//  Ver. 2.5.2  03/06/2016   Arreglado un fallo en la interacción del evento ChangeRank
+//   con el plugin holographicDisplays.
+//  Ver. 2.5.2  04/06/2016   Añadidos nuevos idiomas para el Localizer.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -177,6 +180,10 @@ public class PvpTitles extends JavaPlugin {
         // Instancio la clase para evitar problemas en el reload
         new Inventories().setup();
 
+        // Registro los managers del timing
+        timerManager = new TimerManager(this);
+        movementManager = new MovementManager(this);  
+        
         // Registro los handlers de los eventos
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
         getServer().getPluginManager().registerEvents(new HandlePlayerTag(this), this);        
@@ -192,11 +199,7 @@ public class PvpTitles extends JavaPlugin {
         getCommand("pvpLadder").setExecutor(new LadderCommand(this));
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
         getCommand("pvpDatabase").setExecutor(new DBCommand(this));
-        getCommand("pvpTitles").setExecutor(new InfoCommand(this));
-
-        // Registro los managers del timing
-        movementManager = new MovementManager(this);
-        timerManager = new TimerManager(this);
+        getCommand("pvpTitles").setExecutor(new InfoCommand(this));      
 
         checkOnlinePlayers();
 
@@ -261,15 +264,15 @@ public class PvpTitles extends JavaPlugin {
             }
 
             // Times
-            TimedPlayer tPlayer = this.getPlayerManager().hasPlayer(pl)
-                    ? this.getPlayerManager().getPlayer(pl) : new TimedPlayer(this, pl);
+            TimedPlayer tPlayer = this.getTimerManager().hasPlayer(pl)
+                    ? this.getTimerManager().getPlayer(pl) : new TimedPlayer(this, pl);
             tPlayer.startSession();
 
-            this.getMovementManager().addLastMovement(pl);
-
-            if (!this.getPlayerManager().hasPlayer(pl)) {
-                this.getPlayerManager().addPlayer(tPlayer);
+            if (!this.getTimerManager().hasPlayer(pl)) {
+                this.getTimerManager().addPlayer(tPlayer);
             }
+            
+            this.getMovementManager().addLastMovement(pl);
         }
     }
 
@@ -290,7 +293,7 @@ public class PvpTitles extends JavaPlugin {
         return movementManager;
     }
 
-    public TimerManager getPlayerManager() {
+    public TimerManager getTimerManager() {
         return timerManager;
     }
 

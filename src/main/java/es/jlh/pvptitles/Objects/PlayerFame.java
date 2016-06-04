@@ -51,7 +51,7 @@ public class PlayerFame implements Comparable {
     
     public int getRealSeconds() {
         int actual = plugin.manager.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
-        int session = plugin.getPlayerManager().getPlayer(plugin.getServer()
+        int session = plugin.getTimerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
         return actual+session;

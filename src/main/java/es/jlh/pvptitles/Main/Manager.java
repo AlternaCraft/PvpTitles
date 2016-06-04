@@ -363,7 +363,7 @@ public final class Manager {
         this.eventoChecker = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                Set<TimedPlayer> tp = pvpTitles.getPlayerManager().getTimedPlayers();
+                Set<TimedPlayer> tp = pvpTitles.getTimerManager().getTimedPlayers();
 
                 for (TimedPlayer timedPlayer : tp) {
                     // Fix para evitar nullpointerexception

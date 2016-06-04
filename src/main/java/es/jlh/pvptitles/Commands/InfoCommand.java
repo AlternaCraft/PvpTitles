@@ -63,31 +63,31 @@ public class InfoCommand implements CommandExecutor {
         sender.sendMessage("  " + ChatColor.AQUA + pvpladder
                 + ChatColor.RESET + " [" + LangFile.COMMAND_LADDER_INFO.getText(messages) + "]");
 
-        String setrankperm = pvpTitles.getDescription().getCommands().get("pvpfame").get("permission").toString();
+        String setrankperm = pvpTitles.getDescription().getCommands().get("pvpFame").get("permission").toString();
         if (sender.hasPermission(setrankperm)) {
             sender.sendMessage("  " + ChatColor.AQUA + pvpfame
                     + ChatColor.RESET + " [" + LangFile.COMMAND_FAME_INFO.getText(messages) + "]");
         }
 
-        String boardperm = pvpTitles.getDescription().getCommands().get("pvpboard").get("permission").toString();
+        String boardperm = pvpTitles.getDescription().getCommands().get("pvpBoard").get("permission").toString();
         if (sender.hasPermission(boardperm)) {
             sender.sendMessage("  " + ChatColor.AQUA + pvpBoard
                     + ChatColor.RESET + " [" + LangFile.COMMAND_BOARD_INFO.getText(messages) + "]");
         }
 
-        String purgeperm = pvpTitles.getDescription().getCommands().get("pvppurge").get("permission").toString();
+        String purgeperm = pvpTitles.getDescription().getCommands().get("pvpPurge").get("permission").toString();
         if (sender.hasPermission(purgeperm)) {
             sender.sendMessage("  " + ChatColor.AQUA + pvppurge
                     + ChatColor.RESET + " [" + LangFile.COMMAND_PURGE_INFO.getText(messages) + "]");
         }
 
-        String reloadperm = pvpTitles.getDescription().getCommands().get("pvpreload").get("permission").toString();
+        String reloadperm = pvpTitles.getDescription().getCommands().get("pvpReload").get("permission").toString();
         if (sender.hasPermission(reloadperm)) {
             sender.sendMessage("  " + ChatColor.AQUA + pvpreload
                     + ChatColor.RESET + " [" + LangFile.COMMAND_RELOAD_INFO.getText(messages) + "]");
         }
         
-        String dbperm = pvpTitles.getDescription().getCommands().get("pvpdatabase").get("permission").toString();
+        String dbperm = pvpTitles.getDescription().getCommands().get("pvpDatabase").get("permission").toString();
         if (sender.hasPermission(dbperm)) {
             sender.sendMessage("  " + ChatColor.AQUA + pvpdb
                     + ChatColor.RESET + " [" + LangFile.COMMAND_DATABASE_INFO.getText(messages) + "]");
