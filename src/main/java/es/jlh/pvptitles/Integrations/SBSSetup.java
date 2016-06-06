@@ -4,6 +4,7 @@ import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
+import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Misc.Ranks;
@@ -42,8 +43,9 @@ public class SBSSetup {
         replaceManager.register(new VariableReplacer() {
             @Override
             public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int puntos = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+                int fame = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                 int seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+                int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
 
                 /*
                  * La variable rank no funcionara hasta la proxima version del
@@ -51,13 +53,15 @@ public class SBSSetup {
                  */
                 switch (var) {
                     case "fame":
-                        replaceEvent.setScore(puntos);
+                        replaceEvent.setScore(fame);
                         break;
                     case "rank":
-                        replaceEvent.setScoreOrText(Ranks.getRank(puntos, seconds));
+                        replaceEvent.setScoreOrText(Ranks.getRank(fame, seconds));
                         break;
+                    case "killstreak":
+                        replaceEvent.setScore(killstreak);
                 }
             }
-        }, plugin, "fame", "rank");
+        }, plugin, "fame", "rank", "killstreak");
     }
 }

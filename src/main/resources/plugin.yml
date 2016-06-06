@@ -6,7 +6,7 @@ database: true
 author: AlternaCraft
 
 main: es.jlh.pvptitles.Main.PvpTitles
-softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib]
+softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI]
 
 commands:
     pvpTitles:

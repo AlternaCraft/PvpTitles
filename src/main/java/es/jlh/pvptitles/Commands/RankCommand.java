@@ -52,8 +52,10 @@ public class RankCommand implements CommandExecutor {
      * @param player Jugador que consulta los datos
      */
     private void HandleRankCmd(Player player) {
+        String uuid = player.getUniqueId().toString();
+        
         int fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-        int racha = (HandlePlayerFame.KILLSTREAK.containsKey(player.getName())) ? HandlePlayerFame.KILLSTREAK.get(player.getName()) : 0;
+        int racha = HandlePlayerFame.getKillStreakFrom(uuid);
         int seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
                 + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         
@@ -81,7 +83,7 @@ public class RankCommand implements CommandExecutor {
         if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
             player.sendMessage("  * " + LangFile.VETO_STARTED.getText(Localizer.getLocale(player))
                     .replace("%tag%", pt.manager.params.getTag())
-                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(player.getUniqueId().toString()))));
+                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(uuid))));
         }
     }
 }

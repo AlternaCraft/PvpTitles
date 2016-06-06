@@ -35,7 +35,7 @@ public class HandlePlayerFame implements Listener {
     private static final int TICKS = 20;
 
     // Variable temporal
-    public static final Map<String, Integer> KILLSTREAK = new HashMap();
+    private static final Map<String, Integer> KILLSTREAK = new HashMap();
 
     private Manager cm = null;
     private static AntiFarmManager afm = null;
@@ -109,7 +109,8 @@ public class HandlePlayerFame implements Listener {
             PvpTitles.logError("Error on player quit " + player.getName(), null);
             return;
         }
-        HandlePlayerFame.KILLSTREAK.put(player.getName(), 0);
+        
+        HandlePlayerFame.KILLSTREAK.put(player.getUniqueId().toString(), 0);
 
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getTimerManager().getPlayer(player);
@@ -154,35 +155,35 @@ public class HandlePlayerFame implements Listener {
             int kills = 0;
 
             Player killer = death.getEntity().getKiller();
-            String killername = killer.getUniqueId().toString();
-            String victim = death.getEntity().getUniqueId().toString();
+            String killeruuid = killer.getUniqueId().toString();
+            String victimuuid = death.getEntity().getUniqueId().toString();
             
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
-            if (afm.isVetado(killername) || killername.equalsIgnoreCase(victim)) {
-                if (afm.isVetado(killername)) {
+            if (afm.isVetado(killeruuid) || killeruuid.equalsIgnoreCase(victimuuid)) {
+                if (afm.isVetado(killeruuid)) {
                     killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
                             .replace("%tag%", this.cm.params.getTag())
-                            .replace("%time%", splitToComponentTimes(afm.getVetoTime(killername))));
+                            .replace("%time%", splitToComponentTimes(afm.getVetoTime(killeruuid))));
                 }
                 return;
             }
 
             // Modulo anti farm
-            antiFarm(killer, victim);
+            antiFarm(killer, victimuuid);
 
             // Lo compruebo de nuevo por si le acaban de vetar
-            if (afm.isVetado(killername)) {
+            if (afm.isVetado(killeruuid)) {
                 return;
             }
 
             // Si ya esta en el mapa guardo sus bajas
-            if (KILLSTREAK.containsKey(killername)) {
-                kills = KILLSTREAK.get(killername);
+            if (KILLSTREAK.containsKey(killeruuid)) {
+                kills = KILLSTREAK.get(killeruuid);
             }
 
-            // Final de la KILLSTREAK de bajas
-            if (HandlePlayerFame.KILLSTREAK.containsKey(victim)) {
-                HandlePlayerFame.KILLSTREAK.put(victim, 0);
+            // Final de la racha de bajas
+            if (HandlePlayerFame.KILLSTREAK.containsKey(victimuuid)) {
+                HandlePlayerFame.KILLSTREAK.put(victimuuid, 0);
             }
 
             // Aniado el nuevo valor de kills
@@ -190,7 +191,7 @@ public class HandlePlayerFame implements Listener {
 
             kills += 1;
             this.calculateRank(death.getEntity().getName(), killer, fame, kills);
-            HandlePlayerFame.KILLSTREAK.put(killername, kills);
+            HandlePlayerFame.KILLSTREAK.put(killeruuid, kills);
         }
     }
 
@@ -198,20 +199,20 @@ public class HandlePlayerFame implements Listener {
      * Método para evitar que farmen puntos para los titulos pvp
      *
      * @param killer String con el nombre del asesino
-     * @param victim String con el nombre del asesinado
+     * @param victimuuid String con el nombre del asesinado
      */
-    private void antiFarm(final Player killer, String victim) {
-        final String killername = killer.getUniqueId().toString();
+    private void antiFarm(final Player killer, String victimuuid) {
+        final String killeruuid = killer.getUniqueId().toString();
         
-        if (afm.hasKiller(killername)) {
-            CleanTaskManager ck = csKiller.get(killername);
+        if (afm.hasKiller(killeruuid)) {
+            CleanTaskManager ck = csKiller.get(killeruuid);
 
             // Ya lo ha matado antes
-            if (afm.hasVictim(killername, victim)) {
-                ck.cleanVictim(victim); // Cancel task
+            if (afm.hasVictim(killeruuid, victimuuid)) {
+                ck.cleanVictim(victimuuid); // Cancel task
 
-                if (afm.getKillsOnVictim(killername, victim) > this.cm.params.getKills() - 1) {
-                    afm.vetar(killername, System.currentTimeMillis());
+                if (afm.getKillsOnVictim(killeruuid, victimuuid) > this.cm.params.getKills() - 1) {
+                    afm.vetar(killeruuid, System.currentTimeMillis());
                     ck.cleanAll(); // Cancel all tasks
 
                     killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
@@ -221,10 +222,10 @@ public class HandlePlayerFame implements Listener {
                     pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, new Runnable() {
                         @Override
                         public void run() {
-                            afm.cleanVeto(killername);
+                            afm.cleanVeto(killeruuid);
 
                             // Limpio su historial
-                            afm.cleanAllVictims(killername);
+                            afm.cleanAllVictims(killeruuid);
 
                             killer.sendMessage(PLUGIN + LangFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
                         }
@@ -235,18 +236,18 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Si llega aqui no ha abusado, de momento...
-            afm.addKillOnVictim(killername, victim);
+            afm.addKillOnVictim(killeruuid, victimuuid);
             // Evento de limpieza...
-            ck.addVictim(victim);
+            ck.addVictim(victimuuid);
 
         } else {
-            CleanTaskManager ck = new CleanTaskManager(afm, killername);
+            CleanTaskManager ck = new CleanTaskManager(afm, killeruuid);
 
-            afm.addKiller(killername);
-            afm.addKillOnVictim(killername, victim);
-            ck.addVictim(victim);
+            afm.addKiller(killeruuid);
+            afm.addKillOnVictim(killeruuid, victimuuid);
+            ck.addVictim(victimuuid);
 
-            csKiller.put(killername, ck);
+            csKiller.put(killeruuid, ck);
         }
     }
 
@@ -297,4 +298,17 @@ public class HandlePlayerFame implements Listener {
         return afm;
     }
     
+    /**
+     * Método para recibir la racha de bajas de un jugador
+     * @param uuid UUID
+     * @return Entero
+     */
+    public static int getKillStreakFrom(String uuid) {
+        if (HandlePlayerFame.KILLSTREAK.containsKey(uuid)) {
+            return HandlePlayerFame.KILLSTREAK.get(uuid);
+        }        
+        else {
+            return 0;
+        }
+    }
 }

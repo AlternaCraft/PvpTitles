@@ -97,6 +97,8 @@
 //  Ver. 2.5.2  03/06/2016   Arreglado un fallo en la interacción del evento ChangeRank
 //   con el plugin holographicDisplays.
 //  Ver. 2.5.2  04/06/2016   Añadidos nuevos idiomas para el Localizer.
+//  Ver. 2.5.2  07/06/2016   Añadido soporte para placeholder api y arreglado fallo con el
+//   contador de la racha de bajas
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -115,6 +117,7 @@ import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
 import es.jlh.pvptitles.Integrations.HolographicSetup;
+import es.jlh.pvptitles.Integrations.PlaceholderSetup;
 import es.jlh.pvptitles.Integrations.SBSSetup;
 import es.jlh.pvptitles.Integrations.VaultSetup;
 import es.jlh.pvptitles.Managers.MetricsManager;
@@ -277,6 +280,9 @@ public class PvpTitles extends JavaPlugin {
     }
 
     private void checkExternalPlugins() {
+        if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderSetup(this).hook();
+        }
         if (this.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
             new SBSSetup(this).setupSBS();
         }
@@ -285,7 +291,7 @@ public class PvpTitles extends JavaPlugin {
         }
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
             new HolographicSetup(this).setup();
-        }
+        }        
     }
 
     /* PLAYER TIME */
