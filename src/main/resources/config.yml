@@ -155,6 +155,14 @@ DisplayTitleInChat: true
 DisplayTitleOverPlayer: false
 # Holographic title's format (For all ranks) [Supports colors]
 HoloTitleFormat: "[%rank%]"
+# Modifier for setting the hologram height (Min value = 0)
+# -> GRAPHIC EXAMPLE <-
+# ---    (...)   --- (n)
+# ---            --- (2)
+# ---            --- (1) [Default height]
+# --- playername --- (0) [This coincides with the height of player name]
+# --- ( player ) ---
+HoloHeightModifier: 1
 # This requires that HolographicDisplays be loaded
 ## -- ##
 

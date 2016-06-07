@@ -82,6 +82,8 @@ public class ConfigDataStore {
     private boolean displayLikeHolo = false;
     // Formato para el titulo como holograma
     private String holotagformat = null;
+    // Modificador de la altura del holograma
+    private short holoHeightMod = 1;
 
     // Color del titulo en el chat
     private ChatColor prefixColor = null;
@@ -208,6 +210,10 @@ public class ConfigDataStore {
 
     public void setHolotagformat(String holotagformat) {
         this.holotagformat = holotagformat;
+    }
+
+    public void setHoloHeightMod(short holoheightmod) {
+        this.holoHeightMod = (holoheightmod >= 0) ? holoheightmod:0;
     }
 
     public void setMw_enabled(boolean mw_enabled) {
@@ -357,6 +363,10 @@ public class ConfigDataStore {
 
     public String getHolotagformat() {
         return holotagformat;
+    }
+
+    public short getHoloHeightMod() {
+        return holoHeightMod;
     }
 
     // ** COMPROBACIONES ** \\

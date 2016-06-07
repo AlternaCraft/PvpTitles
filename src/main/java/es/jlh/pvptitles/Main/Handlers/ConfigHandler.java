@@ -117,6 +117,7 @@ public class ConfigHandler {
         params.displayInChat(config.getBoolean("DisplayTitleInChat"));
         params.displayLikeHolo(config.getBoolean("DisplayTitleOverPlayer"));
         params.setHolotagformat(Utils.translateColor(config.getString("HoloTitleFormat")));
+        params.setHoloHeightMod((short) config.getInt("HoloHeightModifier"));
         params.setPrefixColor(config.getString("PrefixColor"));
         params.setTag(config.getString("Tag"));
         params.setPrefix(config.getString("Prefix"));

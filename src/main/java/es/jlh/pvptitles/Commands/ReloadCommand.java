@@ -2,6 +2,8 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Integrations.HolographicSetup;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.DEFAULT_TITLE_HEIGHT;
+import static es.jlh.pvptitles.Integrations.HolographicSetup.HEIGHT_PER_ROW;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
@@ -53,6 +55,7 @@ public class ReloadCommand implements CommandExecutor {
         
         if (HolographicSetup.isHDEnable && pvpTitles.manager.params.displayLikeHolo()) {
             HolographicSetup.RANK_LINE = pvpTitles.manager.params.getHolotagformat();
+            HolographicSetup.TITLE_HEIGHT = ((pvpTitles.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW) + DEFAULT_TITLE_HEIGHT;
             HolographicSetup.loadPlayersInServer();
         }
         else if (HolographicSetup.isHDEnable && HolographicSetup.HOLOPLAYERS.size() > 0) {

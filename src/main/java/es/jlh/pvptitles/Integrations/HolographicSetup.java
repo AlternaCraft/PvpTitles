@@ -25,10 +25,15 @@ import org.bukkit.entity.Player;
  */
 public class HolographicSetup {
 
-    public static String RANK_LINE = null;
-
-    public static final double TITLE_HEIGHT = 2.6D;
-    public static final double CROUCH_HEIGHT = 2.2D;
+    public static String RANK_LINE = null;    
+    
+    public static final double HEIGHT_PER_ROW = 0.26D;
+    public static final double DEFAULT_TITLE_HEIGHT = 2.58D; // 2.6D
+    
+    public static double TITLE_HEIGHT = DEFAULT_TITLE_HEIGHT;
+    
+    /*public static final double CROUCH_HEIGHT = 2.2D;*/
+    
     public static boolean isHDEnable = false;
 
     public static final Map<String, Hologram> HOLOPLAYERS = new HashMap();
@@ -38,6 +43,7 @@ public class HolographicSetup {
     public HolographicSetup(PvpTitles pt) {
         HolographicSetup.plugin = pt;
         RANK_LINE = pt.manager.params.getHolotagformat();
+        TITLE_HEIGHT = (pt.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
     }
 
     public void setup() {

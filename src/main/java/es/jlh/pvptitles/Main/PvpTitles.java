@@ -97,8 +97,9 @@
 //  Ver. 2.5.2  03/06/2016   Arreglado un fallo en la interacción del evento ChangeRank
 //   con el plugin holographicDisplays.
 //  Ver. 2.5.2  04/06/2016   Añadidos nuevos idiomas para el Localizer.
-//  Ver. 2.5.2  07/06/2016   Añadido soporte para placeholder api y arreglado fallo con el
-//   contador de la racha de bajas
+//  Ver. 2.5.2  07/06/2016   Añadido soporte para placeholder api, arreglado fallo con el
+//   contador de la racha de bajas y añadido modificador para ajustar la altura del
+//   título holográfico
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -168,24 +169,24 @@ public class PvpTitles extends JavaPlugin {
         
         this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
-
+        
+        // Registro los managers del timing
+        this.timerManager = new TimerManager(this);
+        this.movementManager = new MovementManager(this);  
+        
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
          * de configuraciones.
          */
-        works = this.manager.setup(this);
+        this.works = this.manager.setup(this);
 
-        if (!works) {
+        if (!this.works) {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         // Instancio la clase para evitar problemas en el reload
         new Inventories().setup();
-
-        // Registro los managers del timing
-        timerManager = new TimerManager(this);
-        movementManager = new MovementManager(this);  
         
         // Registro los handlers de los eventos
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
@@ -234,7 +235,7 @@ public class PvpTitles extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (works) {
+        if (this.works) {
             this.timerManager.stopSessions();
             Set<TimedPlayer> players = this.timerManager.getTimedPlayers();
 
@@ -261,7 +262,7 @@ public class PvpTitles extends JavaPlugin {
         // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : this.getServer().getOnlinePlayers()) {
             // Fama
-            if (!manager.dbh.getDm().playerConnection(pl)) {
+            if (!this.manager.dbh.getDm().playerConnection(pl)) {
                 PvpTitles.logError("Error checking online player " + pl.getName(), null);
                 return;
             }
@@ -296,11 +297,11 @@ public class PvpTitles extends JavaPlugin {
 
     /* PLAYER TIME */
     public MovementManager getMovementManager() {
-        return movementManager;
+        return this.movementManager;
     }
 
     public TimerManager getTimerManager() {
-        return timerManager;
+        return this.timerManager;
     }
 
     // Custom message
