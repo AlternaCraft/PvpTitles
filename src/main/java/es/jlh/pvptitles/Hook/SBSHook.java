@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Integrations;
+package es.jlh.pvptitles.Hook;
 
 import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
@@ -16,13 +16,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author AlternaCraft
  */
-public class SBSSetup {
+public class SBSHook {
 
     private ScoreboardStats sbs = null;
     private ReplaceManager replaceManager = null;
     private PvpTitles plugin = null;
 
-    public SBSSetup(PvpTitles plugin) {
+    public SBSHook(PvpTitles plugin) {
         this.plugin = plugin;
     }
 

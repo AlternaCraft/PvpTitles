@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Managers.BoardsCustom;
 
 import es.jlh.pvptitles.Files.HologramsFile;
-import es.jlh.pvptitles.Integrations.HolographicSetup;
+import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -85,7 +85,7 @@ public class HologramBoard extends Board {
 
                     if (param != null) {
                         if (param.contains("<main>")) {
-                            HolographicSetup.createHoloBoardHead(l, getModel().getCantidad());
+                            HolographicHook.createHoloBoardHead(l, getModel().getCantidad());
                             param = "";
                         } else {
                             // Longitud para colocar las columnas de la tabla
@@ -108,7 +108,7 @@ public class HologramBoard extends Board {
         // Posicion de los hologramas
         if (c == 1) {
             xpos.add(newL.getX());
-            HolographicSetup.createHoloBoard(columnacompleta.get(0), newL);
+            HolographicHook.createHoloBoard(columnacompleta.get(0), newL);
         } else {
             // Datos para sacar punto de partida
             double separador = (maxcol - 1) * SEPARATOR;
@@ -122,7 +122,7 @@ public class HologramBoard extends Board {
                 double ant = (i > 0) ? (blockspercolumn[i - 1] / 2) + SEPARATOR : 0;
                 newL.setX(newL.getX() + ant + blockspercolumn[i] / 2);
                 xpos.add(newL.getX());
-                HolographicSetup.createHoloBoard(columnacompleta.get(i), newL);
+                HolographicHook.createHoloBoard(columnacompleta.get(i), newL);
             }
         }
     }
@@ -130,10 +130,10 @@ public class HologramBoard extends Board {
     @Override
     public void dematerialize(short jugadores) {
         Location l = this.getData().getCustomL();
-        HolographicSetup.deleteHoloBoard(l); // Elimino el header
+        HolographicHook.deleteHoloBoard(l); // Elimino el header
         for (Double xpo : xpos) {
             // Elimino los hologramas con los datos
-            HolographicSetup.deleteHoloBoard(new Location(l.getWorld(), xpo, l.getY() - HEADER, l.getZ()));
+            HolographicHook.deleteHoloBoard(new Location(l.getWorld(), xpo, l.getY() - HEADER, l.getZ()));
         }
         xpos.clear();
     }

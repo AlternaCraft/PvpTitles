@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Integrations;
+package es.jlh.pvptitles.Hook;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
  *
  * @author AlternaCraft
  */
-public class HolographicSetup {
+public class HolographicHook {
 
     public static String RANK_LINE = null;    
     
@@ -40,8 +40,8 @@ public class HolographicSetup {
 
     private static PvpTitles plugin = null;
 
-    public HolographicSetup(PvpTitles pt) {
-        HolographicSetup.plugin = pt;
+    public HolographicHook(PvpTitles pt) {
+        HolographicHook.plugin = pt;
         RANK_LINE = pt.manager.params.getHolotagformat();
         TITLE_HEIGHT = (pt.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
     }

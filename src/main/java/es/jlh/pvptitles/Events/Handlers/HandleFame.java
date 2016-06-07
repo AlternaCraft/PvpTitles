@@ -5,7 +5,7 @@ import es.jlh.pvptitles.Events.FameEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
 import es.jlh.pvptitles.Events.RankChangedEvent;
 import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Integrations.VaultSetup;
+import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -111,7 +111,7 @@ public class HandleFame implements Listener {
     }
 
     private void setValues(Map<String, List<String>> data, OfflinePlayer pl) {
-        Economy economy = VaultSetup.economy;
+        Economy economy = VaultHook.economy;
 
         if (data.containsKey("money")) {
             if (economy != null) {

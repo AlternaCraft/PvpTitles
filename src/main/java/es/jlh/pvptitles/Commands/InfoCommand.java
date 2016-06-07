@@ -31,7 +31,7 @@ public class InfoCommand implements CommandExecutor {
             sender.sendMessage(PLUGIN + LangFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
-
+        
         String pvprank = pvpTitles.getDescription().getCommands().get("pvpRank")
                 .get("usage").toString().replace("<command>", "pvprank");
 

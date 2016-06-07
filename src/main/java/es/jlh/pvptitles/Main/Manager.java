@@ -9,7 +9,7 @@ import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Backend.ConfigDataStore;
-import es.jlh.pvptitles.Integrations.HolographicSetup;
+import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.LeaderBoardManager;
@@ -193,12 +193,12 @@ public final class Manager {
         }
 
         // Holograms
-        if (HolographicSetup.isHDEnable) {
-            HolographicSetup.loadHoloBoards();
+        if (HolographicHook.isHDEnable) {
+            HolographicHook.loadHoloBoards();
         }
         
         showMessage(ChatColor.YELLOW + "" + this.lbm.getBoards().size()
-                + " scoreboards "+((HolographicSetup.isHDEnable)?"":"per signs ") 
+                + " scoreboards "+((HolographicHook.isHDEnable)?"":"per signs ") 
                 + ChatColor.AQUA + "loaded correctly."
         );
     }

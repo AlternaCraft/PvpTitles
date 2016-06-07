@@ -2,11 +2,11 @@ package es.jlh.pvptitles.Events.Handlers;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import es.jlh.pvptitles.Events.RankChangedEvent;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.HOLOPLAYERS;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.RANK_LINE;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.TITLE_HEIGHT;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.isHDEnable;
-import es.jlh.pvptitles.Integrations.VaultSetup;
+import static es.jlh.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
+import static es.jlh.pvptitles.Hook.HolographicHook.RANK_LINE;
+import static es.jlh.pvptitles.Hook.HolographicHook.TITLE_HEIGHT;
+import static es.jlh.pvptitles.Hook.HolographicHook.isHDEnable;
+import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Ranks;
@@ -29,8 +29,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.createHoloPlayer;
-import static es.jlh.pvptitles.Integrations.HolographicSetup.removeHoloPlayer;
+import static es.jlh.pvptitles.Hook.HolographicHook.createHoloPlayer;
+import static es.jlh.pvptitles.Hook.HolographicHook.removeHoloPlayer;
 
 /**
  *
@@ -62,7 +62,7 @@ public class HandlePlayerTag implements Listener {
 
     public static boolean canDisplayRank(Player pl) {
         // Fix prefix
-        Permission perm = VaultSetup.permission;
+        Permission perm = VaultHook.permission;
         if (perm != null) { // Vault en el server
             if (perm.hasGroupSupport() && perm.getPlayerGroups(pl).length != 0) {
                 String group = perm.getPrimaryGroup(pl);

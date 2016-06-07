@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Integrations;
+package es.jlh.pvptitles.Hook;
 
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
  *
  * @author AlternaCraft
  */
-public class PlaceholderSetup extends EZPlaceholderHook {
+public class PlaceholderHook extends EZPlaceholderHook {
 
     private PvpTitles plugin = null;
 
-    public PlaceholderSetup(PvpTitles plugin) {
+    public PlaceholderHook(PvpTitles plugin) {
         super(plugin, "pvptitles");
         this.plugin = plugin;
         PvpTitles.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");

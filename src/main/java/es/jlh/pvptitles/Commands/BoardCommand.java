@@ -2,7 +2,7 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Files.HologramsFile;
 import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Integrations.HolographicSetup;
+import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -58,7 +58,7 @@ public class BoardCommand implements CommandExecutor {
             }
             
             if (args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())
-                    && !HolographicSetup.isHDEnable) {
+                    && !HolographicHook.isHDEnable) {
                 pl.sendMessage(PLUGIN + ChatColor.RED + "HolographicDisplays is not enabled");
                 return true;
             }

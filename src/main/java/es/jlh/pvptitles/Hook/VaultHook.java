@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Integrations;
+package es.jlh.pvptitles.Hook;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
@@ -12,7 +12,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  *
  * @author AlternaCraft
  */
-public class VaultSetup {
+public class VaultHook {
 
     public static Permission permission = null;
     public static Economy economy = null;
@@ -20,7 +20,7 @@ public class VaultSetup {
 
     private PvpTitles plugin = null;
 
-    public VaultSetup(PvpTitles plugin) {
+    public VaultHook(PvpTitles plugin) {
         this.plugin = plugin;
     }
 

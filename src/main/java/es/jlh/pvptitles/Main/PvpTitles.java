@@ -117,10 +117,10 @@ import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
-import es.jlh.pvptitles.Integrations.HolographicSetup;
-import es.jlh.pvptitles.Integrations.PlaceholderSetup;
-import es.jlh.pvptitles.Integrations.SBSSetup;
-import es.jlh.pvptitles.Integrations.VaultSetup;
+import es.jlh.pvptitles.Hook.HolographicHook;
+import es.jlh.pvptitles.Hook.PlaceholderHook;
+import es.jlh.pvptitles.Hook.SBSHook;
+import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
 import es.jlh.pvptitles.Managers.TimerManager;
@@ -247,8 +247,8 @@ public class PvpTitles extends JavaPlugin {
             }
 
             // Holograms
-            if (HolographicSetup.isHDEnable) {
-                HolographicSetup.deleteHolograms();
+            if (HolographicHook.isHDEnable) {
+                HolographicHook.deleteHolograms();
             }
 
             // Inventories
@@ -282,16 +282,16 @@ public class PvpTitles extends JavaPlugin {
 
     private void checkExternalPlugins() {
         if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderSetup(this).hook();
+            new PlaceholderHook(this).hook();
         }
         if (this.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
-            new SBSSetup(this).setupSBS();
+            new SBSHook(this).setupSBS();
         }
         if (this.getServer().getPluginManager().isPluginEnabled("Vault")) {
-            new VaultSetup(this).setupVault();
+            new VaultHook(this).setupVault();
         }
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            new HolographicSetup(this).setup();
+            new HolographicHook(this).setup();
         }        
     }
 
