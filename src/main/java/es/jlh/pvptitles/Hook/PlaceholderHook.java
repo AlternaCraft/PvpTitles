@@ -18,6 +18,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
     public PlaceholderHook(PvpTitles plugin) {
         super(plugin, "pvptitles");
         this.plugin = plugin;
+        
         PvpTitles.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
     }
 

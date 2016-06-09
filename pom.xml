@@ -4,7 +4,7 @@
     
     <groupId>es.jlh</groupId>
     <artifactId>PvpTitles</artifactId>
-    <version>2.5.2-SNAPSHOT</version>
+    <version>2.5.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>PvpTitles</name>
@@ -59,6 +59,12 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        
+        <repository>
+            <id>mvdw-software</id>
+            <name>MVdW Public Repositories</name>
+            <url>http://repo.mvdw-software.be/content/groups/public/</url>
+        </repository>
     </repositories>    
     
     <dependencies>
@@ -98,10 +104,10 @@
         
         <!--Placeholder API-->
         <dependency>
-         <groupId>me.clip</groupId>
-          <artifactId>placeholderapi</artifactId>
-          <version>2.0.8</version>
-         <scope>provided</scope>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.0.8</version>
+            <scope>provided</scope>
         </dependency>
         
         <!--ScoreBoardStats API-->
@@ -122,6 +128,14 @@
             <optional>true</optional>
             <scope>system</scope>
             <systemPath>${basedir}/lib/HolographicDisplaysAPI_v2.1.7.jar</systemPath>
+        </dependency>
+        
+        <!--MVdWPlaceholderAPI-->
+        <dependency>
+            <groupId>be.maximvdw</groupId>
+            <artifactId>MVdWPlaceholderAPI</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>   
     

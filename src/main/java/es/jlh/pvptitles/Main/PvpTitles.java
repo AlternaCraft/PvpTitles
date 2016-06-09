@@ -100,6 +100,7 @@
 //  Ver. 2.5.2  07/06/2016   Añadido soporte para placeholder api, arreglado fallo con el
 //   contador de la racha de bajas y añadido modificador para ajustar la altura del
 //   título holográfico
+//  Ver. 2.5.3  09/06/2016   Añadido soporte para MVdWPlaceholderAPI.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -118,6 +119,7 @@ import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
 import es.jlh.pvptitles.Hook.HolographicHook;
+import es.jlh.pvptitles.Hook.MVdWPlaceholderHook;
 import es.jlh.pvptitles.Hook.PlaceholderHook;
 import es.jlh.pvptitles.Hook.SBSHook;
 import es.jlh.pvptitles.Hook.VaultHook;
@@ -166,14 +168,14 @@ public class PvpTitles extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        
+
         this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
-        
+
         // Registro los managers del timing
         this.timerManager = new TimerManager(this);
-        this.movementManager = new MovementManager(this);  
-        
+        this.movementManager = new MovementManager(this);
+
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
          * de configuraciones.
@@ -187,10 +189,10 @@ public class PvpTitles extends JavaPlugin {
 
         // Instancio la clase para evitar problemas en el reload
         new Inventories().setup();
-        
+
         // Registro los handlers de los eventos
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
-        getServer().getPluginManager().registerEvents(new HandlePlayerTag(this), this);        
+        getServer().getPluginManager().registerEvents(new HandlePlayerTag(this), this);
         getServer().getPluginManager().registerEvents(new HandleFame(this), this);
         getServer().getPluginManager().registerEvents(new HandleSign(this), this);
         getServer().getPluginManager().registerEvents(new HandleInventory(this), this);
@@ -203,7 +205,7 @@ public class PvpTitles extends JavaPlugin {
         getCommand("pvpLadder").setExecutor(new LadderCommand(this));
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
         getCommand("pvpDatabase").setExecutor(new DBCommand(this));
-        getCommand("pvpTitles").setExecutor(new InfoCommand(this));      
+        getCommand("pvpTitles").setExecutor(new InfoCommand(this));
 
         checkOnlinePlayers();
 
@@ -241,8 +243,8 @@ public class PvpTitles extends JavaPlugin {
 
             for (TimedPlayer next : players) {
                 if (!this.manager.dbh.getDm().savePlayedTime(next)) {
-                    PvpTitles.logError("Error saving played time to " + 
-                            next.getOfflinePlayer().getName(), null);
+                    PvpTitles.logError("Error saving played time to "
+                            + next.getOfflinePlayer().getName(), null);
                 }
             }
 
@@ -275,7 +277,7 @@ public class PvpTitles extends JavaPlugin {
             if (!this.getTimerManager().hasPlayer(pl)) {
                 this.getTimerManager().addPlayer(tPlayer);
             }
-            
+
             this.getMovementManager().addLastMovement(pl);
         }
     }
@@ -283,6 +285,9 @@ public class PvpTitles extends JavaPlugin {
     private void checkExternalPlugins() {
         if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlaceholderHook(this).hook();
+        }
+        if (this.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+            new MVdWPlaceholderHook(this).setup();
         }
         if (this.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
             new SBSHook(this).setupSBS();
@@ -292,7 +297,7 @@ public class PvpTitles extends JavaPlugin {
         }
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
             new HolographicHook(this).setup();
-        }        
+        }
     }
 
     /* PLAYER TIME */
@@ -308,15 +313,15 @@ public class PvpTitles extends JavaPlugin {
     public static void showMessage(String msg) {
         plugin.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
     }
-    
+
     public static void logMessage(String msg) {
         LOGGER.info(msg);
     }
 
     private static final String MYSQL_CRAP_REGEX = "com.*: ";
-    
+
     /* DEBUG MANAGEMENT */
-    public static void logDebugInfo(String message) {        
+    public static void logDebugInfo(String message) {
         logDebugInfo(Level.INFO, message.replaceFirst(MYSQL_CRAP_REGEX, ""));
     }
 

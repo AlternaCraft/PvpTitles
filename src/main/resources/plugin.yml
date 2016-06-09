@@ -1,12 +1,12 @@
 name: PvpTitles
-version: 2.5.2
+version: 2.5.3
 description: Get epic titles in pvp
 database: true
 
 author: AlternaCraft
 
 main: es.jlh.pvptitles.Main.PvpTitles
-softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI]
+softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI, MVdWPlaceholderAPI]
 
 commands:
     pvpTitles:

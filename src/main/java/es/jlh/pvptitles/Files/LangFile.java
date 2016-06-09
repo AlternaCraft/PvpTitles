@@ -71,11 +71,11 @@ public enum LangFile {
     ),
     COMMAND_FAME_INFO(
             "Ver/modificar el rango de un jugador",
-            "View/modify the range of a player"
+            "View/modify the rank of a player"
     ),
     COMMAND_BOARD_INFO(
-            "Interactuar con los tableros registrados en el server",
-            "Interact with boards registered in the server"
+            "Interactuar con los tableros del servidor",
+            "Interact with boards of the server"
     ),
     COMMAND_PURGE_INFO(
             "Limpia los usuarios inactivos",
