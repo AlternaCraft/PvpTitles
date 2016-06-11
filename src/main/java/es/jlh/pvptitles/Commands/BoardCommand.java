@@ -58,7 +58,7 @@ public class BoardCommand implements CommandExecutor {
             }
             
             if (args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())
-                    && !HolographicHook.isHDEnable) {
+                    && !HolographicHook.ISHDENABLED) {
                 pl.sendMessage(PLUGIN + ChatColor.RED + "HolographicDisplays is not enabled");
                 return true;
             }

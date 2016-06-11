@@ -53,12 +53,12 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.manager.loadActualizador();
         pvpTitles.manager.loadRankTimeChecker();
         
-        if (HolographicHook.isHDEnable && pvpTitles.manager.params.displayLikeHolo()) {
+        if (HolographicHook.ISHDENABLED && pvpTitles.manager.params.displayLikeHolo()) {
             HolographicHook.RANK_LINE = pvpTitles.manager.params.getHolotagformat();
             HolographicHook.TITLE_HEIGHT = ((pvpTitles.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW) + DEFAULT_TITLE_HEIGHT;
             HolographicHook.loadPlayersInServer();
         }
-        else if (HolographicHook.isHDEnable && HolographicHook.HOLOPLAYERS.size() > 0) {
+        else if (HolographicHook.ISHDENABLED && HolographicHook.HOLOPLAYERS.size() > 0) {
             /*
              * En caso de hacer un pvpreload habiendo desactivado los hologramas en
              * el config, borro los que haya en el server creados anteriormente.

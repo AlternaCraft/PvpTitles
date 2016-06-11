@@ -18,6 +18,10 @@ public class VaultHook {
     public static Economy economy = null;
     public static Chat chatPlugin = null;
 
+    public static boolean PERMISSIONS_ENABLED = false;
+    public static boolean ECONOMY_ENABLED = false;
+    public static boolean CHAT_ENABLED = false;
+    
     private PvpTitles plugin = null;
 
     public VaultHook(PvpTitles plugin) {
@@ -25,15 +29,15 @@ public class VaultHook {
     }
 
     public void setupVault() {
-        boolean perms = this.setupPermissions();
-        boolean chat = this.setupChat();
-        boolean econ = this.setupEconomy();        
+        PERMISSIONS_ENABLED = this.setupPermissions();
+        CHAT_ENABLED = this.setupChat();
+        ECONOMY_ENABLED = this.setupEconomy();        
 
-        if (perms)
+        if (PERMISSIONS_ENABLED)
             showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
-        if (chat)
+        if (CHAT_ENABLED)
             showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
-        if (econ)
+        if (ECONOMY_ENABLED)
             showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
     }
     

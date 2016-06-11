@@ -118,7 +118,8 @@
 //   título holográfico
 //  Ver. 2.5.3  09/06/2016   Añadido soporte para MVdWPlaceholderAPI.
 //  Ver. 2.5.3  11/06/2016   Mejorada la gestión de errores de la base de datos,
-//   añadido un nuevo placeholder y modificada la gestion del chat sobre los titulos
+//   añadido un nuevo placeholder, modificada la gestion del chat sobre los titulos
+//   y arreglado un fallo con el integrador de Vault
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -269,7 +270,7 @@ public class PvpTitles extends JavaPlugin {
             }
 
             // Holograms
-            if (HolographicHook.isHDEnable) {
+            if (HolographicHook.ISHDENABLED) {
                 HolographicHook.deleteHolograms();
             }
 

@@ -34,7 +34,7 @@ public class HolographicHook {
     
     /*public static final double CROUCH_HEIGHT = 2.2D;*/
     
-    public static boolean isHDEnable = false;
+    public static boolean ISHDENABLED = false;
 
     public static final Map<String, Hologram> HOLOPLAYERS = new HashMap();
 
@@ -47,9 +47,9 @@ public class HolographicHook {
     }
 
     public void setup() {
-        isHDEnable = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
+        ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
         
-        if (isHDEnable) {
+        if (ISHDENABLED) {
             PvpTitles.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
             PvpTitles.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
                     + " scoreboards per holograms " + ChatColor.AQUA + "loaded correctly."

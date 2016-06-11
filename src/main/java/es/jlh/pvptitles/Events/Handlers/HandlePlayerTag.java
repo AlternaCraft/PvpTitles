@@ -7,7 +7,6 @@ import static es.jlh.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
 import static es.jlh.pvptitles.Hook.HolographicHook.RANK_LINE;
 import static es.jlh.pvptitles.Hook.HolographicHook.TITLE_HEIGHT;
 import static es.jlh.pvptitles.Hook.HolographicHook.createHoloPlayer;
-import static es.jlh.pvptitles.Hook.HolographicHook.isHDEnable;
 import static es.jlh.pvptitles.Hook.HolographicHook.removeHoloPlayer;
 import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
@@ -32,6 +31,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
+import static es.jlh.pvptitles.Hook.HolographicHook.ISHDENABLED;
 
 /**
  *
@@ -68,8 +68,10 @@ public class HandlePlayerTag implements Listener {
 
     private static boolean hasPermission(Player pl) {
         // Fix prefix
-        Permission perm = VaultHook.permission;
-        if (perm != null) { // Vault en el server
+        
+        if (VaultHook.PERMISSIONS_ENABLED) { // Vault en el server
+            Permission perm = VaultHook.permission;
+            
             if (perm.hasGroupSupport() && perm.getPlayerGroups(pl).length != 0) {
                 String group = perm.getPrimaryGroup(pl);
                 
@@ -137,7 +139,7 @@ public class HandlePlayerTag implements Listener {
      * @param player Player
      */
     public static void holoPlayerLogin(Player player) {
-        if (isHDEnable && HandlePlayerTag.cm.params.displayLikeHolo()) {
+        if (ISHDENABLED && HandlePlayerTag.cm.params.displayLikeHolo()) {
             String uuid = player.getUniqueId().toString();
 
             // Holograms

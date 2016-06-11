@@ -47,7 +47,7 @@ public class HandleFame implements Listener {
             e.setCancelled(true);
             return;
         }
-        
+
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             Map<String, Map<String, List<String>>> kills = pt.manager.commandsRw.get("onKill");
@@ -76,7 +76,7 @@ public class HandleFame implements Listener {
                 } catch (DBException ex) {
                     PvpTitles.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 String lastRank = Ranks.getRank(e.getFame(), seconds);
                 if (rango.equals(Ranks.getRank(e.getFameTotal(), seconds)) && !rango.equals(lastRank)) {
                     setValues(rank.get(rango), e.getOfflinePlayer());
@@ -98,7 +98,7 @@ public class HandleFame implements Listener {
         // Nuevo rango
         if (e.getOfflinePlayer().isOnline()) {
             Player pl = (Player) e.getOfflinePlayer();
-           
+
             int fameA = e.getFame();
             int fameD = e.getFameTotal();
 
@@ -123,10 +123,9 @@ public class HandleFame implements Listener {
     }
 
     private void setValues(Map<String, List<String>> data, OfflinePlayer pl) {
-        Economy economy = VaultHook.economy;
-
-        if (data.containsKey("money")) {
-            if (economy != null) {
+        if (VaultHook.ECONOMY_ENABLED) {
+            Economy economy = VaultHook.economy;
+            if (economy != null && data.containsKey("money")) {
                 List<String> money = data.get("money");
                 if (money != null && !money.isEmpty()) {
                     Double cant = Double.valueOf(money.get(0));

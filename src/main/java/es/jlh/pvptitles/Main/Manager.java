@@ -200,12 +200,12 @@ public final class Manager {
         }
 
         // Holograms
-        if (HolographicHook.isHDEnable) {
+        if (HolographicHook.ISHDENABLED) {
             HolographicHook.loadHoloBoards();
         }
 
         showMessage(ChatColor.YELLOW + "" + this.lbm.getBoards().size()
-                + " scoreboards " + ((HolographicHook.isHDEnable) ? "" : "per signs ")
+                + " scoreboards " + ((HolographicHook.ISHDENABLED) ? "" : "per signs ")
                 + ChatColor.AQUA + "loaded correctly."
         );
     }
