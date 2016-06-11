@@ -48,11 +48,6 @@ commands:
         usage: /<command> export|import [<filename>]
         aliases: pvpdb
         permission: pvptitles.database
-    pvpTesting:
-        description: Testing command.
-        usage: /<command>
-        aliases: pvptesting
-        permission: pvptitles.testing
         
 permissions:
     pvptitles.*:
@@ -106,6 +101,3 @@ permissions:
     pvptitles.hideprefix:
         description: Doesn't display your title.
         default: false
-    pvptitles.testing:
-        description: Testing command.
-        default: op
