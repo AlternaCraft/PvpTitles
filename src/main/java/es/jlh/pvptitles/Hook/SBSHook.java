@@ -4,6 +4,7 @@ import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
@@ -43,8 +44,20 @@ public class SBSHook {
         replaceManager.register(new VariableReplacer() {
             @Override
             public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int fame = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                int seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+                int fame = 0;
+                try {
+                    fame = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
+                int seconds = 0;
+                try {
+                    seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
                 int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
 
                 /*

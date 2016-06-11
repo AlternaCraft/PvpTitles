@@ -1,6 +1,8 @@
 package es.jlh.pvptitles.Hook;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
+import static es.jlh.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Ranks;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
@@ -28,12 +30,29 @@ public class PlaceholderHook extends EZPlaceholderHook {
             return "";
         }
         
-        int fame = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-        int seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+        int fame = 0;
+        try {
+            fame = plugin.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
+        
+        int seconds = 0;
+        try {
+            seconds = plugin.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
+        
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
         
+        String rank = Ranks.getRank(fame, seconds);
+        
         if (id.equals("rank")) {
-            return Ranks.getRank(fame, seconds);
+            return rank;
+        }
+        else if (id.equals("valid_rank")) {            
+            return (!plugin.manager.params.displayInChat() || canDisplayRank(player, rank)) ? "":rank;
         }
         else if (id.equals("fame")) {
             return String.valueOf(fame);

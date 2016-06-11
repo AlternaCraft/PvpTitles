@@ -1,16 +1,17 @@
 package es.jlh.pvptitles.Events.Handlers;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.FameEvent;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.Localizer;
-import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import es.jlh.pvptitles.Managers.AntiFarmManager;
 import es.jlh.pvptitles.Managers.CleanTaskManager;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
+import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.Misc.Ranks;
+import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
@@ -63,9 +64,11 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        
-        if (!cm.dbh.getDm().playerConnection(player)) {
-            PvpTitles.logError("Error on player login " + player.getName(), null);
+
+        try {
+            cm.dbh.getDm().playerConnection(player);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
             return;
         }
 
@@ -77,7 +80,7 @@ public class HandlePlayerFame implements Listener {
         if (!this.pvpTitles.getTimerManager().hasPlayer(player)) {
             this.pvpTitles.getTimerManager().addPlayer(tPlayer);
         }
-        
+
         this.pvpTitles.getMovementManager().addLastMovement(player);
 
         HandlePlayerTag.holoPlayerLogin(player);
@@ -91,9 +94,10 @@ public class HandlePlayerFame implements Listener {
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
 
-        if (!cm.dbh.getDm().playerConnection(player)) {
-            PvpTitles.logError("Error on player change world " + player.getName(), null);
-            return;
+        try {
+            cm.dbh.getDm().playerConnection(player);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
         }
     }
 
@@ -105,11 +109,13 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (!cm.dbh.getDm().playerConnection(player)) {
-            PvpTitles.logError("Error on player quit " + player.getName(), null);
+        try {
+            cm.dbh.getDm().playerConnection(player);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
             return;
         }
-        
+
         HandlePlayerFame.KILLSTREAK.put(player.getUniqueId().toString(), 0);
 
         // Time
@@ -157,7 +163,7 @@ public class HandlePlayerFame implements Listener {
             Player killer = death.getEntity().getKiller();
             String killeruuid = killer.getUniqueId().toString();
             String victimuuid = death.getEntity().getUniqueId().toString();
-            
+
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
             if (afm.isVetado(killeruuid) || killeruuid.equalsIgnoreCase(victimuuid)) {
                 if (afm.isVetado(killeruuid)) {
@@ -187,7 +193,12 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Aniado el nuevo valor de kills
-            int fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
+            int fame = 0;
+            try {
+                fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
 
             kills += 1;
             this.calculateRank(death.getEntity().getName(), killer, fame, kills);
@@ -203,7 +214,7 @@ public class HandlePlayerFame implements Listener {
      */
     private void antiFarm(final Player killer, String victimuuid) {
         final String killeruuid = killer.getUniqueId().toString();
-        
+
         if (afm.hasKiller(killeruuid)) {
             CleanTaskManager ck = csKiller.get(killeruuid);
 
@@ -260,7 +271,12 @@ public class HandlePlayerFame implements Listener {
      * @param kills Racha de bajas
      */
     private void calculateRank(String killed, Player player, int fame, int kills) {
-        int seconds = pvpTitles.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+        int seconds = 0;
+        try {
+            seconds = pvpTitles.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
 
         int fameAntes = fame;
         String tag = this.cm.params.getTag();
@@ -275,8 +291,10 @@ public class HandlePlayerFame implements Listener {
 
         int fameDespues = fameAntes + fameRec;
 
-        if (!this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null)) {
-            PvpTitles.logError("Error saving player fame to " + player.getName(), null);
+        try {
+            this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
             return;
         }
 
@@ -297,17 +315,17 @@ public class HandlePlayerFame implements Listener {
     public static AntiFarmManager getAfm() {
         return afm;
     }
-    
+
     /**
      * Método para recibir la racha de bajas de un jugador
+     *
      * @param uuid UUID
      * @return Entero
      */
     public static int getKillStreakFrom(String uuid) {
         if (HandlePlayerFame.KILLSTREAK.containsKey(uuid)) {
             return HandlePlayerFame.KILLSTREAK.get(uuid);
-        }        
-        else {
+        } else {
             return 0;
         }
     }

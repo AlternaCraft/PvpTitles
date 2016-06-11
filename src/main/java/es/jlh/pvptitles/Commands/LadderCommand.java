@@ -1,5 +1,6 @@
 package es.jlh.pvptitles.Commands;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -36,7 +37,12 @@ public class LadderCommand implements CommandExecutor {
         
         short top = this.pvpTitles.manager.params.getTop();
         
-        ArrayList<PlayerFame> rankedPlayers = pvpTitles.manager.dbh.getDm().getTopPlayers(top, "");                
+        ArrayList<PlayerFame> rankedPlayers = new ArrayList<>();                
+        try {
+            rankedPlayers = pvpTitles.manager.dbh.getDm().getTopPlayers(top, "");
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
         
         sender.sendMessage("");
         sender.sendMessage(PLUGIN);

@@ -4,16 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
+import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
+import static es.jlh.pvptitles.Backend.Exceptions.DBException.UNKNOWN_ERROR;
 import es.jlh.pvptitles.Main.PvpTitles;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilsFile;
-import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
-import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
-import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Objects.PlayerFame;
-import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -102,11 +104,17 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
-    private short checkPlayerExists(OfflinePlayer pl, String w) {
+    private short checkPlayerExists(OfflinePlayer pl, String w) throws DBException {
         short psid = -1;
+
         if (pl == null || !MySQLConnection.isConnected()) {
-            return psid;
+            HashMap data = new HashMap();
+            data.put("Null player?", (pl == null));
+            data.put("MySQL connection?", MySQLConnection.isConnected());
+
+            throw new DBException("Error checking if player exists", DBException.TYPE.PLAYER_CONNECTION, data);
         }
+
         String uuid = pl.getUniqueId().toString();
 
         try {
@@ -157,18 +165,16 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            throw new DBException("Error checking if player exists",
+                    DBException.TYPE.PLAYER_CONNECTION, ex.getMessage());
         }
 
         return psid;
     }
 
     @Override
-    public boolean playerConnection(Player player) {
+    public void playerConnection(Player player) throws DBException {
         short psid = checkPlayerExists(player, player.getWorld().getName());
-        if (psid == -1) {
-            return false;
-        }
 
         try {
             java.util.Date utilDate = new java.util.Date();
@@ -178,28 +184,29 @@ public class DatabaseManagerMysql implements DatabaseManager {
             modFecha.setDate(1, sqlDate);
             modFecha.setInt(2, psid);
             modFecha.executeUpdate();
+
             PvpTitles.logDebugInfo("Update last login: " + modFecha.toString());
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_CONNECTION, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
+    public void savePlayerFame(UUID playerUUID, int fame, String w) throws DBException {
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         short psid = checkPlayerExists(pl, w);
-        if (psid == -1) {
-            return false;
-        }
 
         try {
             if (plugin.manager.params.isMw_enabled()) {
                 if (w == null && !pl.isOnline()) {
-                    return false;
+                    HashMap<String, Object> data = new HashMap();
+                    data.put("Player", pl.getName());
+                    data.put("Player Online", pl.isOnline());
+                    data.put("Method world", w);
+                    data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+
+                    throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_SAVING, data);
                 }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
@@ -217,27 +224,29 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 PvpTitles.logDebugInfo("Update player points: " + updateFame.toString());
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_FAME_SAVING, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public int loadPlayerFame(UUID playerUUID, String w) {
+    public int loadPlayerFame(UUID playerUUID, String w) throws DBException {
         int fama = 0;
+
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
         short psid = checkPlayerExists(pl, w);
-        if (psid == -1) {
-            return fama;
-        }
 
         try {
             if (plugin.manager.params.isMw_enabled()) {
                 if (w == null && !pl.isOnline()) {
-                    return fama;
+                    HashMap<String, Object> data = new HashMap();
+                    data.put("Player", pl.getName());
+                    data.put("Player Online", pl.isOnline());
+                    data.put("Method world", w);
+                    data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+
+                    throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_LOADING, data);
                 }
+                
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 PreparedStatement getFame = mysql.prepareStatement(MWPLAYER_POINTS);
@@ -260,18 +269,15 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_FAME_LOADING, ex.getMessage());
         }
 
         return fama;
     }
 
     @Override
-    public boolean savePlayedTime(TimedPlayer player) {
+    public void savePlayedTime(TimedPlayer player) throws DBException {
         short psid = checkPlayerExists(plugin.getServer().getPlayer(player.getUniqueId()), null);
-        if (psid == -1) {
-            return false;
-        }
 
         try {
             int time = player.getTotalOnline();
@@ -282,21 +288,15 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logDebugInfo("Save played time: " + playedTime.toString());
 
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_TIME_SAVING, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public int loadPlayedTime(UUID playerUUID) {
+    public int loadPlayedTime(UUID playerUUID) throws DBException {
         int time = 0;
 
         short psid = checkPlayerExists(plugin.getServer().getOfflinePlayer(playerUUID), null);
-        if (psid == -1) {
-            return time;
-        }
 
         try {
             PreparedStatement playedTime = mysql.prepareStatement(PLAYEDTIME);
@@ -308,14 +308,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 time = rs.getInt("playedTime");
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_TIME_LOADING, ex.getMessage());
         }
 
         return time;
     }
 
     @Override
-    public ArrayList getTopPlayers(short cant, String server) {
+    public ArrayList getTopPlayers(short cant, String server) throws DBException {
         ArrayList rankedPlayers = new ArrayList();
 
         if (!MySQLConnection.isConnected()) {
@@ -333,7 +333,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         // <editor-fold defaultstate="collapsed" desc="QUERY MAKER">
         // Checker mw-filter        
-        String mundos = "";        
+        String mundos = "";
         if (plugin.manager.params.isMw_enabled() && !plugin.manager.params.showOnLeaderBoard()) {
             List<String> worlds_disabled = plugin.manager.params.getAffectedWorlds();
 
@@ -385,34 +385,29 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PlayerFame pf;
 
             for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); rankedPlayers.add(pf)) {
-                if (plugin.manager.params.isMw_enabled()) {
-                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("PlayerWorld.points"),
-                            rs.getInt("playedTime"), this.plugin);
-                } else {
-                    pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"),
-                            rs.getInt("playedTime"), this.plugin);
-                }
-
+                pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"), 
+                        rs.getInt("playedTime"), this.plugin);
                 pf.setServer(rs.getShort("serverID"));
-
+                
                 if (plugin.manager.params.isMw_enabled()) {
+                    pf.setFame(rs.getInt("PlayerWorld.points"));
                     pf.setWorld(rs.getString("worldName"));
                 }
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYERS_TOP, ex.getMessage());
         }
 
         return rankedPlayers;
     }
 
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="SIGNS...">  
+    // <editor-fold defaultstate="collapsed" desc="BOARDS...">  
     @Override
-    public boolean registraBoard(SignBoard sb) {
+    public void registraBoard(SignBoard sb) throws DBException {
 
         if (!MySQLConnection.isConnected()) {
-            return false;
+            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_SAVING);
         }
 
         Location l = sb.getData().getLocation();
@@ -433,17 +428,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             saveBoard.executeUpdate();
             PvpTitles.logDebugInfo("Save board: " + saveBoard.toString());
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SAVING, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public boolean modificaBoard(Location l) {
+    public void modificaBoard(Location l) throws DBException {
         if (!MySQLConnection.isConnected()) {
-            return false;
+            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_UPDATING);
         }
 
         try {
@@ -456,17 +448,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             updBoard.executeUpdate();
             PvpTitles.logDebugInfo("Update board: " + updBoard.toString());
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_UPDATING, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public boolean borraBoard(Location l) {
+    public void borraBoard(Location l) throws DBException {
         if (!MySQLConnection.isConnected()) {
-            return false;
+            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_REMOVING);
         }
 
         try {
@@ -479,15 +468,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
             delBoard.executeUpdate();
             PvpTitles.logDebugInfo("Delete board: " + delBoard.toString());
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
-            return false;
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_REMOVING, ex.getMessage());
         }
-
-        return true;
     }
 
     @Override
-    public ArrayList<SignBoardData> buscaBoards() {
+    public ArrayList<SignBoardData> buscaBoards() throws DBException {
         ArrayList<SignBoardData> sbd = new ArrayList();
 
         if (!MySQLConnection.isConnected()) {
@@ -521,7 +507,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
 
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SEARCHING, ex.getMessage());
         }
 
         return sbd;

@@ -1,13 +1,14 @@
 package es.jlh.pvptitles.Managers;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.BoardEvent;
 import es.jlh.pvptitles.Files.HologramsFile;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsCustom.HologramBoard;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Objects.CustomLocation;
 import es.jlh.pvptitles.Objects.PlayerFame;
@@ -59,7 +60,12 @@ public class LeaderBoardManager {
     public boolean addBoard(Board b, Player pl) {
         if (!boards.contains(b)) {
             // Compruebo si ya hay algo ocupando el sitio            
-            ArrayList<PlayerFame> pf = this.pt.manager.dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
+            ArrayList<PlayerFame> pf = new ArrayList<>();
+            try {
+                pf = this.pt.manager.dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
             short jugadores = (short) pf.size();
 
             if (!b.isMaterializable(jugadores)) {
@@ -69,8 +75,10 @@ public class LeaderBoardManager {
 
             // Tipos predefinidos
             if (b instanceof SignBoard) {
-                if (!pt.manager.dbh.getDm().registraBoard((SignBoard) b)) {
-                    PvpTitles.logError("Error saving sign board", null);
+                try {
+                    pt.manager.dbh.getDm().registraBoard((SignBoard) b);
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
                     return false;
                 }
             } else if (b instanceof HologramBoard) {
@@ -93,17 +101,26 @@ public class LeaderBoardManager {
 
     public void loadBoard(Board cs) {
         if (!boards.contains(cs)) {
-            cs.materialize(pt.manager.dbh.getDm().getTopPlayers(
-                    cs.getModel().getCantidad(), cs.getData().getServer()
-            ));
+            try {
+                cs.materialize(pt.manager.dbh.getDm().getTopPlayers(
+                        cs.getModel().getCantidad(), cs.getData().getServer()
+                ));
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
             boards.add(cs);
         }
     }
 
     public void updateBoards() {
         for (Board board : boards) {
-            ArrayList<PlayerFame> pf = pt.manager.dbh.getDm().getTopPlayers(
-                    board.getModel().getCantidad(), board.getData().getServer());
+            ArrayList<PlayerFame> pf = new ArrayList<>();
+            try {
+                pf = pt.manager.dbh.getDm().getTopPlayers(
+                        board.getModel().getCantidad(), board.getData().getServer());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
             
             board.dematerialize((short) pf.size());
             board.materialize(pf);
@@ -113,8 +130,13 @@ public class LeaderBoardManager {
     public void deleteBoard(Location l, Object o) {
         for (Board bo : boards) {
             if (bo.getData().getLocation().equals(CustomLocation.toCustomLocation(l))) {
-                short jugadores = (short) pt.manager.dbh.getDm().getTopPlayers(
-                        bo.getModel().getCantidad(), bo.getData().getServer()).size();
+                short jugadores = 0;
+                try {
+                    jugadores = (short) pt.manager.dbh.getDm().getTopPlayers(
+                            bo.getModel().getCantidad(), bo.getData().getServer()).size();
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
 
                 Player pl = null;
 
@@ -141,8 +163,10 @@ public class LeaderBoardManager {
 
                 // Tipos predefinidos
                 if (bo instanceof SignBoard) {
-                    if (!pt.manager.dbh.getDm().borraBoard(bo.getData().getLocation())) {
-                        PvpTitles.logError("Error deleting sign board", null);
+                    try {
+                        pt.manager.dbh.getDm().borraBoard(bo.getData().getLocation());
+                    } catch (DBException ex) {
+                        PvpTitles.logError(ex.getCustomMessage(), null);
                         return;
                     }
                 } else if (bo instanceof HologramBoard) {

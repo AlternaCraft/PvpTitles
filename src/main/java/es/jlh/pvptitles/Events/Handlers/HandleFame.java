@@ -1,5 +1,6 @@
 package es.jlh.pvptitles.Events.Handlers;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
@@ -10,8 +11,8 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
-import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.Misc.Ranks;
 import java.util.List;
 import java.util.Map;
 import net.milkbowl.vault.economy.Economy;
@@ -69,7 +70,13 @@ public class HandleFame implements Listener {
         Map<String, Map<String, List<String>>> rank = pt.manager.commandsRw.get("onRank");
         if (rank != null) {
             for (String rango : rank.keySet()) {
-                int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+                int seconds = 0;
+                try {
+                    seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
                 String lastRank = Ranks.getRank(e.getFame(), seconds);
                 if (rango.equals(Ranks.getRank(e.getFameTotal(), seconds)) && !rango.equals(lastRank)) {
                     setValues(rank.get(rango), e.getOfflinePlayer());
@@ -95,7 +102,12 @@ public class HandleFame implements Listener {
             int fameA = e.getFame();
             int fameD = e.getFameTotal();
 
-            int oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
+            int oldTime = 0;
+            try {
+                oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
             TimedPlayer tp = pt.getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
 
@@ -146,7 +158,12 @@ public class HandleFame implements Listener {
         }
 
         Player pl = (Player) e.getOfflinePlayer();
-        int seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+        int seconds = 0;
+        try {
+            seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
 
         if (!e.isSilent()) {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);

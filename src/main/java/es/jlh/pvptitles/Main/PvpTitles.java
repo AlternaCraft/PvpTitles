@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
 // Last Change:     28-03-2016
@@ -101,9 +117,13 @@
 //   contador de la racha de bajas y añadido modificador para ajustar la altura del
 //   título holográfico
 //  Ver. 2.5.3  09/06/2016   Añadido soporte para MVdWPlaceholderAPI.
+//  Ver. 2.5.3  11/06/2016   Mejorada la gestión de errores de la base de datos,
+//   añadido un nuevo placeholder y modificada la gestion del chat sobre los titulos
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
+import es.jlh.pvptitles.Commands.BoardCommand;
 import es.jlh.pvptitles.Commands.DBCommand;
 import es.jlh.pvptitles.Commands.FameCommand;
 import es.jlh.pvptitles.Commands.InfoCommand;
@@ -111,13 +131,12 @@ import es.jlh.pvptitles.Commands.LadderCommand;
 import es.jlh.pvptitles.Commands.PurgeCommand;
 import es.jlh.pvptitles.Commands.RankCommand;
 import es.jlh.pvptitles.Commands.ReloadCommand;
-import es.jlh.pvptitles.Commands.BoardCommand;
-import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Events.Handlers.HandleFame;
 import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Hook.MVdWPlaceholderHook;
 import es.jlh.pvptitles.Hook.PlaceholderHook;
@@ -125,10 +144,10 @@ import es.jlh.pvptitles.Hook.SBSHook;
 import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Managers.TimerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
 import es.jlh.pvptitles.Misc.Inventories;
-import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -242,9 +261,10 @@ public class PvpTitles extends JavaPlugin {
             Set<TimedPlayer> players = this.timerManager.getTimedPlayers();
 
             for (TimedPlayer next : players) {
-                if (!this.manager.dbh.getDm().savePlayedTime(next)) {
-                    PvpTitles.logError("Error saving played time to "
-                            + next.getOfflinePlayer().getName(), null);
+                try {
+                    this.manager.dbh.getDm().savePlayedTime(next);
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
                 }
             }
 
@@ -263,10 +283,11 @@ public class PvpTitles extends JavaPlugin {
     private void checkOnlinePlayers() {
         // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : this.getServer().getOnlinePlayers()) {
-            // Fama
-            if (!this.manager.dbh.getDm().playerConnection(pl)) {
-                PvpTitles.logError("Error checking online player " + pl.getName(), null);
-                return;
+            try {                
+                this.manager.dbh.getDm().playerConnection(pl);
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+                continue;
             }
 
             // Times

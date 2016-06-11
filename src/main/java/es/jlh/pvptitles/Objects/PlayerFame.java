@@ -1,5 +1,6 @@
 package es.jlh.pvptitles.Objects;
 
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Main.PvpTitles;
 import java.util.UUID;
 import org.bukkit.ChatColor;
@@ -32,6 +33,10 @@ public class PlayerFame implements Comparable {
     public int getFame() {
         return fame;
     }
+
+    public void setFame(int fame) {
+        this.fame = fame;
+    }
     
     public String getUUID() {
         return uuid;
@@ -50,7 +55,13 @@ public class PlayerFame implements Comparable {
     }
     
     public int getRealSeconds() {
-        int actual = plugin.manager.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+        int actual = 0;
+        try {
+            actual = plugin.manager.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
+        
         int session = plugin.getTimerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         

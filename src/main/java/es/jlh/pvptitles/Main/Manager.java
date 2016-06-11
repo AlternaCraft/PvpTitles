@@ -1,27 +1,28 @@
 package es.jlh.pvptitles.Main;
 
+import es.jlh.pvptitles.Backend.ConfigDataStore;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Files.CommandFile;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Files.LangFile.LangType;
 import es.jlh.pvptitles.Files.ModelsFile;
 import es.jlh.pvptitles.Files.ServersFile;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.Localizer;
-import es.jlh.pvptitles.Backend.ConfigDataStore;
 import es.jlh.pvptitles.Hook.HolographicHook;
-import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
-import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
-import es.jlh.pvptitles.Managers.LeaderBoardManager;
-import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Main.Handlers.ConfigHandler;
 import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
+import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
+import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
 import static es.jlh.pvptitles.Managers.CleanTaskManager.TICKS;
+import es.jlh.pvptitles.Managers.LeaderBoardManager;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
+import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,7 @@ public final class Manager {
     private static final Map<Integer, String> RANKLIST = new HashMap();
     private static final Map<Integer, Integer> REQFAME = new HashMap();
     private static final Map<Integer, Integer> REQTIME = new HashMap();
-    
+
     // Modelos
     public ArrayList<BoardModel> modelos = null;
     // Recompensas
@@ -67,7 +68,7 @@ public final class Manager {
     public HashMap<String, HashMap<Short, List<String>>> servers = null;
     // Configuracion
     public ConfigDataStore params = null;
-    
+
     // Chat
     public static LangType messages = null;
 
@@ -162,7 +163,12 @@ public final class Manager {
      * Método para guardar en memoria los scoreboards
      */
     public void loadSavedBoards() {
-        List<SignBoardData> carteles = pvpTitles.manager.dbh.getDm().buscaBoards();
+        List<SignBoardData> carteles = new ArrayList<>();
+        try {
+            carteles = pvpTitles.manager.dbh.getDm().buscaBoards();
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
 
         lbm.vaciar(); // Evito duplicados
 
@@ -171,21 +177,22 @@ public final class Manager {
             BoardModel bm = searchModel(cartel.getModelo());
 
             if (bm == null) {
-                if (!pvpTitles.manager.dbh.getDm().borraBoard(cartel.getLocation())) {
-                    PvpTitles.logError("Error deleting board", null);
-                }
-                else {
+                try {
+                    pvpTitles.manager.dbh.getDm().borraBoard(cartel.getLocation());
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
                 }
+                
                 continue;
             }
 
             ModelController mc = new ModelController();
             mc.preprocessUnit(bm.getParams());
-            
+
             SignBoard cs = new SignBoard(cartel, bm, mc);
-            
+
             cs.setLineas(new String[0]);
             cs.setMatSign(((SignBoardData) cartel).getSignMaterial());
 
@@ -196,9 +203,9 @@ public final class Manager {
         if (HolographicHook.isHDEnable) {
             HolographicHook.loadHoloBoards();
         }
-        
+
         showMessage(ChatColor.YELLOW + "" + this.lbm.getBoards().size()
-                + " scoreboards "+((HolographicHook.isHDEnable)?"":"per signs ") 
+                + " scoreboards " + ((HolographicHook.isHDEnable) ? "" : "per signs ")
                 + ChatColor.AQUA + "loaded correctly."
         );
     }
@@ -259,7 +266,7 @@ public final class Manager {
 
             for (String type : types) {
                 Map data = new HashMap();
-                
+
                 String value = lp.getString("Rewards." + reward + "." + type);
 
                 if (value != null || (type.equals("onKill") && nulos)) {
@@ -371,8 +378,19 @@ public final class Manager {
                         continue;
                     }
 
-                    int actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
-                    int savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
+                    int actualFame = 0;
+                    try {
+                        actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
+                    } catch (DBException ex) {
+                        PvpTitles.logError(ex.getCustomMessage(), null);
+                    }
+                    
+                    int savedTimeB = 0;
+                    try {
+                        savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
+                    } catch (DBException ex) {
+                        PvpTitles.logError(ex.getCustomMessage(), null);
+                    }
 
                     String rankB = Ranks.getRank(actualFame, savedTimeB);
                     int savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
@@ -380,11 +398,13 @@ public final class Manager {
 
                     // Actualizo el tiempo del jugador en el server
                     if (!rankB.equals(rankA)) {
-                        if (!dbh.getDm().savePlayedTime(timedPlayer)) {
-                            PvpTitles.logError("Error saving played time to " + 
-                                    timedPlayer.getOfflinePlayer().getName(), null);
+                        try {
+                            dbh.getDm().savePlayedTime(timedPlayer);
+                        } catch (DBException ex) {
+                            PvpTitles.logError(ex.getCustomMessage(), null);
                             continue;
                         }
+                        
                         timedPlayer.removeSessions(); // Reinicio el tiempo a cero
                         timedPlayer.startSession(); // Nueva sesion
 
@@ -402,6 +422,7 @@ public final class Manager {
                 + " sec]" + ChatColor.AQUA + " loaded correctly."
         );
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SOME GETTERS...">
     /**

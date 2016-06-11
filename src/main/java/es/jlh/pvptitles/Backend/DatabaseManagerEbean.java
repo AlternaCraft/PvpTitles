@@ -1,21 +1,24 @@
 package es.jlh.pvptitles.Backend;
 
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
+import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
+import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
+import static es.jlh.pvptitles.Backend.Exceptions.DBException.UNKNOWN_ERROR;
 import es.jlh.pvptitles.Libraries.Ebean;
 import es.jlh.pvptitles.Main.PvpTitles;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilsFile;
 import es.jlh.pvptitles.Objects.PlayerFame;
-import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
-import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
-import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
-import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -35,22 +38,23 @@ public class DatabaseManagerEbean implements DatabaseManager {
     private static final String FILENAME_EXPORT = "database.sql";
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
-    private PvpTitles pt = null;
+    private PvpTitles plugin = null;
     private Ebean ebeanServer = null;
 
-    public DatabaseManagerEbean(PvpTitles pt, Ebean ebeanServer) {
-        this.pt = pt;
+    public DatabaseManagerEbean(PvpTitles plugin, Ebean ebeanServer) {
+        this.plugin = plugin;
         this.ebeanServer = ebeanServer;
     }
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     @Override
-    public boolean playerConnection(Player player) {
+    public void playerConnection(Player player) throws DBException {
         PlayerPT plClass = null;
 
         if (player == null) {
-            return false;
+            throw new DBException("The player is null...",
+                    DBException.TYPE.PLAYER_CONNECTION);
         }
 
         UUID playerUUID = player.getUniqueId();
@@ -71,7 +75,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         ebeanServer.getDatabase().save(plClass);
 
         // MultiWorld   
-        if (pt.manager.params.isMw_enabled()) {
+        if (plugin.manager.params.isMw_enabled()) {
             WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                     .select("playerUUID, world")
                     .where()
@@ -88,15 +92,13 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(plwClass);
             }
         }
-
-        return true;
     }
 
     /* TABLA PLAYERS */
     @Override
-    public boolean savePlayerFame(UUID playerUUID, int fame, String w) {
+    public void savePlayerFame(UUID playerUUID, int fame, String w) throws DBException {
         // Multiworld + mundo permitido
-        OfflinePlayer pl = pt.getServer().getOfflinePlayer(playerUUID);
+        OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         PlayerPT plClass = null;
 
@@ -118,9 +120,15 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         WorldPlayerPT plwClass = null;
 
-        if (pt.manager.params.isMw_enabled()) {
+        if (plugin.manager.params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
-                return false;
+                HashMap<String, Object> data = new HashMap();
+                data.put("Player", pl.getName());
+                data.put("Player Online", pl.isOnline());
+                data.put("Method world", w);
+                data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+
+                throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_SAVING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -152,23 +160,27 @@ public class DatabaseManagerEbean implements DatabaseManager {
             plClass.setPoints(fame);
             ebeanServer.getDatabase().save(plClass);
         }
-
-        return true;
     }
 
     @Override
-    public int loadPlayerFame(UUID playerUUID, String w) {
+    public int loadPlayerFame(UUID playerUUID, String w) throws DBException {
         int points = 0;
 
-        OfflinePlayer pl = pt.getServer().getOfflinePlayer(playerUUID);
+        OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         if (pl == null) {
-            return points;
+            throw new DBException("Player is null", DBException.TYPE.PLAYER_FAME_LOADING);
         }
 
-        if (pt.manager.params.isMw_enabled()) {
+        if (plugin.manager.params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
-                return points;
+                HashMap<String, Object> data = new HashMap();
+                data.put("Player", pl.getName());
+                data.put("Player Online", pl.isOnline());
+                data.put("Method world", w);
+                data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+
+                throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_LOADING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -199,11 +211,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public boolean savePlayedTime(TimedPlayer tPlayer) {
+    public void savePlayedTime(TimedPlayer tPlayer) throws DBException {
         PlayerPT plClass = null;
 
         if (tPlayer == null) {
-            return false;
+            throw new DBException("tPlayer is null", DBException.TYPE.PLAYER_TIME_SAVING);
         }
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
@@ -221,12 +233,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
 
         ebeanServer.getDatabase().save(plClass);
-
-        return true;
     }
 
     @Override
-    public int loadPlayedTime(UUID playerUUID) {
+    public int loadPlayedTime(UUID playerUUID) throws DBException {
         PlayerPT plClass = null;
         int time = 0;
 
@@ -245,110 +255,122 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     /* OTROS */
     @Override
-    public ArrayList<PlayerFame> getTopPlayers(short cant, String server) {
+    public ArrayList<PlayerFame> getTopPlayers(short cant, String server) throws DBException {
         List<WorldPlayerPT> allPlayersW;
         List<PlayerPT> allPlayers;
 
         ArrayList<PlayerFame> rankedPlayers = new ArrayList();
 
-        if (pt.manager.params.isMw_enabled()) {
-            String mundos = "";
+        try {
+            if (plugin.manager.params.isMw_enabled()) {
+                String mundos = "";
 
-            if (!pt.manager.params.showOnLeaderBoard()) {
-                List<String> worlds_disabled = pt.manager.params.getAffectedWorlds();
-                
-                StringBuilder buf = new StringBuilder();
-                for (String world : worlds_disabled) {
-                    buf.append("world != '").append(world).append("' AND ");
+                if (!plugin.manager.params.showOnLeaderBoard()) {
+                    List<String> worlds_disabled = plugin.manager.params.getAffectedWorlds();
+
+                    StringBuilder buf = new StringBuilder();
+                    for (String world : worlds_disabled) {
+                        buf.append("world != '").append(world).append("' AND ");
+                    }
+                    if (!worlds_disabled.isEmpty()) {
+                        mundos = buf.toString();
+                        mundos = mundos.substring(0, mundos.length() - 5);
+                    }
                 }
-                if (!worlds_disabled.isEmpty()) {
-                    mundos = buf.toString();
-                    mundos = mundos.substring(0, mundos.length() - 5);
+
+                allPlayersW = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                        .select("playerUUID, points, world")
+                        .where(mundos)
+                        .orderBy("points desc")
+                        .setMaxRows(cant)
+                        .findList();
+
+                for (int i = 0; i < allPlayersW.size(); i++) {
+                    PlayerPT time = ebeanServer.getDatabase().find(PlayerPT.class)
+                            .select("playerUUID, playedTime")
+                            .where()
+                            .ieq("playerUUID", allPlayersW.get(i).getPlayerUUID())
+                            .findUnique();
+
+                    PlayerFame pf = new PlayerFame(allPlayersW.get(i).getPlayerUUID(),
+                            allPlayersW.get(i).getPoints(), time.getPlayedTime(),
+                            this.plugin);
+
+                    pf.setWorld(allPlayersW.get(i).getWorld());
+                    rankedPlayers.add(pf);
+                }
+            } else {
+                allPlayers = ebeanServer.getDatabase().find(PlayerPT.class)
+                        .select("playerUUID, points, playedTime")
+                        .orderBy("points desc")
+                        .setMaxRows(cant)
+                        .findList();
+
+                for (int i = 0; i < allPlayers.size(); i++) {
+                    PlayerFame pf = new PlayerFame(allPlayers.get(i).getPlayerUUID(),
+                            allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime(),
+                            this.plugin);
+                    rankedPlayers.add(pf);
                 }
             }
-
-            allPlayersW = ebeanServer.getDatabase().find(WorldPlayerPT.class)
-                    .select("playerUUID, points, world")
-                    .where(mundos)
-                    .orderBy("points desc")
-                    .setMaxRows(cant)
-                    .findList();
-
-            for (int i = 0; i < allPlayersW.size(); i++) {
-                PlayerPT time = ebeanServer.getDatabase().find(PlayerPT.class)
-                        .select("playerUUID, playedTime")
-                        .where()
-                        .ieq("playerUUID", allPlayersW.get(i).getPlayerUUID())
-                        .findUnique();
-
-                PlayerFame pf = new PlayerFame(allPlayersW.get(i).getPlayerUUID(),
-                        allPlayersW.get(i).getPoints(), time.getPlayedTime(),
-                        this.pt);
-
-                pf.setWorld(allPlayersW.get(i).getWorld());
-                rankedPlayers.add(pf);
-            }
-        } else {
-            allPlayers = ebeanServer.getDatabase().find(PlayerPT.class)
-                    .select("playerUUID, points, playedTime")
-                    .orderBy("points desc")
-                    .setMaxRows(cant)
-                    .findList();
-
-            for (int i = 0; i < allPlayers.size(); i++) {
-                PlayerFame pf = new PlayerFame(allPlayers.get(i).getPlayerUUID(),
-                        allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime(),
-                        this.pt);
-                rankedPlayers.add(pf);
-            }
+        } catch (Exception ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYERS_TOP, ex.getMessage());
         }
 
         return rankedPlayers;
     }
 
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="SIGNS...">
+    // <editor-fold defaultstate="collapsed" desc="BOARDS...">
     /* TABLA CARTELES */
     @Override
-    public boolean registraBoard(SignBoard sb) {
-        SignPT st = new SignPT();
-        st.setName(sb.getData().getNombre());
-        st.setModel(sb.getData().getModelo());
-        st.setLocation(sb.getData().getLocation());
-        st.setOrientation(sb.getData().getOrientacion());
-        st.setBlockface(sb.getData().getPrimitiveBlockface());
+    public void registraBoard(SignBoard sb) throws DBException {
+        try {
+            SignPT st = new SignPT();
+            st.setName(sb.getData().getNombre());
+            st.setModel(sb.getData().getModelo());
+            st.setLocation(sb.getData().getLocation());
+            st.setOrientation(sb.getData().getOrientacion());
+            st.setBlockface(sb.getData().getPrimitiveBlockface());
 
-        ebeanServer.getDatabase().save(st);
-        return true;
+            ebeanServer.getDatabase().save(st);
+        } catch (Exception ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SAVING, ex.getMessage());
+        }
     }
 
     @Override
-    public boolean modificaBoard(Location l) {
+    public void modificaBoard(Location l) {
         // Nothing yet
-        return false;
     }
 
     @Override
-    public boolean borraBoard(Location l) {
-        SignPT st = ebeanServer.getDatabase().find(SignPT.class)
-                .where()
-                .eq("x", l.getX())
-                .eq("y", l.getY())
-                .eq("z", l.getZ())
-                .ieq("world", l.getWorld().getName())
-                .findUnique();
+    public void borraBoard(Location l) throws DBException {
+        try {
+            SignPT st = ebeanServer.getDatabase().find(SignPT.class)
+                    .where()
+                    .eq("x", l.getX())
+                    .eq("y", l.getY())
+                    .eq("z", l.getZ())
+                    .ieq("world", l.getWorld().getName())
+                    .findUnique();
 
-        ebeanServer.getDatabase().delete(st);
-        return true;
+            ebeanServer.getDatabase().delete(st);
+        } catch (Exception ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_REMOVING, ex.getMessage());
+        }
     }
 
     @Override
     public ArrayList<SignBoardData> buscaBoards() {
-        List<SignPT> plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
+        List<SignPT> plClass = null;
+
+        plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
+
         ArrayList<SignBoardData> sbd = new ArrayList();
 
         for (SignPT signPT : plClass) {
-            Location l = new Location(pt.getServer().getWorld(signPT.getWorld()), signPT.getX(), signPT.getY(), signPT.getZ());
+            Location l = new Location(plugin.getServer().getWorld(signPT.getWorld()), signPT.getX(), signPT.getY(), signPT.getZ());
             SignBoardData bds = new SignBoardData(signPT.getName(), signPT.getModel(), "", l);
             bds.setOrientacion(signPT.getOrientation());
             bds.setBlockface(signPT.getBlockface());
@@ -363,7 +385,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
     public String getServerName(short id) {
-        return this.pt.manager.params.getNameS();
+        return this.plugin.manager.params.getNameS();
     }
 
     @Override
@@ -377,7 +399,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findList();
 
         for (PlayerPT player : allDates) {
-            if (pt.manager.params.getNoPurge().contains(player.getPlayerUUID())) {
+            if (plugin.manager.params.getNoPurge().contains(player.getPlayerUUID())) {
                 continue;
             }
 
@@ -386,7 +408,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             cFile.setTime(fechaFile);
 
             // Tiempo en config
-            cFile.add(GregorianCalendar.DAY_OF_YEAR, pt.manager.params.getTimeP());
+            cFile.add(GregorianCalendar.DAY_OF_YEAR, plugin.manager.params.getTimeP());
 
             Date hoy = new Date();
             Calendar cHoy = new GregorianCalendar();
@@ -394,7 +416,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             // cFile + timePurga < hoy
             if (cFile.before(cHoy)) {
-                if (pt.manager.params.isMw_enabled()) {
+                if (plugin.manager.params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
                             .lt("playerUUID", player.getPlayerUUID())
@@ -416,12 +438,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public void DBExport(String filename) {
-        String ruta = new StringBuilder().append(
-                pt.getDataFolder()).append( // Ruta
+        String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
                         filename).toString();
 
-        short serverID = pt.manager.params.getMultiS();
+        short serverID = plugin.manager.params.getMultiS();
 
         String sql = "";
         sql += MySQLConnection.getTableServers() + "\n";
@@ -441,7 +462,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         boolean mw = pwClass != null && pwClass.size() > 0;
 
-        sql += "insert into Servers values (" + serverID + ", '" + pt.manager.params.getNameS() + "')"
+        sql += "insert into Servers values (" + serverID + ", '" + plugin.manager.params.getNameS() + "')"
                 + " ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
 
         if (plClass != null && plClass.size() > 0) {
@@ -497,8 +518,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public boolean DBImport(String filename) {
-        String ruta = new StringBuilder().append(
-                pt.getDataFolder()).append( // Ruta
+        String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
                         filename).toString();
 
@@ -547,7 +567,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                 if (spt == null) {
                     spt = new SignPT();
-                    spt.setLocation(new Location(pt.getServer().getWorld(signsPT.getWorld()),
+                    spt.setLocation(new Location(plugin.getServer().getWorld(signsPT.getWorld()),
                             signsPT.getX(), signsPT.getY(), signsPT.getZ()));
                 }
 

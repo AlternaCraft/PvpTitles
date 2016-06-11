@@ -1,12 +1,13 @@
 package es.jlh.pvptitles.Commands;
 
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
+import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
-import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Localizer;
+import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
 import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
 import org.bukkit.ChatColor;
@@ -54,10 +55,22 @@ public class RankCommand implements CommandExecutor {
     private void HandleRankCmd(Player player) {
         String uuid = player.getUniqueId().toString();
         
-        int fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+        int fame = 0;
+        try {
+            fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
+        
         int racha = HandlePlayerFame.getKillStreakFrom(uuid);
-        int seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
-                + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+        
+        int seconds = 0;
+        try {
+            seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
+                    + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
         
         String rank = Ranks.getRank(fame, seconds);
         

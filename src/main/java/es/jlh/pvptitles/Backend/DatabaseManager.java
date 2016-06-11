@@ -1,9 +1,10 @@
 package es.jlh.pvptitles.Backend;
 
-import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
+import es.jlh.pvptitles.Objects.PlayerFame;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -23,10 +24,9 @@ public interface DatabaseManager {
      * </p>
      *
      * @param player Player
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean playerConnection(Player player);
+    public void playerConnection(Player player) throws DBException;
 
     /**
      * Método para guardar la fama obtenida por un jugador
@@ -38,10 +38,9 @@ public interface DatabaseManager {
      * @param fame Entero con los puntos PvP
      * @param world En caso de MW activado, opción para establecer puntos en un
      * mundo específico
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean savePlayerFame(UUID playerUUID, int fame, String world);
+    public void savePlayerFame(UUID playerUUID, int fame, String world) throws DBException;
 
     /**
      * Método para cargar los puntos pvp de un jugador
@@ -51,17 +50,17 @@ public interface DatabaseManager {
      * específico
      *
      * @return Entero con la fama del jugador
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public int loadPlayerFame(UUID playerUUID, String world);
+    public int loadPlayerFame(UUID playerUUID, String world) throws DBException;
 
     /**
      * Método para crear o añadir el tiempo de juego de un jugador
      *
      * @param tPlayer TimedPlayer
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean savePlayedTime(TimedPlayer tPlayer);
+    public void savePlayedTime(TimedPlayer tPlayer) throws DBException;
 
     /**
      * Método para recibir los dias que lleva el jugador en el servidor con el
@@ -70,52 +69,52 @@ public interface DatabaseManager {
      * @param playerUUID UUID
      *
      * @return Entero con los minutos transcurridos
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public int loadPlayedTime(UUID playerUUID);
+    public int loadPlayedTime(UUID playerUUID) throws DBException;
 
     /**
      * Método para recibir el top deseado de jugadores ordenado de mejor a peor
      *
-     * @param cant Cantidad de jugadores a mostrarng w,
+     * @param cant Cantidad de jugadores a mostrar
      * @param server String
      *
      * @return ArrayList con los jugadores
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public ArrayList<PlayerFame> getTopPlayers(short cant, String server);
+    public ArrayList<PlayerFame> getTopPlayers(short cant, String server) throws DBException;
 
     /**
      * Método para registrar un cartel en la base de datos
      *
      * @param sb SignBoard
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean registraBoard(SignBoard sb);
+    public void registraBoard(SignBoard sb) throws DBException;
 
     /**
      * Método para modificar la id del server de un cartel
      *
      * @param l Location
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean modificaBoard(Location l);
+    public void modificaBoard(Location l) throws DBException;
 
     /**
      * Método para borrar un cartel de la base de datos
      *
      * @param l Localicación del cartel base
-     *
-     * @return False si no se pudo completar
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public boolean borraBoard(Location l);
+    public void borraBoard(Location l) throws DBException;
 
     /**
      * Método para buscar las tablas de puntuaciones de la base de datos
      *
      * @return ArrayList con todas ellas
+     * @throws es.jlh.pvptitles.Backend.Exceptions.DBException
      */
-    public ArrayList<SignBoardData> buscaBoards();
+    public ArrayList<SignBoardData> buscaBoards() throws DBException;
 
     /**
      * Método para recibir el nombre del servidor según su ID

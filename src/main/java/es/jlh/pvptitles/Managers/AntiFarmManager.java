@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Objects.PlayerKills;
 import es.jlh.pvptitles.Main.PvpTitles;
+import es.jlh.pvptitles.Objects.PlayerKills;
 import java.util.HashMap;
 import java.util.Map;
 

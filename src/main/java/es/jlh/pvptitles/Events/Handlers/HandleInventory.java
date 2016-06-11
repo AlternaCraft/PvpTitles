@@ -6,6 +6,7 @@ import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Misc.Inventories;
+import static es.jlh.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
 import es.jlh.pvptitles.Misc.Localizer;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +21,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.EventExecutor;
-import static es.jlh.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
 
 /**
  * Clase evento para comprobar los jugadores que pulsan click en el inv virtual

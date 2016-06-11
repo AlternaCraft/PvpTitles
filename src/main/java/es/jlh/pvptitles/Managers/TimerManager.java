@@ -1,7 +1,7 @@
 package es.jlh.pvptitles.Managers;
 
-import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Main.PvpTitles;
+import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.OfflinePlayer;

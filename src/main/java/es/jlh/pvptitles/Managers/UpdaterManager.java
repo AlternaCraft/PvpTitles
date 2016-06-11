@@ -1,13 +1,13 @@
 package es.jlh.pvptitles.Managers;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import static es.jlh.pvptitles.Main.PvpTitles.logMessage;
+import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import java.io.File;
 import java.util.regex.Pattern;
 import net.gravitydevelopment.updater.Updater;
-import net.gravitydevelopment.updater.Updater.UpdateType;
 import net.gravitydevelopment.updater.Updater.UpdateResult;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 import org.bukkit.ChatColor;
 
 /**

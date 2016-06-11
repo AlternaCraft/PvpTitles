@@ -1,11 +1,14 @@
 package es.jlh.pvptitles.Events.Handlers;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.RankChangedEvent;
 import static es.jlh.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
 import static es.jlh.pvptitles.Hook.HolographicHook.RANK_LINE;
 import static es.jlh.pvptitles.Hook.HolographicHook.TITLE_HEIGHT;
+import static es.jlh.pvptitles.Hook.HolographicHook.createHoloPlayer;
 import static es.jlh.pvptitles.Hook.HolographicHook.isHDEnable;
+import static es.jlh.pvptitles.Hook.HolographicHook.removeHoloPlayer;
 import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -29,8 +32,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
-import static es.jlh.pvptitles.Hook.HolographicHook.createHoloPlayer;
-import static es.jlh.pvptitles.Hook.HolographicHook.removeHoloPlayer;
 
 /**
  *
@@ -38,7 +39,7 @@ import static es.jlh.pvptitles.Hook.HolographicHook.removeHoloPlayer;
  */
 public class HandlePlayerTag implements Listener {
 
-    public static final String IGNORED_RANK = "None";
+    private static final String IGNORED_RANK = "None";
     private static final String IGNORED_CHAT_PERM = "pvptitles.hideprefix";
 
     private static PvpTitles plugin;
@@ -49,6 +50,11 @@ public class HandlePlayerTag implements Listener {
         cm = pt.manager;
     }
 
+    public static boolean canDisplayRank(Player pl, String rank) {
+        return validWorld(pl.getWorld().getName()) && hasPermission(pl) 
+                && rank.equalsIgnoreCase(IGNORED_RANK);
+    }
+    
     private static boolean validWorld(String w) {
         // Compruebo si el mundo esta en la lista de los vetados        
         if (HandlePlayerTag.cm.params.getAffectedWorlds().contains(w.toLowerCase())) {
@@ -60,7 +66,7 @@ public class HandlePlayerTag implements Listener {
         return true;
     }
 
-    public static boolean canDisplayRank(Player pl) {
+    private static boolean hasPermission(Player pl) {
         // Fix prefix
         Permission perm = VaultHook.permission;
         if (perm != null) { // Vault en el server
@@ -82,22 +88,28 @@ public class HandlePlayerTag implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (!validWorld(event.getPlayer().getWorld().getName())
-                || !HandlePlayerTag.cm.params.displayInChat()
-                || !canDisplayRank(event.getPlayer())) {
-            return;
-        }
-
+        Player pl = event.getPlayer();
         String rank = null;
 
-        int fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-        int seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
+        int fame = 0;
+        try {
+            fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
+        int seconds = 0;
+        try {
+            seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+        }
         rank = Ranks.getRank(fame, seconds);
 
         String format = event.getFormat();
 
         if (rank != null && !rank.isEmpty()) {
-            if (rank.equalsIgnoreCase(IGNORED_RANK)) {
+            // Si ya se ha definido un prefix, en caso de que se de alguna de las condiciones lo elimino
+            if (!HandlePlayerTag.cm.params.displayInChat() || !canDisplayRank(pl, rank)) {
                 if (format.contains(HandlePlayerTag.cm.params.getPrefix())) {
                     format = format.replace(HandlePlayerTag.cm.params.getPrefix(), "");
                 }
@@ -129,8 +141,20 @@ public class HandlePlayerTag implements Listener {
             String uuid = player.getUniqueId().toString();
 
             // Holograms
-            int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            int fame = 0;
+            try {
+                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
+            int oldTime = 0;
+            try {
+                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
@@ -139,10 +163,7 @@ public class HandlePlayerTag implements Listener {
 
             // Fix reload
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) 
-                    || player.isSneaking()
-                    || rank.equalsIgnoreCase(IGNORED_RANK)
-                    || !canDisplayRank(player)
-                    || !validWorld(player.getWorld().getName())) {
+                    || player.isSneaking() || !canDisplayRank(player, rank)) {
                 HOLOPLAYERS.get(uuid).removeLine(0);
             }
         }
@@ -191,15 +212,25 @@ public class HandlePlayerTag implements Listener {
                     player.getLocation().getZ());
             h.teleport(l);
 
-            int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            int fame = 0;
+            try {
+                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
+            int oldTime = 0;
+            try {
+                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
-            if (!rank.equals(IGNORED_RANK)
-                    && validWorld(player.getWorld().getName())
-                    && canDisplayRank(player)) {
+            if (canDisplayRank(player, rank)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
             }
         }
@@ -218,16 +249,25 @@ public class HandlePlayerTag implements Listener {
 
             if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                     && !player.isSneaking() && !player.isDead()) {
-                int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                int fame = 0;
+                try {
+                    fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
+                int oldTime = 0;
+                try {
+                    oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
                 int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = Ranks.getRank(fame, totalTime);
 
-                // Rango <> none y mundo valido
-                if (!rank.equals(IGNORED_RANK)
-                        && validWorld(player.getWorld().getName())
-                        && canDisplayRank(player)) {
+                if (canDisplayRank(player, rank)) {
                     h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
             } else if (!isHologramEmpty(h) && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
@@ -245,7 +285,7 @@ public class HandlePlayerTag implements Listener {
             Hologram h = HOLOPLAYERS.get(uuid);
             h.clearLines();
 
-            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && canDisplayRank(player)) {
+            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && hasPermission(player)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", event.getNewRank()));
             }
         }
@@ -267,15 +307,25 @@ public class HandlePlayerTag implements Listener {
 
             h.teleport(l);
 
-            int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            int fame = 0;
+            try {
+                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
+            int oldTime = 0;
+            try {
+                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+            }
+            
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = Ranks.getRank(fame, totalTime);
 
-            if (!rank.equalsIgnoreCase(IGNORED_RANK)
-                    && validWorld(player.getWorld().getName())
-                    && canDisplayRank(player)) {
+            if (canDisplayRank(player, rank)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
             }
         }
@@ -303,16 +353,25 @@ public class HandlePlayerTag implements Listener {
                     h.removeLine(0);
                 }
             } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                int fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                int oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                int fame = 0;
+                try {
+                    fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
+                int oldTime = 0;
+                try {
+                    oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    PvpTitles.logError(ex.getCustomMessage(), null);
+                }
+                
                 int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = Ranks.getRank(fame, totalTime);
 
-                // Rango <> none y mundo valido
-                if (!rank.equalsIgnoreCase(IGNORED_RANK)
-                        && validWorld(player.getWorld().getName())
-                        && canDisplayRank(player)) {
+                if (canDisplayRank(player, rank)) {
                     h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
             }
