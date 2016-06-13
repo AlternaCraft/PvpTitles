@@ -112,7 +112,8 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("Null player?", (pl == null));
             data.put("MySQL connection?", MySQLConnection.isConnected());
 
-            throw new DBException("Error checking if player exists", DBException.TYPE.PLAYER_CONNECTION, data);
+            throw new DBException("Error checking if player is registered", 
+                    DBException.TYPE.PLAYER_CONNECTION, data);
         }
 
         String uuid = pl.getUniqueId().toString();

@@ -120,6 +120,8 @@
 //  Ver. 2.5.3  11/06/2016   Mejorada la gestión de errores de la base de datos,
 //   añadido un nuevo placeholder, modificada la gestion del chat sobre los titulos
 //   y arreglado un fallo con el integrador de Vault
+//  Ver. 2.5.3  14/06/2016   Arreglado un fallo con el control de los rangos como
+//   prefijos en el chat y mejorado el sistema de gestión de errores.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
@@ -132,7 +134,6 @@ import es.jlh.pvptitles.Commands.LadderCommand;
 import es.jlh.pvptitles.Commands.PurgeCommand;
 import es.jlh.pvptitles.Commands.RankCommand;
 import es.jlh.pvptitles.Commands.ReloadCommand;
-import es.jlh.pvptitles.Commands.TestingCommand;
 import es.jlh.pvptitles.Events.Handlers.HandleFame;
 import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
@@ -193,21 +194,9 @@ public class PvpTitles extends JavaPlugin {
         this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
 
-        showMessage("-------------------");
-        showMessage("TESTING MESSAGE (0)");
-        showMessage("-------------------");
-        showMessage("Values (T & M):" + (timerManager == null) + ";" + (movementManager == null));
-        showMessage("");
-
         // Registro los managers del timing
         this.timerManager = new TimerManager(this);
         this.movementManager = new MovementManager(this);
-
-        showMessage("-------------------");
-        showMessage("TESTING MESSAGE (1)");
-        showMessage("-------------------");
-        showMessage("Values (T & M): " + (timerManager == null) + "; " + (movementManager == null));
-        showMessage("");
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
@@ -219,12 +208,6 @@ public class PvpTitles extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
-        showMessage("-------------------");
-        showMessage("TESTING MESSAGE (2)");
-        showMessage("-------------------");
-        showMessage("Values (T & M):" + (timerManager == null) + ";" + (movementManager == null));
-        showMessage("");
 
         // Instancio la clase para evitar problemas en el reload
         new Inventories().setup();
@@ -245,15 +228,8 @@ public class PvpTitles extends JavaPlugin {
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
         getCommand("pvpDatabase").setExecutor(new DBCommand(this));
         getCommand("pvpTitles").setExecutor(new InfoCommand(this));
-        getCommand("pvpTesting").setExecutor(new TestingCommand(this));
 
         checkOnlinePlayers();
-
-        showMessage("-------------------");
-        showMessage("TESTING MESSAGE (3)");
-        showMessage("-------------------");
-        showMessage("Values (T & M):" + (timerManager == null) + ";" + (movementManager == null));
-        showMessage("");
 
         // Tareas posteriores
         this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
@@ -271,14 +247,7 @@ public class PvpTitles extends JavaPlugin {
                 checkExternalPlugins();
 
                 getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
-                        + "# ENDING INTEGRATION MODULE #");
-
-                showMessage("-------------------");
-                showMessage("TESTING MESSAGE (4)");
-                showMessage("-------------------");
-                showMessage("Values (T & M):" + (timerManager == null) + ";" + (movementManager == null));
-                showMessage("");
-                
+                        + "# ENDING INTEGRATION MODULE #");                
                 /*
                  * -> Fin integraciones <-
                  */

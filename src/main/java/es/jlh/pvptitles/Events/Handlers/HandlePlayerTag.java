@@ -51,11 +51,11 @@ public class HandlePlayerTag implements Listener {
     }
 
     public static boolean canDisplayRank(Player pl, String rank) {
-        return validWorld(pl.getWorld().getName()) && hasPermission(pl) 
-                && rank.equalsIgnoreCase(IGNORED_RANK);
+        return isValidWorld(pl.getWorld().getName()) && !hasIgnoredChatPermission(pl) 
+                && !hasIgnoredRank(rank);
     }
     
-    private static boolean validWorld(String w) {
+    private static boolean isValidWorld(String w) {
         // Compruebo si el mundo esta en la lista de los vetados        
         if (HandlePlayerTag.cm.params.getAffectedWorlds().contains(w.toLowerCase())) {
             if (!HandlePlayerTag.cm.params.isTitleShown()) {
@@ -66,28 +66,32 @@ public class HandlePlayerTag implements Listener {
         return true;
     }
 
-    private static boolean hasPermission(Player pl) {
+    private static boolean hasIgnoredChatPermission(Player pl) {
         // Fix prefix
         
         if (VaultHook.PERMISSIONS_ENABLED) { // Vault en el server
-            Permission perm = VaultHook.permission;
+            Permission user = VaultHook.permission;
             
-            if (perm.hasGroupSupport() && perm.getPlayerGroups(pl).length != 0) {
-                String group = perm.getPrimaryGroup(pl);
+            if (user.hasGroupSupport() && user.getPlayerGroups(pl).length != 0) {
+                String group = user.getPrimaryGroup(pl);
                 
                 World w = null;
                 World wp = pl.getWorld();
 
-                return !(perm.groupHas(w, group, IGNORED_CHAT_PERM)
-                        || perm.groupHas(wp, group, IGNORED_CHAT_PERM));
+                return (user.groupHas(w, group, IGNORED_CHAT_PERM)
+                        || user.groupHas(wp, group, IGNORED_CHAT_PERM));
             } else {
-                return !perm.has(pl, IGNORED_CHAT_PERM);
+                return user.has(pl, IGNORED_CHAT_PERM);
             }
         }
 
-        return true;
+        return false;
     }
 
+    private static boolean hasIgnoredRank(String rank) {
+        return rank.equalsIgnoreCase(IGNORED_RANK);
+    }
+    
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
@@ -287,7 +291,7 @@ public class HandlePlayerTag implements Listener {
             Hologram h = HOLOPLAYERS.get(uuid);
             h.clearLines();
 
-            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && hasPermission(player)) {
+            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && hasIgnoredChatPermission(player)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", event.getNewRank()));
             }
         }

@@ -133,7 +133,8 @@ public class ConfigHandler {
         params.setAFKTime((short) config.getInt("AFKTime"));
         params.setUpdate(config.getBoolean("Update"));
         params.setAlert(config.getBoolean("Alert"));
-        params.setMetrics(config.getBoolean("Metrics"));        
+        params.setMetrics(config.getBoolean("Metrics"));
+        params.setErrorFormat((short) config.getInt("ErrorFormat"));
         params.setMw_enabled(config.getBoolean("MW.enable"));
         params.setTitle(config.getBoolean("MW-filter.title"));
         params.setPoints(config.getBoolean("MW-filter.points"));

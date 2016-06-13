@@ -19,6 +19,8 @@ public class ConfigDataStore {
     private boolean update = false;
     // Atributo para guardar si se va a avisar de las actualizaciones o no
     private boolean alert = true;
+    // Atributo para guardar el tipo de formato para el error
+    private short errorFormat = 2;
 
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
@@ -196,6 +198,10 @@ public class ConfigDataStore {
         this.metrics = metrics;
     }
 
+    public void setErrorFormat(short errorFormat) {
+        this.errorFormat = errorFormat;
+    }
+
     public void setTitle(boolean title) {
         this.title = title;
     }
@@ -351,6 +357,10 @@ public class ConfigDataStore {
 
     public boolean isMetrics() {
         return metrics;
+    }
+
+    public short getErrorFormat() {
+        return errorFormat;
     }
 
     public boolean displayInChat() {
