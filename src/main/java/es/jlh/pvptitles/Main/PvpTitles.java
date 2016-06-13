@@ -134,6 +134,7 @@ import es.jlh.pvptitles.Commands.LadderCommand;
 import es.jlh.pvptitles.Commands.PurgeCommand;
 import es.jlh.pvptitles.Commands.RankCommand;
 import es.jlh.pvptitles.Commands.ReloadCommand;
+import es.jlh.pvptitles.Commands.TestingCommand;
 import es.jlh.pvptitles.Events.Handlers.HandleFame;
 import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
@@ -228,6 +229,7 @@ public class PvpTitles extends JavaPlugin {
         getCommand("pvpReload").setExecutor(new ReloadCommand(this));
         getCommand("pvpDatabase").setExecutor(new DBCommand(this));
         getCommand("pvpTitles").setExecutor(new InfoCommand(this));
+        getCommand("pvpTesting").setExecutor(new TestingCommand(this));
 
         checkOnlinePlayers();
 
