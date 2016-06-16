@@ -161,4 +161,11 @@ public interface DatabaseManager {
      * @return String
      */
     public String getDefaultFExport();
+    
+    /**
+     * Método para actualizar la conexion a la base de datos
+     * 
+     * @param connection Nueva conexión
+     */
+    public void updateConnection(Object connection);
 }

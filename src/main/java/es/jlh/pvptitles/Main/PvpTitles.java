@@ -122,10 +122,12 @@
 //   y arreglado un fallo con el integrador de Vault
 //  Ver. 2.5.3  14/06/2016   Arreglado un fallo con el control de los rangos como
 //   prefijos en el chat y mejorado el sistema de gestión de errores.
+//  Ver. 2.5.3  16/06/2016   Mejorada la gestión de errores de la base de datos.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
+import es.jlh.pvptitles.Backend.MySQLConnection;
 import es.jlh.pvptitles.Commands.BoardCommand;
 import es.jlh.pvptitles.Commands.DBCommand;
 import es.jlh.pvptitles.Commands.FameCommand;
@@ -145,12 +147,14 @@ import es.jlh.pvptitles.Hook.MVdWPlaceholderHook;
 import es.jlh.pvptitles.Hook.PlaceholderHook;
 import es.jlh.pvptitles.Hook.SBSHook;
 import es.jlh.pvptitles.Hook.VaultHook;
+import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import es.jlh.pvptitles.Managers.MetricsManager;
 import es.jlh.pvptitles.Managers.MovementManager;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Managers.TimerManager;
 import es.jlh.pvptitles.Managers.UpdaterManager;
 import es.jlh.pvptitles.Misc.Inventories;
+import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -278,6 +282,11 @@ public class PvpTitles extends JavaPlugin {
 
             // Inventories
             Inventories.closeInventories();
+            
+            if (DBHandler.tipo.equals(DBHandler.DBTYPE.MYSQL)) try {
+                MySQLConnection.closeConnection();
+            } catch (SQLException ex) {
+            }
         }
 
         logMessage(LangFile.PLUGIN_DISABLED.getText(Manager.messages));

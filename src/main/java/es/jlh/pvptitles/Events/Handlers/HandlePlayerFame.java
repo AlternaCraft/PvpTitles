@@ -174,6 +174,15 @@ public class HandlePlayerFame implements Listener {
                 return;
             }
 
+            // Guardo su fama anterior
+            int fame = 0;
+            try {
+                fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
+            } catch (DBException ex) {
+                PvpTitles.logError(ex.getCustomMessage(), null);
+                return; // Le bajaria los puntos posteriormente
+            }
+
             // Modulo anti farm
             antiFarm(killer, victimuuid);
 
@@ -190,14 +199,6 @@ public class HandlePlayerFame implements Listener {
             // Final de la racha de bajas
             if (HandlePlayerFame.KILLSTREAK.containsKey(victimuuid)) {
                 HandlePlayerFame.KILLSTREAK.put(victimuuid, 0);
-            }
-
-            // Aniado el nuevo valor de kills
-            int fame = 0;
-            try {
-                fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
-            } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
             }
 
             kills += 1;
@@ -271,28 +272,29 @@ public class HandlePlayerFame implements Listener {
      * @param kills Racha de bajas
      */
     private void calculateRank(String killed, Player player, int fame, int kills) {
-        int seconds = 0;
-        try {
-            seconds = pvpTitles.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
-        } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
-        }
-
         int fameAntes = fame;
         String tag = this.cm.params.getTag();
         double mod = Math.abs(this.cm.params.getMod());
 
         int fameRec = (int) Math.ceil((kills - 1 * mod) + 1);
 
+        int fameDespues = fameAntes + fameRec;
+
+        try {
+            this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
+        } catch (DBException ex) {
+            PvpTitles.logError(ex.getCustomMessage(), null);
+            return;
+        }
+
         player.sendMessage(PLUGIN + LangFile.PLAYER_KILLED.getText(Localizer.getLocale(player))
                 .replace("%killed%", killed)
                 .replace("%fameRec%", Integer.toString(fameRec))
                 .replace("%tag%", tag));
 
-        int fameDespues = fameAntes + fameRec;
-
+        int seconds = 0;
         try {
-            this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
+            seconds = pvpTitles.manager.dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
             return;
