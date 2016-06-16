@@ -38,7 +38,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     private static final String FILENAME_EXPORT = "database.sql";
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
-    private PvpTitles plugin = null;
+    private final PvpTitles plugin;
     private Ebean ebeanServer = null;
 
     public DatabaseManagerEbean(PvpTitles plugin, Ebean ebeanServer) {
@@ -53,7 +53,9 @@ public class DatabaseManagerEbean implements DatabaseManager {
         PlayerPT plClass = null;
 
         if (player == null) {
-            throw new DBException("The player is null...",
+            HashMap data = new HashMap();
+            data.put("Null player?", (player == null));
+            throw new DBException(DBException.PLAYER_CONNECTION_ERROR,
                     DBException.TYPE.PLAYER_CONNECTION);
         }
 
@@ -128,7 +130,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Method world", w);
                 data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
-                throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_SAVING, data);
+                throw new DBException(DBException.MULTIWORLD_ERROR, 
+                        DBException.TYPE.PLAYER_FAME_SAVING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -180,7 +183,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Method world", w);
                 data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
-                throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_LOADING, data);
+                throw new DBException(DBException.MULTIWORLD_ERROR, 
+                        DBException.TYPE.PLAYER_FAME_LOADING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -215,7 +219,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
         PlayerPT plClass = null;
 
         if (tPlayer == null) {
-            throw new DBException("tPlayer is null", DBException.TYPE.PLAYER_TIME_SAVING);
+            HashMap<String, Object> data = new HashMap();
+            data.put("Null Player?", tPlayer == null);
+            
+            throw new DBException(DBException.PLAYER_TIME_ERROR, 
+                    DBException.TYPE.PLAYER_TIME_SAVING, data);
         }
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
@@ -439,7 +447,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     @Override
     public void DBExport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         short serverID = plugin.manager.params.getMultiS();
@@ -519,7 +527,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     @Override
     public boolean DBImport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         if (!UtilsFile.exists(ruta)) {
@@ -613,6 +621,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
     public String getDefaultFExport() {
         return this.FILENAME_EXPORT;
     }
-    // </editor-fold>
 
+    @Override
+    public void updateConnection(Object connection) {
+        this.ebeanServer = (Ebean) connection;
+    }
+    // </editor-fold>
 }

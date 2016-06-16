@@ -4,6 +4,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.RankChangedEvent;
 import static es.jlh.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
+import static es.jlh.pvptitles.Hook.HolographicHook.ISHDENABLED;
 import static es.jlh.pvptitles.Hook.HolographicHook.RANK_LINE;
 import static es.jlh.pvptitles.Hook.HolographicHook.TITLE_HEIGHT;
 import static es.jlh.pvptitles.Hook.HolographicHook.createHoloPlayer;
@@ -31,7 +32,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
-import static es.jlh.pvptitles.Hook.HolographicHook.ISHDENABLED;
 
 /**
  *
@@ -102,12 +102,15 @@ public class HandlePlayerTag implements Listener {
             fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
+            return;
         }
+        
         int seconds = 0;
         try {
             seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
+            return;
         }
         rank = Ranks.getRank(fame, seconds);
 

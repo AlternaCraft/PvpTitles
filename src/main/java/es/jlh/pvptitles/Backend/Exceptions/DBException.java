@@ -35,8 +35,15 @@ public class DBException extends Exception {
     private static final short FULL = 2;
     
     public static final String UNKNOWN_ERROR = "Unknown error";
-
-    //private final String 
+    public static final String PLAYER_CONNECTION_ERROR = "Error checking if player is registered";
+    public static final String PLAYER_TIME_ERROR = "Error loading player time";
+    public static final String MULTIWORLD_ERROR = "Error checking with multiworld";
+    public static final String TOP_PLAYERS_ERROR = "Error getting top players";
+    public static final String SAVING_BOARD_ERROR = "Error saving board";
+    public static final String SEARCHING_BOARD_ERROR = "Error searching board";
+    public static final String REMOVING_BOARD_ERROR = "Error removing board";
+    public static final String UPDATING_BOARD_ERROR = "Error updating board";    
+    
     private final String REPORT = "If you don't know the error cause, please, report it.\n"
             + "http://dev.bukkit.org/bukkit-plugins/pvptitles/create-ticket/";
 
