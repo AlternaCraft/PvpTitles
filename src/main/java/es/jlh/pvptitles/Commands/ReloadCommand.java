@@ -1,9 +1,11 @@
 package es.jlh.pvptitles.Commands;
 
+import es.jlh.pvptitles.Backend.MySQLConnection;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import static es.jlh.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
 import static es.jlh.pvptitles.Hook.HolographicHook.HEIGHT_PER_ROW;
+import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
@@ -11,6 +13,9 @@ import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.RetroCP.DBChecker;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +43,12 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         pvpTitles.manager.getCh().loadConfig(pvpTitles.manager.params);
+        
+        if (DBHandler.tipo.equals(DBHandler.DBTYPE.MYSQL)) try {
+            MySQLConnection.closeConnection();
+        } catch (SQLException ex) {
+        }
+        
         pvpTitles.manager.getDbh().selectDB();
         new DBChecker(pvpTitles).setup();
 

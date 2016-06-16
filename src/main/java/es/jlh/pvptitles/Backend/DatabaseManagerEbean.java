@@ -38,7 +38,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     private static final String FILENAME_EXPORT = "database.sql";
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
-    private PvpTitles plugin = null;
+    private final PvpTitles plugin;
     private Ebean ebeanServer = null;
 
     public DatabaseManagerEbean(PvpTitles plugin, Ebean ebeanServer) {
@@ -439,7 +439,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     @Override
     public void DBExport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         short serverID = plugin.manager.params.getMultiS();
@@ -519,7 +519,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     @Override
     public boolean DBImport(String filename) {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         filename).toString();
 
         if (!UtilsFile.exists(ruta)) {
@@ -613,6 +613,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
     public String getDefaultFExport() {
         return this.FILENAME_EXPORT;
     }
-    // </editor-fold>
 
+    @Override
+    public void updateConnection(Object connection) {
+        this.ebeanServer = (Ebean) connection;
+    }
+    // </editor-fold>
 }

@@ -15,7 +15,7 @@ public class MySQLConnection {
     /**
      * constante DRIVER para definir el conector jdbc
      */
-    public static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
 
     private static Connection conexion;
 
@@ -42,18 +42,19 @@ public class MySQLConnection {
      * @param ruta Host + puerto + db
      * @param user String con el usuario
      * @param pass String con la clave
+     * @param reconnect Sin mostrar mensajes
      */
-    public static void connectDB(String ruta, String user, String pass) {
+    public static void connectDB(String ruta, String user, String pass, boolean reconnect) {
         try {
             Class.forName(DRIVER);
             conexion = DriverManager.getConnection("jdbc:mysql://" + ruta, user, pass);
             estado_conexion = Estado.CONECTADO;
         } catch (ClassNotFoundException ex) {
-            PvpTitles.logError("MySQL library not found", null);
+            if (!reconnect) PvpTitles.logError("MySQL library not found", null);
             estado_conexion = Estado.SIN_CONEXION;
         } catch (SQLException ex) {
-            PvpTitles.logError(((ex.getErrorCode() == 0)
-                    ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode()) 
+            if (!reconnect) PvpTitles.logError(((ex.getErrorCode() == 0)
+                    ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode())
                     + "; Using Ebean per default...", null);
             estado_conexion = Estado.SIN_CONEXION;
         }
@@ -62,23 +63,38 @@ public class MySQLConnection {
     /**
      * Método para comprobar si existe una conexion con la bdd
      *
+     * @param reconnect Booleano para ejecutar la parte de reconexión
      * @return Booleano con el resultado
      */
-    public static boolean isConnected() {
+    public static boolean isConnected(boolean reconnect) {
         boolean iniciada = false, valida = false;
 
         iniciada = (conexion != null);
-
+        
         if (iniciada) {
             try {
-                valida = conexion.isValid(5);
-                estado_conexion = Estado.CONECTADO;
+                valida = conexion.isValid(3) && !conexion.isClosed();
+                
+                if (valida) {
+                    estado_conexion = Estado.CONECTADO;
+                } 
+                else if (reconnect) {
+                    closeConnection();
+                    
+                    PvpTitles.getInstance().manager.getDbh().mysqlConnect(true);
+                    valida = conexion.isValid(3) && !conexion.isClosed();
+                    
+                    if (valida) estado_conexion = Estado.CONECTADO;
+                }
+                else {
+                    estado_conexion = Estado.SIN_CONEXION;
+                }
             } catch (SQLException ex) {
                 estado_conexion = Estado.SIN_CONEXION;
             }
         }
 
-        return iniciada && valida;
+        return valida;
     }
 
     /**
@@ -87,7 +103,7 @@ public class MySQLConnection {
      * @throws SQLException Fallo al cerrar la conexion
      */
     public static void closeConnection() throws SQLException {
-        if (isConnected()) {
+        if (!conexion.isClosed()) {
             conexion.close();
             estado_conexion = Estado.SIN_CONEXION;
         }
@@ -179,7 +195,7 @@ public class MySQLConnection {
     }
 
     private static void update(String sql) {
-        if (isConnected()) {
+        if (isConnected(true)) {
             try {
                 conexion.createStatement().execute(sql);
             } catch (SQLException ex) {

@@ -383,6 +383,7 @@ public final class Manager {
                         actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
                     } catch (DBException ex) {
                         PvpTitles.logError(ex.getCustomMessage(), null);
+                        return;
                     }
                     
                     int savedTimeB = 0;
@@ -390,6 +391,7 @@ public final class Manager {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
                         PvpTitles.logError(ex.getCustomMessage(), null);
+                        return;
                     }
 
                     String rankB = Ranks.getRank(actualFame, savedTimeB);

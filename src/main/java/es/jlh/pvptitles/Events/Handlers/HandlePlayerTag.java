@@ -102,12 +102,15 @@ public class HandlePlayerTag implements Listener {
             fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
+            return;
         }
+        
         int seconds = 0;
         try {
             seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
+            return;
         }
         rank = Ranks.getRank(fame, seconds);
 

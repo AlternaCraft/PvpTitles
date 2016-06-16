@@ -89,7 +89,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private final PvpTitles plugin;
-    private final Connection mysql;
+    private Connection mysql;
 
     /**
      * Constructor de la clase
@@ -107,12 +107,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
     private short checkPlayerExists(OfflinePlayer pl, String w) throws DBException {
         short psid = -1;
 
-        if (pl == null || !MySQLConnection.isConnected()) {
+        if (pl == null || !MySQLConnection.isConnected(true)) {
             HashMap data = new HashMap();
             data.put("Null player?", (pl == null));
-            data.put("MySQL connection?", MySQLConnection.isConnected());
+            data.put("MySQL connection?", MySQLConnection.isConnected(false));
 
-            throw new DBException("Error checking if player is registered", 
+            throw new DBException("Error checking if player is registered",
                     DBException.TYPE.PLAYER_CONNECTION, data);
         }
 
@@ -247,7 +247,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
                     throw new DBException("Error with multiworld", DBException.TYPE.PLAYER_FAME_LOADING, data);
                 }
-                
+
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 PreparedStatement getFame = mysql.prepareStatement(MWPLAYER_POINTS);
@@ -319,8 +319,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public ArrayList getTopPlayers(short cant, String server) throws DBException {
         ArrayList rankedPlayers = new ArrayList();
 
-        if (!MySQLConnection.isConnected()) {
-            return rankedPlayers;
+        if (!MySQLConnection.isConnected(true)) {
+            HashMap data = new HashMap();
+            data.put("MySQL connection?", false);
+
+            throw new DBException("Error getting top players list",
+                    DBException.TYPE.PLAYERS_TOP, data);
         }
 
         HashMap<Short, List<String>> servidores = plugin.manager.servers.get(server);
@@ -386,10 +390,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PlayerFame pf;
 
             for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); rankedPlayers.add(pf)) {
-                pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"), 
+                pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"),
                         rs.getInt("playedTime"), this.plugin);
                 pf.setServer(rs.getShort("serverID"));
-                
+
                 if (plugin.manager.params.isMw_enabled()) {
                     pf.setFame(rs.getInt("PlayerWorld.points"));
                     pf.setWorld(rs.getString("worldName"));
@@ -407,8 +411,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
     @Override
     public void registraBoard(SignBoard sb) throws DBException {
 
-        if (!MySQLConnection.isConnected()) {
-            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_SAVING);
+        if (!MySQLConnection.isConnected(true)) {
+            HashMap data = new HashMap();
+            data.put("MySQL connection?", false);
+
+            throw new DBException("Error saving board",
+                    DBException.TYPE.BOARD_SAVING, data);
         }
 
         Location l = sb.getData().getLocation();
@@ -435,8 +443,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     @Override
     public void modificaBoard(Location l) throws DBException {
-        if (!MySQLConnection.isConnected()) {
-            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_UPDATING);
+        if (!MySQLConnection.isConnected(true)) {
+            HashMap data = new HashMap();
+            data.put("MySQL connection?", false);
+
+            throw new DBException("Error updating board",
+                    DBException.TYPE.BOARD_UPDATING, data);
         }
 
         try {
@@ -455,8 +467,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     @Override
     public void borraBoard(Location l) throws DBException {
-        if (!MySQLConnection.isConnected()) {
-            throw new DBException("MySQL connection failed", DBException.TYPE.BOARD_REMOVING);
+        if (!MySQLConnection.isConnected(true)) {
+            HashMap data = new HashMap();
+            data.put("MySQL connection?", false);
+
+            throw new DBException("Error removing board",
+                    DBException.TYPE.BOARD_REMOVING, data);
         }
 
         try {
@@ -477,8 +493,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public ArrayList<SignBoardData> buscaBoards() throws DBException {
         ArrayList<SignBoardData> sbd = new ArrayList();
 
-        if (!MySQLConnection.isConnected()) {
-            return sbd;
+        if (!MySQLConnection.isConnected(true)) {
+            HashMap data = new HashMap();
+            data.put("MySQL connection?", false);
+
+            throw new DBException("Error searching boards",
+                    DBException.TYPE.BOARD_SEARCHING, data);
         }
 
         try {
@@ -520,7 +540,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public String getServerName(short id) {
         String nombre = "";
 
-        if (!MySQLConnection.isConnected()) {
+        if (!MySQLConnection.isConnected(true)) {
             return nombre;
         }
 
@@ -545,7 +565,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     public int purgeData() {
         int contador = 0;
 
-        if (!MySQLConnection.isConnected()) {
+        if (!MySQLConnection.isConnected(true)) {
             return contador;
         }
 
@@ -706,6 +726,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
     @Override
     public String getDefaultFExport() {
         return this.FILENAME_EXPORT;
+    }
+
+    public void updateConnection(Object mysql) {
+        this.mysql = (Connection) mysql;
     }
     //</editor-fold>
 }

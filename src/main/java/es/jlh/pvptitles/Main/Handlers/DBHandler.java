@@ -58,7 +58,7 @@ public class DBHandler {
                 break;                
             case MYSQL:
                 // MySQL server
-                this.mysqlConnect();
+                this.mysqlConnect(false);
 
                 if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION) {
                     tipo = DBTYPE.EBEAN;
@@ -131,24 +131,29 @@ public class DBHandler {
 
     /**
      * Conexion a MySQL
+     * @param reconnect Intentar conectar de nuevo a la bd de forma silenciosa
      */
-    public void mysqlConnect() {
+    public void mysqlConnect(boolean reconnect) {
         ConfigDataStore params = pvpTitles.manager.params;
 
         MySQLConnection.connectDB(params.getHost() + ":" + params.getPort()
-                + "/" + params.getDb(), params.getUser(), params.getPass());
+                + "/" + params.getDb(), params.getUser(), params.getPass(), reconnect);
 
-        if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION) {
+        // No lo cambio porque sigue usando mysql (reconnect)
+        if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION && !reconnect) {
             tipo = DBTYPE.EBEAN;
         } else {
             tipo = DBTYPE.MYSQL;
             mysql = MySQLConnection.getConnection();
 
-            MySQLConnection.creaDefault();
-
-            MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
-
-            showMessage(ChatColor.YELLOW + "MySQL database " + ChatColor.AQUA + "loaded correctly.");
+            if (!reconnect) {            
+                MySQLConnection.creaDefault();
+                MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
+                showMessage(ChatColor.YELLOW + "MySQL database " + ChatColor.AQUA + "loaded correctly.");
+            }
+            else {
+                dm.updateConnection(mysql);
+            }
         }
     }
 
