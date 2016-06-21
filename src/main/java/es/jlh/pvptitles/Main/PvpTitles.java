@@ -124,6 +124,8 @@
 //   prefijos en el chat y mejorado el sistema de gestión de errores.
 //  Ver. 2.5.3  16/06/2016   Mejorada la gestión de errores de la base de datos.
 // </editor-fold>
+//  Ver. 2.5.4  21/06/2016   Arreglado un fallo con el placeholder "valid_rank" y
+//   mejorada la respuesta del comando /pvprank
 package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;

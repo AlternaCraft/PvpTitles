@@ -49,8 +49,7 @@ public class MVdWPlaceholderHook {
 
                     String rank = Ranks.getRank(fame, seconds);
                     
-                    if (!plugin.manager.params.displayInChat() 
-                            || !canDisplayRank(player, rank)) {
+                    if (!canDisplayRank(player, rank)) {
                         return "";
                     }
                     

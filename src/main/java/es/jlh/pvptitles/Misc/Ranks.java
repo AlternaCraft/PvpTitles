@@ -29,16 +29,17 @@ public class Ranks {
 
         /*
          Caso puntual para comprobar si los puntos son mayores que todos 
-         los de la lista
+         los de la lista (Además evito que lance un NullPointerEx el bucle de debajo)
          */
         if (fame >= reqFame.get(reqFame.values().size() - 1) && seconds
                 >= reqTime.get(reqTime.values().size() - 1)) {
-            nextRankFame = 999999;
-            nextRankTime = 999999;
+            nextRankFame = 0;
+            nextRankTime = 0;
             return rankList.get(reqFame.values().size() - 1);
         }
 
-        for (int i = 0; i < reqFame.size(); i++) {
+        // Desde el primero hasta el penúltimo
+        for (int i = 0; i < reqFame.size() - 1; i++) {
             // Voy comprobando si esta entre los puntos que va obteniendo
             if (fame >= reqFame.get(i) && fame < reqFame.get(i + 1)) {
                 for (int j = i; j >= 0; j--) {

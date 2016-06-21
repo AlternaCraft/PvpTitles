@@ -86,7 +86,7 @@ public class RankCommand implements CommandExecutor {
         player.sendMessage("  - " + ChatColor.AQUA + tag + ": " + ChatColor.RESET + fame);
         player.sendMessage("  - " + ChatColor.AQUA + "KillStreak: " + ChatColor.RESET + racha);
 
-        if (rankup < 999999 /* y el tiempo */) {
+        if (rankup > 0 || timeup > 0) {
             player.sendMessage("  - " + LangFile.RANK_INFO.getText(Localizer.getLocale(player))
                     .replace("%rankup%", String.valueOf(rankup))
                     .replace("%timeup%", Utils.splitToComponentTimes(timeup))

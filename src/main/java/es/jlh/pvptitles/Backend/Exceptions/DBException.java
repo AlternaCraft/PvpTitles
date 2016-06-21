@@ -33,7 +33,8 @@ public class DBException extends Exception {
     private static final short SIMPLIFIED = 0;
     private static final short ESSENTIAL = 1;
     private static final short FULL = 2;
-    
+
+    // <editor-fold defaultstate="collapsed" desc="ERRORS">
     public static final String UNKNOWN_ERROR = "Unknown error";
     public static final String PLAYER_CONNECTION_ERROR = "Error checking if player is registered";
     public static final String PLAYER_TIME_ERROR = "Error loading player time";
@@ -42,7 +43,8 @@ public class DBException extends Exception {
     public static final String SAVING_BOARD_ERROR = "Error saving board";
     public static final String SEARCHING_BOARD_ERROR = "Error searching board";
     public static final String REMOVING_BOARD_ERROR = "Error removing board";
-    public static final String UPDATING_BOARD_ERROR = "Error updating board";    
+    public static final String UPDATING_BOARD_ERROR = "Error updating board";
+    // </editor-fold>
     
     private final String REPORT = "If you don't know the error cause, please, report it.\n"
             + "http://dev.bukkit.org/bukkit-plugins/pvptitles/create-ticket/";
@@ -121,6 +123,7 @@ public class DBException extends Exception {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="ERROR ELEMENTS">
     private String getHeader() {
         return new StringBuilder("(" + DBHandler.tipo.toString() + " ERROR) ")
                 .append("On ").append(getFilteredString(this.type.toString()))
@@ -141,6 +144,26 @@ public class DBException extends Exception {
                 .append("\n-------------------------------------------------------------").toString();
     }
 
+    private String getExtraData() {
+        String extradata = "";
+
+        if (!this.data.isEmpty()) {
+            extradata = "\n\nMore information:";
+            extradata += "\n-----------------";
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                extradata += new StringBuilder().append("\n- ").append(key)
+                        .append(": ").append(value).toString();
+            }
+        } else if (this.custom_error != null) {
+            extradata = "\nMore information: " + this.custom_error;
+        }
+
+        return extradata;
+    }
+    // </editor-fold>
+
     private String getFilteredString(String str) {
         return "\"" + str.replaceAll("_", " ") + "\"";
     }
@@ -160,24 +183,5 @@ public class DBException extends Exception {
         }
 
         return (possible_errors.isEmpty()) ? "\n- " + NOT_FOUND.getText() : possible_errors;
-    }
-
-    private String getExtraData() {
-        String extradata = "";
-
-        if (!this.data.isEmpty()) {
-            extradata = "\n\nMore information:";
-            extradata += "\n-----------------";
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                extradata += new StringBuilder().append("\n- ").append(key)
-                        .append(": ").append(value).toString();
-            }
-        } else if (this.custom_error != null) {
-            extradata = "\nMore information: " + this.custom_error;
-        }
-
-        return extradata;
     }
 }

@@ -19,6 +19,11 @@ commands:
         usage: /<command>
         aliases: pvprango
         permission: pvptitles.rank
+    pvpLadder:
+        description: It shows the top five players.
+        usage: /<command>
+        aliases: pvpranking
+        permission: pvptitles.ladder        
     pvpFame:
         description: Add, view or set player fame in game.
         usage: /<command> add|see|set <player> [<world_name>] [<famepoints>] [-silent]
@@ -34,11 +39,6 @@ commands:
         usage: /<command>
         aliases: pvppurga
         permission: pvptitles.purge
-    pvpLadder:
-        description: It shows the top five players.
-        usage: /<command>
-        aliases: pvpranking
-        permission: pvptitles.ladder
     pvpReload:
         description: It reloads the plugin.
         usage: /<command>        
@@ -55,10 +55,10 @@ permissions:
         children:
             - pvptitles.help: true            
             - pvptitles.rank: true
+            - pvptitles.ladder: true
             - pvptitles.setRank: true
             - pvptitles.board: true
-            - pvptitles.purge: true
-            - pvptitles.ladder: true
+            - pvptitles.purge: true            
             - pvptitles.reload: true
             - pvptitles.database: true
             - pvptitles.manageboard: true

@@ -73,8 +73,9 @@ public class ModelsFile {
             + "<main>\n"
             + "<player>[<rank>] | &e<player>&r[<rank>]";
 
+    private static final String FILENAME = "models.txt";
     private static final Charset CHARSET = Charset.forName("UTF-8");
-
+    
     private static final String FIRST_CHAR_MODEL = "#";
     private static final String SPLIT_MODELS = "&&";
 
@@ -110,7 +111,7 @@ public class ModelsFile {
      * @return Lista de objetos
      * @throws java.io.IOException
      */
-    public ArrayList<BoardModel> leeArchivo(String ruta) throws IOException {
+    public ArrayList<BoardModel> readFile(String ruta) throws IOException {
         ArrayList<BoardModel> sm = new ArrayList();
         BufferedReader br = null;
 
@@ -136,7 +137,7 @@ public class ModelsFile {
             buf.append(linea).append(SPLIT_MODELS);
         }
 
-        // Limpieza de caracteres
+        // Limpieza de espacios
         modelos = buf.toString().replace(" ", "");
 
         al = new ArrayList<>(Arrays.asList(modelos.split(FIRST_CHAR_MODEL)));
@@ -218,11 +219,11 @@ public class ModelsFile {
      * @param pl Plugin
      * @return Contenido del archivo
      */
-    public ArrayList<BoardModel> creaArchivo(PvpTitles pl) {
+    public ArrayList<BoardModel> makeFile(PvpTitles pl) {
         String ruta = new StringBuilder().append(
                 pl.getDataFolder()).append( // Ruta
                         File.separator).append( // Separador
-                        "models.txt").toString();
+                        FILENAME).toString();
         FileWriter fichero = null;
         PrintWriter pw = null;
 
@@ -249,7 +250,7 @@ public class ModelsFile {
         ArrayList<BoardModel> signmodels = null;
 
         try {
-            signmodels = this.leeArchivo(ruta);
+            signmodels = this.readFile(ruta);
         } catch (IOException ex) {
         }
 

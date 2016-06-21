@@ -52,7 +52,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
             return rank;
         }
         else if (id.equals("valid_rank")) {            
-            return (!plugin.manager.params.displayInChat() || canDisplayRank(player, rank)) ? "":rank;
+            return (canDisplayRank(player, rank)) ? rank:"";
         }
         else if (id.equals("fame")) {
             return String.valueOf(fame);

@@ -151,9 +151,9 @@ public final class Manager {
                         "models.txt").toString();
 
         try {
-            modelos = contenido.leeArchivo(fichero);
+            modelos = contenido.readFile(fichero);
         } catch (IOException ex) {
-            modelos = contenido.creaArchivo(this.pvpTitles);
+            modelos = contenido.makeFile(this.pvpTitles);
         }
 
         showMessage(ChatColor.YELLOW + "" + modelos.size() + " models " + ChatColor.AQUA + "loaded correctly.");
