@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.List;
 
 /**

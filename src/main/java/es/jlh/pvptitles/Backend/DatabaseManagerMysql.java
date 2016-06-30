@@ -15,7 +15,7 @@ import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.TagsClass;
 import es.jlh.pvptitles.Misc.UtilsFile;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -730,6 +730,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         return this.FILENAME_EXPORT;
     }
 
+    @Override
     public void updateConnection(Object mysql) {
         this.mysql = (Connection) mysql;
     }

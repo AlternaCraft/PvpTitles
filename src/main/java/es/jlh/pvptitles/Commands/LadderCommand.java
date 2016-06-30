@@ -6,7 +6,7 @@ import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

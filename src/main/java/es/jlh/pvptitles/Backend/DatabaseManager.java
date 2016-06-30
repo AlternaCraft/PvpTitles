@@ -4,7 +4,7 @@ import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoardData;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.bukkit.Location;

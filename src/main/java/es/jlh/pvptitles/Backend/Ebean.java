@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Libraries;
+package es.jlh.pvptitles.Backend;
 
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.EbeanServerFactory;

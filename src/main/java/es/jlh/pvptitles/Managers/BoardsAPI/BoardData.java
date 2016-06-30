@@ -1,6 +1,6 @@
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
-import es.jlh.pvptitles.Objects.CustomLocation;
+import es.jlh.pvptitles.Misc.CustomLocation;
 import org.bukkit.Location;
 
 /**

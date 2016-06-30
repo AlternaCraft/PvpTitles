@@ -7,7 +7,7 @@ import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
 import es.jlh.pvptitles.Misc.Utils;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;

@@ -2,8 +2,8 @@ package es.jlh.pvptitles.Managers.BoardsAPI;
 
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.Utils;
-import es.jlh.pvptitles.Objects.Params;
-import es.jlh.pvptitles.Objects.PlayerFame;
+import es.jlh.pvptitles.Misc.Params;
+import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import java.util.List;
 

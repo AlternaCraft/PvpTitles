@@ -7,7 +7,7 @@ import es.jlh.pvptitles.Main.Manager;
 import static es.jlh.pvptitles.Main.Manager.messages;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Utils;
-import es.jlh.pvptitles.Objects.FileConfig;
+import es.jlh.pvptitles.Misc.FileConfig;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;

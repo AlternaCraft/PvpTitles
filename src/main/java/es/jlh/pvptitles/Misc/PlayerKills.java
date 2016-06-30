@@ -1,4 +1,4 @@
-package es.jlh.pvptitles.Objects;
+package es.jlh.pvptitles.Misc;
 
 import java.util.HashMap;
 import java.util.Map;
