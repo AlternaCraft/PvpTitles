@@ -74,8 +74,8 @@ public enum LangFile {
             "View/modify the rank of a player"
     ),
     COMMAND_BOARD_INFO(
-            "Interactuar con los tableros del servidor",
-            "Interact with boards of the server"
+            "Gestionar los tableros del servidor",
+            "Manage server scoreboards"
     ),
     COMMAND_PURGE_INFO(
             "Limpia los usuarios inactivos",
