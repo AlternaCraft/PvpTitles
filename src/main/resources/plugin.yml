@@ -1,5 +1,5 @@
 name: PvpTitles
-version: 2.5.3
+version: 2.5.4
 description: Get epic titles in pvp
 database: true
 
@@ -30,7 +30,7 @@ commands:
         aliases: pvpfama
         permission: pvptitles.setRank
     pvpBoard:
-        description: Manage scoreboards.
+        description: Manage server scoreboards.
         usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
         aliases: pvpSign
         permission: pvptitles.board
@@ -45,7 +45,7 @@ commands:
         permission: pvptitles.reload
     pvpDatabase:
         description: It allows to manage data from the database.
-        usage: /<command> export|import [<filename>]
+        usage: /<command> export|import [<file_name>]
         aliases: pvpdb
         permission: pvptitles.database
         
