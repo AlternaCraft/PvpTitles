@@ -116,7 +116,7 @@ public class DBException extends Exception {
                 return new StringBuilder(getHeader())
                         .append(getExtraData())
                         .append(getBody())
-                        .append(getPossibleReason())
+                        .append(getPossibleReasons())
                         .append(getReportMessage()).toString();
             default:
                 return "";
@@ -137,11 +137,11 @@ public class DBException extends Exception {
                 .append(getSource()).toString();
     }
     
-    private String getPossibleReason() {
+    private String getPossibleReasons() {
         return new StringBuilder()
                 .append("\n\nPossible reason/s for the error:")
                 .append("\n--------------------------------")
-                .append(getPossibleError()).append("\n").toString();
+                .append(getPossibleErrors()).append("\n").toString();
     }
 
     private String getReportMessage() {
@@ -191,7 +191,7 @@ public class DBException extends Exception {
         return source;
     }
     
-    private String getPossibleError() {
+    private String getPossibleErrors() {
         String possible_errors = "";
 
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
