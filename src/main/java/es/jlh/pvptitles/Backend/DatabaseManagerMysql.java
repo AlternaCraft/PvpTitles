@@ -291,11 +291,11 @@ public class DatabaseManagerMysql implements DatabaseManager {
     }
 
     @Override
-    public void savePlayedTime(TimedPlayer player) throws DBException {
-        short psid = checkPlayerExists(plugin.getServer().getPlayer(player.getUniqueId()), null);
+    public void savePlayedTime(TimedPlayer tPlayer) throws DBException {
+        short psid = checkPlayerExists(tPlayer.getOfflinePlayer(), null);
 
         try {
-            int time = player.getTotalOnline();
+            int time = tPlayer.getTotalOnline();
             PreparedStatement playedTime = mysql.prepareStatement(UPDATE_PLAYERMETA_PLAYEDTIME);
             playedTime.setInt(1, time);
             playedTime.setInt(2, psid);
