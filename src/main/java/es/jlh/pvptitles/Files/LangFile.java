@@ -1,15 +1,55 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Files;
 
 import es.jlh.pvptitles.Main.PvpTitles;
-import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Misc.StrUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- *
- * @author AlternaCraft
+ * Custom class for getting messages
+ * <p>Currently, this works with the following custom languages:</p>
+ * <ul>
+ *  <li>Czech (CS)</li> 
+ *  <li>Euskara (EU)</li> 
+ *  <li>Galician (GL)</li> 
+ *  <li>Catalan (CA)</li> 
+ *  <li>Croatian (HR)</li> 
+ *  <li>Korean (KO)</li> 
+ *  <li>Ukrainian (UK)</li> 
+ *  <li>Polish (PL)</li> 
+ *  <li>Slovenian (SL)</li> 
+ *  <li>Serbian (SR)</li> 
+ *  <li>Romanian (RO)</li>
+ *  <li>Portuguese (PT)</li> 
+ *  <li>German (DE)</li> 
+ *  <li>Greek (GR)</li> 
+ *  <li>French (FR)</li> 
+ *  <li>Japanese (JP)</li> 
+ *  <li>Chinese (CH)</li> 
+ *  <li>Simplified Chinese (CN)</li> 
+ *  <li>Russian (RU)</li>
+ *  <li>Swedish (SV)</li> 
+ * </ul>
+ * 
+ * @see Localizer
  */
 public enum LangFile {
     // <editor-fold defaultstate="collapsed" desc="MESSAGES">
@@ -200,12 +240,10 @@ public enum LangFile {
     }
 
     private static final String DIRECTORY = new StringBuilder().append(
-            "plugins").append(
-                    File.separator).append(
-                    "PvpTitles").append(
-                    File.separator).append(
+            PvpTitles.getInstance().getDataFolder()).append(
+                File.separator).append(
                     "Langs").append(
-                    File.separator).toString();
+                        File.separator).toString();
 
     private final HashMap<LangType, String> messages = new HashMap();
 
@@ -221,7 +259,7 @@ public enum LangFile {
      * @return String
      */
     public String getText(LangType lang) {
-        return Utils.translateColor(getDefaultText(lang));
+        return StrUtils.translateColors(getDefaultText(lang));
     }
 
     /**
@@ -248,7 +286,7 @@ public enum LangFile {
     public static void load() {
         for (LangType langType : LangType.values()) {
 
-            // Lista negra
+            // Black list
             if (langType.name().contains("CUSTOM")) {
                 continue;
             }

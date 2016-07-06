@@ -1,16 +1,28 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
 import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Misc.StrUtils;
 import es.jlh.pvptitles.Misc.Params;
 import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author AlternaCraft
- */
 public class ModelController {
 
     protected Params params = null;
@@ -69,7 +81,7 @@ public class ModelController {
                 ArrayList<String> cols = filas.get(j);
                 for (int k = 0; k < cols.size(); k++) {
                     String param = cols.get(k);
-                    table[i][k][j] = Utils.translateColor(param);
+                    table[i][k][j] = StrUtils.translateColors(param);
                 }
             }
         }

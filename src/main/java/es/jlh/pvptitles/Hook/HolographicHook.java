@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Hook;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -10,7 +26,7 @@ import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
 import es.jlh.pvptitles.Managers.BoardsCustom.HologramBoard;
-import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Misc.StrUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +35,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-/**
- *
- * @author AlternaCraft
- */
 public class HolographicHook {
 
     public static String RANK_LINE = null;    
@@ -126,10 +138,10 @@ public class HolographicHook {
     public static void createHoloBoardHead(Location l, short top) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
 
-        h.appendTextLine(Utils.translateColor("&6&lPvpTitles"));
-        h.appendTextLine(Utils.translateColor("&6&l+&r------&6&l+"));
-        h.appendTextLine(Utils.translateColor("| &e&lTop " + top + "&r |"));
-        h.appendTextLine(Utils.translateColor("&6&l+&r------&6&l+"));
+        h.appendTextLine(StrUtils.translateColors("&6&lPvpTitles"));
+        h.appendTextLine(StrUtils.translateColors("&6&l+&r------&6&l+"));
+        h.appendTextLine(StrUtils.translateColors("| &e&lTop " + top + "&r |"));
+        h.appendTextLine(StrUtils.translateColors("&6&l+&r------&6&l+"));
     }
 
     public static void createHoloBoard(List<String> contenido, Location l) {

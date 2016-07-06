@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Backend;
 
 import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
@@ -27,10 +43,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-/**
- *
- * @author AlternaCraft
- */
 public class DatabaseManagerEbean implements DatabaseManager {
 
     private static final String FILENAME_IMPORT = "database.json";
@@ -55,7 +67,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             HashMap data = new HashMap();
             data.put("Null player?", (player == null));
             throw new DBException(DBException.PLAYER_CONNECTION_ERROR,
-                    DBException.TYPE.PLAYER_CONNECTION);
+                    DBException.DB_METHOD.PLAYER_CONNECTION);
         }
 
         UUID playerUUID = player.getUniqueId();
@@ -130,7 +142,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
                 throw new DBException(DBException.MULTIWORLD_ERROR, 
-                        DBException.TYPE.PLAYER_FAME_SAVING, data);
+                        DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -171,7 +183,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         if (pl == null) {
-            throw new DBException("Player is null", DBException.TYPE.PLAYER_FAME_LOADING);
+            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_LOADING);
         }
 
         if (plugin.manager.params.isMw_enabled()) {
@@ -183,7 +195,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
                 throw new DBException(DBException.MULTIWORLD_ERROR, 
-                        DBException.TYPE.PLAYER_FAME_LOADING, data);
+                        DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
             }
 
             String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -222,7 +234,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             data.put("Null Player?", tPlayer == null);
             
             throw new DBException(DBException.PLAYER_TIME_ERROR, 
-                    DBException.TYPE.PLAYER_TIME_SAVING, data);
+                    DBException.DB_METHOD.PLAYER_TIME_SAVING, data);
         }
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
@@ -321,7 +333,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 }
             }
         } catch (Exception ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYERS_TOP, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage());
         }
 
         return rankedPlayers;
@@ -342,7 +354,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             ebeanServer.getDatabase().save(st);
         } catch (Exception ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SAVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage());
         }
     }
 
@@ -364,7 +376,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             ebeanServer.getDatabase().delete(st);
         } catch (Exception ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_REMOVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
         }
     }
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Managers.BoardsCustom;
 
 import es.jlh.pvptitles.Files.HologramsFile;
@@ -6,16 +22,12 @@ import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
-import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Misc.StrUtils;
 import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Location;
 
-/**
- *
- * @author AlternaCraft
- */
 public class HologramBoard extends Board {
 
     private static final double BLOCKSPERCARACTER = 0.153D;
@@ -89,7 +101,7 @@ public class HologramBoard extends Board {
                             param = "";
                         } else {
                             // Longitud para colocar las columnas de la tabla
-                            String fix = Utils.removeColors(param);
+                            String fix = StrUtils.removeColors(param);
                             if (fix.length() > maxlength) {
                                 maxlength = fix.length();
                             }

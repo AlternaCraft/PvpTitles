@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
@@ -8,18 +24,14 @@ import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.Utils;
-import static es.jlh.pvptitles.Misc.Utils.splitToComponentTimes;
+import es.jlh.pvptitles.Misc.StrUtils;
+import static es.jlh.pvptitles.Misc.StrUtils.splitToComponentTimes;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/**
- *
- * @author AlternaCraft
- */
 public class RankCommand implements CommandExecutor {
 
     private PvpTitles pt = null;
@@ -89,7 +101,7 @@ public class RankCommand implements CommandExecutor {
         if (rankup > 0 || timeup > 0) {
             player.sendMessage("  - " + LangFile.RANK_INFO.getText(Localizer.getLocale(player))
                     .replace("%rankup%", String.valueOf(rankup))
-                    .replace("%timeup%", Utils.splitToComponentTimes(timeup))
+                    .replace("%timeup%", StrUtils.splitToComponentTimes(timeup))
                     .replace("%tag%", tag).replace("%nextRank%", nextRank));
         }
 

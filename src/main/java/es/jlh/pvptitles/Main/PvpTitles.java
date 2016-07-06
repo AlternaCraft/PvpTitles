@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
 // Last Change:     28-03-2016
@@ -123,9 +124,12 @@
 //  Ver. 2.5.3  14/06/2016   Arreglado un fallo con el control de los rangos como
 //   prefijos en el chat y mejorado el sistema de gestión de errores.
 //  Ver. 2.5.3  16/06/2016   Mejorada la gestión de errores de la base de datos.
-// </editor-fold>
 //  Ver. 2.5.4  21/06/2016   Arreglado un fallo con el placeholder "valid_rank" y
 //   mejorada la respuesta del comando /pvprank
+//  Ver. 2.5.5  03/07/2016   Mejorada la gestión de errores
+//  Ver. 2.5.5  06/07/2016   Arreglados varios fallos y añadidas las licencias 
+//   a todas las clases
+// </editor-fold>
 package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
@@ -164,10 +168,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- *
- * @author AlternaCraft
- */
 public class PvpTitles extends JavaPlugin {
 
     private static PvpTitles plugin = null;

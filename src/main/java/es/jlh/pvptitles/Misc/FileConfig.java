@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Misc;
 
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -16,8 +32,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
+ * Custom class for working better with the main config file. 
+ * These are the capabilities:
+ * <ul>
+ *  <li>Saving config with comments between lines</li>
+ *  <li>Checking config version with internal version for checking changes
+ *      <ul>
+ *          <li>Setting params from previous config into the new one</li>
+ *      </ul>
+ *  </li>
+ * </ul>
  *
- * @author AlternaCraft
+ * @see FileConfiguration
  */
 public class FileConfig {
     
@@ -86,7 +112,7 @@ public class FileConfig {
          
             String linea;
             while ((linea = br.readLine()) != null) {
-                if ((linea.matches("\\s*-\\s?.+") && !linea.contains("#"))) {
+                if (linea.matches("\\s*-\\s?.+") && !linea.contains("#")) {
                     continue;
                 }                
                 String nline = replace(linea, newFile, oldFile);

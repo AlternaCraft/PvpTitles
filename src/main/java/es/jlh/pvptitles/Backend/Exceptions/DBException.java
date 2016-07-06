@@ -25,8 +25,6 @@ import java.util.Map;
 
 /**
  * If you don't know the error cause, please, report it.
- *
- * @author AlternaCraft
  */
 public class DBException extends Exception {
 
@@ -49,11 +47,11 @@ public class DBException extends Exception {
     private final String REPORT = "If you don't know the error cause, please, report it.\n"
             + "http://dev.bukkit.org/bukkit-plugins/pvptitles/create-ticket/";
 
-    private TYPE type = null;
+    private DB_METHOD type = null;
     private HashMap<String, Object> data = new HashMap();
     private String custom_error = null;
 
-    public enum TYPE {
+    public enum DB_METHOD {
         PLAYER_CONNECTION,
         PLAYER_FAME_SAVING,
         PLAYER_FAME_LOADING,
@@ -83,24 +81,24 @@ public class DBException extends Exception {
         }
     }
 
-    public DBException(String message, TYPE type) {
+    public DBException(String message, DB_METHOD type) {
         super(message);
         this.type = type;
     }
 
-    public DBException(String message, TYPE type, String custom_error) {
+    public DBException(String message, DB_METHOD type, String custom_error) {
         super(message);
         this.type = type;
         this.custom_error = custom_error;
     }
 
-    public DBException(String message, TYPE type, HashMap<String, Object> data) {
+    public DBException(String message, DB_METHOD type, HashMap<String, Object> data) {
         super(message);
         this.type = type;
         this.data = data;
     }
 
-    public TYPE getType() {
+    public DB_METHOD getType() {
         return type;
     }
 
@@ -112,11 +110,13 @@ public class DBException extends Exception {
                 return getHeader();
             case ESSENTIAL:
                 return new StringBuilder(getHeader())
-                        .append(getBody()).toString();
+                        .append(getBody())
+                        .append("\n").toString();
             case FULL:
                 return new StringBuilder(getHeader())
                         .append(getExtraData())
                         .append(getBody())
+                        .append(getPossibleReason())
                         .append(getReportMessage()).toString();
             default:
                 return "";
@@ -131,6 +131,13 @@ public class DBException extends Exception {
     }
 
     private String getBody() {
+        return new StringBuilder()
+                .append("\n\nStackTrace:")
+                .append("\n-----------")
+                .append(getSource()).toString();
+    }
+    
+    private String getPossibleReason() {
         return new StringBuilder()
                 .append("\n\nPossible reason/s for the error:")
                 .append("\n--------------------------------")
@@ -168,6 +175,22 @@ public class DBException extends Exception {
         return "\"" + str.replaceAll("_", " ") + "\"";
     }
 
+    private String getSource() {
+        String source = "";
+        
+        for (int i = 0; i < this.getStackTrace().length; i++) {
+            String str = this.getStackTrace()[i].toString();
+            if (str.contains(PvpTitles.getInstance().getDescription().getName().toLowerCase())) {
+                source += "\n" + str;
+            }
+            else {
+                break;
+            }
+        }
+        
+        return source;
+    }
+    
     private String getPossibleError() {
         String possible_errors = "";
 

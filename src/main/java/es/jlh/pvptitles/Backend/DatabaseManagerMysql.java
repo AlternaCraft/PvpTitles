@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Backend;
 
 import com.google.gson.Gson;
@@ -35,10 +51,6 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-/**
- *
- * @author AlternaCraft
- */
 public class DatabaseManagerMysql implements DatabaseManager {
 
     private static final String FILENAME_IMPORT = "database.sql";
@@ -113,7 +125,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", MySQLConnection.isConnected(false));
 
             throw new DBException("Error checking if player is registered",
-                    DBException.TYPE.PLAYER_CONNECTION, data);
+                    DBException.DB_METHOD.PLAYER_CONNECTION, data);
         }
 
         String uuid = pl.getUniqueId().toString();
@@ -167,7 +179,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
         } catch (SQLException ex) {
             throw new DBException("Error checking if player exists",
-                    DBException.TYPE.PLAYER_CONNECTION, ex.getMessage());
+                    DBException.DB_METHOD.PLAYER_CONNECTION, ex.getMessage());
         }
 
         return psid;
@@ -188,7 +200,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
             PvpTitles.logDebugInfo("Update last login: " + modFecha.toString());
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_CONNECTION, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_CONNECTION, ex.getMessage());
         }
     }
 
@@ -208,7 +220,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR, 
-                            DBException.TYPE.PLAYER_FAME_SAVING, data);
+                            DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
                 }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
@@ -226,7 +238,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 PvpTitles.logDebugInfo("Update player points: " + updateFame.toString());
             }
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_FAME_SAVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage());
         }
     }
 
@@ -247,7 +259,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR, 
-                            DBException.TYPE.PLAYER_FAME_LOADING, data);
+                            DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
                 }
 
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -272,7 +284,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_FAME_LOADING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_LOADING, ex.getMessage());
         }
 
         return fama;
@@ -291,7 +303,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PvpTitles.logDebugInfo("Save played time: " + playedTime.toString());
 
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_TIME_SAVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage());
         }
     }
 
@@ -311,7 +323,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 time = rs.getInt("playedTime");
             }
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYER_TIME_LOADING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage());
         }
 
         return time;
@@ -326,7 +338,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", false);
 
             throw new DBException(DBException.TOP_PLAYERS_ERROR,
-                    DBException.TYPE.PLAYERS_TOP, data);
+                    DBException.DB_METHOD.PLAYERS_TOP, data);
         }
 
         HashMap<Short, List<String>> servidores = plugin.manager.servers.get(server);
@@ -402,7 +414,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.PLAYERS_TOP, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage());
         }
 
         return rankedPlayers;
@@ -418,7 +430,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", false);
 
             throw new DBException(DBException.SAVING_BOARD_ERROR,
-                    DBException.TYPE.BOARD_SAVING, data);
+                    DBException.DB_METHOD.BOARD_SAVING, data);
         }
 
         Location l = sb.getData().getLocation();
@@ -439,7 +451,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             saveBoard.executeUpdate();
             PvpTitles.logDebugInfo("Save board: " + saveBoard.toString());
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SAVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage());
         }
     }
 
@@ -450,7 +462,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", false);
 
             throw new DBException(DBException.UPDATING_BOARD_ERROR,
-                    DBException.TYPE.BOARD_UPDATING, data);
+                    DBException.DB_METHOD.BOARD_UPDATING, data);
         }
 
         try {
@@ -463,7 +475,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             updBoard.executeUpdate();
             PvpTitles.logDebugInfo("Update board: " + updBoard.toString());
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_UPDATING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_UPDATING, ex.getMessage());
         }
     }
 
@@ -474,7 +486,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", false);
 
             throw new DBException(DBException.REMOVING_BOARD_ERROR,
-                    DBException.TYPE.BOARD_REMOVING, data);
+                    DBException.DB_METHOD.BOARD_REMOVING, data);
         }
 
         try {
@@ -487,7 +499,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             delBoard.executeUpdate();
             PvpTitles.logDebugInfo("Delete board: " + delBoard.toString());
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_REMOVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
         }
     }
 
@@ -500,7 +512,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             data.put("MySQL connection?", false);
 
             throw new DBException(DBException.SEARCHING_BOARD_ERROR,
-                    DBException.TYPE.BOARD_SEARCHING, data);
+                    DBException.DB_METHOD.BOARD_SEARCHING, data);
         }
 
         try {
@@ -530,7 +542,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
 
         } catch (SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.TYPE.BOARD_SEARCHING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SEARCHING, ex.getMessage());
         }
 
         return sbd;

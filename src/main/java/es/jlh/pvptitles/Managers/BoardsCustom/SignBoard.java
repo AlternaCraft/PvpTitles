@@ -1,10 +1,26 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Managers.BoardsCustom;
 
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
-import es.jlh.pvptitles.Misc.Utils;
+import es.jlh.pvptitles.Misc.StrUtils;
 import es.jlh.pvptitles.Misc.CustomLocation;
 import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
@@ -15,10 +31,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
-/**
- *
- * @author AlternaCraft
- */
 public class SignBoard extends Board {
 
     private static final short SIGN_ROWS = 4;
@@ -52,7 +64,7 @@ public class SignBoard extends Board {
     @Override
     public boolean isMaterializable(short jugadores) {
         int jug = this.getModel().getFilasJugadores(jugadores);
-        jug = Utils.dividirEntero(jug, SIGN_ROWS); // Para carteles
+        jug = StrUtils.dividirEntero(jug, SIGN_ROWS); // Para carteles
         
         int filas = this.getModel().getFilasSinJugadores(SIGN_ROWS) + jug;
         int cols = getModel().getColumnas();
@@ -204,7 +216,7 @@ public class SignBoard extends Board {
     @Override
     public void dematerialize(short jugadores) {
         int jug = this.getModel().getFilasJugadores(jugadores);
-        jug = Utils.dividirEntero(jug, SIGN_ROWS);
+        jug = StrUtils.dividirEntero(jug, SIGN_ROWS);
         
         int filas = this.getModel().getFilasSinJugadores(SIGN_ROWS) + jug;
         int cols = getModel().getColumnas();
@@ -289,7 +301,7 @@ public class SignBoard extends Board {
 
         for (int i = 0; i < in.length; i++) {
             String[][] rows = in[i];
-            signs.add(i, new String[Utils.dividirEntero(rows.length, SIGN_ROWS)][columns][SIGN_ROWS]);
+            signs.add(i, new String[StrUtils.dividirEntero(rows.length, SIGN_ROWS)][columns][SIGN_ROWS]);
 
             int k = 0;
             while (k < columns) {

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Events.Handlers;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -13,8 +29,7 @@ import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.Utils;
-import static es.jlh.pvptitles.Misc.Utils.isHologramEmpty;
+import es.jlh.pvptitles.Misc.StrUtils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,10 +48,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
 
-/**
- *
- * @author AlternaCraft
- */
 public class HandlePlayerTag implements Listener {
 
     private static final String IGNORED_RANK = "None";
@@ -213,7 +224,9 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
-            h.removeLine(0);
+            if (!StrUtils.isHologramEmpty(h)) {
+                h.removeLine(0);
+            }
 
             Location l = new Location(player.getLocation().getWorld(),
                     player.getLocation().getX(),
@@ -256,7 +269,7 @@ public class HandlePlayerTag implements Listener {
             Hologram h = HOLOPLAYERS.get(uuid);
             h.teleport(new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ()));
 
-            if (isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+            if (StrUtils.isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                     && !player.isSneaking() && !player.isDead()) {
                 int fame = 0;
                 try {
@@ -279,7 +292,8 @@ public class HandlePlayerTag implements Listener {
                 if (canDisplayRank(player, rank)) {
                     h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
-            } else if (!isHologramEmpty(h) && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            } else if (!StrUtils.isHologramEmpty(h) && 
+                    player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 h.removeLine(0);
             }
         }
@@ -345,7 +359,10 @@ public class HandlePlayerTag implements Listener {
         String uuid = event.getEntity().getUniqueId().toString();
 
         if (HOLOPLAYERS.containsKey(uuid)) {
-            HOLOPLAYERS.get(uuid).removeLine(0);
+            Hologram h = HOLOPLAYERS.get(uuid);
+            if (!StrUtils.isHologramEmpty(h)) {
+                h.removeLine(0);
+            }
         }
     }
 
@@ -358,7 +375,7 @@ public class HandlePlayerTag implements Listener {
             Hologram h = HOLOPLAYERS.get(uuid);
 
             if (event.isSneaking()) {
-                if (!Utils.isHologramEmpty(h)) {
+                if (!StrUtils.isHologramEmpty(h)) {
                     h.removeLine(0);
                 }
             } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {

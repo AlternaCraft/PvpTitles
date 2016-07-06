@@ -1,13 +1,25 @@
+/*
+ * Copyright (C) 2016 AlternaCraft
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
-import es.jlh.pvptitles.Misc.Utils;
-import static es.jlh.pvptitles.Misc.Utils.removeColors;
+import es.jlh.pvptitles.Misc.StrUtils;
+import static es.jlh.pvptitles.Misc.StrUtils.removeColors;
 import java.util.ArrayList;
 
-/**
- *
- * @author AlternaCraft
- */
 public class BoardModel {
 
     protected ArrayList<ArrayList<ArrayList<String>>> params = null;
@@ -144,14 +156,14 @@ public class BoardModel {
         int filas = 0;
 
         for (Integer value : values) {
-            filas += Utils.dividirEntero(value, divisor);
+            filas += StrUtils.dividirEntero(value, divisor);
         }
 
         return filas;
     }
 
     public int getFilasJugadores(int size) {
-        int vprogre = Utils.dividirEntero(size, columnas);
+        int vprogre = StrUtils.dividirEntero(size, columnas);
         return (this.isProgresivo()) ? vprogre : size;
     }
 
