@@ -53,6 +53,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public enum LangFile {
     // <editor-fold defaultstate="collapsed" desc="MESSAGES">
+// <editor-fold defaultstate="collapsed" desc="MESSAGES">
     PLUGIN_ENABLED(
             "Plugin activado correctamente",
             "Plugin activated successfully"
@@ -205,10 +206,22 @@ public enum LangFile {
             "&cVeto finalizado",
             "&cVeto has ended"
     ),
-    RANK_INFO(
+    RANK_INFO_TITLE (
+            "  - &bTítulo: &r%rank%",
+            "  - &bTitle: &r%rank%"
+    ),
+    RANK_INFO_TAG (
+            "  - &b%tag%: &r%fame%",
+            "  - &b%tag%: &r%fame%"
+    ),
+    RANK_INFO_KS (
+            "  - &bRacha: &r%ks%",
+            "  - &bKillStreak: &r%ks%"
+    ),
+    RANK_INFO_NEXTRANK(
             "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%",
             "&bRankUP: &fYou need %rankup% of %tag% and %timeup% played to achieve %nextRank%"
-    ),
+    ),    
     COMPLETE_TELEPORT_PLAYER(
             "&6Has sido teletransportado correctamente",
             "&6You have been teleported correctly"

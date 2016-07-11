@@ -16,10 +16,10 @@
  */
 package es.jlh.pvptitles.Managers.BoardsAPI;
 
-import es.jlh.pvptitles.Misc.Ranks;
-import es.jlh.pvptitles.Misc.StrUtils;
 import es.jlh.pvptitles.Misc.Params;
 import es.jlh.pvptitles.Misc.PlayerFame;
+import es.jlh.pvptitles.Misc.Ranks;
+import es.jlh.pvptitles.Misc.StrUtils;
 import java.util.ArrayList;
 import java.util.List;
 

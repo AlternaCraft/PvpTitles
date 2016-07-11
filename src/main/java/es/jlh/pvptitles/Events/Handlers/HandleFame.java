@@ -29,6 +29,7 @@ import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.Ranks;
+import es.jlh.pvptitles.Misc.StrUtils;
 import java.util.List;
 import java.util.Map;
 import net.milkbowl.vault.economy.Economy;
@@ -89,8 +90,9 @@ public class HandleFame implements Listener {
                     PvpTitles.logError(ex.getCustomMessage(), null);
                 }
 
-                String lastRank = Ranks.getRank(e.getFame(), seconds);
-                if (rango.equals(Ranks.getRank(e.getFameTotal(), seconds)) && !rango.equals(lastRank)) {
+                String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
+                String newRank = StrUtils.removeColors(Ranks.getRank(e.getFameTotal(), seconds));
+                if (rango.equals(newRank) && !rango.equals(oldRank)) {
                     setValues(rank.get(rango), e.getOfflinePlayer());
                     break;
                 }
@@ -148,6 +150,7 @@ public class HandleFame implements Listener {
         if (data.containsKey("commands")) {
             for (String cmd : data.get("commands")) {
                 cmd = cmd.replaceAll("<[pP]layer>", pl.getName());
+                cmd = StrUtils.translateColors(cmd);
                 pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
             }
         }

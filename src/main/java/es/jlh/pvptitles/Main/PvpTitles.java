@@ -129,6 +129,10 @@
 //  Ver. 2.5.5  03/07/2016   Mejorada la gestión de errores
 //  Ver. 2.5.5  06/07/2016   Arreglados varios fallos y añadidas las licencias 
 //   a todas las clases
+//  Ver. 2.5.6  11/07/2016   Mejorada la gestión de UUIDs para el comando /pvpfame, 
+//   arreglado un problema con los título con color en el archivo de commandos (onRank),
+//   añadidos nuevos mensajes a los locales (RANK_INFO_(...)) y añadido soporte para
+//   colores en los comandos de las recompensas.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 

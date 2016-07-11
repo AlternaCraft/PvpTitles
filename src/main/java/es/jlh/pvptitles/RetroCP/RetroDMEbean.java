@@ -20,10 +20,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import es.jlh.pvptitles.Backend.Ebean;
 import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
 import es.jlh.pvptitles.Backend.EbeanTables.SignPT;
 import es.jlh.pvptitles.Backend.EbeanTables.WorldPlayerPT;
-import es.jlh.pvptitles.Backend.Ebean;
+import es.jlh.pvptitles.Libraries.UUIDFetcher;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Misc.TagsClass;
@@ -35,11 +36,8 @@ import es.jlh.pvptitles.RetroCP.oldTables.PlayerWTable;
 import es.jlh.pvptitles.RetroCP.oldTables.SignTable;
 import es.jlh.pvptitles.RetroCP.oldTables.TimeTable;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -80,19 +78,19 @@ public class RetroDMEbean {
                 String nPlayer = item.getName().substring(0, item.getName().indexOf('.'));
                 int fame = yaml.getInt("Fame");
                 
-                Map<String, UUID> response = getUUID(Arrays.asList(nPlayer));
+                UUID uuid = UUIDFetcher.getIDPlayer(nPlayer);
                 
                 // No repes
                 PlayerPT pl = (PlayerPT) ebeanServer.getDatabase().find(PlayerPT.class)
                         .where("playerUUID like :name OR playerUUID like :uuid")
                             .setParameter("name", nPlayer)
-                            .setParameter("uuid", response.get(nPlayer).toString())                        
+                            .setParameter("uuid", uuid.toString())                        
                         .findUnique();
 
                 if (pl == null) {
                     pl = new PlayerPT();
 
-                    pl.setPlayerUUID(response.get(nPlayer).toString());
+                    pl.setPlayerUUID(uuid.toString());
                     pl.setPoints(fame);
                     pl.setLastLogin(new Date());
 
@@ -134,24 +132,12 @@ public class RetroDMEbean {
         }
 
         for (PlayerPT player : plClass) {
-            if (!player.getPlayerUUID().matches(UUID_REGEX)) {
-                Map<String, UUID> response = getUUID(Arrays.asList(player.getPlayerUUID()));
-                player.setPlayerUUID(response.get(player.getPlayerUUID()).toString());
+            if (!player.getPlayerUUID().matches(UUID_REGEX)) {                
+                player.setPlayerUUID(UUIDFetcher.getIDPlayer(player.getPlayerUUID()).toString());
             }
         }
 
         ebeanServer.getDatabase().save(plClass);
-    }
-
-    private Map<String, UUID> getUUID(List<String> players) {
-        Map<String, UUID> response = new HashMap();
-        
-        for (String player : players) {
-            UUID uuid = pt.getServer().getOfflinePlayer(player).getUniqueId();
-            response.put(player, uuid);
-        }
-        
-        return response;
     }
 
     public void exportarData(int status) {

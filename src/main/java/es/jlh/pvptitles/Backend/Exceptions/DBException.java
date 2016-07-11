@@ -196,10 +196,10 @@ public class DBException extends Exception {
 
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
             String k = entry.getKey();
-            String v = entry.getValue().toString();
+            Object v = entry.getValue();
 
             if (k.contains("MySQL") && k.contains("connection")) {
-                if (v.equals("false")) {
+                if (((String)v).equals("false")) {
                     possible_errors += "\n- " + DB_CONNECTION.getText();
                 }
             }

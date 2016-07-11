@@ -28,7 +28,7 @@ public class Ranks {
     private static int nextRankFame;
     private static int nextRankTime;
     private static String nextRankTitle;
-
+    
     /**
      * Método para recibir el rango segun los puntos que tenga el jugador
      *

@@ -21,10 +21,13 @@ import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
 import es.jlh.pvptitles.Files.LangFile;
 import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Libraries.UUIDFetcher;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Misc.Localizer;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -71,14 +74,17 @@ public class FameCommand implements CommandExecutor {
 
         if (args.length < 1) {
             return false;
-        } else if (args.length > 1) {
-            opl = pt.getServer().getOfflinePlayer(args[1]);
+        } else if (args.length > 1) {            
+            UUID uuid = UUIDFetcher.getIDPlayer(args[1]);
 
             // Evitar NullPointerException
-            if (opl == null) {
+            if (uuid == null) {
                 sender.sendMessage(PLUGIN + ChatColor.RED + args[1] + " doesn't "
                         + "exist");
                 return true;
+            }
+            else {
+                opl = Bukkit.getOfflinePlayer(uuid);
             }
         }
 

@@ -17,8 +17,6 @@
 package es.jlh.pvptitles.Misc;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 
 public class StrUtils {
@@ -50,23 +48,11 @@ public class StrUtils {
     }
 
     public static String removeColors(String str) {
-        return str.replaceAll("§(\\w|\\d){1}", "");
+        return ChatColor.stripColor(str);
     }
 
     public static int dividirEntero(int v, int div) {
         return (v % div == 0 && v != 0) ? v / div : ((int) v / div) + 1;
-    }
-
-    public static String getHologramText(String str) {
-        String regex = "text=(.*)\\]";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(str);
-
-        if (m.find()) {
-            return m.group(1);
-        }
-
-        return str;
     }
     
     public static boolean isHologramEmpty(Hologram h) {

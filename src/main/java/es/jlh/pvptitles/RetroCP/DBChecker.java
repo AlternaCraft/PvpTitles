@@ -16,8 +16,8 @@
  */
 package es.jlh.pvptitles.RetroCP;
 
-import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
 import es.jlh.pvptitles.Backend.Ebean;
+import es.jlh.pvptitles.Backend.EbeanTables.PlayerPT;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;

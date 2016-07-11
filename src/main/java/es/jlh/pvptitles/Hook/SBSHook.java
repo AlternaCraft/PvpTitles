@@ -74,7 +74,7 @@ public class SBSHook {
 
                 /*
                  * La variable rank no funcionara hasta la proxima version del
-                 * plugin scoreboardstats
+                 * plugin scoreboardstats que lo implemente
                  */
                 switch (var) {
                     case "fame":
