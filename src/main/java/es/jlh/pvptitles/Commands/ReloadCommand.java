@@ -17,7 +17,7 @@
 package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Backend.MySQLConnection;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import static es.jlh.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
 import static es.jlh.pvptitles.Hook.HolographicHook.HEIGHT_PER_ROW;
@@ -45,10 +45,10 @@ public class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        LangFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
+        LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length > 0) {
-            sender.sendMessage(PLUGIN + LangFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
@@ -67,7 +67,8 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.manager.loadLang();
         pvpTitles.manager.loadModels();
         pvpTitles.manager.loadSavedBoards();
-        pvpTitles.manager.loadCommands();
+        pvpTitles.manager.loadRewards();
+        pvpTitles.manager.loadTemplates();
 
         if (tipo == DBTYPE.MYSQL) {
             pvpTitles.manager.loadServers();
@@ -88,7 +89,7 @@ public class ReloadCommand implements CommandExecutor {
             HolographicHook.deleteHoloPlayers();
         }
 
-        sender.sendMessage(PLUGIN + LangFile.PLUGIN_RELOAD.getText(messages));
+        sender.sendMessage(PLUGIN + LangsFile.PLUGIN_RELOAD.getText(messages));
 
         return true;
     }

@@ -21,18 +21,25 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class CommandFile {
-    public File commandsFile = new File("plugins/PvpTitles/commands.yml");        
+public class RewardsFile {
+    /* Compatibility file */
+    public File oldCommandsFile = new File("plugins/PvpTitles/commands.yml");        
+    public File rewardsFile = new File("plugins/PvpTitles/rewards.yml");        
     
-    public CommandFile() {
+    public RewardsFile() {
     }
     
     public YamlConfiguration load() {
-        if (!commandsFile.exists()) {
-            createConfig();
+        if (!rewardsFile.exists()) {
+            if (oldCommandsFile.exists()) {
+                oldCommandsFile.renameTo(rewardsFile);
+            }
+            else {
+                createConfig();
+            }
         }
         
-        return YamlConfiguration.loadConfiguration(commandsFile);
+        return YamlConfiguration.loadConfiguration(rewardsFile);
     }
     
     private void createConfig() {
@@ -50,7 +57,7 @@ public class CommandFile {
         
         // Comandos de ejemplo
         String[] commands1 = {"say Congratulations <Player>, now you are God"};
-        String[] commands2 = {"give exp <player> 1000"};
+        String[] commands2 = {"give <player> diamond 1000"};
         String[] commands3 = {"exp give <player> 10"};
         String[] commands4 = {"pvpfame add <player> 100"};
         String[] commands5 = {"economy give <player> 5000", "broadcast Wow, <Player> is on roll"};
@@ -80,7 +87,7 @@ public class CommandFile {
         newConfig.set("Rewards.EachKill.command", Arrays.asList(commands3));
         
         try {
-            newConfig.save(commandsFile);
+            newConfig.save(rewardsFile);
         } 
         catch (IOException e) {
         }

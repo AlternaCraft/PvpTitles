@@ -18,9 +18,10 @@ package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Backend.ConfigDataStore;
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
-import es.jlh.pvptitles.Files.CommandFile;
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Files.TemplatesFile;
+import es.jlh.pvptitles.Files.RewardsFile;
+import es.jlh.pvptitles.Files.LangsFile;
+import es.jlh.pvptitles.Files.LangsFile.LangType;
 import es.jlh.pvptitles.Files.ModelsFile;
 import es.jlh.pvptitles.Files.ServersFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
@@ -75,7 +76,9 @@ public final class Manager {
     // Modelos
     public ArrayList<BoardModel> modelos = null;
     // Recompensas
-    public Map<String, Map<String, Map<String, List<String>>>> commandsRw = null;
+    public Map<String, Map<String, Map<String, List<String>>>> rewards = null;
+    // Templates
+    public TemplatesFile templates = null;
     // Servers
     public HashMap<String, HashMap<Short, List<String>>> servers = null;
     // Configuracion
@@ -94,7 +97,7 @@ public final class Manager {
      */
     private Manager() {
         modelos = new ArrayList();
-        commandsRw = new HashMap();
+        rewards = new HashMap();
         servers = new HashMap();
         params = new ConfigDataStore();
     }
@@ -137,7 +140,8 @@ public final class Manager {
         this.loadLang();
         this.loadModels();
         this.loadSavedBoards();
-        this.loadCommands();
+        this.loadRewards();
+        this.loadTemplates();
 
         if (tipo == DBHandler.DBTYPE.MYSQL) {
             this.loadServers();
@@ -255,7 +259,7 @@ public final class Manager {
             oldMessages.renameTo(newMessages);
         }
 
-        LangFile.load();
+        LangsFile.load();
 
         showMessage(ChatColor.YELLOW + "Locales " + ChatColor.AQUA + "loaded correctly.");
     }
@@ -263,10 +267,10 @@ public final class Manager {
     /**
      * Método para cargar el sistema de recompensas
      */
-    public void loadCommands() {
-        commandsRw = new HashMap();
+    public void loadRewards() {
+        rewards = new HashMap();
 
-        YamlConfiguration lp = new CommandFile().load();
+        YamlConfiguration lp = new RewardsFile().load();
 
         List<String> activos = lp.getStringList("activeRewards");
         List<String> types = new ArrayList(
@@ -284,8 +288,8 @@ public final class Manager {
                 if (value != null || (type.equals("onKill") && nulos)) {
                     nulos = false;
 
-                    if (commandsRw.get(type) == null) {
-                        commandsRw.put(type, new HashMap());
+                    if (rewards.get(type) == null) {
+                        rewards.put(type, new HashMap());
                     }
 
                     // Valores de la recompensa
@@ -296,7 +300,7 @@ public final class Manager {
                     data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
 
                     // Guardo en el mapa principal los valores para ese valor
-                    commandsRw.get(type).put(value, data);
+                    rewards.get(type).put(value, data);
                 }
             }
         }
@@ -304,6 +308,11 @@ public final class Manager {
         showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
 
+    public void loadTemplates() {
+        this.templates = new TemplatesFile();
+        templates.load();
+    }
+    
     /**
      * Método para cargar los locales
      */
@@ -424,7 +433,7 @@ public final class Manager {
 
                         if (timedPlayer.getOfflinePlayer().isOnline()) {
                             Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
-                            pl.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.
+                            pl.sendMessage(PLUGIN + LangsFile.PLAYER_NEW_RANK.
                                     getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
                         }
                     }

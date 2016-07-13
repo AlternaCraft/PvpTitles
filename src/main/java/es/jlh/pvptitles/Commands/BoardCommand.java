@@ -17,7 +17,7 @@
 package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Files.HologramsFile;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -54,11 +54,11 @@ public class BoardCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        LangFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
+        LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         // Esto no puede ser ejecutado por la consola
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN + LangFile.COMMAND_FORBIDDEN.getText(messages));
+            sender.sendMessage(PLUGIN + LangsFile.COMMAND_FORBIDDEN.getText(messages));
             return true;
         }
 
@@ -98,7 +98,7 @@ public class BoardCommand implements CommandExecutor {
                         BoardData bd = HologramsFile.loadHologram(args[2]);
 
                         if (bd == null) {
-                            pl.sendMessage(PLUGIN + LangFile.BOARD_NAME_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(PLUGIN + LangsFile.BOARD_NAME_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                         } else {
                             cm.getLbm().deleteBoard(bd.getLocation(), pl);
                         }
@@ -121,13 +121,13 @@ public class BoardCommand implements CommandExecutor {
     private void create(String name, String model, String filter, Player pl) {
         BoardData bda = HologramsFile.loadHologram(name);
         if (bda != null) {
-            pl.sendMessage(PLUGIN + LangFile.BOARD_NAME_ALREADY_EXISTS.getText(Localizer.getLocale(pl)));
+            pl.sendMessage(PLUGIN + LangsFile.BOARD_NAME_ALREADY_EXISTS.getText(Localizer.getLocale(pl)));
             return;
         }
 
         BoardModel bm = cm.searchModel(model);
         if (bm == null) {
-            pl.sendMessage(PLUGIN + LangFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+            pl.sendMessage(PLUGIN + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
             return;
         }
 

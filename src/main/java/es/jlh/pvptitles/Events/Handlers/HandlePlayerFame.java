@@ -18,7 +18,7 @@ package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.FameEvent;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -179,7 +179,7 @@ public class HandlePlayerFame implements Listener {
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
             if (afm.isVetado(killeruuid) || killeruuid.equalsIgnoreCase(victimuuid)) {
                 if (afm.isVetado(killeruuid)) {
-                    killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
+                    killer.sendMessage(PLUGIN + LangsFile.VETO_STARTED.getText(Localizer.getLocale(killer))
                             .replace("%tag%", this.cm.params.getTag())
                             .replace("%time%", splitToComponentTimes(afm.getVetoTime(killeruuid))));
                 }
@@ -239,7 +239,7 @@ public class HandlePlayerFame implements Listener {
                     afm.vetar(killeruuid, System.currentTimeMillis());
                     ck.cleanAll(); // Cancel all tasks
 
-                    killer.sendMessage(PLUGIN + LangFile.VETO_STARTED.getText(Localizer.getLocale(killer))
+                    killer.sendMessage(PLUGIN + LangsFile.VETO_STARTED.getText(Localizer.getLocale(killer))
                             .replace("%tag%", this.cm.params.getTag())
                             .replace("%time%", splitToComponentTimes(this.cm.params.getTimeV())));
 
@@ -251,7 +251,7 @@ public class HandlePlayerFame implements Listener {
                             // Limpio su historial
                             afm.cleanAllVictims(killeruuid);
 
-                            killer.sendMessage(PLUGIN + LangFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
+                            killer.sendMessage(PLUGIN + LangsFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
                         }
                     }, this.cm.params.getTimeV() * TICKS);
 
@@ -299,7 +299,7 @@ public class HandlePlayerFame implements Listener {
             return;
         }
 
-        player.sendMessage(PLUGIN + LangFile.PLAYER_KILLED.getText(Localizer.getLocale(player))
+        player.sendMessage(PLUGIN + LangsFile.PLAYER_KILLED.getText(Localizer.getLocale(player))
                 .replace("%killed%", killed)
                 .replace("%fameRec%", Integer.toString(fameRec))
                 .replace("%tag%", tag));
@@ -316,7 +316,7 @@ public class HandlePlayerFame implements Listener {
         String newRank = Ranks.getRank(fameDespues, seconds);
 
         if (!currentRank.equalsIgnoreCase(newRank)) {
-            player.sendMessage(PLUGIN + LangFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(player))
+            player.sendMessage(PLUGIN + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(player))
                     .replace("%newRank%", newRank));
         }
 

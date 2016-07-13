@@ -51,7 +51,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * 
  * @see Localizer
  */
-public enum LangFile {
+public enum LangsFile {
     // <editor-fold defaultstate="collapsed" desc="MESSAGES">
 // <editor-fold defaultstate="collapsed" desc="MESSAGES">
     PLUGIN_ENABLED(
@@ -207,16 +207,16 @@ public enum LangFile {
             "&cVeto has ended"
     ),
     RANK_INFO_TITLE (
-            "  - &bTítulo: &r%rank%",
-            "  - &bTitle: &r%rank%"
+            "Título",
+            "Title"
     ),
     RANK_INFO_TAG (
-            "  - &b%tag%: &r%fame%",
-            "  - &b%tag%: &r%fame%"
+            "%tag%",
+            "%tag%"
     ),
     RANK_INFO_KS (
-            "  - &bRacha: &r%ks%",
-            "  - &bKillStreak: &r%ks%"
+            "Racha",
+            "KillStreak"
     ),
     RANK_INFO_NEXTRANK(
             "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%",
@@ -260,7 +260,7 @@ public enum LangFile {
 
     private final HashMap<LangType, String> messages = new HashMap();
 
-    private LangFile(String es, String en) {
+    private LangsFile(String es, String en) {
         this.messages.put(LangType.ES, es);
         this.messages.put(LangType.EN, en);
     }
@@ -329,7 +329,7 @@ public enum LangFile {
         );
         newConfig.options().copyHeader(true);
 
-        for (LangFile idioma : LangFile.values()) {
+        for (LangsFile idioma : LangsFile.values()) {
             String name = idioma.name();
             String value = idioma.getDefaultText(lang);
             newConfig.set(name, value);
@@ -337,8 +337,8 @@ public enum LangFile {
 
         try {
             newConfig.save(langFile);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException ex) {
+            PvpTitles.logError(ex.getMessage(), null);
         }
     }
 
@@ -349,13 +349,14 @@ public enum LangFile {
         Boolean resul = true;
 
         // Check if it is complete
-        for (LangFile lang : LangFile.values()) {
+        for (LangsFile lang : LangsFile.values()) {
             if (!langConf.contains(lang.name())) {
                 try {
                     langConf.save(backupFile); // Save the original file                   
                     createConfig(langFile, langType);
                     resul = false;
                 } catch (IOException ex) {
+                    PvpTitles.logError(ex.getMessage(), null);
                 }
             }
         }

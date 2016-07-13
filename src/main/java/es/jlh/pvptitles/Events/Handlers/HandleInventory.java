@@ -17,7 +17,7 @@
 package es.jlh.pvptitles.Events.Handlers;
 
 import es.jlh.pvptitles.Events.BoardEvent;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
@@ -71,7 +71,7 @@ public class HandleInventory implements Listener, EventExecutor {
 
         int page;
 
-        if (inventory.getName().equals(LangFile.BOARD_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
+        if (inventory.getName().equals(LangsFile.BOARD_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
             Map<Integer, Inventory> inventories = Inventories
                     .createInventory(plugin.manager.getLbm().getBoards(), Localizer.getLocale(pl));
 
@@ -113,7 +113,7 @@ public class HandleInventory implements Listener, EventExecutor {
                 pl.closeInventory();
                 pl.teleport(loc);
 
-                pl.sendMessage(PLUGIN + LangFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(PLUGIN + LangsFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
 
             } else if (event.getClick() == ClickType.RIGHT) {
                 // Caso para cambiar de pagina               

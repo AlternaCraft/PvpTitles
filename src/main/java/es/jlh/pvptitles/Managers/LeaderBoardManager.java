@@ -19,7 +19,7 @@ package es.jlh.pvptitles.Managers;
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.BoardEvent;
 import es.jlh.pvptitles.Files.HologramsFile;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
@@ -81,7 +81,7 @@ public class LeaderBoardManager {
             short jugadores = (short) pf.size();
 
             if (!b.isMaterializable(jugadores)) {
-                pl.sendMessage(PLUGIN + LangFile.BOARD_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(PLUGIN + LangsFile.BOARD_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
                 return false;
             }
 
@@ -102,7 +102,7 @@ public class LeaderBoardManager {
 
             pt.getServer().getPluginManager().callEvent(new BoardEvent(pl, b.getData().getFullLocation()));
             
-            pl.sendMessage(PLUGIN + LangFile.BOARD_CREATED_CORRECTLY.
+            pl.sendMessage(PLUGIN + LangsFile.BOARD_CREATED_CORRECTLY.
                     getText(Localizer.getLocale(pl)).replace("%name%", b.getData().getNombre()));
         } else {
             return false;
@@ -159,7 +159,7 @@ public class LeaderBoardManager {
                         pl = event.getPlayer();
 
                         if (!pl.hasPermission("pvptitles.manageboard")) {
-                            pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             event.setCancelled(true);
                             return;
                         }
@@ -167,7 +167,7 @@ public class LeaderBoardManager {
                         pl = (Player) o;
 
                         if (!pl.hasPermission("pvptitles.manageboard")) {
-                            pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             return;
                         }
                     }
@@ -191,7 +191,7 @@ public class LeaderBoardManager {
                 pt.getServer().getPluginManager().callEvent(new BoardEvent(pl, bo.getData().getFullLocation()));
                 
                 if (pl != null) {
-                    pl.sendMessage(PLUGIN + LangFile.BOARD_DELETED.getText(Localizer.getLocale(pl)));
+                    pl.sendMessage(PLUGIN + LangsFile.BOARD_DELETED.getText(Localizer.getLocale(pl)));
                 }
 
                 break;

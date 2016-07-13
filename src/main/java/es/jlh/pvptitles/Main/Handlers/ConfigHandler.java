@@ -17,7 +17,7 @@
 package es.jlh.pvptitles.Main.Handlers;
 
 import es.jlh.pvptitles.Backend.ConfigDataStore;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import es.jlh.pvptitles.Main.Manager;
 import static es.jlh.pvptitles.Main.Manager.messages;
@@ -114,16 +114,16 @@ public class ConfigHandler {
         
         if (!"ES".equals(lang) && !"EN".equals(lang)) {
             try {
-                messages = LangFile.LangType.valueOf("CUSTOM_"+lang);
+                messages = LangsFile.LangType.valueOf("CUSTOM_"+lang);
             }
             catch (Exception ex){}
         }
         else {
-            messages = LangFile.LangType.valueOf(lang);
+            messages = LangsFile.LangType.valueOf(lang);
         }
         
         if (messages == null) {
-            messages = LangFile.LangType.EN;
+            messages = LangsFile.LangType.EN;
         }
 
         params.displayInChat(config.getBoolean("DisplayTitleInChat"));

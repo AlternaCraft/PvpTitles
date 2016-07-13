@@ -151,7 +151,7 @@ import es.jlh.pvptitles.Events.Handlers.HandleInventory;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerTag;
 import es.jlh.pvptitles.Events.Handlers.HandleSign;
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Hook.MVdWPlaceholderHook;
 import es.jlh.pvptitles.Hook.PlaceholderHook;
@@ -264,7 +264,7 @@ public class PvpTitles extends JavaPlugin {
             }
         }, 5L);
 
-        logMessage(LangFile.PLUGIN_ENABLED.getText(Manager.messages));
+        logMessage(LangsFile.PLUGIN_ENABLED.getText(Manager.messages));
     }
 
     @Override
@@ -295,7 +295,7 @@ public class PvpTitles extends JavaPlugin {
             }
         }
 
-        logMessage(LangFile.PLUGIN_DISABLED.getText(Manager.messages));
+        logMessage(LangsFile.PLUGIN_DISABLED.getText(Manager.messages));
     }
 
     private void checkOnlinePlayers() {

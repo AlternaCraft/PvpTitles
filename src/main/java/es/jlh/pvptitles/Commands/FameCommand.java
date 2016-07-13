@@ -19,8 +19,8 @@ package es.jlh.pvptitles.Commands;
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.FameAddEvent;
 import es.jlh.pvptitles.Events.FameSetEvent;
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Files.LangsFile;
+import es.jlh.pvptitles.Files.LangsFile.LangType;
 import es.jlh.pvptitles.Libraries.UUIDFetcher;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
@@ -50,7 +50,7 @@ public class FameCommand implements CommandExecutor {
         LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length == 0 || args.length > 5) {
-            sender.sendMessage(PLUGIN + LangFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
@@ -135,7 +135,7 @@ public class FameCommand implements CommandExecutor {
                     if (!event.isCancelled()) {
                         try {
                             this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(PLUGIN + LangFile.FAME_ADD.getText(messages).
+                            sender.sendMessage(PLUGIN + LangsFile.FAME_ADD.getText(messages).
                                     replace("%tag%", this.dm.params.getTag())
                             );
                         } catch (DBException ex) {
@@ -143,7 +143,7 @@ public class FameCommand implements CommandExecutor {
                             event.setCancelled(true);
                         }
                     } else {
-                        sender.sendMessage(PLUGIN + LangFile.FAME_MODIFY_ERROR.getText(messages).
+                        sender.sendMessage(PLUGIN + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );
@@ -187,7 +187,7 @@ public class FameCommand implements CommandExecutor {
                         }
                     }
 
-                    sender.sendMessage(PLUGIN + LangFile.FAME_SEE.getText(messages).
+                    sender.sendMessage(PLUGIN + LangsFile.FAME_SEE.getText(messages).
                             replace("%player%", args[1]).
                             replace("%fame%", String.valueOf(fameTotal)).
                             replace("%tag%", this.dm.params.getTag())
@@ -246,14 +246,14 @@ public class FameCommand implements CommandExecutor {
                     if (!event.isCancelled()) {
                         try {
                             this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(PLUGIN + LangFile.FAME_SET.getText(messages).
+                            sender.sendMessage(PLUGIN + LangsFile.FAME_SET.getText(messages).
                                     replace("%tag%", this.dm.params.getTag()));
                         } catch (DBException ex) {
                             PvpTitles.logError(ex.getCustomMessage(), null);
                             event.setCancelled(true);
                         }
                     } else {
-                        sender.sendMessage(PLUGIN + LangFile.FAME_MODIFY_ERROR.getText(messages).
+                        sender.sendMessage(PLUGIN + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );

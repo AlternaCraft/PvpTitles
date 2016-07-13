@@ -16,8 +16,8 @@
  */
 package es.jlh.pvptitles.Misc;
 
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Files.LangsFile;
+import es.jlh.pvptitles.Files.LangsFile.LangType;
 import es.jlh.pvptitles.Main.PvpTitles;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
@@ -75,14 +75,12 @@ public class Inventories {
         int vuelta = 0;
 
         if (cs.isEmpty()) {
-            Inventory inventory = PvpTitles.getInstance().getServer().createInventory(
-                    null, 27, LangFile.BOARD_INVENTORY_TITLE.getText(lt));
+            Inventory inventory = PvpTitles.getInstance().getServer().createInventory(null, 27, LangsFile.BOARD_INVENTORY_TITLE.getText(lt));
             inventories.put(vuelta, inventory);
             opened.add(inventory); // To close it on reload
         } else {
             while (cont < cs.size()) {
-                Inventory inventory = PvpTitles.getInstance().getServer().createInventory(
-                        null, 27, LangFile.BOARD_INVENTORY_TITLE.getText(lt));
+                Inventory inventory = PvpTitles.getInstance().getServer().createInventory(null, 27, LangsFile.BOARD_INVENTORY_TITLE.getText(lt));
 
                 for (int j = 0; cont < cs.size() && j < (MAX_BOARDS_PER_PAGE); j++, cont++) {
                     Board board = cs.get(cont);
@@ -138,30 +136,30 @@ public class Inventories {
         // Paginas
         if (total > MAX_BOARDS_PER_PAGE * (vuelta + 1)) {
             if (vuelta == 0) {
-                content = new String[]{LangFile.BOARD_INVENTORY_ACTION3_1.getText(lt)};
+                content = new String[]{LangsFile.BOARD_INVENTORY_ACTION3_1.getText(lt)};
             } else {
-                content = new String[]{LangFile.BOARD_INVENTORY_ACTION3_1.getText(lt),
-                    LangFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
+                content = new String[]{LangsFile.BOARD_INVENTORY_ACTION3_1.getText(lt),
+                    LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
             }
 
             item = new ItemStack(Material.WOOL, 1, DyeColor.YELLOW.getData());
-            createDisplay(item, inv, 18, LangFile.BOARD_INVENTORY_INFO3.getText(lt)
+            createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         } else if (vuelta > 0) {
-            content = new String[]{LangFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
+            content = new String[]{LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
 
             item = new ItemStack(Material.WOOL, 1, DyeColor.YELLOW.getData());
-            createDisplay(item, inv, 18, LangFile.BOARD_INVENTORY_INFO3.getText(lt)
+            createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         }
 
         // items de ayuda
         item = new ItemStack(Material.WOOL, 1, DyeColor.GREEN.getData());
-        createDisplay(item, inv, 25, LangFile.BOARD_INVENTORY_ACTION1.getText(lt),
-                new String[]{LangFile.BOARD_INVENTORY_INFO1.getText(lt)});
+        createDisplay(item, inv, 25, LangsFile.BOARD_INVENTORY_ACTION1.getText(lt),
+                new String[]{LangsFile.BOARD_INVENTORY_INFO1.getText(lt)});
 
         item = new ItemStack(Material.WOOL, 1, DyeColor.RED.getData());
-        createDisplay(item, inv, 26, LangFile.BOARD_INVENTORY_ACTION2.getText(lt),
-                new String[]{LangFile.BOARD_INVENTORY_INFO2.getText(lt)});
+        createDisplay(item, inv, 26, LangsFile.BOARD_INVENTORY_ACTION2.getText(lt),
+                new String[]{LangsFile.BOARD_INVENTORY_INFO2.getText(lt)});
     }
 }

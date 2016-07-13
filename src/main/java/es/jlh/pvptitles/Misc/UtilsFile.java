@@ -25,15 +25,23 @@ import java.io.IOException;
 
 public class UtilsFile {
 
-    public static boolean exists(String ruta) {
-        return new File(ruta).exists();
+    public static boolean exists(String path) {
+        return exists(new File(path));
+    }
+    
+    public static boolean exists(File file) {
+        return file.exists();
     }
 
-    public static void writeFile(String ruta, String cont) {
+    public static void writeFile(String path, String cont) {
+        writeFile(new File(path), cont);
+    }
+    
+    public static void writeFile(File file, String cont) {
         FileWriter fichero = null;
 
         try {
-            fichero = new FileWriter(ruta);
+            fichero = new FileWriter(file);
             fichero.write(cont);
         } catch (Exception e) {
         } finally {
@@ -49,11 +57,15 @@ public class UtilsFile {
         }
     }
 
-    public static String readFile(String ruta) {
+    public static String readFile(String path) {
+        return readFile(new File(path));
+    }
+    
+    public static String readFile(File file) {
         BufferedReader br = null;
         
         try {
-            br = new BufferedReader(new FileReader(ruta));
+            br = new BufferedReader(new FileReader(file));
 
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();

@@ -16,7 +16,7 @@
  */
 package es.jlh.pvptitles.Events.Handlers;
 
-import es.jlh.pvptitles.Files.LangFile;
+import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -74,7 +74,7 @@ public class HandleSign implements Listener {
 
             // Compruebo permisos
             if (!event.getPlayer().hasPermission("pvptitles.manageboard")) {
-                pl.sendMessage(PLUGIN + LangFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                 return;
             }
 
@@ -128,7 +128,7 @@ public class HandleSign implements Listener {
                     event.setCancelled(true);
                 }
             } else {
-                pl.sendMessage(PLUGIN + LangFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(PLUGIN + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                 event.setCancelled(true);
             }
         }

@@ -92,6 +92,14 @@ public class PlayerFame implements Comparable {
         return plugin.manager.dbh.getDm().getServerName(this.server);
     }
     
+    public String getMWName() {
+        String worldName = "";
+        if (!"".equals(this.world)) {
+            worldName = "["+this.world+"] ";
+        }
+        return worldName + this.getName();
+    }
+    
     @Override
     public String toString() {
         String worldName = "";

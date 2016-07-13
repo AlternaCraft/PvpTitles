@@ -18,8 +18,17 @@ package es.jlh.pvptitles.Commands;
 
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
-import es.jlh.pvptitles.Files.LangFile;
-import es.jlh.pvptitles.Files.LangFile.LangType;
+import es.jlh.pvptitles.Files.LangsFile;
+import es.jlh.pvptitles.Files.LangsFile.LangType;
+import es.jlh.pvptitles.Files.TemplatesFile.FILES;
+import static es.jlh.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.FAME_VALUE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.KS_TITLE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.KS_VALUE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.NEXT_RANK_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
 import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
@@ -31,6 +40,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import static es.jlh.pvptitles.Files.TemplatesFile.VETO_TAG;
 
 public class RankCommand implements CommandExecutor {
 
@@ -42,10 +52,10 @@ public class RankCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        LangFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
+        LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN + LangFile.COMMAND_FORBIDDEN.getText(messages));
+            sender.sendMessage(PLUGIN + LangsFile.COMMAND_FORBIDDEN.getText(messages));
             return true;
         }
 
@@ -94,30 +104,44 @@ public class RankCommand implements CommandExecutor {
 
         LangType lang = Localizer.getLocale(player);
 
-        player.sendMessage("");
-        player.sendMessage(PLUGIN);
-        player.sendMessage(LangFile.RANK_INFO_TITLE.getText(lang)
-                .replace("%rank%", rank)
-        );
-        player.sendMessage(LangFile.RANK_INFO_TAG.getText(lang)
-                .replace("%tag%", tag)
-                .replace("%fame%", String.valueOf(fame))
-        );
-        player.sendMessage(LangFile.RANK_INFO_KS.getText(lang)
-                .replace("%ks%", String.valueOf(racha)));
+        String[] lines = this.pt.manager.templates.getFileContent(FILES.RANK_COMMAND);
 
-        if (rankup > 0 || timeup > 0) {
-            String next = LangFile.RANK_INFO_NEXTRANK.getText(lang);
-            player.sendMessage("  - " + next
-                    .replace("%rankup%", String.valueOf(rankup))
-                    .replace("%timeup%", StrUtils.splitToComponentTimes(timeup))
-                    .replace("%tag%", tag).replace("%nextRank%", nextRank));
-        }
+        for (String line : lines) {
+            String msg = line;
 
-        if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
-            player.sendMessage("  * " + LangFile.VETO_STARTED.getText(Localizer.getLocale(player))
-                    .replace("%tag%", pt.manager.params.getTag())
-                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(uuid))));
+            if (!line.isEmpty()) {
+                msg = msg
+                        .replace(PLUGIN_TAG, PLUGIN)
+                        .replace(RANK_TITLE_TAG, LangsFile.RANK_INFO_TITLE.getText(lang))
+                        .replace(RANK_VALUE_TAG, rank)
+                        .replace(FAME_TITLE_TAG, LangsFile.RANK_INFO_TAG.getText(lang)
+                                .replace("%tag%", tag))
+                        .replace(FAME_VALUE_TAG, String.valueOf(fame))
+                        .replace(KS_TITLE_TAG, LangsFile.RANK_INFO_KS.getText(lang))
+                        .replace(KS_VALUE_TAG, String.valueOf(racha));
+
+                if (rankup > 0 || timeup > 0) {
+                    msg = msg
+                            .replace(NEXT_RANK_TAG, LangsFile.RANK_INFO_NEXTRANK.getText(lang)
+                                    .replace("%rankup%", String.valueOf(rankup))
+                                    .replace("%timeup%", StrUtils.splitToComponentTimes(timeup))
+                                    .replace("%tag%", tag)
+                                    .replace("%nextRank%", nextRank));
+                } else if (msg.contains(NEXT_RANK_TAG)) {
+                    continue;
+                }
+
+                if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
+                    msg = msg
+                            .replace(VETO_TAG, LangsFile.VETO_STARTED.getText(Localizer.getLocale(player))
+                                    .replace("%tag%", pt.manager.params.getTag())
+                                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(uuid))));
+                } else if (msg.contains(VETO_TAG)) {
+                    continue;
+                }
+            }
+
+            player.sendMessage(msg);
         }
     }
 }
