@@ -53,7 +53,7 @@ public class TemplatesFile {
                     File.separator).toString();
 
     public enum FILES {
-        TAGS_DESCRIPTION("VARIABLES.txt", ""
+        TAGS_DESCRIPTION("INFO.txt", ""
                 + "** Common tags **\n"
                 + " - " + PLUGIN_TAG + ": Plugin name\n"
                 + "\n** pvpladder file **\n"
