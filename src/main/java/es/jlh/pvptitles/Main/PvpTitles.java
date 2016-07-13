@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     28-03-2016
+// Last Change:     13-07-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -133,6 +133,8 @@
 //   arreglado un problema con los título con color en el archivo de commandos (onRank),
 //   añadidos nuevos mensajes a los locales (RANK_INFO_(...)) y añadido soporte para
 //   colores en los comandos de las recompensas.
+//  Ver. 2.5.6  13/07/2016   Añadidas algunas plantillas para modificar el formato
+//   de los comandos que pueden ejecutar todos los jugadores por defecto.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
