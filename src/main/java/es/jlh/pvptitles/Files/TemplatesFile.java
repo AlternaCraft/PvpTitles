@@ -73,7 +73,7 @@ public class TemplatesFile {
                 + "\n** pvptitles file **\n"
                 + " - " + VERSION_TAG + ": Plugin version\n"
                 + " - " + COMMAND_TAG + ": Command usage\n"
-                + " - " + INFO_COMMAND_TAG + ": Command information"
+                + " - " + INFO_COMMAND_TAG + ": Command description"
         ),
         INFO_COMMAND("pvptitles.txt", ""
                 + "\n"
