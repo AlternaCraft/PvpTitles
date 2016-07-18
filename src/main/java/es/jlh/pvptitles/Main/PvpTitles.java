@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     13-07-2016
+// Last Change:     18-07-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -135,6 +135,8 @@
 //   colores en los comandos de las recompensas.
 //  Ver. 2.5.6  13/07/2016   Añadidas algunas plantillas para modificar el formato
 //   de los comandos que pueden ejecutar todos los jugadores por defecto.
+//  Ver. 2.5.7  18/07/2016   Añadida funcionalidad, sobre los locales cuando hay
+//   un error, para mantener los valores del archivo incompleto en el nuevo.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 

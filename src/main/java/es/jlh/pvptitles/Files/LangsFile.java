@@ -25,30 +25,31 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Custom class for getting messages
- * <p>Currently, this works with the following custom languages:</p>
+ * <p>
+ * Currently, this works with the following custom languages:</p>
  * <ul>
- *  <li>Czech (CS)</li> 
- *  <li>Euskara (EU)</li> 
- *  <li>Galician (GL)</li> 
- *  <li>Catalan (CA)</li> 
- *  <li>Croatian (HR)</li> 
- *  <li>Korean (KO)</li> 
- *  <li>Ukrainian (UK)</li> 
- *  <li>Polish (PL)</li> 
- *  <li>Slovenian (SL)</li> 
- *  <li>Serbian (SR)</li> 
- *  <li>Romanian (RO)</li>
- *  <li>Portuguese (PT)</li> 
- *  <li>German (DE)</li> 
- *  <li>Greek (GR)</li> 
- *  <li>French (FR)</li> 
- *  <li>Japanese (JP)</li> 
- *  <li>Chinese (CH)</li> 
- *  <li>Simplified Chinese (CN)</li> 
- *  <li>Russian (RU)</li>
- *  <li>Swedish (SV)</li> 
+ * <li>Czech (CS)</li>
+ * <li>Euskara (EU)</li>
+ * <li>Galician (GL)</li>
+ * <li>Catalan (CA)</li>
+ * <li>Croatian (HR)</li>
+ * <li>Korean (KO)</li>
+ * <li>Ukrainian (UK)</li>
+ * <li>Polish (PL)</li>
+ * <li>Slovenian (SL)</li>
+ * <li>Serbian (SR)</li>
+ * <li>Romanian (RO)</li>
+ * <li>Portuguese (PT)</li>
+ * <li>German (DE)</li>
+ * <li>Greek (GR)</li>
+ * <li>French (FR)</li>
+ * <li>Japanese (JP)</li>
+ * <li>Chinese (CH)</li>
+ * <li>Simplified Chinese (CN)</li>
+ * <li>Russian (RU)</li>
+ * <li>Swedish (SV)</li>
  * </ul>
- * 
+ *
  * @see Localizer
  */
 public enum LangsFile {
@@ -89,7 +90,7 @@ public enum LangsFile {
     FAME_MW_CHANGE_PLAYER(
             "&eTe han establecido tu %tag% a %fame% en el mundo %world%, tu rango ahora es %rank%",
             "&eYour %tag% has been established to %fame% in %world%, Your rank is now %rank%"
-    ),    
+    ),
     COMMAND_FORBIDDEN(
             "&4No puedes ejecutar ese comando",
             "&4You can not execute that command"
@@ -206,26 +207,27 @@ public enum LangsFile {
             "&cVeto finalizado",
             "&cVeto has ended"
     ),
-    RANK_INFO_TITLE (
+    RANK_INFO_TITLE(
             "Título",
             "Title"
     ),
-    RANK_INFO_TAG (
+    RANK_INFO_TAG(
             "%tag%",
             "%tag%"
     ),
-    RANK_INFO_KS (
+    RANK_INFO_KS(
             "Racha",
             "KillStreak"
     ),
     RANK_INFO_NEXTRANK(
             "&bSiguiente rango: &fTe falta %rankup% de %tag% y %timeup% jugados para conseguir %nextRank%",
             "&bRankUP: &fYou need %rankup% of %tag% and %timeup% played to achieve %nextRank%"
-    ),    
+    ),
     COMPLETE_TELEPORT_PLAYER(
             "&6Has sido teletransportado correctamente",
             "&6You have been teleported correctly"
     );
+
     // </editor-fold> 
     public static enum LangType {
         ES,
@@ -240,9 +242,9 @@ public enum LangsFile {
         CUSTOM_PL,
         CUSTOM_SL,
         CUSTOM_SR,
-        CUSTOM_RO,        
+        CUSTOM_RO,
         CUSTOM_SV,
-        CUSTOM_PT,        
+        CUSTOM_PT,
         CUSTOM_DE,
         CUSTOM_GR,
         CUSTOM_FR,
@@ -254,11 +256,13 @@ public enum LangsFile {
 
     private static final String DIRECTORY = new StringBuilder().append(
             PvpTitles.getInstance().getDataFolder()).append(
-                File.separator).append(
+                    File.separator).append(
                     "Langs").append(
-                        File.separator).toString();
+                    File.separator).toString();
 
     private final HashMap<LangType, String> messages = new HashMap();
+
+    private static File backupFile = null;
 
     private LangsFile(String es, String en) {
         this.messages.put(LangType.ES, es);
@@ -307,7 +311,7 @@ public enum LangsFile {
             File langFile = new File(DIRECTORY + "messages_" + langType.name() + ".yml");
 
             if (!langFile.exists()) {
-                createConfig(langFile, langType);
+                createConfig(langFile, langType, false);
             }
 
             YamlConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
@@ -319,8 +323,12 @@ public enum LangsFile {
         }
     }
 
-    private static void createConfig(File langFile, LangType lang) {
+    private static void createConfig(File langFile, LangType lang, boolean restore) {
         YamlConfiguration newConfig = new YamlConfiguration();
+        YamlConfiguration cBackup = null;
+        if (restore) {
+            cBackup = YamlConfiguration.loadConfiguration(LangsFile.backupFile);
+        }
 
         newConfig.options().header(
                 "########################################\n"
@@ -331,7 +339,15 @@ public enum LangsFile {
 
         for (LangsFile idioma : LangsFile.values()) {
             String name = idioma.name();
-            String value = idioma.getDefaultText(lang);
+            String value = idioma.getDefaultText(lang);;
+            
+            // Set previous value
+            if (restore) {
+                if (cBackup.contains(name)) {
+                    value = cBackup.getString(name);
+                }
+            }
+
             newConfig.set(name, value);
         }
 
@@ -344,7 +360,7 @@ public enum LangsFile {
 
     private static boolean compLocales(File langFile, YamlConfiguration langConf,
             LangType langType) {
-        File backupFile = new File(DIRECTORY + "messages_" + langType.name() + "_Backup.yml");
+        backupFile = new File(DIRECTORY + "messages_" + langType.name() + "_Backup.yml");
 
         Boolean resul = true;
 
@@ -353,7 +369,7 @@ public enum LangsFile {
             if (!langConf.contains(lang.name())) {
                 try {
                     langConf.save(backupFile); // Save the original file                   
-                    createConfig(langFile, langType);
+                    createConfig(langFile, langType, true);
                     resul = false;
                 } catch (IOException ex) {
                     PvpTitles.logError(ex.getMessage(), null);
