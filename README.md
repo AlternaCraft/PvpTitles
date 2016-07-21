@@ -12,9 +12,9 @@ Developed from version [1.7.9](http://mcupdate.tumblr.com/post/82203913927/minec
 Getting Started & Documentation
 -------------------------------
 
-All documentation is available on the [Wiki page](https://github.com/AlternaCraft/PvpTitles/wiki)
+All documentation is available on the [Wiki page](https://github.com/AlternaCraft/PvpTitles/wiki).
 
-Feel free to contribute there too. Just click the edit button after you login into your Github account
+Feel free to contribute there too. Just click the edit button after you login into your Github account.
 
 
 ### Compatibility
