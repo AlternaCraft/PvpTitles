@@ -1,11 +1,5 @@
 # PvpTitles 2015 Edition [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles)
 
-**Please note**: We'd like to provide the best experience to the final users. So, if you believe you have found a bug, _please responsibly disclose_ by posting an issue at [here](https://github.com/AlternaCraft/PvpTitles/issues) or contacting with us by using:
-
-* Webpage: (In develop...)
-* IRC: `#PvpTitles` on Freenode
-
-
 PvpTitles is a [Bukkit](https://github.com/Bukkit/Bukkit) / [Spigot](https://github.com/SpigotMC/Spigot-API) plugin which is based on the [PvP titles plugin](https://github.com/dreanor/PvPTitles) by [asc_dreanor](https://github.com/dreanor). These titles reflect a player's success in defeating other players by earning titles after a specific amount of Kills. 
 
 Developed from version [1.7.9](http://mcupdate.tumblr.com/post/82203913927/minecraft-179) of [Minecraft](http://minecraft.net).
