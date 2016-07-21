@@ -4,7 +4,7 @@
   <groupId>es.jlh</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.5.6-SNAPSHOT</version>
+  <version>2.5.7-SNAPSHOT</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -34,6 +34,12 @@
       <resource>
         <filtering>true</filtering>
         <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>LICENSE.md</include>
+        </includes>
       </resource>
     </resources>
     <finalName>PvpTitles</finalName>
