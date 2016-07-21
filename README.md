@@ -1,6 +1,6 @@
 # PvpTitles 2015 Edition [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles)
 
-**Please note**: I'd like to provide the best experience to the final users. So, if you believe you have found a bug, _please responsibly disclose_ by posting an issue at [here](https://github.com/AlternaCraft/PvpTitles/issues) or contacting with us by using:
+**Please note**: We'd like to provide the best experience to the final users. So, if you believe you have found a bug, _please responsibly disclose_ by posting an issue at [here](https://github.com/AlternaCraft/PvpTitles/issues) or contacting with us by using:
 
 * Webpage: (In develop...)
 * IRC: `#PvpTitles` on Freenode
