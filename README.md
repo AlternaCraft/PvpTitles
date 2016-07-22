@@ -24,7 +24,7 @@ Feel free to contribute there too. Just click the edit button after you login in
 
 
 ### Compatibility
-This plugin is compatible with all Minecraft versions above 1.7.9.
+This plugin is compatible with all Minecraft versions above 1.7.9
 
 Also, there are some optional dependencies for having a better experience with the plugin:
 * ScoreboardStats (http://dev.bukkit.org/bukkit-plugins/scoreboardstats)
@@ -32,6 +32,7 @@ Also, there are some optional dependencies for having a better experience with t
 * HolographicDisplays & ProtocolLib (http://dev.bukkit.org/bukkit-plugins/holographic-displays/)
 * Placeholder API (https://www.spigotmc.org/resources/placeholderapi.6245/)
 * MVdWPlaceholderAPI (https://www.spigotmc.org/resources/mvdwplaceholderapi.11182/)
+
 You don't need to do nothing for getting it work together. It is hooked automatically.
 
 
