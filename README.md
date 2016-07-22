@@ -36,7 +36,7 @@ You don't need to do nothing for getting it work together. It is hooked automati
 
 
 ### Building
-PvpTitles uses Maven 4 to manage building configurations, general project informations and dependencies. You can compile this project yourself by using Maven.
+PvpTitles uses Maven 3 to manage building configurations, general project informations and dependencies. You can compile this project yourself by using Maven.
 
 * Just import the project from [Github](http://github.com/).
   Your IDE would detect the Maven project.
