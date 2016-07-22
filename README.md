@@ -33,7 +33,7 @@ Also, there are some optional dependencies for having a better experience with t
 * Placeholder API (https://www.spigotmc.org/resources/placeholderapi.6245/)
 * MVdWPlaceholderAPI (https://www.spigotmc.org/resources/mvdwplaceholderapi.11182/)
 
-You don't need to do nothing for getting it work together. It is hooked automatically.
+You don't need to do anything for getting it works together. It is automatically hooked. 
 
 
 ### Building
