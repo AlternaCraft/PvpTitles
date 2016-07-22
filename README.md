@@ -4,7 +4,13 @@ PvpTitles is a [Bukkit](https://github.com/Bukkit/Bukkit) / [Spigot](https://git
 
 Developed from version [1.7.9](http://mcupdate.tumblr.com/post/82203913927/minecraft-179) of [Minecraft](http://minecraft.net).
 
-**Project pages**:
+Downloads
+---------
+
+**Official builds**:
+
+You can find the official builds at bukkit and spigot:
+
 * http://dev.bukkit.org/bukkit-plugins/pvptitles/
 * https://www.spigotmc.org/resources/pvptitles.20927/
 
