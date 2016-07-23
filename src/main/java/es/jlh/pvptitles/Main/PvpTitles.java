@@ -137,6 +137,8 @@
 //   de los comandos que pueden ejecutar todos los jugadores por defecto.
 //  Ver. 2.5.7  18/07/2016   Añadida funcionalidad, sobre los locales cuando hay
 //   un error, para mantener los valores del archivo incompleto en el nuevo.
+//  Ver. 2.5.7  23/07/2016   Modificados varios métodos y añadidas clases para
+//   realizar las pruebas unitarias.
 // </editor-fold>
 package es.jlh.pvptitles.Main;
 
