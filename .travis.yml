@@ -1,3 +1,9 @@
 language: java
 jdk: [ openjdk7 ]
+
+sudo: false # faster builds
+
 script: mvn compile test -U
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
