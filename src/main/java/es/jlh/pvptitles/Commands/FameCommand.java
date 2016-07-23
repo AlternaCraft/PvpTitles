@@ -24,7 +24,7 @@ import es.jlh.pvptitles.Files.LangsFile.LangType;
 import es.jlh.pvptitles.Libraries.UUIDFetcher;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -42,7 +42,7 @@ public class FameCommand implements CommandExecutor {
 
     public FameCommand(PvpTitles pt) {
         this.pt = pt;
-        this.dm = pt.manager;
+        this.dm = pt.getManager();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FameCommand implements CommandExecutor {
         LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length == 0 || args.length > 5) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
@@ -79,7 +79,7 @@ public class FameCommand implements CommandExecutor {
 
             // Evitar NullPointerException
             if (uuid == null) {
-                sender.sendMessage(PLUGIN + ChatColor.RED + args[1] + " doesn't "
+                sender.sendMessage(getPluginName() + ChatColor.RED + args[1] + " doesn't "
                         + "exist");
                 return true;
             }
@@ -98,13 +98,13 @@ public class FameCommand implements CommandExecutor {
 
                     if (dm.params.isMw_enabled()) {
                         if (args.length < 4) {
-                            sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame add <player> <world_name> <famepoints>'");
+                            sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame add <player> <world_name> <famepoints>'");
                             return true;
                         }
 
                         world = args[2];
                         if (pt.getServer().getWorld(world) == null) {
-                            sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
+                            sender.sendMessage(getPluginName() + ChatColor.RED + "World \"" + world + "\" does not exist");
                             return true;
                         }
                         fameIncr = Integer.parseInt(args[3]);
@@ -135,7 +135,7 @@ public class FameCommand implements CommandExecutor {
                     if (!event.isCancelled()) {
                         try {
                             this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(PLUGIN + LangsFile.FAME_ADD.getText(messages).
+                            sender.sendMessage(getPluginName() + LangsFile.FAME_ADD.getText(messages).
                                     replace("%tag%", this.dm.params.getTag())
                             );
                         } catch (DBException ex) {
@@ -143,13 +143,13 @@ public class FameCommand implements CommandExecutor {
                             event.setCancelled(true);
                         }
                     } else {
-                        sender.sendMessage(PLUGIN + LangsFile.FAME_MODIFY_ERROR.getText(messages).
+                        sender.sendMessage(getPluginName() + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );
                     }
                 } else {
-                    sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame add <player> [<world_name>] <famepoints>'");
+                    sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame add <player> [<world_name>] <famepoints>'");
                 }
                 return true;
             // </editor-fold>
@@ -187,13 +187,13 @@ public class FameCommand implements CommandExecutor {
                         }
                     }
 
-                    sender.sendMessage(PLUGIN + LangsFile.FAME_SEE.getText(messages).
+                    sender.sendMessage(getPluginName() + LangsFile.FAME_SEE.getText(messages).
                             replace("%player%", args[1]).
                             replace("%fame%", String.valueOf(fameTotal)).
                             replace("%tag%", this.dm.params.getTag())
                     );
                 } else {
-                    sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame see <player> [<world_name>]'");
+                    sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame see <player> [<world_name>]'");
                 }
                 return true;
             // </editor-fold>
@@ -206,13 +206,13 @@ public class FameCommand implements CommandExecutor {
 
                     if (dm.params.isMw_enabled()) {
                         if (args.length < 4) {
-                            sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame set <player> <world_name> <famepoints>'");
+                            sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> <world_name> <famepoints>'");
                             return true;
                         }
 
                         world = args[2];
                         if (pt.getServer().getWorld(world) == null) {
-                            sender.sendMessage(PLUGIN + ChatColor.RED + "World \"" + world + "\" does not exist");
+                            sender.sendMessage(getPluginName() + ChatColor.RED + "World \"" + world + "\" does not exist");
                             return true;
                         }
                         fameTotal = Integer.valueOf(args[3]);
@@ -246,20 +246,20 @@ public class FameCommand implements CommandExecutor {
                     if (!event.isCancelled()) {
                         try {
                             this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(PLUGIN + LangsFile.FAME_SET.getText(messages).
+                            sender.sendMessage(getPluginName() + LangsFile.FAME_SET.getText(messages).
                                     replace("%tag%", this.dm.params.getTag()));
                         } catch (DBException ex) {
                             PvpTitles.logError(ex.getCustomMessage(), null);
                             event.setCancelled(true);
                         }
                     } else {
-                        sender.sendMessage(PLUGIN + LangsFile.FAME_MODIFY_ERROR.getText(messages).
+                        sender.sendMessage(getPluginName() + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );
                     }
                 } else {
-                    sender.sendMessage(PLUGIN + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <famepoints>'");
+                    sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <famepoints>'");
                 }
                 return true;
             // </editor-fold>

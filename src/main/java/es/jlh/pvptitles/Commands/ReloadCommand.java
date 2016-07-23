@@ -26,7 +26,7 @@ import es.jlh.pvptitles.Main.Handlers.DBHandler.DBTYPE;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.RetroCP.DBChecker;
 import java.sql.SQLException;
@@ -48,7 +48,7 @@ public class ReloadCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length > 0) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
@@ -59,27 +59,27 @@ public class ReloadCommand implements CommandExecutor {
             }
         }
 
-        pvpTitles.manager.getCh().loadConfig(pvpTitles.manager.params);
+        pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);
 
-        pvpTitles.manager.getDbh().selectDB();
+        pvpTitles.getManager().getDbh().selectDB();
         new DBChecker(pvpTitles).setup();
 
-        pvpTitles.manager.loadLang();
-        pvpTitles.manager.loadModels();
-        pvpTitles.manager.loadSavedBoards();
-        pvpTitles.manager.loadRewards();
-        pvpTitles.manager.loadTemplates();
+        pvpTitles.getManager().loadLang();
+        pvpTitles.getManager().loadModels();
+        pvpTitles.getManager().loadSavedBoards();
+        pvpTitles.getManager().loadRewards();
+        pvpTitles.getManager().loadTemplates();
 
         if (tipo == DBTYPE.MYSQL) {
-            pvpTitles.manager.loadServers();
+            pvpTitles.getManager().loadServers();
         }
 
-        pvpTitles.manager.loadActualizador();
-        pvpTitles.manager.loadRankTimeChecker();
+        pvpTitles.getManager().loadActualizador();
+        pvpTitles.getManager().loadRankTimeChecker();
 
-        if (HolographicHook.ISHDENABLED && pvpTitles.manager.params.displayLikeHolo()) {
-            HolographicHook.RANK_LINE = pvpTitles.manager.params.getHolotagformat();
-            HolographicHook.TITLE_HEIGHT = ((pvpTitles.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW) + DEFAULT_TITLE_HEIGHT;
+        if (HolographicHook.ISHDENABLED && pvpTitles.getManager().params.displayLikeHolo()) {
+            HolographicHook.RANK_LINE = pvpTitles.getManager().params.getHolotagformat();
+            HolographicHook.TITLE_HEIGHT = ((pvpTitles.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW) + DEFAULT_TITLE_HEIGHT;
             HolographicHook.loadPlayersInServer();
         } else if (HolographicHook.ISHDENABLED && HolographicHook.HOLOPLAYERS.size() > 0) {
             /*
@@ -89,7 +89,7 @@ public class ReloadCommand implements CommandExecutor {
             HolographicHook.deleteHoloPlayers();
         }
 
-        sender.sendMessage(PLUGIN + LangsFile.PLUGIN_RELOAD.getText(messages));
+        sender.sendMessage(getPluginName() + LangsFile.PLUGIN_RELOAD.getText(messages));
 
         return true;
     }

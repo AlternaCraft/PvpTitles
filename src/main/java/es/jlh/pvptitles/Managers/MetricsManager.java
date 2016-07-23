@@ -29,7 +29,7 @@ public class MetricsManager {
     private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
         Graph mwUsedGraph = metrics.createGraph("MultiWorld usage");
 
-        if (plugin.manager.params.isMw_enabled()) {
+        if (plugin.getManager().params.isMw_enabled()) {
             addPlotter(mwUsedGraph, "Enabled", 1);
         } else {
             addPlotter(mwUsedGraph, "Disabled", 1);
@@ -58,7 +58,7 @@ public class MetricsManager {
     private void setPDBGraph(final PvpTitles plugin, Metrics metrics) {
         Graph preferreddb = metrics.createGraph("Preferred DB");
 
-        if (plugin.manager.dbh.getDm() instanceof DatabaseManagerEbean) {
+        if (plugin.getManager().dbh.getDm() instanceof DatabaseManagerEbean) {
             addPlotter(preferreddb, "Ebean", 1);
         } else {
             addPlotter(preferreddb, "MySQL", 1);
@@ -68,13 +68,13 @@ public class MetricsManager {
     private void setDMGraph(final PvpTitles plugin, Metrics metrics) {
         Graph displayMode = metrics.createGraph("Display mode");
 
-        if (plugin.manager.params.displayInChat() && plugin.manager.params.displayLikeHolo()) {
+        if (plugin.getManager().params.displayInChat() && plugin.getManager().params.displayLikeHolo()) {
             addPlotter(displayMode, "Both", 1);
         } else {
-            if (plugin.manager.params.displayInChat()) {
+            if (plugin.getManager().params.displayInChat()) {
                 addPlotter(displayMode, "Chat", 1);
             }
-            if (plugin.manager.params.displayLikeHolo()) {
+            if (plugin.getManager().params.displayLikeHolo()) {
                 addPlotter(displayMode, "Holograms", 1);
             }
         }
@@ -100,7 +100,7 @@ public class MetricsManager {
 
     public void sendData(final PvpTitles plugin) {
         try {
-            if (plugin.manager.params.isMetrics()) {
+            if (plugin.getManager().params.isMetrics()) {
                 Metrics metrics = new Metrics(plugin);
 
                 setMWGraph(plugin, metrics); // MultiWorld

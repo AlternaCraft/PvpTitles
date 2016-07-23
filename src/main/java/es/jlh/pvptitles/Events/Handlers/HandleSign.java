@@ -19,7 +19,7 @@ package es.jlh.pvptitles.Events.Handlers;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
 import es.jlh.pvptitles.Managers.BoardsAPI.ModelController;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
@@ -51,7 +51,7 @@ public class HandleSign implements Listener {
 
     public HandleSign(PvpTitles plugin) {
         this.pt = plugin;
-        this.cm = plugin.manager;
+        this.cm = plugin.getManager();
     }
 
     @EventHandler
@@ -74,7 +74,7 @@ public class HandleSign implements Listener {
 
             // Compruebo permisos
             if (!event.getPlayer().hasPermission("pvptitles.manageboard")) {
-                pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(getPluginName() + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                 return;
             }
 
@@ -124,11 +124,11 @@ public class HandleSign implements Listener {
                 cs.setLineas(lineas);
                 cs.setMatSign(matSign);
 
-                if (!pt.manager.getLbm().addBoard(cs, pl)) {                
+                if (!pt.getManager().getLbm().addBoard(cs, pl)) {                
                     event.setCancelled(true);
                 }
             } else {
-                pl.sendMessage(PLUGIN + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(getPluginName() + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                 event.setCancelled(true);
             }
         }
@@ -147,18 +147,18 @@ public class HandleSign implements Listener {
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX() + coord, b.getY(), b.getZ()).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.manager.getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.getManager().getLbm().deleteBoard(b2.getLocation(), event);
                 }
             }
             
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX(), b.getY(), b.getZ() + coord).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.manager.getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.getManager().getLbm().deleteBoard(b2.getLocation(), event);
                 }
             }
         } else {
-            pt.manager.getLbm().deleteBoard(locblock, event);
+            pt.getManager().getLbm().deleteBoard(locblock, event);
         }
     }
 

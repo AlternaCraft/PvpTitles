@@ -29,8 +29,8 @@ import org.bukkit.ChatColor;
 public class UpdaterManager {
 
     public void testUpdate(final PvpTitles plugin, File file) {
-        boolean shouldupdate = plugin.manager.params.isUpdate();
-        boolean shouldalert = plugin.manager.params.isAlert();
+        boolean shouldupdate = plugin.getManager().params.isUpdate();
+        boolean shouldalert = plugin.getManager().params.isAlert();
 
         if (!shouldupdate && !shouldalert) { // Optimizacion
             return;

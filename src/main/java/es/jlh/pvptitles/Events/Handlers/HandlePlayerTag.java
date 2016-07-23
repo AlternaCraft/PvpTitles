@@ -58,7 +58,7 @@ public class HandlePlayerTag implements Listener {
 
     public HandlePlayerTag(PvpTitles pt) {
         plugin = pt;
-        cm = pt.manager;
+        cm = pt.getManager();
     }
 
     public static boolean canDisplayRank(Player pl, String rank) {

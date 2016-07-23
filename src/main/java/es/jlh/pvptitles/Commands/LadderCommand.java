@@ -26,7 +26,7 @@ import static es.jlh.pvptitles.Files.TemplatesFile.TOP_POS_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.TOP_TAG;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
@@ -48,26 +48,26 @@ public class LadderCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length > 0) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
-        short top = this.pvpTitles.manager.params.getTop();
+        short top = this.pvpTitles.getManager().params.getTop();
 
         ArrayList<PlayerFame> rankedPlayers = new ArrayList<>();
         try {
-            rankedPlayers = pvpTitles.manager.dbh.getDm().getTopPlayers(top, "");
+            rankedPlayers = pvpTitles.getManager().dbh.getDm().getTopPlayers(top, "");
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
         }
 
-        String[] lines = this.pvpTitles.manager.templates.getFileContent(FILES.LADDER_COMMAND);
+        String[] lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);
 
         for (String line : lines) {
             String msg = line;
 
             msg = msg
-                    .replace(PLUGIN_TAG, PLUGIN)
+                    .replace(PLUGIN_TAG, getPluginName())
                     .replace(TOP_TAG, String.valueOf(top));
             
             if (line.contains(TOP_POS_TAG) || line.contains(TOP_PLAYER_TAG)) {

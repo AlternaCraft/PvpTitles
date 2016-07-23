@@ -88,7 +88,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         ebeanServer.getDatabase().save(plClass);
 
         // MultiWorld   
-        if (plugin.manager.params.isMw_enabled()) {
+        if (plugin.getManager().params.isMw_enabled()) {
             WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                     .select("playerUUID, world")
                     .where()
@@ -133,13 +133,13 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         WorldPlayerPT plwClass = null;
 
-        if (plugin.manager.params.isMw_enabled()) {
+        if (plugin.getManager().params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
                 HashMap<String, Object> data = new HashMap();
                 data.put("Player", pl.getName());
                 data.put("Player Online", pl.isOnline());
                 data.put("Method world", w);
-                data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+                data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                 throw new DBException(DBException.MULTIWORLD_ERROR, 
                         DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
@@ -186,13 +186,13 @@ public class DatabaseManagerEbean implements DatabaseManager {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_LOADING);
         }
 
-        if (plugin.manager.params.isMw_enabled()) {
+        if (plugin.getManager().params.isMw_enabled()) {
             if (w == null && !pl.isOnline()) {
                 HashMap<String, Object> data = new HashMap();
                 data.put("Player", pl.getName());
                 data.put("Player Online", pl.isOnline());
                 data.put("Method world", w);
-                data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+                data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                 throw new DBException(DBException.MULTIWORLD_ERROR, 
                         DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
@@ -281,11 +281,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
         ArrayList<PlayerFame> rankedPlayers = new ArrayList();
 
         try {
-            if (plugin.manager.params.isMw_enabled()) {
+            if (plugin.getManager().params.isMw_enabled()) {
                 String mundos = "";
 
-                if (!plugin.manager.params.showOnLeaderBoard()) {
-                    List<String> worlds_disabled = plugin.manager.params.getAffectedWorlds();
+                if (!plugin.getManager().params.showOnLeaderBoard()) {
+                    List<String> worlds_disabled = plugin.getManager().params.getAffectedWorlds();
 
                     StringBuilder buf = new StringBuilder();
                     for (String world : worlds_disabled) {
@@ -404,7 +404,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
     public String getServerName(short id) {
-        return this.plugin.manager.params.getNameS();
+        return this.plugin.getManager().params.getNameS();
     }
 
     @Override
@@ -418,7 +418,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findList();
 
         for (PlayerPT player : allDates) {
-            if (plugin.manager.params.getNoPurge().contains(player.getPlayerUUID())) {
+            if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
                 continue;
             }
 
@@ -427,7 +427,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             cFile.setTime(fechaFile);
 
             // Tiempo en config
-            cFile.add(GregorianCalendar.DAY_OF_YEAR, plugin.manager.params.getTimeP());
+            cFile.add(GregorianCalendar.DAY_OF_YEAR, plugin.getManager().params.getTimeP());
 
             Date hoy = new Date();
             Calendar cHoy = new GregorianCalendar();
@@ -435,7 +435,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             // cFile + timePurga < hoy
             if (cFile.before(cHoy)) {
-                if (plugin.manager.params.isMw_enabled()) {
+                if (plugin.getManager().params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
                             .lt("playerUUID", player.getPlayerUUID())
@@ -461,7 +461,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 File.separator).append( // Separador
                         filename).toString();
 
-        short serverID = plugin.manager.params.getMultiS();
+        short serverID = plugin.getManager().params.getMultiS();
 
         String sql = "";
         sql += MySQLConnection.getTableServers() + "\n";
@@ -481,7 +481,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
         boolean mw = pwClass != null && pwClass.size() > 0;
 
-        sql += "insert into Servers values (" + serverID + ", '" + plugin.manager.params.getNameS() + "')"
+        sql += "insert into Servers values (" + serverID + ", '" + plugin.getManager().params.getNameS() + "')"
                 + " ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
 
         if (plClass != null && plClass.size() > 0) {

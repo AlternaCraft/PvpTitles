@@ -16,15 +16,15 @@
  */
 package es.jlh.pvptitles.Commands;
 
+import es.jlh.pvptitles.Files.LangsFile;
+import static es.jlh.pvptitles.Files.TemplatesFile.COMMAND_TAG;
 import es.jlh.pvptitles.Files.TemplatesFile.FILES;
+import static es.jlh.pvptitles.Files.TemplatesFile.INFO_COMMAND_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.VERSION_TAG;
-import static es.jlh.pvptitles.Files.TemplatesFile.COMMAND_TAG;
-import static es.jlh.pvptitles.Files.TemplatesFile.INFO_COMMAND_TAG;
-import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,19 +47,19 @@ public class InfoCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length > 0) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
         Set<String> commands = pvpTitles.getDescription().getCommands().keySet();
 
-        String[] commandTemplate = this.pvpTitles.manager.templates.getFileContent(FILES.INFO_COMMAND);
+        String[] commandTemplate = this.pvpTitles.getManager().templates.getFileContent(FILES.INFO_COMMAND);
 
         for (String line : commandTemplate) {
             String msg = line;
             
             msg = msg
-                    .replace(PLUGIN_TAG, PLUGIN)
+                    .replace(PLUGIN_TAG, getPluginName())
                     .replace(VERSION_TAG, pvpTitles.getDescription().getVersion());
             
             if (msg.contains(COMMAND_TAG) || msg.contains(INFO_COMMAND_TAG)) {

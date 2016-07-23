@@ -180,13 +180,13 @@ public class PvpTitles extends JavaPlugin {
 
     private static PvpTitles plugin = null;
 
-    public static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
+    private static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "] ";
 
     public static Logger LOGGER = null;
     public static boolean debugMode = false;
 
-    public Manager manager = null;
+    private Manager manager = null;
 
     private MovementManager movementManager = null;
     private TimerManager timerManager = null;
@@ -255,12 +255,12 @@ public class PvpTitles extends JavaPlugin {
                 /* 
                  * -> Integraciones <-
                  */
-                getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
+                getServer().getConsoleSender().sendMessage(getPluginName() + ChatColor.GRAY
                         + "# STARTING INTEGRATION MODULE #");
 
                 checkExternalPlugins();
 
-                getServer().getConsoleSender().sendMessage(PLUGIN + ChatColor.GRAY
+                getServer().getConsoleSender().sendMessage(getPluginName() + ChatColor.GRAY
                         + "# ENDING INTEGRATION MODULE #");                
                 /*
                  * -> Fin integraciones <-
@@ -354,7 +354,7 @@ public class PvpTitles extends JavaPlugin {
 
     // Custom message
     public static void showMessage(String msg) {
-        plugin.getServer().getConsoleSender().sendMessage(PLUGIN + msg);
+        plugin.getServer().getConsoleSender().sendMessage(getPluginName() + msg);
     }
 
     public static void logMessage(String msg) {
@@ -385,5 +385,13 @@ public class PvpTitles extends JavaPlugin {
 
     public static PvpTitles getInstance() {
         return plugin;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+    
+    public static String getPluginName() {
+        return PLUGIN;
     }
 }

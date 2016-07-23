@@ -146,7 +146,7 @@ public class DBHandler {
      * @param reconnect Intentar conectar de nuevo a la bd de forma silenciosa
      */
     public void mysqlConnect(boolean reconnect) {
-        ConfigDataStore params = pvpTitles.manager.params;
+        ConfigDataStore params = pvpTitles.getManager().params;
 
         MySQLConnection.connectDB(params.getHost() + ":" + params.getPort()
                 + "/" + params.getDb(), params.getUser(), params.getPass(), reconnect);

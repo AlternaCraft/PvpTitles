@@ -103,7 +103,7 @@ public class DBException extends Exception {
     }
 
     public String getCustomMessage() {
-        int n = PvpTitles.getInstance().manager.params.getErrorFormat();
+        int n = PvpTitles.getInstance().getManager().params.getErrorFormat();
 
         switch (n) {
             case SIMPLIFIED:

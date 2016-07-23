@@ -19,7 +19,7 @@ package es.jlh.pvptitles.Events.Handlers;
 import es.jlh.pvptitles.Events.BoardEvent;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Misc.Inventories;
 import static es.jlh.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
@@ -73,7 +73,7 @@ public class HandleInventory implements Listener, EventExecutor {
 
         if (inventory.getName().equals(LangsFile.BOARD_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
             Map<Integer, Inventory> inventories = Inventories
-                    .createInventory(plugin.manager.getLbm().getBoards(), Localizer.getLocale(pl));
+                    .createInventory(plugin.getManager().getLbm().getBoards(), Localizer.getLocale(pl));
 
             event.setCancelled(true);
 
@@ -113,17 +113,17 @@ public class HandleInventory implements Listener, EventExecutor {
                 pl.closeInventory();
                 pl.teleport(loc);
 
-                pl.sendMessage(PLUGIN + LangsFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(getPluginName() + LangsFile.COMPLETE_TELEPORT_PLAYER.getText(Localizer.getLocale(pl)));
 
             } else if (event.getClick() == ClickType.RIGHT) {
                 // Caso para cambiar de pagina               
-                plugin.manager.getLbm().deleteBoard(loc, pl);
+                plugin.getManager().getLbm().deleteBoard(loc, pl);
 
                 // 'Actualizacion' del inventario
                 pl.closeInventory();
 
                 inventories = Inventories.createInventory(
-                        plugin.manager.getLbm().getBoards(), Localizer.getLocale(pl)
+                        plugin.getManager().getLbm().getBoards(), Localizer.getLocale(pl)
                 );
 
                 page = getPageNumber(inventory, inventories);
@@ -135,7 +135,7 @@ public class HandleInventory implements Listener, EventExecutor {
     }
 
     public BoardData getBoard(int pos) {
-        return this.plugin.manager.getLbm().getBoards().get(pos).getData();
+        return this.plugin.getManager().getLbm().getBoards().get(pos).getData();
     }
 
     public Location getLocation(int pos) {

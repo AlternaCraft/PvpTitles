@@ -21,7 +21,7 @@ import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -49,7 +49,7 @@ public class BoardCommand implements CommandExecutor {
 
     public BoardCommand(PvpTitles pvpTitles) {
         this.pt = pvpTitles;
-        this.cm = pvpTitles.manager;
+        this.cm = pvpTitles.getManager();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BoardCommand implements CommandExecutor {
 
         // Esto no puede ser ejecutado por la consola
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_FORBIDDEN.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_FORBIDDEN.getText(messages));
             return true;
         }
 
@@ -71,12 +71,12 @@ public class BoardCommand implements CommandExecutor {
             
             if (args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())
                     && !HolographicHook.ISHDENABLED) {
-                pl.sendMessage(PLUGIN + ChatColor.RED + "HolographicDisplays is not enabled");
+                pl.sendMessage(getPluginName() + ChatColor.RED + "HolographicDisplays is not enabled");
                 return true;
             }
 
             if (!args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())) {
-                pl.sendMessage(PLUGIN + ChatColor.RED + "Supported types: "
+                pl.sendMessage(getPluginName() + ChatColor.RED + "Supported types: "
                         + SUPPORTED_BOARDS.HOLOGRAM.name().toLowerCase());
                 return true;
             }
@@ -89,21 +89,21 @@ public class BoardCommand implements CommandExecutor {
                         String filter = (args.length >= 5) ? args[4] : "";
                         create(name, model, filter, pl);
                     } else {
-                        pl.sendMessage(PLUGIN + ChatColor.RED
+                        pl.sendMessage(getPluginName() + ChatColor.RED
                                 + "Syntax: 'pvpboard create <board_type> <name> <board_model> [<server_name>]'");
                     }
                     break;
                 case "remove":
                     if (args.length >= 3) {
-                        BoardData bd = HologramsFile.loadHologram(args[2]);
+                        BoardData bd = HologramsFile.loadHologram(args[1]);
 
                         if (bd == null) {
-                            pl.sendMessage(PLUGIN + LangsFile.BOARD_NAME_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(getPluginName() + LangsFile.BOARD_NAME_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                         } else {
                             cm.getLbm().deleteBoard(bd.getLocation(), pl);
                         }
                     } else {
-                        pl.sendMessage(PLUGIN + ChatColor.RED
+                        pl.sendMessage(getPluginName() + ChatColor.RED
                                 + "Syntax: 'pvpboard remove <board_type> <name>'");
                     }
                     break;
@@ -111,7 +111,7 @@ public class BoardCommand implements CommandExecutor {
                     return false;
             }
         } else {
-            List<Board> boards = pt.manager.getLbm().getBoards();
+            List<Board> boards = pt.getManager().getLbm().getBoards();
             pl.openInventory(Inventories.createInventory(boards, Localizer.getLocale(pl)).get(0));
         }
 
@@ -121,13 +121,13 @@ public class BoardCommand implements CommandExecutor {
     private void create(String name, String model, String filter, Player pl) {
         BoardData bda = HologramsFile.loadHologram(name);
         if (bda != null) {
-            pl.sendMessage(PLUGIN + LangsFile.BOARD_NAME_ALREADY_EXISTS.getText(Localizer.getLocale(pl)));
+            pl.sendMessage(getPluginName() + LangsFile.BOARD_NAME_ALREADY_EXISTS.getText(Localizer.getLocale(pl)));
             return;
         }
 
         BoardModel bm = cm.searchModel(model);
         if (bm == null) {
-            pl.sendMessage(PLUGIN + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
+            pl.sendMessage(getPluginName() + LangsFile.BOARD_MODEL_NOT_EXISTS.getText(Localizer.getLocale(pl)));
             return;
         }
 

@@ -69,7 +69,7 @@ public class PlayerFame implements Comparable {
     public int getRealSeconds() {
         int actual = 0;
         try {
-            actual = plugin.manager.dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+            actual = plugin.getManager().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
         }
@@ -89,7 +89,7 @@ public class PlayerFame implements Comparable {
     }
     
     public String getServerName() {
-        return plugin.manager.dbh.getDm().getServerName(this.server);
+        return plugin.getManager().dbh.getDm().getServerName(this.server);
     }
     
     public String getMWName() {

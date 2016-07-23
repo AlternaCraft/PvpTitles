@@ -54,8 +54,8 @@ public class HolographicHook {
 
     public HolographicHook(PvpTitles pt) {
         HolographicHook.plugin = pt;
-        RANK_LINE = pt.manager.params.getHolotagformat();
-        TITLE_HEIGHT = (pt.manager.params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
+        RANK_LINE = pt.getManager().params.getHolotagformat();
+        TITLE_HEIGHT = (pt.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
     }
 
     public void setup() {
@@ -68,7 +68,7 @@ public class HolographicHook {
             );
             
             // Ranks
-            if (plugin.manager.params.displayLikeHolo()) {
+            if (plugin.getManager().params.displayLikeHolo()) {
                 loadPlayersInServer();
             }
         }
@@ -121,14 +121,14 @@ public class HolographicHook {
         int t = 0;
 
         for (BoardData holo : HologramsFile.loadHolograms()) {
-            BoardModel sm = plugin.manager.searchModel(holo.getModelo());
+            BoardModel sm = plugin.getManager().searchModel(holo.getModelo());
 
             ModelController mc = new ModelController();
             mc.preprocessUnit(sm.getParams());
 
             HologramBoard hb = new HologramBoard(holo, sm, mc);
 
-            plugin.manager.getLbm().loadBoard(hb);
+            plugin.getManager().getLbm().loadBoard(hb);
             t++;
         }
 

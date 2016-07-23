@@ -133,13 +133,13 @@ public class DatabaseManagerMysql implements DatabaseManager {
         try {
             PreparedStatement playerExists = mysql.prepareStatement(PLAYER_EXISTS);
             playerExists.setString(1, uuid);
-            playerExists.setInt(2, plugin.manager.params.getMultiS());
+            playerExists.setInt(2, plugin.getManager().params.getMultiS());
             ResultSet rs = playerExists.executeQuery();
 
             if (!rs.next()) { // No existe
                 PreparedStatement registraPlayer = mysql.prepareStatement(CREATE_PLAYER);
                 registraPlayer.setString(1, uuid);
-                registraPlayer.setInt(2, plugin.manager.params.getMultiS());
+                registraPlayer.setInt(2, plugin.getManager().params.getMultiS());
                 registraPlayer.executeUpdate();
 
                 rs = playerExists.executeQuery();
@@ -155,12 +155,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
                 // Fix
                 PreparedStatement modID = mysql.prepareStatement(UPDATE_PLAYER_SERVERID);
-                modID.setInt(1, plugin.manager.params.getMultiS());
+                modID.setInt(1, plugin.getManager().params.getMultiS());
                 modID.setString(2, uuid);
                 modID.executeUpdate();
             }
 
-            if (plugin.manager.params.isMw_enabled()) {
+            if (plugin.getManager().params.isMw_enabled()) {
                 if (w == null && !pl.isOnline()) {
                     return -1;
                 }
@@ -211,13 +211,13 @@ public class DatabaseManagerMysql implements DatabaseManager {
         short psid = checkPlayerExists(pl, w);
 
         try {
-            if (plugin.manager.params.isMw_enabled()) {
+            if (plugin.getManager().params.isMw_enabled()) {
                 if (w == null && !pl.isOnline()) {
                     HashMap<String, Object> data = new HashMap();
                     data.put("Player", pl.getName());
                     data.put("Player Online", pl.isOnline());
                     data.put("Method world", w);
-                    data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+                    data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR, 
                             DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
@@ -250,13 +250,13 @@ public class DatabaseManagerMysql implements DatabaseManager {
         short psid = checkPlayerExists(pl, w);
 
         try {
-            if (plugin.manager.params.isMw_enabled()) {
+            if (plugin.getManager().params.isMw_enabled()) {
                 if (w == null && !pl.isOnline()) {
                     HashMap<String, Object> data = new HashMap();
                     data.put("Player", pl.getName());
                     data.put("Player Online", pl.isOnline());
                     data.put("Method world", w);
-                    data.put("Multiworld enabled", plugin.manager.params.isMw_enabled());
+                    data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR, 
                             DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
@@ -341,10 +341,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     DBException.DB_METHOD.PLAYERS_TOP, data);
         }
 
-        HashMap<Short, List<String>> servidores = plugin.manager.servers.get(server);
+        HashMap<Short, List<String>> servidores = plugin.getManager().servers.get(server);
         String sql;
 
-        if (plugin.manager.params.isMw_enabled()) {
+        if (plugin.getManager().params.isMw_enabled()) {
             sql = TOPMWPLAYERS;
         } else {
             sql = TOPPLAYERS;
@@ -353,8 +353,8 @@ public class DatabaseManagerMysql implements DatabaseManager {
         // <editor-fold defaultstate="collapsed" desc="QUERY MAKER">
         // Checker mw-filter        
         String mundos = "";
-        if (plugin.manager.params.isMw_enabled() && !plugin.manager.params.showOnLeaderBoard()) {
-            List<String> worlds_disabled = plugin.manager.params.getAffectedWorlds();
+        if (plugin.getManager().params.isMw_enabled() && !plugin.getManager().params.showOnLeaderBoard()) {
+            List<String> worlds_disabled = plugin.getManager().params.getAffectedWorlds();
 
             StringBuilder buf = new StringBuilder();
             for (String world : worlds_disabled) {
@@ -365,14 +365,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             }
         }
 
-        if (!server.equals("") && servidores != null && plugin.manager.servers.containsKey(server)) {
+        if (!server.equals("") && servidores != null && plugin.getManager().servers.containsKey(server)) {
             // Si hay un '-1' recojo los jugadores de todos los servers
             if (servidores.size() > 0 && !servidores.containsKey(-1)) {
                 sql += " where";
                 for (Short serverID : servidores.keySet()) {
                     sql += " (serverID = " + serverID;
 
-                    if (plugin.manager.params.isMw_enabled() && !servidores.get(serverID).isEmpty()) {
+                    if (plugin.getManager().params.isMw_enabled() && !servidores.get(serverID).isEmpty()) {
                         sql += " AND (";
                         for (String mundoElegido : servidores.get(serverID)) {
                             sql += "worldName like '" + mundoElegido + "' OR ";
@@ -385,11 +385,11 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 sql = sql.substring(0, sql.length() - 3);
             }
         } else {
-            sql += " where serverID=" + plugin.manager.params.getMultiS();
+            sql += " where serverID=" + plugin.getManager().params.getMultiS();
 
-            if (plugin.manager.params.isMw_enabled() && servidores != null && servidores.get(plugin.manager.params.getMultiS()) != null) {
+            if (plugin.getManager().params.isMw_enabled() && servidores != null && servidores.get(plugin.getManager().params.getMultiS()) != null) {
                 sql += " AND (";
-                for (String mundoElegido : servidores.get(plugin.manager.params.getMultiS())) {
+                for (String mundoElegido : servidores.get(plugin.getManager().params.getMultiS())) {
                     sql += "worldName like '" + mundoElegido + "' OR ";
                 }
                 sql = sql.substring(0, sql.length() - 4) + ')';
@@ -408,7 +408,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                         rs.getInt("playedTime"), this.plugin);
                 pf.setServer(rs.getShort("serverID"));
 
-                if (plugin.manager.params.isMw_enabled()) {
+                if (plugin.getManager().params.isMw_enabled()) {
                     pf.setFame(rs.getInt("PlayerWorld.points"));
                     pf.setWorld(rs.getString("worldName"));
                 }
@@ -442,7 +442,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             saveBoard.setString(3, sb.getData().getServer());
             saveBoard.setString(4, sb.getData().getOrientacion());
             saveBoard.setShort(5, sb.getData().getPrimitiveBlockface());
-            saveBoard.setShort(6, plugin.manager.params.getMultiS());
+            saveBoard.setShort(6, plugin.getManager().params.getMultiS());
             saveBoard.setString(7, l.getWorld().getName());
             saveBoard.setInt(8, l.getBlockX());
             saveBoard.setInt(9, l.getBlockY());
@@ -467,7 +467,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         try {
             PreparedStatement updBoard = mysql.prepareStatement(SAVE_BOARD);
-            updBoard.setInt(1, plugin.manager.params.getMultiS());
+            updBoard.setInt(1, plugin.getManager().params.getMultiS());
             updBoard.setString(2, l.getWorld().getName());
             updBoard.setInt(3, l.getBlockX());
             updBoard.setInt(4, l.getBlockY());
@@ -491,7 +491,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         try {
             PreparedStatement delBoard = mysql.prepareStatement(DELETE_BOARD);
-            delBoard.setInt(1, plugin.manager.params.getMultiS());
+            delBoard.setInt(1, plugin.getManager().params.getMultiS());
             delBoard.setString(2, l.getWorld().getName());
             delBoard.setInt(3, l.getBlockX());
             delBoard.setInt(4, l.getBlockY());
@@ -517,7 +517,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         try {
             PreparedStatement searchBoards = mysql.prepareStatement(SEARCH_BOARDS);
-            searchBoards.setInt(1, plugin.manager.params.getMultiS());
+            searchBoards.setInt(1, plugin.getManager().params.getMultiS());
             ResultSet rs = searchBoards.executeQuery();
             PvpTitles.logDebugInfo("Search boards: " + searchBoards.toString());
 
@@ -595,10 +595,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 String nombre = rs.getString("playerUUID");
                 Date fechaMod = rs.getDate("lastLogin");
 
-                if (!plugin.manager.params.getNoPurge().contains(nombre)) {
+                if (!plugin.getManager().params.getNoPurge().contains(nombre)) {
                     Calendar cFile = new GregorianCalendar();
                     cFile.setTime(fechaMod);
-                    cFile.add(6, plugin.manager.params.getTimeP());
+                    cFile.add(6, plugin.getManager().params.getTimeP());
 
                     Date hoy = new Date();
                     Calendar cHoy = new GregorianCalendar();
@@ -624,7 +624,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 File.separator).append( // Separador
                         filename).toString();
 
-        short serverID = plugin.manager.params.getMultiS();
+        short serverID = plugin.getManager().params.getMultiS();
 
         List<PlayerPT> plClass = new ArrayList();
         List<WorldPlayerPT> plwClass = new ArrayList();

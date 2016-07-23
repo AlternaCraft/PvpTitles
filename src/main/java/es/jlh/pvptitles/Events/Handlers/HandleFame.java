@@ -25,7 +25,7 @@ import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Hook.VaultHook;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Managers.Timer.TimedPlayer;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.Ranks;
@@ -51,7 +51,7 @@ public class HandleFame implements Listener {
      */
     public HandleFame(PvpTitles pt) {
         this.pt = pt;
-        this.dm = pt.manager;
+        this.dm = pt.getManager();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -63,13 +63,13 @@ public class HandleFame implements Listener {
 
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
-            Map<String, Map<String, List<String>>> kills = pt.manager.rewards.get("onKill");
+            Map<String, Map<String, List<String>>> kills = pt.getManager().rewards.get("onKill");
             if (kills != null) {
                 setValues(kills.get(null), e.getOfflinePlayer());
             }
         }
 
-        Map<String, Map<String, List<String>>> fame = pt.manager.rewards.get("onFame");
+        Map<String, Map<String, List<String>>> fame = pt.getManager().rewards.get("onFame");
         if (fame != null) {
             for (String cantidad : fame.keySet()) {
                 if (e.getFame() < Integer.parseInt(cantidad)
@@ -80,7 +80,7 @@ public class HandleFame implements Listener {
             }
         }
 
-        Map<String, Map<String, List<String>>> rank = pt.manager.rewards.get("onRank");
+        Map<String, Map<String, List<String>>> rank = pt.getManager().rewards.get("onRank");
         if (rank != null) {
             for (String rango : rank.keySet()) {
                 int seconds = 0;
@@ -99,7 +99,7 @@ public class HandleFame implements Listener {
             }
         }
 
-        Map<String, Map<String, List<String>>> killstreak = pt.manager.rewards.get("onKillstreak");
+        Map<String, Map<String, List<String>>> killstreak = pt.getManager().rewards.get("onKillstreak");
         if (killstreak != null) {
             for (String ks : killstreak.keySet()) {
                 if (e.getKillstreak() == Integer.valueOf(ks)) {
@@ -183,14 +183,14 @@ public class HandleFame implements Listener {
             String rank = Ranks.getRank(e.getFameTotal(), seconds);
 
             if (e.getWorldname() != null) {
-                pl.sendMessage(PLUGIN + LangsFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(getPluginName() + LangsFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%world%", e.getWorldname())
                         .replace("%tag%", this.dm.params.getTag())
                 );
             } else {
-                pl.sendMessage(PLUGIN + LangsFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
+                pl.sendMessage(getPluginName() + LangsFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
                         .replace("%fame%", String.valueOf(e.getFameTotal()))
                         .replace("%rank%", rank)
                         .replace("%tag%", this.dm.params.getTag())

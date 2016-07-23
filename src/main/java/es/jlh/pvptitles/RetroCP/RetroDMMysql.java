@@ -72,7 +72,7 @@ public class RetroDMMysql {
             ResultSet ss = mysql.createStatement().executeQuery("select * from SignsServer");
 
             while (ni.next()) {
-                if (ni.getInt("idServer") == pt.manager.params.getMultiS()) {
+                if (ni.getInt("idServer") == pt.getManager().params.getMultiS()) {
                     continue;
                 }
 

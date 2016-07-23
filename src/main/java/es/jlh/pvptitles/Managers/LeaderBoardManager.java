@@ -21,7 +21,7 @@ import es.jlh.pvptitles.Events.BoardEvent;
 import es.jlh.pvptitles.Files.HologramsFile;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Managers.BoardsAPI.Board;
 import es.jlh.pvptitles.Managers.BoardsCustom.HologramBoard;
 import es.jlh.pvptitles.Managers.BoardsCustom.SignBoard;
@@ -74,21 +74,21 @@ public class LeaderBoardManager {
             // Compruebo si ya hay algo ocupando el sitio            
             ArrayList<PlayerFame> pf = new ArrayList<>();
             try {
-                pf = this.pt.manager.dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
+                pf = this.pt.getManager().dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
             } catch (DBException ex) {
                 PvpTitles.logError(ex.getCustomMessage(), null);
             }
             short jugadores = (short) pf.size();
 
             if (!b.isMaterializable(jugadores)) {
-                pl.sendMessage(PLUGIN + LangsFile.BOARD_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
+                pl.sendMessage(getPluginName() + LangsFile.BOARD_CANT_BE_PLACED.getText(Localizer.getLocale(pl)));
                 return false;
             }
 
             // Tipos predefinidos
             if (b instanceof SignBoard) {
                 try {
-                    pt.manager.dbh.getDm().registraBoard((SignBoard) b);
+                    pt.getManager().dbh.getDm().registraBoard((SignBoard) b);
                 } catch (DBException ex) {
                     PvpTitles.logError(ex.getCustomMessage(), null);
                     return false;
@@ -102,7 +102,7 @@ public class LeaderBoardManager {
 
             pt.getServer().getPluginManager().callEvent(new BoardEvent(pl, b.getData().getFullLocation()));
             
-            pl.sendMessage(PLUGIN + LangsFile.BOARD_CREATED_CORRECTLY.
+            pl.sendMessage(getPluginName() + LangsFile.BOARD_CREATED_CORRECTLY.
                     getText(Localizer.getLocale(pl)).replace("%name%", b.getData().getNombre()));
         } else {
             return false;
@@ -114,7 +114,7 @@ public class LeaderBoardManager {
     public void loadBoard(Board cs) {
         if (!boards.contains(cs)) {
             try {
-                cs.materialize(pt.manager.dbh.getDm().getTopPlayers(
+                cs.materialize(pt.getManager().dbh.getDm().getTopPlayers(
                         cs.getModel().getCantidad(), cs.getData().getServer()
                 ));
             } catch (DBException ex) {
@@ -128,7 +128,7 @@ public class LeaderBoardManager {
         for (Board board : boards) {
             ArrayList<PlayerFame> pf = new ArrayList<>();
             try {
-                pf = pt.manager.dbh.getDm().getTopPlayers(
+                pf = pt.getManager().dbh.getDm().getTopPlayers(
                         board.getModel().getCantidad(), board.getData().getServer());
             } catch (DBException ex) {
                 PvpTitles.logError(ex.getCustomMessage(), null);
@@ -144,7 +144,7 @@ public class LeaderBoardManager {
             if (bo.getData().getLocation().equals(CustomLocation.toCustomLocation(l))) {
                 short jugadores = 0;
                 try {
-                    jugadores = (short) pt.manager.dbh.getDm().getTopPlayers(
+                    jugadores = (short) pt.getManager().dbh.getDm().getTopPlayers(
                             bo.getModel().getCantidad(), bo.getData().getServer()).size();
                 } catch (DBException ex) {
                     PvpTitles.logError(ex.getCustomMessage(), null);
@@ -159,7 +159,7 @@ public class LeaderBoardManager {
                         pl = event.getPlayer();
 
                         if (!pl.hasPermission("pvptitles.manageboard")) {
-                            pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(getPluginName() + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             event.setCancelled(true);
                             return;
                         }
@@ -167,7 +167,7 @@ public class LeaderBoardManager {
                         pl = (Player) o;
 
                         if (!pl.hasPermission("pvptitles.manageboard")) {
-                            pl.sendMessage(PLUGIN + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
+                            pl.sendMessage(getPluginName() + LangsFile.COMMAND_NO_PERMISSIONS.getText(Localizer.getLocale(pl)));
                             return;
                         }
                     }
@@ -176,7 +176,7 @@ public class LeaderBoardManager {
                 // Tipos predefinidos
                 if (bo instanceof SignBoard) {
                     try {
-                        pt.manager.dbh.getDm().borraBoard(bo.getData().getLocation());
+                        pt.getManager().dbh.getDm().borraBoard(bo.getData().getLocation());
                     } catch (DBException ex) {
                         PvpTitles.logError(ex.getCustomMessage(), null);
                         return;
@@ -191,7 +191,7 @@ public class LeaderBoardManager {
                 pt.getServer().getPluginManager().callEvent(new BoardEvent(pl, bo.getData().getFullLocation()));
                 
                 if (pl != null) {
-                    pl.sendMessage(PLUGIN + LangsFile.BOARD_DELETED.getText(Localizer.getLocale(pl)));
+                    pl.sendMessage(getPluginName() + LangsFile.BOARD_DELETED.getText(Localizer.getLocale(pl)));
                 }
 
                 break;

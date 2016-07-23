@@ -18,17 +18,17 @@ package es.jlh.pvptitles.Main;
 
 import es.jlh.pvptitles.Backend.ConfigDataStore;
 import es.jlh.pvptitles.Backend.Exceptions.DBException;
-import es.jlh.pvptitles.Files.TemplatesFile;
-import es.jlh.pvptitles.Files.RewardsFile;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Files.LangsFile.LangType;
 import es.jlh.pvptitles.Files.ModelsFile;
+import es.jlh.pvptitles.Files.RewardsFile;
 import es.jlh.pvptitles.Files.ServersFile;
+import es.jlh.pvptitles.Files.TemplatesFile;
 import es.jlh.pvptitles.Hook.HolographicHook;
 import es.jlh.pvptitles.Main.Handlers.ConfigHandler;
 import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import static es.jlh.pvptitles.Main.Handlers.DBHandler.tipo;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import static es.jlh.pvptitles.Main.PvpTitles.showMessage;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardData;
 import es.jlh.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -181,7 +181,7 @@ public final class Manager {
     public void loadSavedBoards() {
         List<SignBoardData> carteles = new ArrayList<>();
         try {
-            carteles = pvpTitles.manager.dbh.getDm().buscaBoards();
+            carteles = pvpTitles.getManager().dbh.getDm().buscaBoards();
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
         }
@@ -194,7 +194,7 @@ public final class Manager {
 
             if (bm == null) {
                 try {
-                    pvpTitles.manager.dbh.getDm().borraBoard(cartel.getLocation());
+                    pvpTitles.getManager().dbh.getDm().borraBoard(cartel.getLocation());
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {
@@ -433,7 +433,7 @@ public final class Manager {
 
                         if (timedPlayer.getOfflinePlayer().isOnline()) {
                             Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
-                            pl.sendMessage(PLUGIN + LangsFile.PLAYER_NEW_RANK.
+                            pl.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.
                                     getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
                         }
                     }

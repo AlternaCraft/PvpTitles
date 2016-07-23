@@ -20,18 +20,19 @@ import es.jlh.pvptitles.Backend.Exceptions.DBException;
 import es.jlh.pvptitles.Events.Handlers.HandlePlayerFame;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Files.LangsFile.LangType;
-import es.jlh.pvptitles.Files.TemplatesFile.FILES;
 import static es.jlh.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.FAME_VALUE_TAG;
+import es.jlh.pvptitles.Files.TemplatesFile.FILES;
 import static es.jlh.pvptitles.Files.TemplatesFile.KS_TITLE_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.KS_VALUE_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.NEXT_RANK_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
 import static es.jlh.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
+import static es.jlh.pvptitles.Files.TemplatesFile.VETO_TAG;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import es.jlh.pvptitles.Misc.Ranks;
 import es.jlh.pvptitles.Misc.StrUtils;
@@ -40,7 +41,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import static es.jlh.pvptitles.Files.TemplatesFile.VETO_TAG;
 
 public class RankCommand implements CommandExecutor {
 
@@ -55,7 +55,7 @@ public class RankCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_FORBIDDEN.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_FORBIDDEN.getText(messages));
             return true;
         }
 
@@ -79,7 +79,7 @@ public class RankCommand implements CommandExecutor {
 
         int fame = 0;
         try {
-            fame = pt.manager.dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+            fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
         }
@@ -88,7 +88,7 @@ public class RankCommand implements CommandExecutor {
 
         int seconds = 0;
         try {
-            seconds = pt.manager.dbh.getDm().loadPlayedTime(player.getUniqueId())
+            seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
                     + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         } catch (DBException ex) {
             PvpTitles.logError(ex.getCustomMessage(), null);
@@ -100,18 +100,18 @@ public class RankCommand implements CommandExecutor {
         int timeup = Ranks.nextRankTime();
 
         String nextRank = Ranks.nextRankTitle();
-        String tag = pt.manager.params.getTag();
+        String tag = pt.getManager().params.getTag();
 
         LangType lang = Localizer.getLocale(player);
 
-        String[] lines = this.pt.manager.templates.getFileContent(FILES.RANK_COMMAND);
+        String[] lines = this.pt.getManager().templates.getFileContent(FILES.RANK_COMMAND);
 
         for (String line : lines) {
             String msg = line;
 
             if (!line.isEmpty()) {
                 msg = msg
-                        .replace(PLUGIN_TAG, PLUGIN)
+                        .replace(PLUGIN_TAG, getPluginName())
                         .replace(RANK_TITLE_TAG, LangsFile.RANK_INFO_TITLE.getText(lang))
                         .replace(RANK_VALUE_TAG, rank)
                         .replace(FAME_TITLE_TAG, LangsFile.RANK_INFO_TAG.getText(lang)
@@ -134,7 +134,7 @@ public class RankCommand implements CommandExecutor {
                 if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
                     msg = msg
                             .replace(VETO_TAG, LangsFile.VETO_STARTED.getText(Localizer.getLocale(player))
-                                    .replace("%tag%", pt.manager.params.getTag())
+                                    .replace("%tag%", pt.getManager().params.getTag())
                                     .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(uuid))));
                 } else if (msg.contains(VETO_TAG)) {
                     continue;

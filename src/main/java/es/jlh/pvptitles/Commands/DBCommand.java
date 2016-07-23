@@ -21,7 +21,7 @@ import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Handlers.DBHandler;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -42,11 +42,11 @@ public class DBCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
         if (args.length == 0) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
 
-        DatabaseManager dm = pvpTitles.manager.getDbh().getDm();
+        DatabaseManager dm = pvpTitles.getManager().getDbh().getDm();
 
         String filename;
 
@@ -55,21 +55,21 @@ public class DBCommand implements CommandExecutor {
                 if (args.length > 1) {
                     filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".sql" : ".json");
                 } else {
-                    filename = pvpTitles.manager.dbh.getDm().getDefaultFExport();
+                    filename = pvpTitles.getManager().dbh.getDm().getDefaultFExport();
                 }
                 dm.DBExport(filename);
-                sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Exported correctly");
+                sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Exported correctly");
                 break;
             case "import":
                 if (args.length > 1) {
                     filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".json" : ".sql");
                 } else {
-                    filename = pvpTitles.manager.dbh.getDm().getDefaultFImport();
+                    filename = pvpTitles.getManager().dbh.getDm().getDefaultFImport();
                 }
                 if (dm.DBImport(filename)) {
-                    sender.sendMessage(PLUGIN + ChatColor.YELLOW + "Imported correctly");
+                    sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Imported correctly");
                 } else {
-                    sender.sendMessage(PLUGIN + ChatColor.RED + "File '"
+                    sender.sendMessage(getPluginName() + ChatColor.RED + "File '"
                             + filename + "' not found...");
                 }
                 break;

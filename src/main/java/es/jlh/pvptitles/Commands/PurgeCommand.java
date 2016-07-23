@@ -19,7 +19,7 @@ package es.jlh.pvptitles.Commands;
 import es.jlh.pvptitles.Files.LangsFile;
 import es.jlh.pvptitles.Main.Manager;
 import es.jlh.pvptitles.Main.PvpTitles;
-import static es.jlh.pvptitles.Main.PvpTitles.PLUGIN;
+import static es.jlh.pvptitles.Main.PvpTitles.getPluginName;
 import es.jlh.pvptitles.Misc.Localizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +32,7 @@ public class PurgeCommand implements CommandExecutor {
 
     public PurgeCommand(PvpTitles pvpTitles) {
         this.pvpTitles = pvpTitles;
-        this.dh = this.pvpTitles.manager;
+        this.dh = this.pvpTitles.getManager();
     }
     
     @Override
@@ -40,13 +40,13 @@ public class PurgeCommand implements CommandExecutor {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player)sender) : Manager.messages;
         
         if (args.length > 0) {
-            sender.sendMessage(PLUGIN + LangsFile.COMMAND_ARGUMENTS.getText(messages));
+            sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         }
         
         int cantidad = dh.dbh.getDm().purgeData();
         
-        sender.sendMessage(PLUGIN + LangsFile.PURGE_RESULT.getText(messages).
+        sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).
                 replace("%cant%", String.valueOf(cantidad)));
         
         return true;

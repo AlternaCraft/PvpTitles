@@ -93,7 +93,7 @@ public class MySQLConnection {
                 else if (reconnect) {
                     closeConnection();
                     
-                    PvpTitles.getInstance().manager.getDbh().mysqlConnect(true);
+                    PvpTitles.getInstance().getManager().getDbh().mysqlConnect(true);
                     valida = conexion.isValid(3) && !conexion.isClosed();
                     
                     if (valida) estado_conexion = Estado.CONECTADO;
