@@ -1,4 +1,4 @@
-# PvpTitles 2015 Edition - [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles)
+# PvpTitles 2015 Edition - [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles) [ ![Download](https://api.bintray.com/packages/alternacraft/maven/PvpTitles/images/download.svg) ](https://bintray.com/alternacraft/maven/PvpTitles/_latestVersion)
 
 | http://alternacraft.esy.es | [#PvpTitles](http://webchat.freenode.net/?channels=%23PvpTitles) |
 | -------------------------- | ---------------------------------------------------------------- |
