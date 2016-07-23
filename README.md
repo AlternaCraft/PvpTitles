@@ -1,7 +1,5 @@
 # PvpTitles 2015 Edition - [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles)
 
-========================
-
 | http://alternacraft.esy.es | [#PvpTitles](https://webchat.freenode.net/) |
 | -------------------------- | ------------------------------------------- |
 
