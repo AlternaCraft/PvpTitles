@@ -1,6 +1,9 @@
 language: java
 jdk: [ openjdk7 ]
 
+notifications:
+  - email: false
+
 sudo: false # faster builds
 
 script: mvn compile test -U
