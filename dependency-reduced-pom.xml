@@ -4,7 +4,7 @@
   <groupId>com.alternacraft</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.5.7-SNAPSHOT</version>
+  <version>2.5.7</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -195,15 +195,14 @@
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
-      <artifactId>Vault</artifactId>
-      <version>1.6.6</version>
-      <scope>provided</scope>
-      <optional>true</optional>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.6</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.0.8</version>
+      <version>2.5.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -275,9 +274,9 @@
   </dependencies>
   <distributionManagement>
     <repository>
-      <id>bintray-alternacraft-maven</id>
+      <id>bintray</id>
       <name>alternacraft-maven</name>
-      <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1</url>
+      <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1;</url>
     </repository>
   </distributionManagement>
   <properties>
