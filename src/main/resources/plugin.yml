@@ -5,7 +5,7 @@ database: true
 
 author: AlternaCraft
 
-main: es.jlh.pvptitles.Main.PvpTitles
+main: com.alternacraft.pvptitles.Main.PvpTitles
 softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI, MVdWPlaceholderAPI]
 
 commands:
