@@ -47,7 +47,7 @@ public abstract class Board {
     /**
      * Método para comprobar si se puede crear un board
      * @param jugadores
-     * @return 
+     * @return Boolean
      */
     public abstract boolean isMaterializable(short jugadores);
     
@@ -65,19 +65,19 @@ public abstract class Board {
     
     /**
      * Devuelve la información del board
-     * @return 
+     * @return BoardData
      */
     public abstract BoardData getData();
     
     /**
      * Devuelve el modelo del board
-     * @return 
+     * @return BoardModel
      */
     public abstract BoardModel getModel();
     
     /**
      * Devuelve el controlador del modelo
-     * @return 
+     * @return ModelController
      */
     public abstract ModelController getModelController();
     

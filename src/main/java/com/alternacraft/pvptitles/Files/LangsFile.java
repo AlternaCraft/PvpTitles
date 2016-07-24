@@ -49,8 +49,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * <li>Russian (RU)</li>
  * <li>Swedish (SV)</li>
  * </ul>
- *
- * @see Localizer
  */
 public enum LangsFile {
     // <editor-fold defaultstate="collapsed" desc="MESSAGES">
