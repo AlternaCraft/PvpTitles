@@ -1,7 +1,7 @@
-# PvpTitles 2015 Edition - [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles)
+# PvpTitles 2015 Edition - [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles) [ ![Download](https://api.bintray.com/packages/alternacraft/maven/PvpTitles/images/download.svg) ](https://bintray.com/alternacraft/maven/PvpTitles/_latestVersion)
 
-| http://alternacraft.esy.es | [#PvpTitles](http://webchat.freenode.net/?channels=%23PvpTitles) |
-| -------------------------- | ---------------------------------------------------------------- |
+| http://alternacraft.esy.es | [#PvpTitles](http://webchat.freenode.net/?channels=%23PvpTitles) en Freenode |
+| -------------------------- | ---------------------------------------------------------------------------- |
 
 PvpTitles is a [Bukkit](https://github.com/Bukkit/Bukkit) / [Spigot](https://github.com/SpigotMC/Spigot-API) plugin which is based on the [PvP titles plugin](https://github.com/dreanor/PvPTitles) by [asc_dreanor](https://github.com/dreanor). These titles reflect a player's success in defeating other players by earning titles after a specific amount of Kills. 
 
