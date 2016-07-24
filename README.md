@@ -1,6 +1,5 @@
 # PvpTitles 2015 Edition
 [![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles) [ ![Download](https://api.bintray.com/packages/alternacraft/maven/PvpTitles/images/download.svg) ](https://bintray.com/alternacraft/maven/PvpTitles/_latestVersion)
-
 [![Web](https://img.shields.io/badge/Web-http%3A%2F%2Falternacraft.esy.es-yellow.svg)](http://alternacraft.esy.es) [![IRC](https://img.shields.io/badge/IRC-%23PvpTitles-yellow.svg)](http://webchat.freenode.net/?channels=%23PvpTitles)
 ======
 
