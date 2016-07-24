@@ -273,6 +273,13 @@
       <optional>true</optional>
     </dependency>
   </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>bintray-alternacraft-maven</id>
+      <name>alternacraft-maven</name>
+      <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1</url>
+    </repository>
+  </distributionManagement>
   <properties>
     <maven.compiler.source>1.7</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

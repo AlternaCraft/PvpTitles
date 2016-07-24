@@ -247,4 +247,12 @@
         </plugins>
     </build>
     
+    <distributionManagement>
+        <repository>
+            <id>bintray-alternacraft-maven</id>
+            <name>alternacraft-maven</name>
+            <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1</url>
+        </repository>
+    </distributionManagement>
+    
 </project>
