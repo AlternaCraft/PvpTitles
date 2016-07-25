@@ -7,11 +7,11 @@ notifications:
 env:
   global:  
   - secure:  Yi2WhcEjyibmU0gw6i4/qOQXt7xhE+3iAHeqolm6hwU2zNjS/dodQuhE0I0gY3vPYrJi06Tklu4IIaI0IVwOcUpbmqkv3pgcYGIhCJ/rpgj1xrSYwwSSdlgx17F8t6qpwXTxS++lsT648gcpzzpJUAMJCpFMVdzuNHhRynwJsyuemgRefiiiqu0U0LBt2/qvma/USUJMtOWRvEBKPwR5TiYkQT3nhseiNe6aE/m1tK98DuUFOzNzHnLacSYcz2iLyVr4g1KvzmvCS6s2a5liNGwydpBhgYQY0wFcvVWhkrWEFg02E4ZqFI0D4qz1Cp/wu5Uu12aw8p7jjDpGD4/vepyMTCQKPLH1idWp7VHsJ75eeokD9Yqk9lZ5dTIcmd06pRVnTJn7cHb7ElmF/rBzVy0c28wM7ubn83ruCERkjca8qNJIJAtFCEEkp9eK5NERbEiHYHrNZbS4Z9EV572c4NRAN8w2LXIlLIaPH5PSgrhooxVK8OpVBH6ObpSWPamVuPToPPvBxGPBf2U9hEljBRKXxd4NnmpOlMNd9Jrq8WPGTwrxpoJJuGTbtt7yoRbLwpaZjk2I4Z2U518/RtgTQPjjsRHzjLd4SKzcDs7F9TGXu8fSgrcLNkWb/SXB0ZC2rEh1XS1QMZSJj9sUA+6B/0+20tK0MkxtLO4Jd9BWGvw=
-  - ENCRYPTION_LABEL: "4b7ad6b3cb7b"
+  - ENCRYPTION_LABEL: 4b7ad6b3cb7b
   - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"  
 
 script: mvn compile test -U
   
 after_success:
-  - .utility/deploy-javadoc.sh
+  - sh .utility/deploy-javadoc.sh
   - bash <(curl -s https://codecov.io/bash)
