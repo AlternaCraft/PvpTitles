@@ -16,9 +16,9 @@ cp -R target/site/apidocs $HOME/javadoc-latest
 
 cd $HOME
 
+git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
-git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
 
 cd gh-pages
 
