@@ -20,7 +20,7 @@ git config --global user.name "Travis CI"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
 
-RELEASE_VERSION=`mvn help:evaluate -Dexpression=project.version`
+RELEASE_VERSION=`mvn help:evaluate -Dartifact=com.alternacraft:PvpTitles -Dexpression=project.version`
 
 echo $RELEASE_VERSION
 
