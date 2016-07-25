@@ -28,6 +28,7 @@ git clone --quiet --branch=$TARGET_BRANCH $REPO gh-pages
 # doCompile
 
 # Now let's go have some fun with the cloned repo
+dir
 cd gh-pages
 dir
 git config user.name "Travis CI"
