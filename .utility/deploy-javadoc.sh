@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-echo ${TRAVIS_TAG}
+echo `mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \ -Dexpression=project.version`
 
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
