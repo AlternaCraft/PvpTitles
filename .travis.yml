@@ -10,7 +10,7 @@ env:
   - ENCRYPTION_LABEL: 4b7ad6b3cb7b
   - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"  
 
-script: mvn compile test -U
+script: mvn compile test generate-sources javadoc:javadoc -U
   
 after_success:
   - sh .utility/deploy-javadoc.sh
