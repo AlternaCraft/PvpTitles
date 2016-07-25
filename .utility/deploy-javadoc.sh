@@ -20,12 +20,14 @@ git config --global user.name "Travis CI"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
 
-echo `mvn help:evaluate -Dexpression=project.version`
+RELEASE_VERSION=`mvn help:evaluate -Dexpression=project.version`
+
+echo $RELEASE_VERSION
 
 cd gh-pages
 
-git rm -rf ./javadoc
-cp -Rf $HOME/javadoc-latest ./javadoc
+git rm -rf --ignore-unmatch ./javadoc/$RELEASE_VERSION
+cp -Rf $HOME/javadoc-latest ./javadoc/$RELEASE_VERSION
 git add -f .
 git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
 git push -fq origin $TARGET_BRANCH > /dev/null
