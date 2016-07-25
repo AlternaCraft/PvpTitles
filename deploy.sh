@@ -29,10 +29,12 @@ git clone --quiet --branch=$TARGET_BRANCH $REPO gh-pages
 
 # Now let's go have some fun with the cloned repo
 cd gh-pages
+dir
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
 git rm -rf ./javadoc
+echo "blabla"
 cp -Rf $HOME/javadoc-latest ./javadoc
 git add -f .
 git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
