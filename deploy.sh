@@ -33,7 +33,7 @@ dir
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
-git rm -rf ./javadoc
+#git rm -rf ./javadoc
 echo "blabla"
 cp -Rf $HOME/javadoc-latest ./javadoc
 git add -f .
