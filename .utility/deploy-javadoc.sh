@@ -4,16 +4,15 @@ set -e # Exit with nonzero exit code if anything fails
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
 
-function doCompile {
-    mvn compile test -U
-}
-
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
     echo "Skipping deploy; just doing a build."
-    doCompile
     exit 0
 fi
+
+echo -e "Publishing javadoc...\n"
+
+cp -R build/docs/javadoc $HOME/javadoc-latest
 
 # Save some useful information
 REPO=`git config remote.origin.url`
@@ -24,23 +23,16 @@ SHA=`git rev-parse --verify HEAD`
 # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deply)
 git clone --quiet --branch=$TARGET_BRANCH $REPO gh-pages
 
-# Run our compile script
-# doCompile
-
 # Now let's go have some fun with the cloned repo
-dir
 cd gh-pages
-dir
+
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
-#git rm -rf ./javadoc
-echo "blabla"
+git rm -rf ./javadoc
 cp -Rf $HOME/javadoc-latest ./javadoc
 git add -f .
 git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
-
-dir
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
@@ -62,3 +54,5 @@ cd gh-pages
 # Now that we're all set up, we can push.
 git push $SSH_REPO $TARGET_BRANCH
 COMMENT1
+
+echo -e "Published Javadoc to gh-pages.\n"
