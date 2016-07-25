@@ -6,7 +6,7 @@ notifications:
 
 env:
   global:  
-  - ENCRYPTION_LABEL: 4b7ad6b3cb7b
+  - ENCRYPTION_LABEL: "4b7ad6b3cb7b"
   - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"  
 
 script: bash ./deploy.sh
