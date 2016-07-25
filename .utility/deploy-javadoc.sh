@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
+echo ${TRAVIS_TAG}
+
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
 
@@ -28,4 +30,4 @@ git add -f .
 git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
 git push -fq origin $TARGET_BRANCH > /dev/null
 
-echo "Published Javadoc to gh-pages.\n"
+echo "Published Javadoc to gh-pages."
