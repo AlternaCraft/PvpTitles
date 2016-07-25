@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-echo `mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \ -Dexpression=project.version`
-
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
 
@@ -21,6 +19,8 @@ cd $HOME
 git config --global user.name "Travis CI"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
+
+echo `mvn help:evaluate -Dexpression=project.version`
 
 cd gh-pages
 
