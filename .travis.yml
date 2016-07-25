@@ -4,9 +4,12 @@ jdk: [ openjdk7 ]
 notifications:
   - email: false
 
-sudo: false # faster builds
+env:
+  global:  
+  - ENCRYPTION_LABEL: 4b7ad6b3cb7b
+  - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"  
 
-script: mvn compile test -U
-
+script: bash ./deploy.sh
+  
 after_success:
   - bash <(curl -s https://codecov.io/bash)
