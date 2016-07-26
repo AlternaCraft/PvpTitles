@@ -13,6 +13,7 @@ fi
 # Save some useful information
 URL=`git config remote.origin.url`
 REPO=$(echo $URL | sed -e "s/https:\/\//https:\/\/${GH_TOKEN}@/g")
+VERSION=$(while read line; do echo $line; done < target/classes/project.properties)
 
 echo "Publishing javadoc...\n"
 
@@ -28,8 +29,8 @@ git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 cd gh-pages
 
 # Save the latest javadoc
-git rm -rf --ignore-unmatch ./javadoc
-cp -Rf $HOME/javadoc-latest ./javadoc
+git rm -rf --ignore-unmatch ./javadoc/$VERSION
+cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
 # Add and commit new files
 git add .
