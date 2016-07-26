@@ -14,20 +14,22 @@ echo "Publishing javadoc...\n"
 
 cp -R target/site/apidocs $HOME/javadoc-latest
 
+# RELEASE_VERSION=`mvn help:evaluate -Dartifact=com.alternacraft:PvpTitles:jar -Dexpression=project.version`
+
 cd $HOME
 
 git config --global user.name "Travis CI"
 git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 git clone --quiet --branch=$TARGET_BRANCH https://${GH_TOKEN}@github.com/AlternaCraft/Pvptitles $TARGET_BRANCH > /dev/null
 
-RELEASE_VERSION=`mvn help:evaluate -Dartifact=com.alternacraft:PvpTitles -Dexpression=project.version`
-
-echo $RELEASE_VERSION
+#echo $RELEASE_VERSION
 
 cd gh-pages
 
-git rm -rf --ignore-unmatch ./javadoc/$RELEASE_VERSION
-cp -Rf $HOME/javadoc-latest ./javadoc/$RELEASE_VERSION
+#git rm -rf --ignore-unmatch ./javadoc/$RELEASE_VERSION
+git rm -rf --ignore-unmatch ./javadoc
+#cp -Rf $HOME/javadoc-latest ./javadoc/$RELEASE_VERSION
+cp -Rf $HOME/javadoc-latest ./javadoc
 git add -f .
 git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
 git push -fq origin $TARGET_BRANCH > /dev/null
