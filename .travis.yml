@@ -5,9 +5,10 @@ notifications:
   - email: false
 
 env:
-  global:  
-  - ENCRYPTION_LABEL: 4b7ad6b3cb7b
-  - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"  
+  global:
+  - secure: "BULEaHVVB9kRmrVR46Xz8LpzLpFMHlDvsiDx0Lr+y6c2QSHRehXIdNEizsgWxIyhH4BRGPbN978i12daPzEf613gJNywHyrxiF7nc3yMs18rca6Z1yApP7ANejit3VGw0E9GrdP+58o10hNt3mB7pt2u7oXBBTaOOGARGrCX2rPbtNAkrWKKo9ytNr6Ymkn2lRtxvNYRI/8mmyFxPSNbZ9dUBTSHy2wHH+FvXpyF+yhrknEJZrR9AadaPSFRXavY6ialuhCt8sHA97k/Wn/XEDZhzNLRktJVCGazuel6J1miD7igK8CRKhox/SBj7j+4dodew2uVzcBm2htH57T6R7x5/12Jo0JE1jNddtAgACyWyIqFOd+ihUuE4YCOABbbF90qZrS2sYiyiVj11jtEj8yklRPDTvIN8Zn+qMdwqJzedJk0zbW48utDSWO2fRDHEMjgxHhKT0df3CPImL+7Bd61iEgC6iHalcsZ9j9XXLDqHShSfmBuio1pqFS6BUIcMsFZtq1wsIi6jPOA0PvuwXx9VEdu/D2ONLAslbMvBK/TLvmVrjTHGxLOy1URLttGnVBID+PflIRxAI4euG36xH1BE1AErk6A34o2vr33SU5JlsaWzxVjMgcK1nBz98AbfGz4d53oeueE1HHjFH5NQhuajDoJgRpj4acxwfFPHTk="
+  - COMMIT_AUTHOR_NAME: "Travis CI"
+  - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"
 
 script: mvn compile test javadoc:javadoc -U
   
