@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e # Exit with nonzero exit code if anything fails
+set -e # Exit with nonzero exit code if anything fail
 
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
