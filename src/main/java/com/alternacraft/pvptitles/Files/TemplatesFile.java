@@ -21,6 +21,8 @@ import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TemplatesFile {
 
@@ -112,6 +114,8 @@ public class TemplatesFile {
         }
     }
 
+    private final Map<String, CMDFile> templates = new HashMap<>();
+
     public TemplatesFile() {
         File dir = new File(DIRECTORY);
         if (!dir.exists()) {
@@ -121,10 +125,17 @@ public class TemplatesFile {
 
     private class CMDFile {
 
-        private File cmdFile;
+        private String[] content = null;
+        private File cmdFile = null;
 
         public CMDFile(String path) {
             this.cmdFile = new File(DIRECTORY + path);
+            this.load();
+        }
+
+        private void load() {
+            content = StrUtils.translateColors(UtilsFile.readFile(this.cmdFile))
+                    .split(System.getProperty("line.separator"));
         }
 
         public boolean exists() {
@@ -136,13 +147,14 @@ public class TemplatesFile {
             UtilsFile.writeFile(this.cmdFile, c);
         }
 
-        public String[] read() {
-            return StrUtils.translateColors(UtilsFile.readFile(this.cmdFile))
-                    .split(System.getProperty("line.separator"));
+        public String[] getContent() {
+            return this.content;
         }
     }
 
     public void load() {
+        templates.clear();
+
         for (FILES file : FILES.values()) {
             CMDFile f = new CMDFile(file.getPath());
             if (!f.exists()) {
@@ -152,11 +164,12 @@ public class TemplatesFile {
                     PvpTitles.logError("Template " + file.getPath() + " couldn't be created", null);
                 }
             }
+            templates.put(file.getPath(), f);
         }
     }
 
     public String[] getFileContent(FILES file) {
-        return new CMDFile(file.getPath()).read();
+        return templates.get(file.getPath()).getContent();
     }
 
 }

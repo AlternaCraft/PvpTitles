@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e # Exit with nonzero exit code if anything fail
+set -e # Exit with nonzero exit code if anything fails
 
 SOURCE_BRANCH="2.x"
 TARGET_BRANCH="gh-pages"
@@ -13,7 +13,7 @@ fi
 # Save some useful information
 URL=`git config remote.origin.url`
 REPO=$(echo $URL | sed -e "s/https:\/\//https:\/\/${GH_TOKEN}@/g")
-VERSION=$(while read line; do echo $line; done < target/classes/project.properties)
+VERSION=`cat target/classes/project.properties`
 
 echo "Publishing javadoc...\n"
 
