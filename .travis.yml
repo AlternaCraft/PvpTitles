@@ -7,13 +7,14 @@ script: mvn test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - ./.utility/deploy-javadoc.sh
-  - ./.utility/check-dependencies.sh
+  - bash .utility/deploy-javadoc.sh
+  - bash .utility/check-dependencies.sh
 
 before_deploy:
   - VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
   - sed -i "s/REPLACE_THIS_VERSION/$VERSION/" .utility/bintray.json
   - cp target/PvpTitles-$VERSION.jar target/PvpTitles.jar
+  - ls target/
 
 deploy:
   - provider: bintray
