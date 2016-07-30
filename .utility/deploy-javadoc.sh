@@ -1,15 +1,8 @@
 #!/bin/bash
-set -e # Exit with nonzero exit code if anything fails
-
-# Pull requests shouldn't try to deploy
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-    echo "Skipping deploy; just doing a build."
-    exit 0
-fi
 
 # A version has been released
 ORIGIN_BRANCH="^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
-if [[ "$TRAVIS_REPO_SLUG" =~ $ORIGIN_BRANCH ]]; then
+if [[ $TRAVIS_REPO_SLUG =~ $ORIGIN_BRANCH ]]; then
     # Save some useful information
     TARGET_BRANCH="gh-pages"
     

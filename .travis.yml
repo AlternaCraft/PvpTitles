@@ -16,11 +16,10 @@ after_success:
   - VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
   - sed -i "s/REPLACE_THIS_VERSION/$VERSION/" .utility/bintray.json
 
-before_deploy: "echo 'ready?'"  
 deploy:
   provider: bintray
   file: .utility/bintray.json
   user: esejuli94
   key: 
     secure: "CJAVh0DTn36xYvcmZtnR/39agj/PSUg7OTnjdAbRb9BeCMaOFIRTULiCszJRe+HyR+UBzdmN0IquGNpTUAFjTgwSPBmLjGUQSKcellH/yyY8U/xlHZqCBeXbDJbi4Y0xCJkMrE65Dnf3bt3pkay9bM52YjTDBYwed3HAh6UAguI4UyAoZyCVOG6xPEjahs3+IvEm+ZM1HuXePpi6d5O8tV/jayNlYKNkgrlQ9QPaF8hzjkcckhHay+CVdzJtrtFwIkfPcNwr7juNQrnLNiTZMYhUIVxs9bbMEZmPCuRwmI2GD3V3tr3EHjEs1he5pDbdZVsnbVDQ8tI2nhZygDVmMM2wVE6nWh+3al7g5LUf0NSbKW3P5FHZnEt1UNPZi6f7hWUcf6CuYDyEIADVk6o7f4dAkmt1Ym+4OF2SA6UaFjrVDuRGFd7kSIiSb9yiibA5AZdL3bXYP+CjZi3ieagHksRPLMEokyctXm9gTv5ybV1bkjRXjfkzfDqviXNpzaCklA5oKokVh7ZTaoulgr/iUqBO2rNj9MhIVgQUuYcC4ckUrZVnHiwR6KeO+WrnpYwqc2BCwibC38ne5cg3xRLlR6trVk9o+LmlNt+iaFjZX7g4D6b8xA/L5EL+AzTNcHLP5Lw1HnhI97F97B/Yly4PDLXLDjeXjce28qkHo4EyrN8="
-  on: 2.x
+  on: v2.5.7-stable

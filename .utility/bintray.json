@@ -1,8 +1,8 @@
 {
   "package": {
-    "name": "AlternaCraft",
-    "repo": "PvpTitles",
-    "subject": "esejuli94"
+    "name": "PvpTitles",
+    "repo": "maven",
+    "subject": "alternacraft"
   },
   "version": {
     "name": "REPLACE_THIS_VERSION"
