@@ -7,10 +7,10 @@ script: mvn test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - echo ${env.OSSRH_USER}
+  - echo ${OSSRH_USER}
 
 before_deploy:
-  - echo "<settings><servers><server><id>bintray</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server></servers></settings>" > ~/settings.xml
+  - echo "<settings><servers><server><id>bintray</id><username>\${OSSRH_USER}</username><password>\${OSSRH_PASS}</password></server></servers></settings>" > ~/settings.xml
   - mvn deploy --settings ~/settings.xml
   - bash .utility/deploy-javadoc.sh
   - bash .utility/check-dependencies.sh
