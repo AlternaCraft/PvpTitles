@@ -40,7 +40,7 @@ if [[ $TRAVIS_BRANCH =~ $ORIGIN_BRANCH ]]; then
     git push origin $TARGET_BRANCH
 
     echo "Published Javadoc to gh-pages."
-else;
+else
     echo $TRAVIS_BRANCH
     echo $TRAVIS_TAG
     echo "Bad repository; Just deploy for releases"
