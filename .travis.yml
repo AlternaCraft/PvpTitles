@@ -34,7 +34,7 @@ notifications:
   email: false
   irc:
     channels:
-    - "chat.freenode.net#PvpTitles"
+    - "irc://freenode/pvptitles"
     use_notice: true
     skip_join: true
 
