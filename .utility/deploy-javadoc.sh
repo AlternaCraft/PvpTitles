@@ -2,7 +2,7 @@
 
 # A version has been released
 ORIGIN_BRANCH="^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
-if [[ $TRAVIS_REPO_SLUG =~ $ORIGIN_BRANCH ]]; then
+if [[ $TRAVIS_BRANCH =~ $ORIGIN_BRANCH ]]; then
     # Save some useful information
     TARGET_BRANCH="gh-pages"
     
@@ -22,7 +22,7 @@ if [[ $TRAVIS_REPO_SLUG =~ $ORIGIN_BRANCH ]]; then
     cd $HOME
 
     # Get repository
-    git clone --quiet --branch=$TARGET_BRANCH $REPO $TARGET_BRANCH
+    git clone --quiet --branch=$TARGET_BRANCH $REPO gh-pages
     git config --global user.name "$COMMIT_AUTHOR_NAME"
     git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 
@@ -41,6 +41,7 @@ if [[ $TRAVIS_REPO_SLUG =~ $ORIGIN_BRANCH ]]; then
 
     echo "Published Javadoc to gh-pages."
 else;
-    echo $ORIGIN_BRANCH
+    echo $TRAVIS_BRANCH
+    echo $TRAVIS_TAG
     echo "Bad repository; Just deploy for releases"
 fi
