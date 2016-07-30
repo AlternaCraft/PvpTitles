@@ -41,7 +41,5 @@ if [[ $TRAVIS_BRANCH =~ $ORIGIN_BRANCH ]]; then
 
     echo "Published Javadoc to gh-pages."
 else
-    echo $TRAVIS_BRANCH
-    echo $TRAVIS_TAG
     echo "Bad repository; Just deploy for releases"
 fi
