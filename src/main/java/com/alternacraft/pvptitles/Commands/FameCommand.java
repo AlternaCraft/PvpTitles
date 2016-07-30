@@ -25,6 +25,7 @@ import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -117,7 +118,7 @@ public class FameCommand implements CommandExecutor {
                     try {
                         fameA = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
@@ -139,7 +140,7 @@ public class FameCommand implements CommandExecutor {
                                     replace("%tag%", this.dm.params.getTag())
                             );
                         } catch (DBException ex) {
-                            PvpTitles.logError(ex.getCustomMessage(), null);
+                            LoggerManager.logError(ex.getCustomMessage(), null);
                             event.setCancelled(true);
                         }
                     } else {
@@ -170,20 +171,20 @@ public class FameCommand implements CommandExecutor {
                             try {
                                 fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                             } catch (DBException ex) {
-                                PvpTitles.logError(ex.getCustomMessage(), null);
+                                LoggerManager.logError(ex.getCustomMessage(), null);
                             }
                         } else {
                             try {
                                 fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
                             } catch (DBException ex) {
-                                PvpTitles.logError(ex.getCustomMessage(), null);
+                                LoggerManager.logError(ex.getCustomMessage(), null);
                             }
                         }
                     } else {
                         try {
                             fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                         } catch (DBException ex) {
-                            PvpTitles.logError(ex.getCustomMessage(), null);
+                            LoggerManager.logError(ex.getCustomMessage(), null);
                         }
                     }
 
@@ -226,7 +227,7 @@ public class FameCommand implements CommandExecutor {
                     try {
                         fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     fameTotal = (fameTotal < 0) ? 0 : fameTotal;
@@ -249,7 +250,7 @@ public class FameCommand implements CommandExecutor {
                             sender.sendMessage(getPluginName() + LangsFile.FAME_SET.getText(messages).
                                     replace("%tag%", this.dm.params.getTag()));
                         } catch (DBException ex) {
-                            PvpTitles.logError(ex.getCustomMessage(), null);
+                            LoggerManager.logError(ex.getCustomMessage(), null);
                             event.setCancelled(true);
                         }
                     } else {

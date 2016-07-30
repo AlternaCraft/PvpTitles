@@ -16,17 +16,18 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag;
 import com.alternacraft.pvptitles.Files.HologramsFile;
+import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +63,8 @@ public class HolographicHook {
         ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
         
         if (ISHDENABLED) {
-            PvpTitles.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
-            PvpTitles.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
+            MessageManager.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
+            MessageManager.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
                     + " scoreboards per holograms " + ChatColor.AQUA + "loaded correctly."
             );
             

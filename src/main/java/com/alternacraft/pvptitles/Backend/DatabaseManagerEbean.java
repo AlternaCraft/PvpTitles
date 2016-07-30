@@ -24,6 +24,7 @@ import static com.alternacraft.pvptitles.Backend.Exceptions.DBException.UNKNOWN_
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.TagsClass;
@@ -617,7 +618,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             }
 
         } catch (org.json.simple.parser.ParseException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            LoggerManager.logError(ex.getMessage(), ex);
         }
 
         return true;

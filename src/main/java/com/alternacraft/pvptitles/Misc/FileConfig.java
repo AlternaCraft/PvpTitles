@@ -16,8 +16,9 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,14 +27,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Custom class for working better with the main config file. 
- * These are the capabilities:
+ * Custom class for working better with the main config file. These are the
+ * capabilities:
  * <ul>
  *  <li>Saving config with comments between lines</li>
  *  <li>Checking config version with internal version for checking changes
@@ -46,11 +48,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @see FileConfiguration
  */
 public class FileConfig {
-    
+
     private PvpTitles plugin = null;
 
     private FileConfiguration configFile = null;
     private File backupFile = null;
+
+    private String before = "";
 
     public FileConfig(PvpTitles pl) {
         plugin = pl;
@@ -109,17 +113,17 @@ public class FileConfig {
 
         try (BufferedReader br = new BufferedReader(new FileReader(outFile));
                 FileWriter fw = new FileWriter(temp)) {
-         
+
             String linea;
             while ((linea = br.readLine()) != null) {
                 if (linea.matches("\\s*-\\s?.+") && !linea.contains("#")) {
                     continue;
-                }                
+                }
                 String nline = replace(linea, newFile, oldFile);
                 fw.write(nline);
             }
         } catch (IOException ex) {
-            PvpTitles.logDebugInfo(Level.SEVERE, null, ex);
+            LoggerManager.logDebugInfo(Level.SEVERE, null, ex);
         }
 
         if (outFile.exists()) {
@@ -132,35 +136,47 @@ public class FileConfig {
         showMessage(ChatColor.GREEN + "Just in case, check the result.");
     }
 
-    private String replace(String linea, YamlConfiguration newFile, YamlConfiguration oldFile) {
-        String resul = linea;
+    private String replace(String line, YamlConfiguration newFile, YamlConfiguration oldFile) {
+        String resul = line;
 
         for (String value : newFile.getKeys(true)) {
-            if (value.equals("Version")) // Este parametro no se toca
+            // Este parametro no se toca
+            if (value.equals("version")) {
                 continue;
-            
-            String cValue = value + ":";
+            }
+
+            String cValue = value;
             String spaces = ""; // Estilo
 
             // Para comprobar si el valor existe solo me hace falta el ultimo valor
             if (value.contains(".")) {
                 String[] vals = value.split("\\.");
-                cValue = vals[vals.length - 1] + ":";
-                spaces = "    ";
+                cValue = vals[vals.length - 1];
+
+                // Style fix
+                int i = 0;
+                while (i < StringUtils.countMatches(value, ".")) {
+                    spaces += "    ";
+                    i++;
+                }
             }
 
-            if (linea.contains(cValue)) {
+            if (line.contains(cValue + ":")) {
                 Object v = null;
-                
-                if (oldFile.contains(value)) {
+                // Previous structure
+                if (oldFile.contains(before + "." + cValue)) {
+                    v = oldFile.get(before + "." + cValue);
+                } else if (newFile.contains(before + "." + cValue)) {
+                    v = newFile.get(before + "." + cValue);
+                // New structure
+                } else if (oldFile.contains(value)) {
                     v = oldFile.get(value);
-                }
-                else {
+                } else {
                     v = newFile.get(value);
-                }     
-                
-                resul = spaces + cValue;
-                
+                }
+
+                resul = spaces + cValue + ":";
+
                 if (v instanceof List) {
                     List<Object> vs = (List<Object>) v;
                     for (Object v1 : vs) {
@@ -169,29 +185,32 @@ public class FileConfig {
                     }
                 } else if (!(v instanceof MemorySection)) {
                     resul += " " + getFilteredString(v.toString());
+                } else if (v instanceof MemorySection) {
+                    before = value;
                 }
 
                 resul += System.lineSeparator();
                 break;
-            }          
+            }
         }
 
-        return (resul.equals(linea) ? resul + System.lineSeparator() : resul);
-    }    
-    
+        return (resul.equals(line) ? resul + System.lineSeparator() : resul);
+    }
+
     public FileConfiguration getConfig() {
         return this.configFile;
     }
 
     private String getFilteredString(String str) {
-        List<Character> special = Arrays.asList(':', '{', '}', '[', ']', ',', '&', 
+        List<Character> special = Arrays.asList(':', '{', '}', '[', ']', ',', '&',
                 '*', '#', '?', '|', '<', '>', '=', '!', '%', '@', '\\');
-        
+
         for (Character character : special) {
-            if (str.contains(String.valueOf(character)))
+            if (str.contains(String.valueOf(character))) {
                 return "\"" + str + "\"";
+            }
         }
-        
+
         return str;
     }
 }

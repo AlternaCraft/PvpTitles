@@ -22,6 +22,8 @@ import be.maximvdw.placeholderapi.PlaceholderReplacer;
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import org.bukkit.ChatColor;
@@ -37,7 +39,7 @@ public class MVdWPlaceholderHook {
 
     public void setup() {
         if (plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            PvpTitles.showMessage(ChatColor.YELLOW + "MVdWPlaceholderAPI " + ChatColor.AQUA + "integrated correctly.");
+            MessageManager.showMessage(ChatColor.YELLOW + "MVdWPlaceholderAPI " + ChatColor.AQUA + "integrated correctly.");
 
             PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_valid_rank",
                     new PlaceholderReplacer() {
@@ -49,14 +51,14 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     int seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     String rank = Ranks.getRank(fame, seconds);
@@ -79,14 +81,14 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     int seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     return Ranks.getRank(fame, seconds);
@@ -103,7 +105,7 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
                     return String.valueOf(fame);

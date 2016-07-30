@@ -27,6 +27,7 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_TAG;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class LadderCommand implements CommandExecutor {
         try {
             rankedPlayers = pvpTitles.getManager().dbh.getDm().getTopPlayers(top, "");
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
         String[] lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);

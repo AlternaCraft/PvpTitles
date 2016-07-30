@@ -1,0 +1,15 @@
+{
+  "package": {
+    "name": "AlternaCraft",
+    "repo": "PvpTitles",
+    "subject": "esejuli94"
+  },
+  "version": {
+    "name": "REPLACE_THIS_VERSION"
+  },
+  "files": [{
+    "includePattern": "target/(PvpTitles-.+\\.jar)",
+    "uploadPattern": "$1"
+  }],
+  "publish": true
+}

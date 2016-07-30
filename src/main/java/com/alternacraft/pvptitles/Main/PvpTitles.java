@@ -143,6 +143,7 @@
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Commands.BoardCommand;
@@ -165,6 +166,7 @@ import com.alternacraft.pvptitles.Hook.PlaceholderHook;
 import com.alternacraft.pvptitles.Hook.SBSHook;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
 import com.alternacraft.pvptitles.Managers.MetricsManager;
 import com.alternacraft.pvptitles.Managers.MovementManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
@@ -173,7 +175,6 @@ import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import java.sql.SQLException;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -284,7 +285,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().savePlayedTime(next);
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
             }
 
@@ -311,7 +312,7 @@ public class PvpTitles extends JavaPlugin {
             try {
                 this.manager.dbh.getDm().playerConnection(pl);
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
                 continue;
             }
 
@@ -355,35 +356,8 @@ public class PvpTitles extends JavaPlugin {
         return this.timerManager;
     }
 
-    // Custom message
-    public static void showMessage(String msg) {
-        plugin.getServer().getConsoleSender().sendMessage(getPluginName() + msg);
-    }
-
-    public static void logMessage(String msg) {
-        LOGGER.info(msg);
-    }
-
-    private static final String MYSQL_CRAP_REGEX = "com.*: ";
-
-    /* DEBUG MANAGEMENT */
-    public static void logDebugInfo(String message) {
-        logDebugInfo(Level.INFO, message.replaceFirst(MYSQL_CRAP_REGEX, ""));
-    }
-
-    public static void logDebugInfo(Level level, String message) {
-        logDebugInfo(level, message, null);
-    }
-
-    public static void logDebugInfo(Level level, String message, Exception ex) {
-        if (debugMode) {
-            PvpTitles.LOGGER.log(level, message, ex);
-        }
-    }
-
-    /* ERROR MANAGEMENT */
-    public static void logError(String message, Exception ex) {
-        PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
+    public static String getPluginName() {
+        return PLUGIN;
     }
 
     public static PvpTitles getInstance() {
@@ -392,9 +366,5 @@ public class PvpTitles extends JavaPlugin {
 
     public Manager getManager() {
         return manager;
-    }
-    
-    public static String getPluginName() {
-        return PLUGIN;
     }
 }

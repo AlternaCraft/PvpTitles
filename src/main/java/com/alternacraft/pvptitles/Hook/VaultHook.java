@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;

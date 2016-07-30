@@ -42,7 +42,7 @@
         </includes>
       </resource>
     </resources>
-    <finalName>PvpTitles</finalName>
+    <finalName>${project.name}-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>

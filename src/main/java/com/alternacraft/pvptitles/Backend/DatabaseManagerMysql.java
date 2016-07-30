@@ -16,10 +16,6 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
@@ -28,10 +24,15 @@ import static com.alternacraft.pvptitles.Backend.Exceptions.DBException.UNKNOWN_
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -198,7 +199,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             modFecha.setInt(2, psid);
             modFecha.executeUpdate();
 
-            PvpTitles.logDebugInfo("Update last login: " + modFecha.toString());
+            LoggerManager.logDebugInfo("Update last login: " + modFecha.toString());
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_CONNECTION, ex.getMessage());
         }
@@ -229,13 +230,13 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 updateFame.setInt(2, psid);
                 updateFame.setString(3, world);
                 updateFame.executeUpdate();
-                PvpTitles.logDebugInfo("Update mwplayer points: " + updateFame.toString());
+                LoggerManager.logDebugInfo("Update mwplayer points: " + updateFame.toString());
             } else {
                 PreparedStatement updateFame = mysql.prepareStatement(UPDATE_PLAYERMETA_POINTS);
                 updateFame.setInt(1, fame);
                 updateFame.setInt(2, psid);
                 updateFame.executeUpdate();
-                PvpTitles.logDebugInfo("Update player points: " + updateFame.toString());
+                LoggerManager.logDebugInfo("Update player points: " + updateFame.toString());
             }
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage());
@@ -268,7 +269,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 getFame.setInt(1, psid);
                 getFame.setString(2, world);
                 ResultSet rs = getFame.executeQuery();
-                PvpTitles.logDebugInfo("Get mwplayer fame: " + getFame.toString());
+                LoggerManager.logDebugInfo("Get mwplayer fame: " + getFame.toString());
 
                 if (rs.next()) {
                     fama = rs.getInt("points");
@@ -277,7 +278,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 PreparedStatement getFame = mysql.prepareStatement(PLAYER_POINTS);
                 getFame.setInt(1, psid);
                 ResultSet rs = getFame.executeQuery();
-                PvpTitles.logDebugInfo("Get player fame: " + getFame.toString());
+                LoggerManager.logDebugInfo("Get player fame: " + getFame.toString());
 
                 if (rs.next()) {
                     fama = rs.getInt("points");
@@ -300,7 +301,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             playedTime.setInt(1, time);
             playedTime.setInt(2, psid);
             playedTime.executeUpdate();
-            PvpTitles.logDebugInfo("Save played time: " + playedTime.toString());
+            LoggerManager.logDebugInfo("Save played time: " + playedTime.toString());
 
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage());
@@ -317,7 +318,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PreparedStatement playedTime = mysql.prepareStatement(PLAYEDTIME);
             playedTime.setInt(1, psid);
             ResultSet rs = playedTime.executeQuery();
-            PvpTitles.logDebugInfo("Load played time: " + playedTime.toString());
+            LoggerManager.logDebugInfo("Load played time: " + playedTime.toString());
 
             if (rs.next()) {
                 time = rs.getInt("playedTime");
@@ -398,7 +399,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
         sql += mundos + " order by points DESC limit " + cant;
         // </editor-fold>
-        PvpTitles.logDebugInfo("Top players: " + sql);
+        LoggerManager.logDebugInfo("Top players: " + sql);
 
         try {
             PlayerFame pf;
@@ -449,7 +450,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             saveBoard.setInt(10, l.getBlockZ());
 
             saveBoard.executeUpdate();
-            PvpTitles.logDebugInfo("Save board: " + saveBoard.toString());
+            LoggerManager.logDebugInfo("Save board: " + saveBoard.toString());
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage());
         }
@@ -473,7 +474,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             updBoard.setInt(4, l.getBlockY());
             updBoard.setInt(5, l.getBlockZ());
             updBoard.executeUpdate();
-            PvpTitles.logDebugInfo("Update board: " + updBoard.toString());
+            LoggerManager.logDebugInfo("Update board: " + updBoard.toString());
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_UPDATING, ex.getMessage());
         }
@@ -497,7 +498,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             delBoard.setInt(4, l.getBlockY());
             delBoard.setInt(5, l.getBlockZ());
             delBoard.executeUpdate();
-            PvpTitles.logDebugInfo("Delete board: " + delBoard.toString());
+            LoggerManager.logDebugInfo("Delete board: " + delBoard.toString());
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
         }
@@ -519,7 +520,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PreparedStatement searchBoards = mysql.prepareStatement(SEARCH_BOARDS);
             searchBoards.setInt(1, plugin.getManager().params.getMultiS());
             ResultSet rs = searchBoards.executeQuery();
-            PvpTitles.logDebugInfo("Search boards: " + searchBoards.toString());
+            LoggerManager.logDebugInfo("Search boards: " + searchBoards.toString());
 
             SignBoardData sdc;
 
@@ -562,14 +563,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
             PreparedStatement serverName = mysql.prepareStatement(SERVER_NAME);
             serverName.setInt(1, id);
             ResultSet rs = serverName.executeQuery();
-            PvpTitles.logDebugInfo("Server name: " + serverName.toString());
+            LoggerManager.logDebugInfo("Server name: " + serverName.toString());
 
             while (rs.next()) {
                 nombre = rs.getString("nombreS");
                 break;
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            LoggerManager.logError(ex.getMessage(), ex);
         }
 
         return nombre;
@@ -613,7 +614,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 }
             } while (rs.next());
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            LoggerManager.logError(ex.getMessage(), ex);
         }
         return contador;
     }
@@ -674,7 +675,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 signClass.add(sg);
             }
         } catch (SQLException ex) {
-            PvpTitles.logError(ex.getMessage(), ex);
+            LoggerManager.logError(ex.getMessage(), ex);
         }
 
         // Estilo
@@ -724,7 +725,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 PreparedStatement ps = mysql.prepareStatement(consulta);
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                PvpTitles.logError(ex.getMessage(), ex);
+                LoggerManager.logError(ex.getMessage(), ex);
                 return false;
             }
         }

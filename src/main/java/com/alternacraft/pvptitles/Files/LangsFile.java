@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.io.File;
 import java.io.IOException;
@@ -315,7 +316,7 @@ public enum LangsFile {
             YamlConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
 
             if (!compLocales(langFile, lang, langType)) {
-                PvpTitles.logError("Error loading " + langType.name() + " locales, "
+                LoggerManager.logError("Error loading " + langType.name() + " locales, "
                         + "a new one has been created.", null);
             }
         }
@@ -352,7 +353,7 @@ public enum LangsFile {
         try {
             newConfig.save(langFile);
         } catch (IOException ex) {
-            PvpTitles.logError(ex.getMessage(), null);
+            LoggerManager.logError(ex.getMessage(), null);
         }
     }
 
@@ -370,7 +371,7 @@ public enum LangsFile {
                     createConfig(langFile, langType, true);
                     resul = false;
                 } catch (IOException ex) {
-                    PvpTitles.logError(ex.getMessage(), null);
+                    LoggerManager.logError(ex.getMessage(), null);
                 }
             }
         }

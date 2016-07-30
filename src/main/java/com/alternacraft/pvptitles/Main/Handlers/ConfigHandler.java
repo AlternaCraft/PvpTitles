@@ -19,6 +19,7 @@ package com.alternacraft.pvptitles.Main.Handlers;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler.DBTYPE;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.Manager.messages;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -153,9 +154,9 @@ public class ConfigHandler {
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
         if (configList.size() != requFame.size()) {
-            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            PvpTitles.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
         }
     }    
 

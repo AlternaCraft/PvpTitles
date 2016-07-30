@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
@@ -161,7 +162,7 @@ public class TemplatesFile {
                 try {
                     f.create(file.getContent());
                 } catch (IOException ex) {
-                    PvpTitles.logError("Template " + file.getPath() + " couldn't be created", null);
+                    LoggerManager.logError("Template " + file.getPath() + " couldn't be created", null);
                 }
             }
             templates.put(file.getPath(), f);

@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
 import com.alternacraft.pvptitles.Libraries.Metrics;
 import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
@@ -112,7 +113,7 @@ public class MetricsManager {
                 metrics.start();
             }
         } catch (IOException e) {
-            PvpTitles.logError(e.getMessage(), null);
+            LoggerManager.logError(e.getMessage(), null);
         }
     }
 }

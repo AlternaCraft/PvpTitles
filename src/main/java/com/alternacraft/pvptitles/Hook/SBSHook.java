@@ -16,15 +16,16 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
+import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Misc.Ranks;
 import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
-import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
-import com.alternacraft.pvptitles.Misc.Ranks;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,14 +61,14 @@ public class SBSHook {
                 try {
                     fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
                 
                 int seconds = 0;
                 try {
                     seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
                 
                 int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());

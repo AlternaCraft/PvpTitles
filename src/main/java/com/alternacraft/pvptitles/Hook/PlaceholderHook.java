@@ -19,6 +19,8 @@ package com.alternacraft.pvptitles.Hook;
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
@@ -33,7 +35,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
         super(plugin, "pvptitles");
         this.plugin = plugin;
         
-        PvpTitles.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
+        MessageManager.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
     }
 
     @Override
@@ -46,14 +48,14 @@ public class PlaceholderHook extends EZPlaceholderHook {
         try {
             fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
         
         int seconds = 0;
         try {
             seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
         
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());

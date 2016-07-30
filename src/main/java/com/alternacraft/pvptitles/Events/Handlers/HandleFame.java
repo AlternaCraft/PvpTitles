@@ -26,6 +26,7 @@ import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
@@ -87,7 +88,7 @@ public class HandleFame implements Listener {
                 try {
                     seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
                 String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
@@ -120,7 +121,7 @@ public class HandleFame implements Listener {
             try {
                 oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
             }
             TimedPlayer tp = pt.getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
@@ -176,7 +177,7 @@ public class HandleFame implements Listener {
         try {
             seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
         if (!e.isSilent()) {

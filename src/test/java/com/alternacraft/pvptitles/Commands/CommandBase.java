@@ -24,12 +24,10 @@ import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.powermock.api.mockito.PowerMockito;
-
-
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import static org.mockito.Mockito.mock;
+import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.when;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @PrepareForTest(Manager.class)
 public class CommandBase {

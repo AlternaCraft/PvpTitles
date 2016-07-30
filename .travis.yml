@@ -7,11 +7,20 @@ notifications:
 env:
   global:
   - secure: "BULEaHVVB9kRmrVR46Xz8LpzLpFMHlDvsiDx0Lr+y6c2QSHRehXIdNEizsgWxIyhH4BRGPbN978i12daPzEf613gJNywHyrxiF7nc3yMs18rca6Z1yApP7ANejit3VGw0E9GrdP+58o10hNt3mB7pt2u7oXBBTaOOGARGrCX2rPbtNAkrWKKo9ytNr6Ymkn2lRtxvNYRI/8mmyFxPSNbZ9dUBTSHy2wHH+FvXpyF+yhrknEJZrR9AadaPSFRXavY6ialuhCt8sHA97k/Wn/XEDZhzNLRktJVCGazuel6J1miD7igK8CRKhox/SBj7j+4dodew2uVzcBm2htH57T6R7x5/12Jo0JE1jNddtAgACyWyIqFOd+ihUuE4YCOABbbF90qZrS2sYiyiVj11jtEj8yklRPDTvIN8Zn+qMdwqJzedJk0zbW48utDSWO2fRDHEMjgxHhKT0df3CPImL+7Bd61iEgC6iHalcsZ9j9XXLDqHShSfmBuio1pqFS6BUIcMsFZtq1wsIi6jPOA0PvuwXx9VEdu/D2ONLAslbMvBK/TLvmVrjTHGxLOy1URLttGnVBID+PflIRxAI4euG36xH1BE1AErk6A34o2vr33SU5JlsaWzxVjMgcK1nBz98AbfGz4d53oeueE1HHjFH5NQhuajDoJgRpj4acxwfFPHTk="
-  - COMMIT_AUTHOR_NAME: "Travis CI"
-  - COMMIT_AUTHOR_EMAIL: "esejuli94@gmail.com"
 
-script: mvn compile test javadoc:javadoc -U
-  
+script: mvn test -U
+
 after_success:
-  - sh .utility/deploy-javadoc.sh
+  - bash .utility/deploy-javadoc.sh
   - bash <(curl -s https://codecov.io/bash)
+  - VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
+  - sed -i "s/REPLACE_THIS_VERSION/$VERSION/" .utility/bintray.json
+
+before_deploy: "echo 'ready?'"  
+deploy:
+  provider: bintray
+  file: .utility/bintray.json
+  user: esejuli94
+  key: 
+    secure: "CJAVh0DTn36xYvcmZtnR/39agj/PSUg7OTnjdAbRb9BeCMaOFIRTULiCszJRe+HyR+UBzdmN0IquGNpTUAFjTgwSPBmLjGUQSKcellH/yyY8U/xlHZqCBeXbDJbi4Y0xCJkMrE65Dnf3bt3pkay9bM52YjTDBYwed3HAh6UAguI4UyAoZyCVOG6xPEjahs3+IvEm+ZM1HuXePpi6d5O8tV/jayNlYKNkgrlQ9QPaF8hzjkcckhHay+CVdzJtrtFwIkfPcNwr7juNQrnLNiTZMYhUIVxs9bbMEZmPCuRwmI2GD3V3tr3EHjEs1he5pDbdZVsnbVDQ8tI2nhZygDVmMM2wVE6nWh+3al7g5LUf0NSbKW3P5FHZnEt1UNPZi6f7hWUcf6CuYDyEIADVk6o7f4dAkmt1Ym+4OF2SA6UaFjrVDuRGFd7kSIiSb9yiibA5AZdL3bXYP+CjZi3ieagHksRPLMEokyctXm9gTv5ybV1bkjRXjfkzfDqviXNpzaCklA5oKokVh7ZTaoulgr/iUqBO2rNj9MhIVgQUuYcC4ckUrZVnHiwR6KeO+WrnpYwqc2BCwibC38ne5cg3xRLlR6trVk9o+LmlNt+iaFjZX7g4D6b8xA/L5EL+AzTNcHLP5Lw1HnhI97F97B/Yly4PDLXLDjeXjce28qkHo4EyrN8="
+  on: 2.x

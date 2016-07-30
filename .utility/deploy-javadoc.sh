@@ -1,42 +1,50 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-SOURCE_BRANCH="2.x"
-TARGET_BRANCH="gh-pages"
-
-# Pull requests, forks and commits to other branches shouldn't try to deploy, just build to verify
-if [ "$TRAVIS_REPO_SLUG" != "AlternaCraft/PvpTitles" -o "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
+# Pull requests shouldn't try to deploy
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     echo "Skipping deploy; just doing a build."
     exit 0
 fi
 
-# Save some useful information
-URL=`git config remote.origin.url`
-REPO=$(echo $URL | sed -e "s/https:\/\//https:\/\/${GH_TOKEN}@/g")
-VERSION=`cat target/classes/project.properties`
+# A version has been released
+ORIGIN_BRANCH="^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
+if [[ "$TRAVIS_REPO_SLUG" =~ $ORIGIN_BRANCH ]]; then
+    # Save some useful information
+    TARGET_BRANCH="gh-pages"
+    
+    URL=`git config remote.origin.url`
+    REPO=$(echo $URL | sed -e "s/https:\/\//https:\/\/${GH_TOKEN}@/g")
+    VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
+    
+    COMMIT_AUTHOR_NAME="Travis CI"
+    COMMIT_AUTHOR_EMAIL="esejuli94@gmail.com"
 
-echo "Publishing javadoc...\n"
+    echo "Creating javadoc...\n"
 
-cp -R target/site/apidocs $HOME/javadoc-latest
+    mvn javadoc:javadoc
 
-cd $HOME
+    cp -R target/site/apidocs $HOME/javadoc-latest
 
-# Get repository
-git clone --quiet --branch=$TARGET_BRANCH $REPO $TARGET_BRANCH
-git config --global user.name "$COMMIT_AUTHOR_NAME"
-git config --global user.email "$COMMIT_AUTHOR_EMAIL"
+    cd $HOME
 
-cd gh-pages
+    # Get repository
+    git clone --quiet --branch=$TARGET_BRANCH $REPO $TARGET_BRANCH
+    git config --global user.name "$COMMIT_AUTHOR_NAME"
+    git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 
-# Save the latest javadoc
-git rm -rf --ignore-unmatch ./javadoc/$VERSION
-cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
+    cd gh-pages
 
-# Add and commit new files
-git add .
-git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
+    # Save the latest javadoc
+    git rm -rf --ignore-unmatch ./javadoc/$VERSION
+    cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
-# Now that we're all set up, we can push.
-git push origin $TARGET_BRANCH
+    # Add and commit new files
+    git add .
+    git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
 
-echo "Published Javadoc to gh-pages."
+    # Now that we're all set up, we can push.
+    git push origin $TARGET_BRANCH
+
+    echo "Published Javadoc to gh-pages."
+fi

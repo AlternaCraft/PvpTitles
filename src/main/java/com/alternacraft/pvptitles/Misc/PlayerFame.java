@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.util.UUID;
 import org.bukkit.ChatColor;
@@ -71,7 +72,7 @@ public class PlayerFame implements Comparable {
         try {
             actual = plugin.getManager().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
         
         int session = plugin.getTimerManager().getPlayer(plugin.getServer()

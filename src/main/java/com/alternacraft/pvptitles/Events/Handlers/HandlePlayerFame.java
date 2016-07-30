@@ -24,6 +24,7 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.AntiFarmManager;
 import com.alternacraft.pvptitles.Managers.CleanTaskManager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
@@ -80,7 +81,7 @@ public class HandlePlayerFame implements Listener {
         try {
             cm.dbh.getDm().playerConnection(player);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
 
@@ -109,7 +110,7 @@ public class HandlePlayerFame implements Listener {
         try {
             cm.dbh.getDm().playerConnection(player);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
     }
 
@@ -124,7 +125,7 @@ public class HandlePlayerFame implements Listener {
         try {
             cm.dbh.getDm().playerConnection(player);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
 
@@ -191,7 +192,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
                 return; // Le bajaria los puntos posteriormente
             }
 
@@ -295,7 +296,7 @@ public class HandlePlayerFame implements Listener {
         try {
             this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
 
@@ -308,7 +309,7 @@ public class HandlePlayerFame implements Listener {
         try {
             seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
 

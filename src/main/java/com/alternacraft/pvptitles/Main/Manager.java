@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Main;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
@@ -28,8 +29,8 @@ import com.alternacraft.pvptitles.Hook.HolographicHook;
 import com.alternacraft.pvptitles.Main.Handlers.ConfigHandler;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
 import static com.alternacraft.pvptitles.Main.Handlers.DBHandler.tipo;
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
@@ -183,7 +184,7 @@ public final class Manager {
         try {
             carteles = pvpTitles.getManager().dbh.getDm().buscaBoards();
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
         lbm.vaciar(); // Evito duplicados
@@ -198,7 +199,7 @@ public final class Manager {
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
                 
                 continue;
@@ -403,7 +404,7 @@ public final class Manager {
                     try {
                         actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                         return;
                     }
                     
@@ -411,7 +412,7 @@ public final class Manager {
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                         return;
                     }
 
@@ -424,7 +425,7 @@ public final class Manager {
                         try {
                             dbh.getDm().savePlayedTime(timedPlayer);
                         } catch (DBException ex) {
-                            PvpTitles.logError(ex.getCustomMessage(), null);
+                            LoggerManager.logError(ex.getCustomMessage(), null);
                             continue;
                         }
                         

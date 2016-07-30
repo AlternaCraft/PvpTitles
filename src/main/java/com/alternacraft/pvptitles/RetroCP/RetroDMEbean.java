@@ -16,17 +16,13 @@
  */
 package com.alternacraft.pvptitles.RetroCP;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.alternacraft.pvptitles.Backend.Ebean;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import static com.alternacraft.pvptitles.RetroCP.DBChecker.EBEAN_MW_CREATED;
@@ -35,6 +31,10 @@ import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.SignTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.TimeTable;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.util.Date;
 import java.util.List;

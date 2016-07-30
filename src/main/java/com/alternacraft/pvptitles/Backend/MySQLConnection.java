@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Backend;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -62,10 +63,10 @@ public class MySQLConnection {
             conexion = DriverManager.getConnection("jdbc:mysql://" + ruta, user, pass);
             estado_conexion = Estado.CONECTADO;
         } catch (ClassNotFoundException ex) {
-            if (!reconnect) PvpTitles.logError("MySQL library not found", null);
+            if (!reconnect) LoggerManager.logError("MySQL library not found", null);
             estado_conexion = Estado.SIN_CONEXION;
         } catch (SQLException ex) {
-            if (!reconnect) PvpTitles.logError(((ex.getErrorCode() == 0)
+            if (!reconnect) LoggerManager.logError(((ex.getErrorCode() == 0)
                     ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode())
                     + "; Using Ebean per default...", null);
             estado_conexion = Estado.SIN_CONEXION;

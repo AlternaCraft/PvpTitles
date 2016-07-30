@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.BoardEvent;
 import com.alternacraft.pvptitles.Files.HologramsFile;
@@ -76,7 +77,7 @@ public class LeaderBoardManager {
             try {
                 pf = this.pt.getManager().dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
             }
             short jugadores = (short) pf.size();
 
@@ -90,7 +91,7 @@ public class LeaderBoardManager {
                 try {
                     pt.getManager().dbh.getDm().registraBoard((SignBoard) b);
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                     return false;
                 }
             } else if (b instanceof HologramBoard) {
@@ -118,7 +119,7 @@ public class LeaderBoardManager {
                         cs.getModel().getCantidad(), cs.getData().getServer()
                 ));
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
             }
             boards.add(cs);
         }
@@ -131,7 +132,7 @@ public class LeaderBoardManager {
                 pf = pt.getManager().dbh.getDm().getTopPlayers(
                         board.getModel().getCantidad(), board.getData().getServer());
             } catch (DBException ex) {
-                PvpTitles.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage(), null);
             }
             
             board.dematerialize((short) pf.size());
@@ -147,7 +148,7 @@ public class LeaderBoardManager {
                     jugadores = (short) pt.getManager().dbh.getDm().getTopPlayers(
                             bo.getModel().getCantidad(), bo.getData().getServer()).size();
                 } catch (DBException ex) {
-                    PvpTitles.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
                 Player pl = null;
@@ -178,7 +179,7 @@ public class LeaderBoardManager {
                     try {
                         pt.getManager().dbh.getDm().borraBoard(bo.getData().getLocation());
                     } catch (DBException ex) {
-                        PvpTitles.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                         return;
                     }
                 } else if (bo instanceof HologramBoard) {

@@ -33,6 +33,7 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.VETO_TAG;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
@@ -81,7 +82,7 @@ public class RankCommand implements CommandExecutor {
         try {
             fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
         int racha = HandlePlayerFame.getKillStreakFrom(uuid);
@@ -91,7 +92,7 @@ public class RankCommand implements CommandExecutor {
             seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
                     + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
         } catch (DBException ex) {
-            PvpTitles.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
         String rank = Ranks.getRank(fame, seconds);

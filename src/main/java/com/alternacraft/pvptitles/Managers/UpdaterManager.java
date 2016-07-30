@@ -16,9 +16,9 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
+import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
+import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.logMessage;
-import static com.alternacraft.pvptitles.Main.PvpTitles.showMessage;
 import java.io.File;
 import java.util.regex.Pattern;
 import net.gravitydevelopment.updater.Updater;

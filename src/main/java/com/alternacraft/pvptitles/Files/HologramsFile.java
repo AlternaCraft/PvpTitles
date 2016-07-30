@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Files;
 
-import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class HologramsFile {
         try {
             newConfig.save(HOLOSFILE);
         } catch (IOException e) {
-            PvpTitles.logDebugInfo(Level.SEVERE, e.getMessage(), e);
+            LoggerManager.logDebugInfo(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -74,7 +74,7 @@ public class HologramsFile {
         try {
             holosConf.save(HOLOSFILE);
         } catch (IOException e) {
-            PvpTitles.logDebugInfo(Level.SEVERE, e.getMessage(), e);
+            LoggerManager.logDebugInfo(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -141,7 +141,7 @@ public class HologramsFile {
                 try {
                     holosConf.save(HOLOSFILE);
                 } catch (IOException e) {
-                    PvpTitles.logDebugInfo(Level.SEVERE, e.getMessage(), e);
+                    LoggerManager.logDebugInfo(Level.SEVERE, e.getMessage(), e);
                 }
                 break;
             }
