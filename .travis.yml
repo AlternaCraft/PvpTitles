@@ -7,10 +7,9 @@ script: mvn test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - echo ${OSSRH_USER}
 
 before_deploy:
-  - echo "<settings><servers><server><id>bintray</id><username>\${OSSRH_USER}</username><password>\${OSSRH_PASS}</password></server></servers></settings>" > ~/settings.xml
+  - echo "<settings><servers><server><id>bintray</id><username>\${BINTRAY_USER}</username><password>\${BINTRAY_PASS}</password></server></servers></settings>" > ~/settings.xml
   - mvn deploy --settings ~/settings.xml
   - bash .utility/deploy-javadoc.sh
   - bash .utility/check-dependencies.sh
@@ -36,3 +35,5 @@ notifications:
 env:    
   global:
   - secure: BULEaHVVB9kRmrVR46Xz8LpzLpFMHlDvsiDx0Lr+y6c2QSHRehXIdNEizsgWxIyhH4BRGPbN978i12daPzEf613gJNywHyrxiF7nc3yMs18rca6Z1yApP7ANejit3VGw0E9GrdP+58o10hNt3mB7pt2u7oXBBTaOOGARGrCX2rPbtNAkrWKKo9ytNr6Ymkn2lRtxvNYRI/8mmyFxPSNbZ9dUBTSHy2wHH+FvXpyF+yhrknEJZrR9AadaPSFRXavY6ialuhCt8sHA97k/Wn/XEDZhzNLRktJVCGazuel6J1miD7igK8CRKhox/SBj7j+4dodew2uVzcBm2htH57T6R7x5/12Jo0JE1jNddtAgACyWyIqFOd+ihUuE4YCOABbbF90qZrS2sYiyiVj11jtEj8yklRPDTvIN8Zn+qMdwqJzedJk0zbW48utDSWO2fRDHEMjgxHhKT0df3CPImL+7Bd61iEgC6iHalcsZ9j9XXLDqHShSfmBuio1pqFS6BUIcMsFZtq1wsIi6jPOA0PvuwXx9VEdu/D2ONLAslbMvBK/TLvmVrjTHGxLOy1URLttGnVBID+PflIRxAI4euG36xH1BE1AErk6A34o2vr33SU5JlsaWzxVjMgcK1nBz98AbfGz4d53oeueE1HHjFH5NQhuajDoJgRpj4acxwfFPHTk=
+  - secure: "Q9E5HH5NT1dxGM7gu31ZDAEL2ydWAPG3vgrti3DQHfzPZRisQqOegFnur3Zfq15mGWooX3FVW6AyAJpRjzunKaE9UJc6Au+ABMQM8kBhfVZDgo905toQDuwDlwZ0/xQ4FRSf6SdWo7EM0pUWQYrjlNy1HhZ+FFv7Wkta2zobvebedAFjaMbt1OtAoaOYWsN02i0bcnYUclcNcLCNgyqx/AwsHYKGHqQw9Uz1J9VMUJRdOOCA7Gt8yfiMPKJmRPn3B0ucdfJsfjmgLUFfwfWziPPnY6dLzPajQ2Yt96sapbSrG29tXO+mPap+O4SS1v3fSMJTBfOPpbqcV+93FTkQ5IT1qz9NUI8bflyUPuzE/f87sw/Srf+ftgQLVOINanxLVd609D/RyFJ46LIJTtBFqfsJZ9DaKEZy3/EBpsw5hIz+mlsjkAi3J/9h6zvYUncnyCX/Q9F5ATW50lmaBZifQ8YL942bSSyKyVgqIyj94e7t90eyQgzA7nK6eayJCEklP0udxA++7qBPMofNzYY0OBFLXENJLvM0SssgwZ+ole3rR/krfVPCySDPf6w0pplfLV8d5G9yh/FJXmj4ULkQ7OejEbwlCJ3sBMsL3WFJwaWkhVlN/gkqgmAXUQTtHEe1XfR483aUjdupD4XClLyzaT8cdYowYZ7aX75kOpSaIkw="
+  - secure: "iuhsnlKBnbpwyjEGBF/KTpI2nflMnMp5HK+XaoLs+fv1ZfZwywEiQQUJIExl2QZZxsmZsiJyXFcxvkGnU7JY7kdIbppENUpjL+f/MGdbjPc4HxeM4aSrzrSI/M1OiFbx+/oS3TKQktSGiRYZKB0N4KGsaOLZ5jUBVYz/3z/DqtVcpZE0YtJyhnvSWEYLfCXG1PBElSN7v8yKh12b94m5LlZ4UkIEYjH1G3DgpUMvuL7spoR94w9FSChQCU2zlhXX9MtIINh0RmKnF8sHFRQI65NK2Zpua35Pet06Vcu7/8b8hr+qypG38CF1w05guyMs1JsAsy9TfABwcjFzMdX7QNC6DDECZ/yYyjO7SOL6CczC1i6bA7YrKXoBXiX+DaeKHMGnFllqeKhQukeqlTIjovGZZ94KaGLRDswHujuy4uvICcWYZMsS5CMEo+fkaP9FZOHgPt52HLZ3AvOm11lyZhtIXsHvbSK24VklB3sLr0F1J/o8EwV1YoQrwTOWzNryGOt+JyuxM6qxVmnH8UtujYfjPgyUMq+jJUtRO23984XMdFHhdWsy+x3R3p+PXieZuWgL9GTR5rpeTVOSgn1RWXl1CQjYxfxlltm2v4Lkxrdys65FCDFhLxQmVKvtxFoSJehdfM0lhp4MqIv+JdxmDifgeCg5BqFiT9N7kt8i7p4="

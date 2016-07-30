@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# A version has been released
-# ORIGIN_BRANCH="^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
-# if [[ $TRAVIS_BRANCH =~ $ORIGIN_BRANCH ]]; then
-
 # Save some useful information
 TARGET_BRANCH="gh-pages"
 
