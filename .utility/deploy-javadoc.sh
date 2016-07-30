@@ -40,4 +40,7 @@ if [[ $TRAVIS_REPO_SLUG =~ $ORIGIN_BRANCH ]]; then
     git push origin $TARGET_BRANCH
 
     echo "Published Javadoc to gh-pages."
+else;
+    echo $ORIGIN_BRANCH
+    echo "Bad repository; Just deploy for releases"
 fi
