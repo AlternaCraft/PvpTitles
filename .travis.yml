@@ -7,10 +7,10 @@ script: mvn test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - bash .utility/deploy-javadoc.sh
-  - bash .utility/check-dependencies.sh
 
 before_deploy:
+  - bash .utility/deploy-javadoc.sh
+  - bash .utility/check-dependencies.sh
   - VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
   - sed -i "s/REPLACE_THIS_VERSION/$VERSION/" .utility/bintray.json
   - cp target/PvpTitles-$VERSION.jar target/PvpTitles.jar
@@ -23,20 +23,18 @@ deploy:
       secure: "CJAVh0DTn36xYvcmZtnR/39agj/PSUg7OTnjdAbRb9BeCMaOFIRTULiCszJRe+HyR+UBzdmN0IquGNpTUAFjTgwSPBmLjGUQSKcellH/yyY8U/xlHZqCBeXbDJbi4Y0xCJkMrE65Dnf3bt3pkay9bM52YjTDBYwed3HAh6UAguI4UyAoZyCVOG6xPEjahs3+IvEm+ZM1HuXePpi6d5O8tV/jayNlYKNkgrlQ9QPaF8hzjkcckhHay+CVdzJtrtFwIkfPcNwr7juNQrnLNiTZMYhUIVxs9bbMEZmPCuRwmI2GD3V3tr3EHjEs1he5pDbdZVsnbVDQ8tI2nhZygDVmMM2wVE6nWh+3al7g5LUf0NSbKW3P5FHZnEt1UNPZi6f7hWUcf6CuYDyEIADVk6o7f4dAkmt1Ym+4OF2SA6UaFjrVDuRGFd7kSIiSb9yiibA5AZdL3bXYP+CjZi3ieagHksRPLMEokyctXm9gTv5ybV1bkjRXjfkzfDqviXNpzaCklA5oKokVh7ZTaoulgr/iUqBO2rNj9MhIVgQUuYcC4ckUrZVnHiwR6KeO+WrnpYwqc2BCwibC38ne5cg3xRLlR6trVk9o+LmlNt+iaFjZX7g4D6b8xA/L5EL+AzTNcHLP5Lw1HnhI97F97B/Yly4PDLXLDjeXjce28qkHo4EyrN8="
     on:
       tags: true
-      condition: "$TRAVIS_TAG =~ ^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
   - provider: releases
     api_key:
       secure: d/tIg31Tg6CmOBrqPqf+kh6f9Q/QL06ABeLIxfMe9KozIEjDdHyGzB6TNIxPSp1IbF2V5+0KtY8G2RcA0MfXru0350R3aE5OZlde9Viptu91Tbsg7po63LQmgpIoHtgtOuRUsJzamEkVfcULQKyH7zo+FqlMGYxkOdmQMrTNnDWkuomfITqIjeNqFOiyS7VuoJm1dYS5r9qeEGbOfu8RNRd0s/jvUtbQuG1IvE50qkWPYvB7Gq+vFeIKI9jWvyWKmA+Ru+JzKdydmsKEY586/nGiuY+Kc+2v+OJtsP8G2zAIy7gepSq1YQbNbULataeKaj6MxJTPgNyW4ZFg/ZWCFpMDnLvBzNrBE/HIV5YgtI4A6AWLMjDXJtD5U3Z/Q6E1gRpJUo1e9yjdfmUJHluXBKy1QmevEnsJoBFWpCdAAmd01UOZL3NsLZxZ8ZmRDPnH2EriJ/yw0H1VLQOoB3uSNsSdrMO5ijvy5UPn+fxr6eAlbL1fcE0imOybxF3cPf3zpg+wbv3vOhrzXrBQyVhWDnPleIL+Rak8ekfrlqlYBRmqax6SAC8DZ24P5D7YihtO8J5HdkKSCJetmnHtk/5K9O3GGzW3VW9EZYofKGPswIGqpl8ANw1vJOqVz1soiDM9VEQ4MIg+7T65HfPnvttnykilVcwnmLI0cUme2CmAZUU=
     file: target/PvpTitles.jar
     on:
       tags: true
-      condition: "$TRAVIS_TAG =~ ^(v[0-9](.[0-9])+-[a-zA-Z]+)$"
  
 notifications:
   email: false
   irc:
     channels:
-      - "chat.freenode.net#PvpTitles"
+    - "chat.freenode.net#PvpTitles"
     use_notice: true
     skip_join: true
 
