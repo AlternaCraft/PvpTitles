@@ -10,14 +10,14 @@ VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
 COMMIT_AUTHOR_NAME="Travis CI"
 COMMIT_AUTHOR_EMAIL="esejuli94@gmail.com"
 
-echo "Parsing dependencies...\n"
+echo "Getting dependencies file...\n"
 
-cp .utility/dependencies.json $HOME
+cp .utility/dependencies.json $HOME/dependencies-latest
+cp .utility/changes.json $HOME/dependencies-latest
 
 echo "Creating javadoc...\n"
 
 mvn javadoc:javadoc
-
 cp -R target/site/apidocs $HOME/javadoc-latest
 
 cd $HOME
@@ -30,7 +30,8 @@ git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 cd gh-pages
 
 # Save dependencies json
-cp $HOME/dependencies.json .
+git rm -rf --ignore-unmatch ./dependencies
+cp -Rf $HOME/dependencies-latest ./dependencies
 
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION

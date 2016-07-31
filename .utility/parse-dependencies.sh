@@ -12,17 +12,19 @@ do
 	 # Main dependency
 	 if [[ $repo =~ ^(\+-|\\-).*$ ]]; then
 	     repo=\`echo "$repo" | sed 's/+- //' | sed 's/\- //'\`
-	     echo "{'repo': '$repo:$artifact', 'version': '$version'},"
-         # Dependency of dependency
-#	 elif [[ $repo =~ ^(\||( )+).*$ ]]; then
-#            echo "Child -> "$repo":"$artifact" on "$version
+	     echo "{\"groupId\": \"$repo\", \"artifactId\": \"$artifact\", \"type\": \"$type\", \"version\": \"$version\", \"scope\": \"$scope\"},"
+   # Dependency of dependency
+   # elif [[ $repo =~ ^(\||( )+).*$ ]]; then
 	 fi
     fi
 done`
 
 LEN=${#JSON_DEPS}
 JSON_DEPS=`echo ${JSON_DEPS:0:LEN-1}`
-JSON_DEPS=$JSON_DEPS'],'
+JSON_DEPS=$JSON_DEPS']'
+
+# Build the final JSON
+echo $JSON_DEPS > .utility/dependencies.json
 
 echo "Available dependencies parsed to JSON succesfully"
 
@@ -33,10 +35,10 @@ NEW=`echo "$NEW" | sed 's/No dependencies in Dependencies have newer versions.//
 NEW=`echo "$NEW" | sed 's/  //;s/................................ //;s/ ->//;'`
 
 JSON_NEW='['
-JSON_NEW=$JSON_NEW`echo "$NEW" | while IFS=" " read repo prev last
+JSON_NEW=$JSON_NEW`echo "$NEW" | while IFS=" " read repo actual new
 do
-    if [ -n "$repo" -a -n "$prev" -a -n "$last" ]; then
-        echo "{'repo': '$repo', 'prev': '$prev', 'last': '$last'},"
+    if [ -n "$repo" -a -n "$actual" -a -n "$new" ]; then
+        echo "{'repository': '$repo', 'actualv': '$actual', 'newv': '$new'},"
     fi
 done`
 
@@ -47,7 +49,7 @@ fi
 
 JSON_NEW=$JSON_NEW']'
 
-echo "New versions parsed to JSON succesfully"
-
 # Build the final JSON
-echo $JSON_DEPS$JSON_NEW > .utility/dependencies.json
+echo $JSON_NEW > .utility/changes.json
+
+echo "New versions parsed to JSON succesfully"
