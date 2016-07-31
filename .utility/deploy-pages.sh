@@ -18,9 +18,8 @@ cp .utility/changes.json $HOME/dependencies-latest
 
 echo "Creating javadoc..."
 
-mkdir -p $HOME/javadoc-latest
 mvn -q javadoc:javadoc
-cp -R target/site/apidocs/* $HOME/javadoc-latest
+cp -R target/site/apidocs $HOME/javadoc-latest
 
 cd $HOME
 
