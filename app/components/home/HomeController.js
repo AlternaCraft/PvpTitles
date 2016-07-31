@@ -1,6 +1,10 @@
-app.controller('HomeController', function ($scope, Releases, Javadoc) {
+app.controller('HomeController', function ($scope, Releases, Dependencies, Javadoc) {
 
     $scope.actual = 0;
+
+    Dependencies.success(function(data) {
+        console.log(data);
+    });
 
     Releases.success(function(data) {
         $scope.releases = data;
@@ -9,7 +13,7 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
 
     $scope.hasNext = function() {
         return $scope.actual > 0;
-    }
+    };
 
     $scope.next = function() {
         if ($scope.hasNext()) {
@@ -18,10 +22,10 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
     };
 
     $scope.hasBefore = function() {
-        if ($scope.releases != null) {
+        if ($scope.releases !== undefined) {
             return $scope.actual < $scope.releases.length-1;
         }
-    }
+    };
 
     $scope.before = function() {
         if ($scope.hasBefore()) {
@@ -30,13 +34,13 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
     };
 
     $scope.$watch('actual', function (newValue, oldValue) {
-        if ($scope.releases != null) {
+        if ($scope.releases !== undefined) {
             $scope.release = $scope.releases[$scope.actual];
         }
-    })
+    });
 
     $scope.hasJavadoc = function(v) {
         return Javadoc.check(v);
-    }
+    };
 
 });

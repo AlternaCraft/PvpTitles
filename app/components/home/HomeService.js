@@ -7,12 +7,21 @@ app.factory('Releases', function ($http) {
                 return error;
             });
     })
+    .factory('Dependencies', function ($http) {
+        return $http.get("")
+            .success(function (data) {
+                return data;
+            })
+            .error(function (error) {
+                return error;
+            });
+    })
     .factory('Javadoc', function () {
         var javadoc = {};
 
         javadoc.check = function(v) {
             var http = new XMLHttpRequest();
-            var url = '/AlternaCraft/javadoc/' + v;
+            var url = '/javadoc/' + v;
 
             http.open('HEAD', url, false);
             http.send();
