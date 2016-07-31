@@ -7,6 +7,9 @@
 /bower_components/jquery/dist/*
 !/bower_components/jquery/dist/jquery.min.js
 
-!/bower_components/angular*
-/bower_components/angular*/*
-!/bower_components/angular*/angular*.min.js
+!/bower_components/angularjs
+!/bower_components/angular-*
+/bower_components/angularjs/*
+/bower_components/angular-*/*
+!/bower_components/angularjs/angular*.min.js
+!/bower_components/angular-*/angular*.min.js
