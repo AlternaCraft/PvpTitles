@@ -1,10 +1,6 @@
-app.controller('HomeController', function ($scope, Releases, Dependencies, Javadoc) {
+app.controller('HomeController', function ($scope, Releases, Javadoc) {
 
     $scope.actual = 0;
-
-    Dependencies.success(function(data) {
-        console.log(data);
-    });
 
     Releases.success(function(data) {
         $scope.releases = data;
