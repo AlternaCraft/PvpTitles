@@ -8,7 +8,7 @@ app.factory('Releases', function ($http) {
             });
     })
     .factory('Dependencies', function ($http) {
-        return $http.get("")
+    return $http.get("./dependencies/dependencies-latest/dependencies.json")
             .success(function (data) {
                 return data;
             })
