@@ -10,6 +10,10 @@ VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
 COMMIT_AUTHOR_NAME="Travis CI"
 COMMIT_AUTHOR_EMAIL="esejuli94@gmail.com"
 
+echo "Parsing dependencies...\n"
+
+cp .utility/dependencies.json $HOME
+
 echo "Creating javadoc...\n"
 
 mvn javadoc:javadoc
@@ -25,15 +29,18 @@ git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 
 cd gh-pages
 
+# Save dependencies json
+cp $HOME/dependencies.json .
+
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION
 cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
 # Add and commit new files
 git add .
-git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
+git commit -m "Latest components on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to $TARGET_BRANCH"
 
 # Now that we're all set up, we can push.
 git push origin $TARGET_BRANCH
 
-echo "Published Javadoc to gh-pages."
+echo "Published Javadoc and dependencies to gh-pages."

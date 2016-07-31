@@ -11,8 +11,8 @@ after_success:
 before_deploy:
   - echo "<settings><servers><server><id>bintray</id><username>\${BINTRAY_USER}</username><password>\${BINTRAY_PASS}</password></server></servers></settings>" > ~/settings.xml
   - mvn deploy --settings ~/settings.xml
-  - bash .utility/deploy-javadoc.sh
-  - bash .utility/check-dependencies.sh
+  - bash .utility/parse-dependencies.sh
+  - bash .utility/deploy-pages.sh  
   - VERSION=`ls target/PvpTitles-*.jar | sed 's/target\/PvpTitles-//;s/.jar//;'`
   - cp target/PvpTitles-$VERSION.jar target/PvpTitles.jar
 
