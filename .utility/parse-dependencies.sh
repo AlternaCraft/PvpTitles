@@ -1,6 +1,6 @@
 #!/bin/bash
-FILE_DEPS='dependencies.txt'
-FILE_NEWS='dependencies_new.txt'
+FILE_DEPS='.utility/dependencies.txt'
+FILE_NEWS='.utility/dependencies_new.txt'
 
 # Transforming dependencies to JSON
 DEPS=`cat $FILE_DEPS`
