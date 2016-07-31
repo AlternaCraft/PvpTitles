@@ -50,4 +50,4 @@ JSON_NEW=$JSON_NEW']'
 echo "New versions parsed to JSON succesfully"
 
 # Build the final JSON
-echo $JSON_DEPS$JSON_NEW > dependencies.json
+echo $JSON_DEPS$JSON_NEW > .utility/dependencies.json
