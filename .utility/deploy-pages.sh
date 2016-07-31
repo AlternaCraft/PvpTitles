@@ -20,7 +20,7 @@ echo "Creating javadoc..."
 
 mkdir -p $HOME/javadoc-latest
 mvn -q javadoc:javadoc
-cp -R target/site/apidocs $HOME/javadoc-latest
+cp -R target/site/apidocs/* $HOME/javadoc-latest
 
 cd $HOME
 
@@ -34,11 +34,10 @@ cd gh-pages
 # Save dependencies json
 git rm -rf --ignore-unmatch ./dependencies
 mkdir -p dependencies
-cp -Rf $HOME/dependencies-latest ./dependencies
+cp $HOME/dependencies-latest/* ./dependencies
 
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION
-mkdir -p javadoc/$VERSION
 cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
 # Add and commit new files
