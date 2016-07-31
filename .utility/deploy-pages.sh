@@ -12,11 +12,13 @@ COMMIT_AUTHOR_EMAIL="esejuli94@gmail.com"
 
 echo "Getting dependencies file..."
 
-cp .utility/dependencies.json $HOME/dependencies-latest/
-cp .utility/changes.json $HOME/dependencies-latest/
+mkdir -p $HOME/dependencies-latest
+cp .utility/dependencies.json $HOME/dependencies-latest
+cp .utility/changes.json $HOME/dependencies-latest
 
 echo "Creating javadoc..."
 
+mkdir -p $HOME/javadoc-latest
 mvn -q javadoc:javadoc
 cp -R target/site/apidocs $HOME/javadoc-latest
 
@@ -31,11 +33,13 @@ cd gh-pages
 
 # Save dependencies json
 git rm -rf --ignore-unmatch ./dependencies
-cp -Rf $HOME/dependencies-latest/* ./dependencies
+mkdir -p dependencies
+cp -Rf $HOME/dependencies-latest ./dependencies
 
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION
-cp -Rf $HOME/javadoc-latest/* ./javadoc/$VERSION
+mkdir -p javadoc/$VERSION
+cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
 # Add and commit new files
 git add .
