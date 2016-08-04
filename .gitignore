@@ -1,12 +1,25 @@
 /.git
 /bower_components/*
+/less
 
-!/bower_components/jquery
-/bower_components/jquery/*
+# JQUERY AND CUSTOM LIBRARIES
+!/bower_components/jquery*
+/bower_components/jquery*/*
+!/bower_components/jquery*/themes
+/bower_components/jquery*/themes/*
+!/bower_components/jquery*/themes/base
+/bower_components/jquery*/themes/base/*
+
+# JQUERY
 !/bower_components/jquery/dist
 /bower_components/jquery/dist/*
 !/bower_components/jquery/dist/jquery.min.js
 
+# JQUERY-UI
+!/bower_components/jquery-ui/jquery-ui.min.js
+!/bower_components/jquery*/themes/base/jquery-ui.min.css
+
+# ANGULARJS AND CUSTOM LIBRARIES
 !/bower_components/angularjs
 !/bower_components/angular-*
 /bower_components/angularjs/*

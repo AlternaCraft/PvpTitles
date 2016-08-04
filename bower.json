@@ -1,12 +1,13 @@
 {
-    "name": "AlternaCraft",
+    "name": "PvpTitles",
     "dependencies": {
         "angular-animate": "1.5.8",
-        "angular": "~1.5.9-build.4966+sha.31f20b6",
+        "angular": "~1.5.8",
         "angular-resource": "1.5.8",
         "angular-route": "1.5.8",
         "angular-sanitize": "1.5.8",
         "angularjs": "1.5.8",
-        "jquery": "2.2.4"
+        "jquery": "2.2.4",
+        "jquery-ui": "~1.12"
     }
 }

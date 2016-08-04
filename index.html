@@ -14,12 +14,20 @@
     <link rel="icon" href="favicon.ico">
 
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css" media="screen">
+
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/print.css" media="print">
 
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/custom.css" media="screen">
+
     <!-- JQUERY -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 
     <!-- ANGULARJS -->
     <!-- Include the core AngularJS library -->
@@ -38,17 +46,28 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <header>
-        <div class="inner">
-            <h1>Pvptitles</h1>
-            <h2>Get epic titles in battle!</h2>
+        <div id="up" class="inner">
+            <a href="#/">
+                <h1>Pvptitles</h1>
+                <h2>Get epic titles in battle!</h2>
+            </a>
             <a href="https://github.com/AlternaCraft/PvpTitles" class="button"><small>View project on</small> GitHub</a>
         </div>
     </header>
 
-    <div id="content-wrapper">
-        <div ng-view class="inner clearfix">
-        </div>
+    <div ng-view ng-cloak>
     </div>
+
+    <script>
+        /*$(window).scroll(function() {
+            if ($(this).scrollTop() > 1) {
+                $('header').addClass("sticky");
+            } else {
+                $('header').removeClass("sticky");
+            }
+        });*/
+
+    </script>
 
     <!-- Module -->
     <script src="app/app.module.js"></script>
@@ -58,9 +77,12 @@
     <script src="app/components/javadoc/JavadocController.js"></script>
     <script src="app/components/dependencies/DependenciesController.js"></script>
     <!-- Directives -->
+    <script src="app/shared/ui/UIDirective.js"></script>
+    <script src="app/shared/jd/JDDirective.js"></script>
     <!-- Filters-->
-    <script src="app/shared/md/MDFilter.js"></script>
+    <script src="app/shared/jd/CapFilter.js"></script>
     <script src="app/shared/md/VersionFilter.js"></script>
+    <script src="app/shared/arr/arrFilter.js"></script>
     <!-- Services -->
     <script src="app/components/home/HomeService.js"></script>
     <script src="app/components/javadoc/JavadocService.js"></script>
