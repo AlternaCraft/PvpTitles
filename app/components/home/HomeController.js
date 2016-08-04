@@ -18,6 +18,9 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
     });
 
     $scope.hasJavadoc = function (v) {
+        if (v === "") {
+            return false;
+        }
         return Javadoc.check(v);
     };
 

@@ -1,9 +1,10 @@
-app.factory('Javadoc', function () {
+app.factory('Javadoc', function ($location) {
     var javadoc = {};
 
     javadoc.check = function(v) {
         var http = new XMLHttpRequest();
-        var url = 'http://alternacraft.github.io/PvpTitles/javadoc/' + v;
+        var url = "http://" + $location.host() + "/PvpTitles/javadoc/" + v + "/";
+        console.log(url);
 
         http.open('HEAD', url, false);
         http.send();
