@@ -6,8 +6,7 @@ jdk:
 script: mvn test
 after_success:
   - bash <(curl -s https://codecov.io/bash)  
-  - echo "<settings><servers><server><id>bintray-release</id><username>\${BINTRAY_USER}</username><password>\${BINTRAY_PASS}</password></server></servers></settings>" > ~/settings.xml
-  - [[ ! -z $TRAVIS_TAG ]] && bash .utility/parse-dependencies.sh && bash .utility/deploy-pages.sh || mvn deploy --settings ~/settings.xml
+  - bash .utility/environment.sh
 
 notifications:
   email: false

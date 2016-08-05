@@ -285,6 +285,5 @@
             <name>SNAPSHOTS</name>
             <url>http://oss.jfrog.org/oss-snapshot-local/</url>
         </snapshotRepository>
-    </distributionManagement>
-    
+    </distributionManagement>    
 </project>
