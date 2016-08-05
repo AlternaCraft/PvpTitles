@@ -3,8 +3,7 @@ app.factory('Javadoc', function ($location) {
 
     javadoc.check = function(v) {
         var http = new XMLHttpRequest();
-        var url = "http://" + $location.host() + "/PvpTitles/javadoc/" + v + "/";
-        console.log(url);
+        var url = "/PvpTitles/javadoc/" + v + "/";
 
         http.open('HEAD', url, false);
         http.send();

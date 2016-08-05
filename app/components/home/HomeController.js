@@ -1,4 +1,5 @@
 app.controller('HomeController', function ($scope, Releases, Javadoc) {
+    $scope.nshow = 3;
     $scope.releasesName = [];
 
     $scope.releases = undefined;
@@ -14,7 +15,7 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
         }
         $scope.actualR = 0;
 
-        $scope.show = 3;
+        $scope.show = ($scope.releases.length > 3) ? $scope.nshow:$scope.releases.length;
     });
 
     $scope.hasJavadoc = function (v) {
