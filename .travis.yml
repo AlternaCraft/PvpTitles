@@ -2,7 +2,7 @@ sudo: false
 language: java
 jdk:
   - openjdk7
-  
+
 script: mvn test
 after_success:
   - bash <(curl -s https://codecov.io/bash)  
