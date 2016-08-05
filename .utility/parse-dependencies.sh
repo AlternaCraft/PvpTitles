@@ -10,9 +10,7 @@ do
     if [ -n "$repo" -a -n "$artifact" -a -n "$version" ]; then
 	 # Main dependency
 	 if [[ $repo =~ ^(\+-|\\-).*$ ]]; then
-       # Remove breakline
-       scope=\`echo ${scope:0:${#scope}-1}\`
-	     # Remove start
+	     # Remove begining
 	     repo=\`echo "$repo" | sed 's/+- //' | sed 's/\- //'\`
 	     echo "{\"groupId\": \"$repo\", \"artifactId\": \"$artifact\", \"type\": \"$type\", \"version\": \"$version\", \"scope\": \"$scope\"},"
 	 fi
