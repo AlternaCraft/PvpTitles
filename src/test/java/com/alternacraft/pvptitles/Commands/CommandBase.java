@@ -30,7 +30,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @PrepareForTest(Manager.class)
-public class CommandBase {
+abstract class CommandBase {
 
     protected final String TEST_INFO = "Prueba: %desc%";
     protected final String TEST_INITIALIZE = "Inicializo los objetos necesarios";

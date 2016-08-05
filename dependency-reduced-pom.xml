@@ -45,13 +45,6 @@
     <finalName>${project.name}-${project.version}</finalName>
     <plugins>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
-        <configuration>
-          <outputDirectory>${custom.path}</outputDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.3</version>
         <executions>
@@ -72,6 +65,32 @@
                   <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
                 </relocation>
               </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${custom.path}</outputDirectory>
+                  <destFileName>${project.artifactId}.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>
@@ -107,30 +126,16 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.2</version>
-        <executions>
-          <execution>
-            <id>display-dependency-updates</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>display-dependency-updates</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <repositories>
     <repository>
-      <id>vault-repo</id>
-      <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
-    </repository>
-    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>vault-repo</id>
+      <url>http://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
     <repository>
       <id>gravity-repo</id>
@@ -241,9 +246,14 @@
   <distributionManagement>
     <repository>
       <id>bintray</id>
-      <name>alternacraft-maven</name>
+      <name>RELEASES</name>
       <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1;</url>
     </repository>
+    <snapshotRepository>
+      <id>bintray</id>
+      <name>SNAPSHOTS</name>
+      <url>http://oss.jfrog.org/oss-snapshot-local/</url>
+    </snapshotRepository>
   </distributionManagement>
   <properties>
     <versions.outputFile>${basedir}/.utility/dependencies_new.txt</versions.outputFile>

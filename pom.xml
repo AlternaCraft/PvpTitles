@@ -8,15 +8,15 @@
     <version>2.5.7</version>
     <packaging>jar</packaging>   
      
-    <repositories>
-        <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
-        </repository>
-        
+    <repositories>        
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
         
         <repository>
@@ -149,16 +149,7 @@
         </resources>
         
         <plugins>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                
-                <configuration>
-                    <outputDirectory>${custom.path}</outputDirectory>            
-                </configuration>
-            </plugin>
-            
+            <!-- Add updater to plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -186,6 +177,35 @@
                 </executions>
             </plugin>
             
+            <!-- Copy artifacts to non-versioned jar name -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${custom.path}</outputDirectory>
+                                    <destFileName>${project.artifactId}.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <!-- Code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -207,6 +227,7 @@
                 </executions>
             </plugin>
             
+            <!-- Save dependencies -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -216,21 +237,6 @@
                         <phase>prepare-package</phase>
                         <goals>                         
                             <goal>tree</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>display-dependency-updates</id>
-                        <phase>prepare-package</phase>
-                        <goals>                            
-                            <goal>display-dependency-updates</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -270,9 +276,15 @@
     <distributionManagement>
         <repository>
             <id>bintray</id>
-            <name>alternacraft-maven</name>
-            <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1;</url>
+            <name>RELEASES</name>
+            <url>https://api.bintray.com/maven/alternacraft/maven/PvpTitles/;publish=1;</url>            
         </repository>
+        
+        <snapshotRepository>
+            <id>bintray</id>
+            <name>SNAPSHOTS</name>
+            <url>http://oss.jfrog.org/oss-snapshot-local/</url>
+        </snapshotRepository>
     </distributionManagement>
     
 </project>

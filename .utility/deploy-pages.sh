@@ -14,7 +14,6 @@ echo "Getting dependencies file..."
 
 mkdir -p $HOME/dependencies-latest
 cp .utility/dependencies.json $HOME/dependencies-latest
-cp .utility/changes.json $HOME/dependencies-latest
 
 echo "Creating javadoc..."
 
@@ -31,9 +30,9 @@ git config --global user.email "$COMMIT_AUTHOR_EMAIL"
 cd gh-pages
 
 # Save dependencies json
-git rm -rf --ignore-unmatch ./dependencies
-mkdir -p dependencies
-cp $HOME/dependencies-latest/* ./dependencies
+git rm -rf --ignore-unmatch ./dependencies/$VERSION
+mkdir -p dependencies/$VERSION
+cp $HOME/dependencies-latest/* ./dependencies/$VERSION
 
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION
