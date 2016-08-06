@@ -8,7 +8,9 @@ app.factory('Releases', function ($http) {
 
                 for (var i = 0; i < data.length; i++) {
                     var release = data[i];
-                    release.body = filter(release.body);
+                    if (release.body !== null) {
+                        release.body = filter(release.body);
+                    }
                 }
 
                 return data;
@@ -18,7 +20,7 @@ app.factory('Releases', function ($http) {
             });
     };
 
-    rs.paginator = function(data, show) {
+    rs.paginator = function (data, show) {
         var blocks = [];
 
         // data length
@@ -36,8 +38,8 @@ app.factory('Releases', function ($http) {
             var j = 0;
 
             while (j < show && j < q) {
-                var k = j+(i*show);
-                if (k > q-1) break;
+                var k = j + (i * show);
+                if (k > q - 1) break;
                 blocks[i].push(data[k]);
                 j++;
             }

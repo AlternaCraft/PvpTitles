@@ -1,4 +1,4 @@
-app.controller('HomeController', function ($scope, Releases, Javadoc) {
+app.controller('HomeController', function ($scope, Releases, Javadoc, Dependencies) {
     $scope.nshow = 3;
     $scope.releasesName = [];
 
@@ -23,6 +23,13 @@ app.controller('HomeController', function ($scope, Releases, Javadoc) {
             return false;
         }
         return Javadoc.check(v);
+    };
+
+    $scope.hasDependencies = function (v) {
+        if (v === "") {
+            return false;
+        }
+        return Dependencies.getDependencies(v) === undefined;
     };
 
     $scope.optionSelected = function (v) {

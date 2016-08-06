@@ -1,15 +1,15 @@
-<div ng-show="dependencies && changes" id="content-wrapper">
+<div ng-show="dependencies" id="content-wrapper">
     <div class="inner clearfix table-responsive">
         <table class="table">
             <tr>
                 <th>Dependency</th>
-                <th>Resolved</th>
-                <th>Newest</th>
+                <th>Version</th>
+                <th>Scope</th>
             </tr>
-            <tr ng-class="d.class" ng-repeat="d in dependencies">
+            <tr class="item" ng-repeat="d in dependencies | orderBy:'scope'">
                 <td>{{d.artifactId | capitalize}}</td>
                 <td>{{d.version}}</td>
-                <td ng-bind="hasNewVersion(d)"></td>
+                <td>{{d.scope}}</td>
             </tr>
         </table>
     </div>

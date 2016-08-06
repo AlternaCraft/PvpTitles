@@ -1,10 +1,10 @@
 <div id="content-wrapper">
     <div class="inner clearfix">
-        <div ng-hide="releases" style="text-align: center;">
+        <div id="ajax" class="info" ng-hide="releases">
             <img src="assets/images/ajax-loader.gif" alt="Loading..." width="256px">
         </div>
 
-        <div ng-show="releases">
+        <div id="relecont" class="info" ng-show="releases">
             <form class="search-form">
                 <div class="form-group has-feedback">
                     <label for="search" class="sr-only">Search</label>
@@ -56,15 +56,14 @@
 
             <aside id="sidebar">
                 <a href="{{release.zipball_url}}" class="button">
-                    <small>Download</small> .zip file
+                    <small>Download the</small> .zip project
                 </a>
-                <a href="{{release.tarball_url}}" class="button">
-                    <small>Download</small> .tar.gz file
+                <a href="#/deps/{{ release.tag_name | version }}" class="button">
+                    <small>Check out the</small> dependencies
                 </a>
                 <a id="javadoc" ng-show="hasJavadoc(release.tag_name | version)" href="#/jdoc/{{ release.tag_name | version }}" class="button">
                     <small>See the</small> Javadoc
                 </a>
-
                 <p class="repo-owner">
                     <a href="https://github.com/AlternaCraft/PvpTitles">PvpTitles</a> is maintained by <a href="https://github.com/AlternaCraft">AlternaCraft</a>.</p>
 

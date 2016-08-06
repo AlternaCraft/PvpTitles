@@ -6,7 +6,7 @@ app.config(function ($routeProvider) {
         }).when("/jdoc/:id", {
             controller: "JavadocController",
             templateUrl: "app/components/javadoc/JavadocView.html"
-        }).when("/dependencies", {
+        }).when("/deps/:id", {
             controller: "DependenciesController",
             templateUrl: "app/components/dependencies/DependenciesView.html"
         }).when("/404", {
