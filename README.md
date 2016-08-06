@@ -15,6 +15,16 @@ You can find the official builds at bukkit and spigot:
 * http://dev.bukkit.org/bukkit-plugins/pvptitles/
 * https://www.spigotmc.org/resources/pvptitles.20927/
 
+**Development builds**:
+
+```python
+"Development builds of this project can be acquired at the provided continuous integration server."
+"These builds have not been approved by the BukkitDev staff. Use them at your own risk."
+```
+
+[http://oss.jfrog.org/oss-snapshot-local/com/alternacraft/PvpTitles/](http://oss.jfrog.org/oss-snapshot-local/com/alternacraft/PvpTitles/ "dev builds")
+
+The dev builds are primarily for testing purposes.
 
 Getting Started & Documentation
 -------------------------------
