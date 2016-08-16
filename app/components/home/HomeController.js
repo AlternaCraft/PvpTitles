@@ -1,91 +1,139 @@
-app.controller('HomeController', function ($scope, Releases, Javadoc, Dependencies) {
-    $scope.nshow = 3;
-    $scope.releasesName = [];
+app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 'Javadoc', 'Dependencies', function (s, a, t, R, J, D) {
+    s.nshow = 3;
+    s.releasesName = [];
 
-    $scope.releases = undefined;
-    $scope.actualR = -1;
+    s.releases = undefined;
+    s.release = undefined;
+    s.actualR = -1;
 
-    $scope.blocks = undefined;
-    $scope.actualB = -1;
+    s.blocks = undefined;
+    s.block = undefined;
+    s.actualB = -1;
 
-    Releases.releases().success(function (data) {
-        $scope.releases = data;
-        for (var i = 0; i < $scope.releases.length; i++) {
-            $scope.releasesName.push($scope.releases[i].tag_name);
+    R.releases().success(function (data) {
+        s.releases = data;
+        for (var i = 0; i < s.releases.length; i++) {
+            s.releasesName.push(s.releases[i].tag_name);
         }
-        $scope.actualR = 0;
+        s.actualR = 0;
 
-        $scope.show = ($scope.releases.length > 3) ? $scope.nshow:$scope.releases.length;
+        s.show = (s.releases.length > 3) ? s.nshow : s.releases.length;
+    }).error(function (err) {
+        s.noaccess = "there was an error loading the content";
     });
 
-    $scope.hasJavadoc = function (v) {
+    s.hasJavadoc = function (v) {
         if (v === "") {
             return false;
         }
-        return Javadoc.check(v);
+        return J.check(v);
     };
 
-    $scope.hasDependencies = function (v) {
+    s.hasDependencies = function (v) {
         if (v === "") {
             return false;
         }
-        return Dependencies.getDependencies(v) === undefined;
+        return D.getDependencies(v) === undefined;
     };
 
-    $scope.optionSelected = function (v) {
-        for (var i = 0; i < $scope.releases.length; i++) {
-            if ($scope.releases[i].tag_name === v) {
-                $scope.actualR = i;
-                $scope.actualB = Math.floor(i/$scope.show);
-                break;
+    s.optionSelected = function (v) {
+        if (!s.disabled) {
+            s.disabled = true;
+            for (var i = 0; i < s.releases.length; i++) {
+                if (s.releases[i].tag_name === v) {
+                    s.actualR = i;
+                    s.actualB = Math.floor(i / s.show);
+                    break;
+                }
             }
         }
     };
 
-    $scope.hasNext = function () {
-        if ($scope.releases !== undefined) {
-            return $scope.actualB < $scope.blocks.length - 1;
+    s.hasNext = function () {
+        if (s.blocks !== undefined) {
+            return s.actualB < s.blocks.length - 1;
         }
     };
 
-    $scope.hasBefore = function () {
-        return $scope.actualB > 0;
+    s.hasBefore = function () {
+        return s.actualB > 0;
     };
 
-    $scope.next = function () {
-        if ($scope.hasNext()) {
-            $scope.actualB += 1;
+    s.next = function () {
+        if (s.hasNext() && !s.disabled) {
+            var e = angular.element(document.getElementsByClassName("pagination"));
+            var c = "update";
+
+            // Fade update
+            s.animate(e, c, function () {
+                s.actualB += 1;
+            }, function(){});
         }
     };
 
-    $scope.before = function () {
-        if ($scope.hasBefore()) {
-            $scope.actualB -= 1;
+    s.before = function () {
+        if (s.hasBefore() && !s.disabled) {
+            var e = angular.element(document.getElementsByClassName("pagination"));
+            var c = "update";
+
+            // Fade update
+            s.animate(e, c, function () {
+                s.actualB -= 1;
+            }, function(){});
         }
     };
 
-    $scope.$watch('show', function (newValue, oldValue) {
-        if ($scope.releases !== undefined) {
-            $scope.blocks = Releases.paginator($scope.releases, $scope.show);
-            $scope.actualB = Math.floor($scope.actualR/$scope.show);
-            $scope.block = $scope.blocks[$scope.actualB];
+    s.$watch('show', function (nv, ov) {
+        if (s.releases !== undefined) {
+            var e = angular.element(document.getElementsByClassName("pagination"));
+            var c = "update";
+
+            s.animate(e, c, function () {
+                if (nv === undefined || nv === null || nv < 0) {
+                    s.show = 1;
+                }
+                s.blocks = R.paginator(s.releases, s.show);
+                s.actualB = Math.floor(s.actualR / s.show);
+                s.block = s.blocks[s.actualB];
+            }, function(){});
         }
     });
 
-    $scope.$watch('actualR', function (newValue, oldValue) {
-        if ($scope.releases !== undefined) {
-            $scope.release = $scope.releases[$scope.actualR];
-            $scope.release.class = "active";
+    s.$watch('actualR', function (nv, ov) {
+        if (s.releases !== undefined) {
+            var e = angular.element(document.getElementById("main-content"));
+            var c = "before";
 
-            if (oldValue != newValue && $scope.releases[oldValue] !== undefined) {
-                $scope.releases[oldValue].class = "";
+            // Change active class
+            s.releases[nv].class = "active";
+            if (ov != nv && s.releases[ov] !== undefined) {
+                s.releases[ov].class = "";
             }
+
+            // Animate the update
+            s.animate(e, c, function () {
+                s.release = s.releases[nv];
+            }, function () {
+                // Wait to the last animation
+                s.disabled = false;
+            });
         }
     });
 
-    $scope.$watch('actualB', function (newValue, oldValue) {
-        if ($scope.blocks !== undefined) {
-            $scope.block = $scope.blocks[$scope.actualB];
+    s.$watch('actualB', function (nv, ov) {
+        if (s.blocks !== undefined) {
+            s.block = s.blocks[nv];
         }
     });
-});
+
+    s.animate = function (e, c, f, f2) {
+        a.addClass(e, c).then(function () {
+            t(function () {
+                f();
+                return a.removeClass(e, c).then(function () {
+                    f2();
+                });
+            });
+        });
+    };
+}]);

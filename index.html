@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content ="All information about PvpTitles plugin">
     <link rel="icon" href="favicon.ico">
 
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
@@ -55,19 +55,8 @@
         </div>
     </header>
 
-    <div ng-view ng-cloak>
+    <div ng-view>
     </div>
-
-    <script>
-        /*$(window).scroll(function() {
-            if ($(this).scrollTop() > 1) {
-                $('header').addClass("sticky");
-            } else {
-                $('header').removeClass("sticky");
-            }
-        });*/
-
-    </script>
 
     <!-- Module -->
     <script src="app/app.module.js"></script>
@@ -76,13 +65,13 @@
     <script src="app/components/home/HomeController.js"></script>
     <script src="app/components/javadoc/JavadocController.js"></script>
     <script src="app/components/dependencies/DependenciesController.js"></script>
-    <!-- Directives -->
-    <script src="app/shared/ui/UIDirective.js"></script>
+    <!-- Directives & Filters -->
     <script src="app/shared/jd/JDDirective.js"></script>
-    <!-- Filters-->
-    <script src="app/shared/jd/CapFilter.js"></script>
-    <script src="app/shared/md/VersionFilter.js"></script>
-    <script src="app/shared/arr/arrFilter.js"></script>
+    <script src="app/shared/utils/animationDirective.js"></script>
+    <script src="app/shared/utils/arrFilter.js"></script>
+    <script src="app/shared/utils/CapFilter.js"></script>
+    <script src="app/shared/utils/UIDirective.js"></script>
+    <script src="app/shared/utils/VersionFilter.js"></script>
     <!-- Services -->
     <script src="app/components/home/HomeService.js"></script>
     <script src="app/components/javadoc/JavadocService.js"></script>

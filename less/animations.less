@@ -1,0 +1,144 @@
+// main: layout.less
+// Moving blocks
+.before {
+    transform: translateX(-@out);
+}
+
+.next {
+    transform: translateX(@out);
+}
+
+.next-remove,
+.next-add.next-add-active {
+    animation-duration: 0.5s;
+    animation-name: slideout-right;
+}
+
+.next-remove.next-remove-active,
+.next-add {
+    animation-duration: 1.25s;
+    animation-name: slidein-right;
+}
+
+.before-remove,
+.before-add.before-add-active {
+    animation-duration: 0.5s;
+    animation-name: slideout-left;
+}
+
+.before-remove.before-remove-active,
+.before-add {
+    animation-duration: 1.25s;
+    animation-name: slidein-left;
+}
+
+// Table animations
+.item {
+    &.ng-enter {
+        animation-duration: 1s;
+        animation-name: slidein-left;
+    }
+    &.ng-enter-stagger {
+        animation-delay: 0.5s;
+    }
+}
+
+.table {
+    overflow: hidden;
+}
+
+@keyframes slidein-left {
+    /* CSS3 */
+    from {
+        transform: translateX(-@out);
+    }
+    to {
+        transform: translateX(0px);
+    }
+}
+
+@keyframes slideout-left {
+    /* CSS3 */
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(-@out);
+    }
+}
+
+@keyframes slidein-right {
+    /* CSS3 */
+    from {
+        transform: translateX(@out);
+    }
+    to {
+        transform: translateX(0px);
+    }
+}
+
+@keyframes slideout-right {
+    /* CSS3 */
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(@out);
+    }
+}
+
+// Fade animations
+.update {
+    opacity: 0;
+}
+
+.update-remove,
+.update-add.update-add-active {
+    animation-duration: 0.5s;
+    animation-name: fadeout;
+}
+
+.update-remove.update-remove-active,
+.update-add {
+    animation-duration: 0.5s;
+    animation-name: fadein;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+// Main page animations
+#ajax {
+    transition: 0.5s all ease-out;
+}
+
+#relecont,
+#releerror {
+    transition: 0.75s all ease-out;
+    transition-delay: 0.5s;
+}
+
+.info.ng-hide-remove,
+.info.ng-hide-add.ng-hide-add-active {
+    opacity: 0;
+}
+
+.info.ng-hide-remove.ng-hide-remove-active,
+.info.ng-hide-add {
+    opacity: 1;
+}

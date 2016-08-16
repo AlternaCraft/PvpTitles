@@ -6,7 +6,7 @@
                 <th>Version</th>
                 <th>Scope</th>
             </tr>
-            <tr class="item" ng-repeat="d in dependencies | orderBy:'scope'">
+            <tr ng-class="animated" ng-repeat="d in dependencies | orderBy:'scope'">
                 <td>{{d.artifactId | capitalize}}</td>
                 <td>{{d.version}}</td>
                 <td>{{d.scope}}</td>

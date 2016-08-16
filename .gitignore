@@ -1,6 +1,9 @@
 /.git
 /bower_components/*
-/less
+
+# Developing reasons
+/pvptitles.json
+#/less
 
 # JQUERY AND CUSTOM LIBRARIES
 !/bower_components/jquery*

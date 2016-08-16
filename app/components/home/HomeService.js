@@ -2,7 +2,8 @@ app.factory('Releases', function ($http) {
     var rs = {};
 
     rs.releases = function () {
-        return $http.get("https://api.github.com/repos/AlternaCraft/PvpTitles/releases")
+        return $http.get("pvptitles.json")
+//        return $http.get("https://api.github.com/repos/AlternaCraft/PvpTitles/releases")
             .success(function (data) {
                 data = data.reverse();
 

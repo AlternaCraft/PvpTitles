@@ -1,0 +1,205 @@
+// main: ../layout.less
+#content-wrapper.homeview {
+    #releerror {
+        font-family: @font-family;
+        text-align: center;
+        img {
+            margin: auto;
+            opacity: 0.5;
+        }
+    }
+}
+
+.disabled {
+    opacity: 0.7;
+    li:not(.active) {
+        a {
+            cursor: not-allowed !important;
+            &:hover {
+                background-color: #fff !important;
+                border-color: none !important;
+                color: #337ab7 !important;
+            }
+        }
+    }
+    span {
+        cursor: default !important;
+    }
+}
+
+
+/* Plugin */
+
+.plugincard {
+    .body {
+        .download {
+            margin: auto;
+        }
+    }
+}
+
+
+/* Search box */
+
+.search-form {
+    .form-group {
+        margin-top: -90px;
+        float: right !important;
+        transition: all 0.35s, border-radius 0s;
+        width: 32px;
+        height: 32px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+        max-width: 200px;
+        input.form-control {
+            box-sizing: border-box;
+            padding-right: 20px;
+            border: 0 none;
+            background: transparent;
+            box-shadow: none;
+            display: block;
+        }
+        &:hover,
+        &.hover {
+            width: 200px;
+            border-radius: 4px 25px 25px 4px;
+        }
+        span.form-control-feedback {
+            top: -1px;
+            right: -2px;
+            z-index: 2;
+            color: #3596e0;
+            font-size: 14px;
+            pointer-events: auto;
+        }
+    }
+}
+
+
+/* Controls */
+
+.bcontrols {
+    height: auto;
+    width: 100vw;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 100;
+    > .arrow {
+        margin: auto;
+    }
+    > .controls {
+        display: none;
+        background: #2e7bcf url(../images/header-bg.jpg) 0 0 repeat-x;
+        padding-bottom: 15px;
+        padding-top: 15px;
+        .pagination {
+            display: inline-block;
+            text-align: left;
+            margin-bottom: 0;
+            margin-top: 0;
+            &>.active {
+                &>a {
+                    background-color: #7CACDC;
+                    border-color: #7CACDC;
+                    &:hover {
+                        background-color: #7CACDC;
+                        border-color: #7CACDC;
+                    }
+                }
+            }
+        }
+        .glyphicon {
+            margin-top: -1px;
+            font-size: 24px;
+            line-height: 35px;
+            color: #7CACDC;
+            cursor: pointer;
+            &.glyphicon-chevron-right {
+                margin-left: 5px;
+                float: right;
+            }
+            &.glyphicon-chevron-left {
+                margin-right: 5px;
+                float: left;
+            }
+        }
+        .show {
+            font-family: @font-family;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: white;
+            input {
+                width: 30px;
+                text-align: center;
+                background: transparent;
+                border: none;
+            }
+        }
+    }
+}
+
+
+/* Javadoc tag */
+
+#javadoc {
+    background: transparent url(../images/javadoc-button.png) 0 0 no-repeat;
+}
+
+.media-mixin(@break) when (@break =@break-medium) {
+    .card {
+        padding: 0px;
+    }
+    .search-form {
+        .form-group {
+            margin-top: -85px;
+        }
+    }
+}
+
+.media-mixin(@break) when (@break =@break-small) {
+    .search-form {
+        .form-group {
+            max-width: none;
+            margin-top: 0;
+            margin-bottom: 0;
+            &:hover,
+            &.hover {
+                width: 100%;
+            }
+        }
+    }
+    .bcontrols {
+        position: relative;
+        height: auto;
+        bottom: 0;
+        width: auto;
+        margin-top: 10px;
+        .controls {
+            background: none;
+            padding: 0;
+            .pagination {
+                margin-bottom: 0;
+            }
+            .show {
+                padding-top: 20px;
+                color: #474747;
+                input {
+                    border-width: 2px;
+                    border-style: inset;
+                    border-color: initial;
+                }
+            }
+        }
+    }
+    #sidebar p:last-child {
+        margin-bottom: 0;
+    }
+    #content-wrapper.homeview {
+        padding-top: 20px;
+    }
+}
