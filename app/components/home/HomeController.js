@@ -84,14 +84,11 @@ app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 
     };
 
     s.$watch('show', function (nv, ov) {
-        if (s.releases !== undefined) {
+        if (s.releases !== undefined && !(nv === undefined || nv === null || nv < 0)) {
             var e = angular.element(document.getElementsByClassName("pagination"));
             var c = "update";
 
             s.animate(e, c, function () {
-                if (nv === undefined || nv === null || nv < 0) {
-                    s.show = 1;
-                }
                 s.blocks = R.paginator(s.releases, s.show);
                 s.actualB = Math.floor(s.actualR / s.show);
                 s.block = s.blocks[s.actualB];
