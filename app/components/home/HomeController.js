@@ -41,8 +41,13 @@ app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 
             s.disabled = true;
             for (var i = 0; i < s.releases.length; i++) {
                 if (s.releases[i].tag_name === v) {
-                    s.actualR = i;
-                    s.actualB = Math.floor(i / s.show);
+                    if (s.actualR === i) {
+                        s.disabled = false;
+                    }
+                    else {
+                        s.actualR = i;
+                        s.actualB = Math.floor(i / s.show);
+                    }
                     break;
                 }
             }
@@ -67,7 +72,7 @@ app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 
             // Fade update
             s.animate(e, c, function () {
                 s.actualB += 1;
-            }, function(){});
+            }, function () {});
         }
     };
 
@@ -79,7 +84,7 @@ app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 
             // Fade update
             s.animate(e, c, function () {
                 s.actualB -= 1;
-            }, function(){});
+            }, function () {});
         }
     };
 
@@ -92,7 +97,7 @@ app.controller('HomeController', ['$scope', '$animate', '$timeout', 'Releases', 
                 s.blocks = R.paginator(s.releases, s.show);
                 s.actualB = Math.floor(s.actualR / s.show);
                 s.block = s.blocks[s.actualB];
-            }, function(){});
+            }, function () {});
         }
     });
 
