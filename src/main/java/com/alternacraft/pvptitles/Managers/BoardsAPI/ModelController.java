@@ -20,7 +20,6 @@ import com.alternacraft.pvptitles.Misc.Params;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ModelController {
@@ -31,14 +30,14 @@ public class ModelController {
     public ModelController() {
     }
 
-    private int getRows(Integer[] totalperfila, ArrayList<ArrayList<ArrayList<String>>> params) {
+    private int getRows(Integer[] totalperfila, List<List<List<String>>> params) {
         int total = 0;
         int totalfila = 0;
 
         for (int i = 0; i < params.size(); i++) {
-            ArrayList<ArrayList<String>> filas = params.get(i);
+            List<List<String>> filas = params.get(i);
             for (int j = 0; j < filas.size(); j++) {
-                ArrayList<String> cols = filas.get(j);
+                List<String> cols = filas.get(j);
                 totalfila = (totalfila >= cols.size()) ? totalfila : cols.size();
             }
             totalperfila[i] = totalfila;
@@ -49,11 +48,11 @@ public class ModelController {
         return total;
     }
 
-    private int getCols(ArrayList<ArrayList<ArrayList<String>>> params) {
+    private int getCols(List<List<List<String>>> params) {
         int colsperfila = 0;
 
         for (int i = 0; i < params.size(); i++) {
-            ArrayList<ArrayList<String>> filas = params.get(i);
+            List<List<String>> filas = params.get(i);
             colsperfila = (filas.size() > colsperfila) ? filas.size() : colsperfila;
         }
 
@@ -65,7 +64,7 @@ public class ModelController {
      *
      * @param params Datos procesados del fichero
      */
-    public void preprocessUnit(ArrayList<ArrayList<ArrayList<String>>> params) {
+    public void preprocessUnit(List<List<List<String>>> params) {
         Integer[] totalperfila = new Integer[params.size()];
         int colsperfila = getCols(params);
 
@@ -76,9 +75,9 @@ public class ModelController {
         }
 
         for (int i = 0; i < params.size(); i++) {
-            ArrayList<ArrayList<String>> filas = params.get(i);
+            List<List<String>> filas = params.get(i);
             for (int j = 0; j < filas.size(); j++) {
-                ArrayList<String> cols = filas.get(j);
+                List<String> cols = filas.get(j);
                 for (int k = 0; k < cols.size(); k++) {
                     String param = cols.get(k);
                     table[i][k][j] = StrUtils.translateColors(param);
@@ -117,7 +116,7 @@ public class ModelController {
             }
         }
 
-        // First values from columns
+        // Filas de valores
         String[] cols = this.table[table.length - 1][0];
 
         this.params = new Params();

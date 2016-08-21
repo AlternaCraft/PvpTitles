@@ -19,10 +19,11 @@ package com.alternacraft.pvptitles.Managers.BoardsAPI;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.removeColors;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BoardModel {
 
-    protected ArrayList<ArrayList<ArrayList<String>>> params = null;
+    protected List<List<List<String>>> params = null;
 
     private String nombre = null;
     private short cantidad = 0;
@@ -42,7 +43,7 @@ public class BoardModel {
     public final void setColumnas() {
         short ant = 0;
 
-        for (ArrayList<ArrayList<String>> param : params) {
+        for (List<List<String>> param : params) {
             if (param.size() > ant) {
                 ant = (short) param.size();
             }
@@ -54,9 +55,9 @@ public class BoardModel {
     public final void setProgresivo() {
         this.progresivo = false;
 
-        for (ArrayList<ArrayList<String>> param : params) {
+        for (List<List<String>> param : params) {
             ArrayList<String> filas = new ArrayList();
-            for (ArrayList<String> param1 : param) {
+            for (List<String> param1 : param) {
                 String concatena = "";
                 for (String param11 : param1) {
                     StringBuilder buf = new StringBuilder();
@@ -107,7 +108,7 @@ public class BoardModel {
         return cantidad;
     }
 
-    public ArrayList<ArrayList<ArrayList<String>>> getParams() {
+    public List<List<List<String>>> getParams() {
         return params;
     }
 
@@ -124,14 +125,14 @@ public class BoardModel {
         int total = this.params.size();
         Integer[] values = new Integer[total - 1];
 
-        ArrayList<ArrayList<String>> v;
+        List<List<String>> v;
         int i = 0;
 
         while (i < total - 1) {
             int ant = 0;
             v = this.params.get(i);
 
-            for (ArrayList<String> arrayList : v) {
+            for (List<String> arrayList : v) {
                 if (ant < arrayList.size()) {
                     ant = arrayList.size();
                 }

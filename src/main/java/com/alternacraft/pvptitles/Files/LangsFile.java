@@ -53,7 +53,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public enum LangsFile {
     // <editor-fold defaultstate="collapsed" desc="MESSAGES">
-// <editor-fold defaultstate="collapsed" desc="MESSAGES">
     PLUGIN_ENABLED(
             "Plugin activado correctamente",
             "Plugin activated successfully"
@@ -226,8 +225,8 @@ public enum LangsFile {
             "&6Has sido teletransportado correctamente",
             "&6You have been teleported correctly"
     );
-
     // </editor-fold> 
+    
     public static enum LangType {
         ES,
         EN,
