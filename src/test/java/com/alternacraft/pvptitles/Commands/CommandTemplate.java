@@ -34,20 +34,26 @@ public class CommandTemplate extends CommandBase {
         CommandBase.CommandStructure cs = new CommandBase.CommandStructure(bc) {
             @Override
             public void initialize() {
-                
+
             }
+
             @Override
             public void tests(boolean expected) {
-                
+
             }
         };
-        
+
         t(TEST_INFO.replace("%desc%", ""));
-        
+
         String[] args = {};
         boolean expected = true;
-        
+
         cs.premadeRun(args, expected);
+    }
+
+    @Override
+    void somethingElse() {
+        // The code
     }
 
 }

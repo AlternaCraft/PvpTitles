@@ -43,7 +43,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HologramsFile.class, Localizer.class})
 public class BoardCommandTest extends CommandBase {
-    
+
     @Test
     public void testBoardCommandCreate() {
         BoardCommand command = new BoardCommand(mockPlugin);
@@ -53,10 +53,7 @@ public class BoardCommandTest extends CommandBase {
             public void initialize() {
                 PowerMockito.mockStatic(HologramsFile.class);
                 when(HologramsFile.loadHologram(anyString())).thenReturn(null);
-
-                PowerMockito.mockStatic(Localizer.class);
-                when(Localizer.getLocale(any(Player.class))).thenReturn(LangType.EN);
-
+                
                 LeaderBoardManager mockLBM = mock(LeaderBoardManager.class);
                 when(mockManager.getLbm()).thenReturn(mockLBM);
                 when(mockLBM.addBoard(any(Board.class), any(Player.class))).thenReturn(Boolean.FALSE);
@@ -74,7 +71,7 @@ public class BoardCommandTest extends CommandBase {
             @Override
             public void tests(boolean expected) {
                 assertEquals(expected, getResult());
-                
+
                 verify(mockPlayer, never()).sendMessage(anyString());
                 verify(mockManager).searchModel(anyString());
                 verify((LeaderBoardManager) getMook("LBM")).addBoard(any(Board.class), any(Player.class));
@@ -101,14 +98,11 @@ public class BoardCommandTest extends CommandBase {
                 BoardData mockBoardData = mock(BoardData.class);
                 when(HologramsFile.loadHologram(anyString())).thenReturn(mockBoardData);
 
-                PowerMockito.mockStatic(Localizer.class);
-                when(Localizer.getLocale(any(Player.class))).thenReturn(LangType.EN);
-
                 LeaderBoardManager mockLBM = mock(LeaderBoardManager.class);
                 when(mockManager.getLbm()).thenReturn(mockLBM);
                 when(mockLBM.addBoard(any(Board.class), any(Player.class))).thenReturn(Boolean.FALSE);
                 saveMock("LBM", mockLBM);
-                
+
                 // Empieza
                 HolographicHook.ISHDENABLED = true;
             }
@@ -116,8 +110,8 @@ public class BoardCommandTest extends CommandBase {
             @Override
             public void tests(boolean expected) {
                 assertEquals(expected, getResult());
-                
-                verify((LeaderBoardManager)getMook("LBM")).deleteBoard(any(Location.class), anyObject());
+
+                verify((LeaderBoardManager) getMook("LBM")).deleteBoard(any(Location.class), anyObject());
             }
         };
 
@@ -125,7 +119,13 @@ public class BoardCommandTest extends CommandBase {
 
         String[] args = new String[]{"remove", "hologram", "testing"};
         boolean expected = true;
-        
+
         cs.premadeRun(args, expected);
+    }
+
+    @Override
+    void somethingElse() {
+        PowerMockito.mockStatic(Localizer.class);
+        when(Localizer.getLocale(any(Player.class))).thenReturn(LangType.EN);
     }
 }

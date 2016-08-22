@@ -18,25 +18,30 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import java.util.Arrays;
 import java.util.HashMap;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-@PrepareForTest(Manager.class)
+@PrepareForTest({PvpTitles.class, Manager.class})
 abstract class CommandBase {
 
     protected final String TEST_INFO = "Prueba: %desc%";
     protected final String TEST_INITIALIZE = "Inicializo los objetos necesarios";
     protected final String TEST_EXECUTE = "Ejecuto el comando";
     protected final String TEST_RESULTS = "Comprobando resultados...";
-    
+
     protected PvpTitles mockPlugin = null;
     protected Manager mockManager = null;
     protected Player mockPlayer = null;
@@ -49,70 +54,92 @@ abstract class CommandBase {
     public void setUp() {
         m("[ Cargando elementos comúnes ]");
 
-        mockPlugin = mock(PvpTitles.class);
+        mockPlugin = PowerMockito.mock(PvpTitles.class);
         mockManager = PowerMockito.mock(Manager.class);
         mockPlayer = mock(Player.class);
 
-        when(mockPlugin.getManager()).thenReturn(mockManager); // Principal   
+        when(mockPlugin.getManager()).thenReturn(mockManager); // Principal
+        
+        // Plugin name
+        PowerMockito.mockStatic(PvpTitles.class);
+        when(PvpTitles.getPluginName()).thenReturn("");
+        
+        // Player receive a message
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                System.out.println("SenderSendMessage: " + Arrays.toString(args));
+                return null;
+            }
+        }).when(mockPlayer).sendMessage(anyString());
+
+        this.somethingElse();
     }
+
+    abstract void somethingElse();
 
     @After
     public void tearDown() {
     }
-    
+
     protected static void t(String m) {
         m(m + ":");
     }
-    
+
     protected static void p(String m) {
         m(" - " + m);
     }
-    
+
     protected static void m(String m) {
         System.out.println(m);
     }
-    
+
     public class CommandStructure {
-        
-        private CommandExecutor ce = null;        
+
+        private CommandExecutor ce = null;
         private boolean result = false;
-        
+
         private HashMap<String, Object> mocks = new HashMap();
-        
+
         public CommandStructure(CommandExecutor ce) {
             this.ce = ce;
         }
-        
+
         public final void premadeRun(String[] args, boolean expected) {
             p(TEST_INITIALIZE);
-            this.initialize();            
+            this.initialize();
             p(TEST_EXECUTE);
             this.execute(args);
             p(TEST_RESULTS);
             this.tests(expected);
             m("");
         }
-        
+
         public void initialize() {
             //
-        }                
-        
-        public final void execute(String[] args) {            
+        }
+
+        public final void execute(String[] args) {
             result = this.ce.onCommand(mockPlayer, null, null, args);
-        }        
+        }
 
         public void tests(boolean expected) {
             //
-        } 
-        
+        }
+
         public final void saveMock(String k, Object v) {
             mocks.put(k, v);
         }
-        
+
         public final Object getMook(String k) {
             return mocks.get(k);
         }
         
+        public final HashMap<String, Object> getMocks() {
+            return this.mocks;
+        }
+
         public final boolean getResult() {
             return this.result;
         }
