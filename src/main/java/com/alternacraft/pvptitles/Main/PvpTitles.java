@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     27-07-2016
+// Last Change:     24-08-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -140,6 +140,8 @@
 //  Ver. 2.5.7  23/07/2016   Modificados varios métodos y añadidas clases para
 //   realizar las pruebas unitarias.
 //  Ver. 2.5.7  27/07/2016   Mejorado el sistema de plantillas
+//  Ver. 2.5.8  24/08/2016   Añadidas pruebas unitarias y arreglados algunos fallos
+//   (Ahora no se tienen en cuenta los colores de los rangos en las recompensas).
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 

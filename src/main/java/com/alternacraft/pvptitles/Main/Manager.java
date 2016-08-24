@@ -41,6 +41,7 @@ import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
@@ -301,7 +302,7 @@ public final class Manager {
                     data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
 
                     // Guardo en el mapa principal los valores para ese valor
-                    rewards.get(type).put(value, data);
+                    rewards.get(type).put(StrUtils.removeColorsWithoutTranslate(value), data);
                 }
             }
         }

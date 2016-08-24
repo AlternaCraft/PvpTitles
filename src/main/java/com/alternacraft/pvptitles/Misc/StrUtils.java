@@ -51,6 +51,10 @@ public class StrUtils {
         return ChatColor.stripColor(str);
     }
 
+    public static String removeColorsWithoutTranslate(String str) {
+        return ChatColor.stripColor(translateColors(str));
+    }
+
     public static int dividirEntero(int v, int div) {
         return (v % div == 0 && v != 0) ? v / div : ((int) v / div) + 1;
     }
