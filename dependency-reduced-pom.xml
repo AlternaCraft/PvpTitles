@@ -168,19 +168,22 @@
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>VaultAPI</artifactId>
       <version>1.6</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>2.5.1</version>
       <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>be.maximvdw</groupId>
       <artifactId>MVdWPlaceholderAPI</artifactId>
       <version>1.0.1-SNAPSHOT</version>
       <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -231,7 +234,7 @@
       <artifactId>scoreboardstats</artifactId>
       <version>0.9.8</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/ScoreboardStats.jar</systemPath>
+      <systemPath>${basedir}/lib/ScoreboardStats_v0.9.10.jar</systemPath>
       <optional>true</optional>
     </dependency>
     <dependency>

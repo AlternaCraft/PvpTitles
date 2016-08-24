@@ -23,6 +23,7 @@ import static com.alternacraft.pvptitles.Commands.CommandBase.t;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -104,7 +105,7 @@ public class FameCommandTest extends CommandBase {
 
     @Override
     void somethingElse() {
-        // Langs
+        // Langs 
         PowerMockito.mockStatic(Localizer.class);
         when(Localizer.getLocale(any(Player.class))).thenReturn(LangsFile.LangType.EN);
 
@@ -117,6 +118,7 @@ public class FameCommandTest extends CommandBase {
         when(UUIDFetcher.getIDPlayer(anyString())).thenReturn(UUID.randomUUID());
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(mockOPlayer);
 
+        // Database
         DBHandler mockDBHandler = mock(DBHandler.class);
         mockManager.dbh = mockDBHandler;
 
@@ -129,6 +131,7 @@ public class FameCommandTest extends CommandBase {
             System.out.println("DB Error?");
         }
 
+        // Custom events
         Server mockServer = mock(Server.class);
         when(mockPlugin.getServer()).thenReturn(mockServer);
 

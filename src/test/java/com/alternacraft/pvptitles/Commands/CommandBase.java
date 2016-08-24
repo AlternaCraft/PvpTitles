@@ -62,7 +62,8 @@ abstract class CommandBase {
         
         // Plugin name
         PowerMockito.mockStatic(PvpTitles.class);
-        when(PvpTitles.getPluginName()).thenReturn("");
+        when(PvpTitles.getPluginName()).thenReturn("");                
+        when(PvpTitles.getInstance()).thenReturn(mockPlugin);       
         
         // Player receive a message
         doAnswer(new Answer<Void>() {

@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.io.File;
 import java.io.IOException;
@@ -252,7 +253,7 @@ public enum LangsFile {
     }
 
     private static final String DIRECTORY = new StringBuilder().append(
-            "PvpTitles").append(
+            PvpTitles.getInstance().getDataFolder()).append(
                     File.separator).append(
                         "Langs").append(
                             File.separator).toString();
