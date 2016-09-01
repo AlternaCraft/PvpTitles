@@ -23,7 +23,6 @@ import static com.alternacraft.pvptitles.Commands.CommandBase.t;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
-import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.UUID;
 import org.bukkit.Bukkit;

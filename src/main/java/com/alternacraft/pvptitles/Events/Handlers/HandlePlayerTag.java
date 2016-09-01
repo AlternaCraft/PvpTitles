@@ -79,8 +79,6 @@ public class HandlePlayerTag implements Listener {
     }
 
     private static boolean hasIgnoredChatPermission(Player pl) {
-        // Fix prefix
-        
         if (VaultHook.PERMISSIONS_ENABLED) { // Vault en el server
             Permission user = VaultHook.permission;
             

@@ -141,7 +141,7 @@ public class FileConfig {
 
         for (String value : newFile.getKeys(true)) {
             // Este parametro no se toca
-            if (value.equals("version")) {
+            if (value.equalsIgnoreCase("version")) {
                 continue;
             }
 

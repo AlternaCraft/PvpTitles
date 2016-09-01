@@ -57,6 +57,7 @@ public class ConfigHandler {
         // Set debug mode
         FileConfiguration config = getConfig();
         
+        PvpTitles.setPluginName(StrUtils.translateColors(config.getString("PluginPrefix")));        
         PvpTitles.debugMode = config.getBoolean("Debug");
 
         List<String> configList = (List<String>) config.getList("RankNames");

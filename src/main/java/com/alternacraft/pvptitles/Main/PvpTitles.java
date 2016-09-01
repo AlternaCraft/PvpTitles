@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     24-08-2016
+// Last Change:     01-09-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -142,6 +142,8 @@
 //  Ver. 2.5.7  27/07/2016   Mejorado el sistema de plantillas
 //  Ver. 2.5.8  24/08/2016   Añadidas pruebas unitarias y arreglados algunos fallos
 //   (Ahora no se tienen en cuenta los colores de los rangos en las recompensas).
+//  Ver. 2.5.8  01/09/2016   Añadido opcion para editar el prefijo del plugin y
+//   arreglado fallo con el actualizador del config principal.
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 
@@ -186,9 +188,12 @@ public class PvpTitles extends JavaPlugin {
 
     private static PvpTitles plugin = null;
 
-    private static final String PLUGIN = ChatColor.WHITE + "[" + ChatColor.GOLD
+    private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "] ";
-
+    
+    // Custom prefix
+    private static String PLUGINPREFIX = PLUGINMODELPREFIX;
+    
     public static Logger LOGGER = null;
     public static boolean debugMode = false;
 
@@ -261,12 +266,12 @@ public class PvpTitles extends JavaPlugin {
                 /* 
                  * -> Integraciones <-
                  */
-                getServer().getConsoleSender().sendMessage(getPluginName() + ChatColor.GRAY
+                getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# STARTING INTEGRATION MODULE #");
 
                 checkExternalPlugins();
 
-                getServer().getConsoleSender().sendMessage(getPluginName() + ChatColor.GRAY
+                getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# ENDING INTEGRATION MODULE #");                
                 /*
                  * -> Fin integraciones <-
@@ -359,7 +364,11 @@ public class PvpTitles extends JavaPlugin {
     }
 
     public static String getPluginName() {
-        return PLUGIN;
+        return PLUGINPREFIX;
+    }
+    
+    public static void setPluginName(String str) {
+        PLUGINPREFIX = str;
     }
 
     public static PvpTitles getInstance() {
