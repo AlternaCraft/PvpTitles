@@ -16,8 +16,9 @@
  */
 package com.alternacraft.pvptitles.Events.Handlers;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.ISHDENABLED;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.RANK_LINE;
@@ -63,10 +64,10 @@ public class HandlePlayerTag implements Listener {
     }
 
     public static boolean canDisplayRank(Player pl, String rank) {
-        return isValidWorld(pl.getWorld().getName()) && !hasIgnoredChatPermission(pl) 
+        return isValidWorld(pl.getWorld().getName()) && !hasIgnoredChatPermission(pl)
                 && !hasIgnoredRank(rank);
     }
-    
+
     private static boolean isValidWorld(String w) {
         // Compruebo si el mundo esta en la lista de los vetados        
         if (HandlePlayerTag.cm.params.getAffectedWorlds().contains(w.toLowerCase())) {
@@ -81,10 +82,10 @@ public class HandlePlayerTag implements Listener {
     private static boolean hasIgnoredChatPermission(Player pl) {
         if (VaultHook.PERMISSIONS_ENABLED) { // Vault en el server
             Permission user = VaultHook.permission;
-            
+
             if (user.hasGroupSupport() && user.getPlayerGroups(pl).length != 0) {
                 String group = user.getPrimaryGroup(pl);
-                
+
                 World w = null;
                 World wp = pl.getWorld();
 
@@ -101,7 +102,14 @@ public class HandlePlayerTag implements Listener {
     private static boolean hasIgnoredRank(String rank) {
         return rank.equalsIgnoreCase(IGNORED_RANK);
     }
-    
+
+    private String clearFormat(String format) {
+        if (format.contains(HandlePlayerTag.cm.params.getPrefix())) {
+            format = format.replace(HandlePlayerTag.cm.params.getPrefix(), "");
+        }
+        return format;
+    }
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
@@ -114,7 +122,7 @@ public class HandlePlayerTag implements Listener {
             LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
-        
+
         int seconds = 0;
         try {
             seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
@@ -122,16 +130,19 @@ public class HandlePlayerTag implements Listener {
             LoggerManager.logError(ex.getCustomMessage(), null);
             return;
         }
-        rank = Ranks.getRank(fame, seconds);
+
+        try {
+            rank = Ranks.getRank(fame, seconds);
+        } catch (RandomException ex) {
+            LoggerManager.logError(ex.getCustomMessage(), null);
+        }
 
         String format = event.getFormat();
 
         if (rank != null && !rank.isEmpty()) {
             // Si ya se ha definido un prefix, en caso de que se de alguna de las condiciones lo elimino
             if (!HandlePlayerTag.cm.params.displayInChat() || !canDisplayRank(pl, rank)) {
-                if (format.contains(HandlePlayerTag.cm.params.getPrefix())) {
-                    format = format.replace(HandlePlayerTag.cm.params.getPrefix(), "");
-                }
+                clearFormat(format);
             } else {
                 String rankName = String.format(HandlePlayerTag.cm.params.getPrefixColor()
                         + rank + ChatColor.RESET);
@@ -143,6 +154,8 @@ public class HandlePlayerTag implements Listener {
                     format = rankName + format;
                 }
             }
+        } else {
+            clearFormat(format);
         }
 
         event.setFormat(format);
@@ -166,22 +179,27 @@ public class HandlePlayerTag implements Listener {
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
-            String rank = Ranks.getRank(fame, totalTime);
+            String rank = "";
+            try {
+                rank = Ranks.getRank(fame, totalTime);
+            } catch (RandomException ex) {
+                LoggerManager.logError(ex.getCustomMessage(), null);
+            }
 
             HOLOPLAYERS.put(uuid, createHoloPlayer(player, rank));
 
             // Fix reload
-            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) 
+            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                     || player.isSneaking() || !canDisplayRank(player, rank)) {
                 HOLOPLAYERS.get(uuid).removeLine(0);
             }
@@ -239,17 +257,22 @@ public class HandlePlayerTag implements Listener {
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
-            String rank = Ranks.getRank(fame, totalTime);
+            String rank = "";
+            try {
+                rank = Ranks.getRank(fame, totalTime);
+            } catch (RandomException ex) {
+                LoggerManager.logError(ex.getCustomMessage(), null);
+            }
 
             if (canDisplayRank(player, rank)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
@@ -276,23 +299,29 @@ public class HandlePlayerTag implements Listener {
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = Ranks.getRank(fame, totalTime);
+                String rank = "";
+                try {
+                    rank = Ranks.getRank(fame, totalTime);
+
+                } catch (RandomException ex) {
+                    LoggerManager.logError(ex.getCustomMessage(), null);
+                }
 
                 if (canDisplayRank(player, rank)) {
                     h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
                 }
-            } else if (!StrUtils.isHologramEmpty(h) && 
-                    player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            } else if (!StrUtils.isHologramEmpty(h)
+                    && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 h.removeLine(0);
             }
         }
@@ -335,17 +364,22 @@ public class HandlePlayerTag implements Listener {
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            
+
             int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
-            String rank = Ranks.getRank(fame, totalTime);
+            String rank = "";
+            try {
+                rank = Ranks.getRank(fame, totalTime);
+            } catch (RandomException ex) {
+                LoggerManager.logError(ex.getCustomMessage(), null);
+            }
 
             if (canDisplayRank(player, rank)) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
@@ -384,17 +418,22 @@ public class HandlePlayerTag implements Listener {
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = Ranks.getRank(fame, totalTime);
+                String rank = "";
+                try {
+                    rank = Ranks.getRank(fame, totalTime);
+                } catch (RandomException ex) {
+                    LoggerManager.logError(ex.getCustomMessage(), null);
+                }
 
                 if (canDisplayRank(player, rank)) {
                     h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));

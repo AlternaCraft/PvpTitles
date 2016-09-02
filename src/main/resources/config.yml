@@ -8,6 +8,9 @@ Version: 2.5.8
 # +------------------------------------------------------+ #
 ############################################################
 
+# Customizable plugin prefix
+PluginPrefix: "&f[&6PvPTitles&f] "
+
 # Enable/Disable metrics
 Metrics: true
 
@@ -142,8 +145,6 @@ DefaultLang: EN
 ## [Custom translations] Also, you can add your own translations...
 ## Example: You can create "messages_DE" and the messages into the file will be shown to the players whose launcher language is German
 
-# Customizable plugin prefix
-PluginPrefix: "&f[&6PvPTitles&f] "
 # Customizable Name for the points earned by players
 Tag: Fame
 # Color of the title in chat

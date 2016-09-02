@@ -16,8 +16,9 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
@@ -38,6 +39,8 @@ import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -95,7 +98,12 @@ public class RankCommand implements CommandExecutor {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
-        String rank = Ranks.getRank(fame, seconds);
+        String rank = "";
+        try {
+            rank = Ranks.getRank(fame, seconds);
+        } catch (RandomException ex) {
+            LoggerManager.logError(ex.getCustomMessage(), null);
+        }
 
         int rankup = Ranks.fameToRankUp();
         int timeup = Ranks.nextRankTime();

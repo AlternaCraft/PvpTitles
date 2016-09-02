@@ -16,8 +16,9 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -48,7 +49,7 @@ public class SBSHook {
                 replaceManager = sbs.getReplaceManager();
                 registerReplacerInterface(replaceManager);
 
-               showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
+                showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
             }
         }
     }
@@ -63,14 +64,14 @@ public class SBSHook {
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int seconds = 0;
                 try {
                     seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
 
                 /*
@@ -82,7 +83,13 @@ public class SBSHook {
                         replaceEvent.setScore(fame);
                         break;
                     case "rank":
-                        replaceEvent.setScoreOrText(Ranks.getRank(fame, seconds));
+                        String rank = "";
+                        try {
+                            rank = Ranks.getRank(fame, seconds);
+                        } catch (RandomException ex) {
+                            LoggerManager.logError(ex.getCustomMessage(), null);
+                        }
+                        replaceEvent.setScoreOrText(rank);
                         break;
                     case "killstreak":
                         replaceEvent.setScore(killstreak);

@@ -16,7 +16,9 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Main.Manager;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -35,8 +37,9 @@ public class Ranks {
      * @param fame Puntos pvp
      * @param seconds Cantidad de dias
      * @return String con el nombre del titulo
+     * @throws com.alternacraft.pvptitles.Exceptions.RandomException
      */
-    public static String getRank(int fame, int seconds) {
+    public static String getRank(int fame, int seconds) throws RandomException {
         String rank = "";
 
         Map<Integer, String> rankList = Manager.rankList();
@@ -51,22 +54,39 @@ public class Ranks {
                 >= reqTime.get(reqTime.values().size() - 1)) {
             nextRankFame = 0;
             nextRankTime = 0;
-            return rankList.get(reqFame.values().size() - 1);
+            
+            rank = rankList.get(reqFame.values().size() - 1);
         }
-
-        // Desde el primero hasta el penúltimo
-        for (int i = 0; i < reqFame.size() - 1; i++) {
-            // Voy comprobando si esta entre los puntos que va obteniendo
-            if (fame >= reqFame.get(i) && fame < reqFame.get(i + 1)) {
-                for (int j = i; j >= 0; j--) {
-                    if (seconds >= reqTime.get(j)) {
-                        nextRankFame = reqFame.get(j + 1) - fame;
-                        nextRankTitle = rankList.get(j + 1);
-                        nextRankTime = reqTime.get(j + 1) - seconds;
-                        return rankList.get(j);
+        else {
+            // Desde el primero hasta el penúltimo
+            for (int i = 0; i < reqFame.size() - 1; i++) {
+                // Voy comprobando si esta entre los puntos que va obteniendo
+                if (fame >= reqFame.get(i) && fame < reqFame.get(i + 1)) {
+                    for (int j = i; j >= 0; j--) {
+                        if (seconds >= reqTime.get(j)) {
+                            nextRankFame = reqFame.get(j + 1) - fame;
+                            nextRankTitle = rankList.get(j + 1);
+                            nextRankTime = reqTime.get(j + 1) - seconds;
+                            
+                            rank = rankList.get(j);
+                            
+                            break;
+                        }
                     }
                 }
             }
+        }
+        
+        if (rank.isEmpty()) {
+            Map<String, Object> data = new LinkedHashMap<>();
+            
+            data.put("Fame", fame);
+            data.put("Seconds", seconds);
+            data.put("Available ranks", rankList.toString());
+            data.put("Fame required", reqFame.toString());            
+            data.put("Time required", reqTime.toString());
+            
+            throw new RandomException("Error getting rank", data);
         }
 
         return rank;

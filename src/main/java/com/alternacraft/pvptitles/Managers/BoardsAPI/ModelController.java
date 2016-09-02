@@ -16,6 +16,8 @@
  */
 package com.alternacraft.pvptitles.Managers.BoardsAPI;
 
+import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Params;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.Ranks;
@@ -129,9 +131,8 @@ public class ModelController {
         if (progresivo && divisor > 1) {
             if (divisor > filasReales) {
                 filasReales = divisor;
-            }
-            else {
-                int extra = (nfilas % divisor == 0) ? ((int)(nfilas/divisor))-1:(int)(nfilas/divisor);
+            } else {
+                int extra = (nfilas % divisor == 0) ? ((int) (nfilas / divisor)) - 1 : (int) (nfilas / divisor);
                 filasReales = divisor + divisor * extra;
             }
         }
@@ -163,7 +164,7 @@ public class ModelController {
         if (str == null) {
             return str; // Optimizacion
         }
-        
+
         String temp = str;
 
         for (Params.Vars arg : Params.Vars.values()) {
@@ -181,8 +182,14 @@ public class ModelController {
                         str = str.replace("<player>", pf.get(value).getName());
                         break;
                     case RANK:
-                        str = str.replace("<rank>", Ranks.getRank(pf.get(value)
-                                .getFame(), pf.get(value).getSeconds()));
+                        String rank = "";
+                        try {
+                            rank = Ranks.getRank(pf.get(value)
+                                .getFame(), pf.get(value).getSeconds());
+                        } catch (RandomException ex) {
+                            LoggerManager.logError(ex.getCustomMessage(), null);
+                        }
+                        str = str.replace("<rank>", rank);
                         break;
                     case FAME:
                         str = str.replace("<fame>", String.valueOf(pf.get(value).getFame()));

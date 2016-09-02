@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.util.UUID;

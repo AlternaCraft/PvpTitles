@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     01-09-2016
+// Last Change:     02-09-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -144,11 +144,12 @@
 //   (Ahora no se tienen en cuenta los colores de los rangos en las recompensas).
 //  Ver. 2.5.8  01/09/2016   Añadido opcion para editar el prefijo del plugin y
 //   arreglado fallo con el actualizador del config principal.
+//  Ver. 2.5.8  02/09/2016   Mejorada la gestion de errores
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Commands.BoardCommand;
 import com.alternacraft.pvptitles.Commands.DBCommand;

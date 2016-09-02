@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameAddEvent;
 import com.alternacraft.pvptitles.Events.FameSetEvent;
 import com.alternacraft.pvptitles.Files.LangsFile;

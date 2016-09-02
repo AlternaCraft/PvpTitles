@@ -19,9 +19,10 @@ package com.alternacraft.pvptitles.Hook;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import be.maximvdw.placeholderapi.PlaceholderReplacer;
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -61,12 +62,17 @@ public class MVdWPlaceholderHook {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
-                    String rank = Ranks.getRank(fame, seconds);
-                    
+                    String rank = "";
+                    try {
+                        rank = Ranks.getRank(fame, seconds);
+                    } catch (RandomException ex) {
+                        LoggerManager.logError(ex.getCustomMessage(), null);
+                    }
+
                     if (!canDisplayRank(player, rank)) {
                         return "";
                     }
-                    
+
                     return rank;
                 }
             });
@@ -91,7 +97,14 @@ public class MVdWPlaceholderHook {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
-                    return Ranks.getRank(fame, seconds);
+                    String rank = "";
+                    try {
+                        rank = Ranks.getRank(fame, seconds);
+                    } catch (RandomException ex) {
+                        LoggerManager.logError(ex.getCustomMessage(), null);
+                    }
+
+                    return rank;
                 }
             });
 

@@ -16,11 +16,12 @@
  */
 package com.alternacraft.pvptitles.Events.Handlers;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameAddEvent;
 import com.alternacraft.pvptitles.Events.FameEvent;
 import com.alternacraft.pvptitles.Events.FameSetEvent;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
@@ -33,6 +34,8 @@ import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -91,11 +94,15 @@ public class HandleFame implements Listener {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
-                String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
-                String newRank = StrUtils.removeColors(Ranks.getRank(e.getFameTotal(), seconds));
-                if (rango.equals(newRank) && !rango.equals(oldRank)) {
-                    setValues(rank.get(rango), e.getOfflinePlayer());
-                    break;
+                try {
+                    String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
+                    String newRank = StrUtils.removeColors(Ranks.getRank(e.getFameTotal(), seconds));
+                    if (rango.equals(newRank) && !rango.equals(oldRank)) {
+                        setValues(rank.get(rango), e.getOfflinePlayer());
+                        break;
+                    }
+                } catch (RandomException ex) {
+                    LoggerManager.logError(ex.getCustomMessage(), null);
                 }
             }
         }
@@ -126,13 +133,17 @@ public class HandleFame implements Listener {
             TimedPlayer tp = pt.getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
 
-            String actualRank = Ranks.getRank(fameA, totalTime);
-            String newRank = Ranks.getRank(fameD, totalTime);
+            try {
+                String actualRank = Ranks.getRank(fameA, totalTime);
+                String newRank = Ranks.getRank(fameD, totalTime);
 
-            // Ha conseguido otro rango
-            if (!actualRank.equalsIgnoreCase(newRank)) {
-                pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
-                        pl, actualRank, newRank));
+                // Ha conseguido otro rango
+                if (!actualRank.equalsIgnoreCase(newRank)) {
+                    pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
+                            pl, actualRank, newRank));
+                }
+            } catch (RandomException ex) {
+                LoggerManager.logError(ex.getCustomMessage(), null);
             }
         }
     }
@@ -148,7 +159,7 @@ public class HandleFame implements Listener {
                 }
             }
         }
-        if (data.containsKey("commands")) {            
+        if (data.containsKey("commands")) {
             for (String cmd : data.get("commands")) {
                 cmd = cmd.replaceAll("<[pP]layer>", pl.getName());
                 cmd = StrUtils.translateColors(cmd);
@@ -181,7 +192,12 @@ public class HandleFame implements Listener {
         }
 
         if (!e.isSilent()) {
-            String rank = Ranks.getRank(e.getFameTotal(), seconds);
+            String rank = "";
+            try {
+                rank = Ranks.getRank(e.getFameTotal(), seconds);
+            } catch (RandomException ex) {
+                LoggerManager.logError(ex.getCustomMessage(), null);
+            }
 
             if (e.getWorldname() != null) {
                 pl.sendMessage(getPluginName() + LangsFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))

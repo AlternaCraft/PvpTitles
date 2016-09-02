@@ -16,9 +16,10 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -34,7 +35,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
     public PlaceholderHook(PvpTitles plugin) {
         super(plugin, "pvptitles");
         this.plugin = plugin;
-        
+
         MessageManager.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
     }
 
@@ -43,38 +44,40 @@ public class PlaceholderHook extends EZPlaceholderHook {
         if (id == null || player == null) {
             return "";
         }
-        
+
         int fame = 0;
         try {
             fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
-        
+
         int seconds = 0;
         try {
             seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
-        
+
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
-        
-        String rank = Ranks.getRank(fame, seconds);
-        
+
+        String rank = "";
+        try {
+            rank = Ranks.getRank(fame, seconds);
+        } catch (RandomException ex) {
+            LoggerManager.logError(ex.getCustomMessage(), null);
+        }
+
         if (id.equals("rank")) {
             return rank;
-        }
-        else if (id.equals("valid_rank")) {            
-            return (canDisplayRank(player, rank)) ? rank:"";
-        }
-        else if (id.equals("fame")) {
+        } else if (id.equals("valid_rank")) {
+            return (canDisplayRank(player, rank)) ? rank : "";
+        } else if (id.equals("fame")) {
             return String.valueOf(fame);
-        }
-        else if (id.equals("killstreak")) {
+        } else if (id.equals("killstreak")) {
             return String.valueOf(killstreak);
         }
-        
+
         return null;
     }
 }

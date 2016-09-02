@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Commands.CommandBase.t;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;

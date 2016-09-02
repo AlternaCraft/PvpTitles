@@ -18,7 +18,8 @@ package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import com.alternacraft.pvptitles.Files.ModelsFile;
@@ -202,7 +203,7 @@ public final class Manager {
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
-                
+
                 continue;
             }
 
@@ -314,7 +315,7 @@ public final class Manager {
         this.templates = new TemplatesFile();
         templates.load();
     }
-    
+
     /**
      * Método para cargar los locales
      */
@@ -408,7 +409,7 @@ public final class Manager {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                         return;
                     }
-                    
+
                     int savedTimeB = 0;
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
@@ -417,27 +418,31 @@ public final class Manager {
                         return;
                     }
 
-                    String rankB = Ranks.getRank(actualFame, savedTimeB);
-                    int savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
-                    String rankA = Ranks.getRank(actualFame, savedTimeA);
+                    try {
+                        int savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
 
-                    // Actualizo el tiempo del jugador en el server
-                    if (!rankB.equals(rankA)) {
-                        try {
-                            dbh.getDm().savePlayedTime(timedPlayer);
-                        } catch (DBException ex) {
-                            LoggerManager.logError(ex.getCustomMessage(), null);
-                            continue;
-                        }
-                        
-                        timedPlayer.removeSessions(); // Reinicio el tiempo a cero
-                        timedPlayer.startSession(); // Nueva sesion
+                        String rankB = Ranks.getRank(actualFame, savedTimeB);
+                        String rankA = Ranks.getRank(actualFame, savedTimeA);
+                        // Actualizo el tiempo del jugador en el server
+                        if (!rankB.equals(rankA)) {
+                            try {
+                                dbh.getDm().savePlayedTime(timedPlayer);
+                            } catch (DBException ex) {
+                                LoggerManager.logError(ex.getCustomMessage(), null);
+                                continue;
+                            }
 
-                        if (timedPlayer.getOfflinePlayer().isOnline()) {
-                            Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
-                            pl.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.
-                                    getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
+                            timedPlayer.removeSessions(); // Reinicio el tiempo a cero
+                            timedPlayer.startSession(); // Nueva sesion
+
+                            if (timedPlayer.getOfflinePlayer().isOnline()) {
+                                Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
+                                pl.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.
+                                        getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
+                            }
                         }
+                    } catch (RandomException ex) {
+                        LoggerManager.logError(ex.getCustomMessage(), null);
                     }
                 }
             }

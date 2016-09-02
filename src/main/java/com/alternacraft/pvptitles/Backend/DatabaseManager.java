@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
@@ -36,7 +36,7 @@ public interface DatabaseManager {
      * </p>
      *
      * @param player Player
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void playerConnection(Player player) throws DBException;
 
@@ -50,7 +50,7 @@ public interface DatabaseManager {
      * @param fame Entero con los puntos PvP
      * @param world En caso de MW activado, opción para establecer puntos en un
      * mundo específico
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void savePlayerFame(UUID playerUUID, int fame, String world) throws DBException;
 
@@ -62,7 +62,7 @@ public interface DatabaseManager {
      * específico
      *
      * @return Entero con la fama del jugador
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public int loadPlayerFame(UUID playerUUID, String world) throws DBException;
 
@@ -70,7 +70,7 @@ public interface DatabaseManager {
      * Método para crear o añadir el tiempo de juego de un jugador
      *
      * @param tPlayer TimedPlayer
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void savePlayedTime(TimedPlayer tPlayer) throws DBException;
 
@@ -81,7 +81,7 @@ public interface DatabaseManager {
      * @param playerUUID UUID
      *
      * @return Entero con los minutos transcurridos
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public int loadPlayedTime(UUID playerUUID) throws DBException;
 
@@ -92,7 +92,7 @@ public interface DatabaseManager {
      * @param server String
      *
      * @return ArrayList con los jugadores
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public ArrayList<PlayerFame> getTopPlayers(short cant, String server) throws DBException;
 
@@ -100,7 +100,7 @@ public interface DatabaseManager {
      * Método para registrar un cartel en la base de datos
      *
      * @param sb SignBoard
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void registraBoard(SignBoard sb) throws DBException;
 
@@ -108,7 +108,7 @@ public interface DatabaseManager {
      * Método para modificar la id del server de un cartel
      *
      * @param l Location
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void modificaBoard(Location l) throws DBException;
 
@@ -116,7 +116,7 @@ public interface DatabaseManager {
      * Método para borrar un cartel de la base de datos
      *
      * @param l Localicación del cartel base
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public void borraBoard(Location l) throws DBException;
 
@@ -124,7 +124,7 @@ public interface DatabaseManager {
      * Método para buscar las tablas de puntuaciones de la base de datos
      *
      * @return ArrayList con todas ellas
-     * @throws com.alternacraft.pvptitles.Backend.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
     public ArrayList<SignBoardData> buscaBoards() throws DBException;
 

@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Backend.Exceptions.DBException;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.TemplatesFile.FILES;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
