@@ -4,10 +4,13 @@ app.factory('Releases', function ($http) {
     rs.releases = function () {
         return $http.get("https://api.github.com/repos/AlternaCraft/PvpTitles/releases")
             .success(function (data) {
-                data = data.reverse();
-
                 for (var i = 0; i < data.length; i++) {
                     var release = data[i];
+                    if (release.prerelease) {
+                        data.splice(i, 1);
+                        i--;
+                        continue;
+                    }
                     if (release.body !== null) {
                         release.body = filter(release.body);
                     }
