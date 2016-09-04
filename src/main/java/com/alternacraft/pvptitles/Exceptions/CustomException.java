@@ -32,6 +32,7 @@ public abstract class CustomException extends Exception {
     protected Map<String, Object> data = new LinkedHashMap();
     protected String custom_error = null;
 
+    // <editor-fold defaultstate="collapsed" desc="CONSTRUCTS">    
     public CustomException(String message) {
         super(message);
     }
@@ -45,6 +46,7 @@ public abstract class CustomException extends Exception {
         this(message);
         this.custom_error = custom_error;
     }
+    // </editor-fold>
 
     public String getCustomMessage() {
         int n = PvpTitles.getInstance().getManager().params.getErrorFormat();
@@ -67,17 +69,18 @@ public abstract class CustomException extends Exception {
         }
     }
 
-    /* CUSTOM MESSAGE */
+    // <editor-fold defaultstate="collapsed" desc="ABSTRACT METHODS">
     protected abstract String getHeader();
-
+    protected abstract String getPossibleReasons();
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="DEFAULT TEMPLATES">
     protected String getBody() {
         return new StringBuilder()
                 .append("\n\nStackTrace:")
                 .append("\n-----------")
                 .append(getSource()).toString();
     }
-
-    protected abstract String getPossibleReasons();
 
     protected String getExtraData() {
         String extradata = "";
@@ -104,6 +107,7 @@ public abstract class CustomException extends Exception {
                 .append(this.REPORT)
                 .append("\n-------------------------------------------------------------").toString();
     }
+    // </editor-fold>
 
     /* UTILS */
     protected String getSource() {

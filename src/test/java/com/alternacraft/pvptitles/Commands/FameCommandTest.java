@@ -19,7 +19,7 @@ package com.alternacraft.pvptitles.Commands;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
 import com.alternacraft.pvptitles.Exceptions.DBException;
-import static com.alternacraft.pvptitles.Commands.CommandBase.t;
+import static com.alternacraft.pvptitles.Commands.TestBase.t;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
@@ -32,30 +32,30 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.verify;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, UUIDFetcher.class, Localizer.class})
-public class FameCommandTest extends CommandBase {
+public class FameCommandTest extends TestBase {
 
     private DatabaseManager mockDM = null;
 
     @Test
     public void FameCommand() {
         FameCommand rc = new FameCommand(mockPlugin);
-        CommandBase.CommandStructure cs = new CommandBase.CommandStructure(rc) {
+        TestBase.CommandStructure cs = new TestBase.CommandStructure(rc) {
             @Override
             public void initialize() {
                 ConfigDataStore mockConfig = mock(ConfigDataStore.class);
@@ -94,7 +94,7 @@ public class FameCommandTest extends CommandBase {
         m("");
     }
 
-    private void execute(CommandBase.CommandStructure cs, String desc, String[] args, boolean expected, boolean mw) {
+    private void execute(TestBase.CommandStructure cs, String desc, String[] args, boolean expected, boolean mw) {
         t("\n" + TEST_INFO.replace("%desc%", desc));
         when(((ConfigDataStore) cs.getMook("cds")).isMw_enabled()).thenReturn(mw);
         p(TEST_EXECUTE);

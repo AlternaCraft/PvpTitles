@@ -41,6 +41,7 @@ public class DBException extends CustomException {
     public static final String UPDATING_BOARD_ERROR = "Error updating board";
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="INTERNAL STUFF">
     private DB_METHOD type = null;
 
     public enum DB_METHOD {
@@ -72,7 +73,8 @@ public class DBException extends CustomException {
             return this.error_str + " (" + PREFIX + this.error_num + ")";
         }
     }
-
+    // </editor-fold>
+    
     public DBException(String message, DB_METHOD type) {
         super(message);
         this.type = type;

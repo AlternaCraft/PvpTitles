@@ -20,7 +20,7 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import com.alternacraft.pvptitles.Exceptions.RandomException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.github.games647.scoreboardstats.ScoreboardStats;
@@ -49,7 +49,7 @@ public class SBSHook {
                 replaceManager = sbs.getReplaceManager();
                 registerReplacerInterface(replaceManager);
 
-                showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
+                MessageManager.showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
             }
         }
     }

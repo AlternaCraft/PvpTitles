@@ -24,18 +24,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
-import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @PrepareForTest({PvpTitles.class, Manager.class})
-abstract class CommandBase {
+abstract class TestBase {
 
     protected final String TEST_INFO = "Prueba: %desc%";
     protected final String TEST_INITIALIZE = "Inicializo los objetos necesarios";
@@ -59,12 +60,12 @@ abstract class CommandBase {
         mockPlayer = mock(Player.class);
 
         when(mockPlugin.getManager()).thenReturn(mockManager); // Principal
-        
+
         // Plugin name
         PowerMockito.mockStatic(PvpTitles.class);
-        when(PvpTitles.getPluginName()).thenReturn("");                
-        when(PvpTitles.getInstance()).thenReturn(mockPlugin);       
-        
+        when(PvpTitles.getPluginName()).thenReturn("");
+        when(PvpTitles.getInstance()).thenReturn(mockPlugin);
+
         // Player receive a message
         doAnswer(new Answer<Void>() {
             @Override
@@ -96,12 +97,50 @@ abstract class CommandBase {
         System.out.println(m);
     }
 
-    public class CommandStructure {
+    public class TestStructure {
 
+        protected HashMap<String, Object> mocks = new HashMap();
+
+        public final void premadeRun() {
+            p(TEST_INITIALIZE);
+            this.initialize();
+            p(TEST_EXECUTE);
+            this.execute();
+            p(TEST_RESULTS);
+            this.tests();
+            m("");
+        }
+
+        public void initialize() {
+            //
+        }
+
+        public void execute() {
+            //
+        }
+
+        public void tests() {
+            //
+        }
+
+        public final void saveMock(String k, Object v) {
+            mocks.put(k, v);
+        }
+
+        public final Object getMook(String k) {
+            return mocks.get(k);
+        }
+
+        public final HashMap<String, Object> getMocks() {
+            return this.mocks;
+        }
+
+    }
+
+    public class CommandStructure extends TestStructure {
+
+        private boolean result = false;        
         private CommandExecutor ce = null;
-        private boolean result = false;
-
-        private HashMap<String, Object> mocks = new HashMap();
 
         public CommandStructure(CommandExecutor ce) {
             this.ce = ce;
@@ -117,32 +156,16 @@ abstract class CommandBase {
             m("");
         }
 
-        public void initialize() {
+        public void tests(boolean result) {
             //
-        }
-
-        public final void execute(String[] args) {
-            result = this.ce.onCommand(mockPlayer, null, null, args);
-        }
-
-        public void tests(boolean expected) {
-            //
-        }
-
-        public final void saveMock(String k, Object v) {
-            mocks.put(k, v);
-        }
-
-        public final Object getMook(String k) {
-            return mocks.get(k);
-        }
-        
-        public final HashMap<String, Object> getMocks() {
-            return this.mocks;
         }
 
         public final boolean getResult() {
             return this.result;
+        }
+
+        public final void execute(String[] args) {
+            result = this.ce.onCommand(mockPlayer, null, null, args);
         }
     }
 }
