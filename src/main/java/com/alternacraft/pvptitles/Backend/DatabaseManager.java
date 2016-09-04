@@ -132,7 +132,7 @@ public interface DatabaseManager {
      * Método para recibir el nombre del servidor según su ID
      *
      * @param id int
-     * 
+     *
      * @return String
      */
     public String getServerName(short id);
@@ -140,13 +140,14 @@ public interface DatabaseManager {
     /**
      * Método para borrar los datos de los jugadores inactivos
      *
+     * @param q Entero con la cantidad de dias necesarios para ser inactivo
      * @return Entero con la cantidad de ficheros borrados
      */
-    public int purgeData();
+    public int purgeData(int q);
 
     /**
      * Método para exportar todos los datos de la base de datos
-     * 
+     *
      * @param filename String
      */
     public void DBExport(String filename);
@@ -173,10 +174,10 @@ public interface DatabaseManager {
      * @return String
      */
     public String getDefaultFExport();
-    
+
     /**
      * Método para actualizar la conexion a la base de datos
-     * 
+     *
      * @param connection Nueva conexión
      */
     public void updateConnection(Object connection);

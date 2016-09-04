@@ -20,6 +20,8 @@ import java.util.Map;
 
 public class RandomException extends CustomException {
 
+    private static final String PREFIX = "00x";
+    
     public RandomException(String message) {
         super(message);
     }
@@ -35,7 +37,7 @@ public class RandomException extends CustomException {
     @Override
     protected String getHeader() {
         return new StringBuilder()
-                .append("Error: ")
+                .append("Error ")
                 .append(this.getMessage()).toString();
     }
 

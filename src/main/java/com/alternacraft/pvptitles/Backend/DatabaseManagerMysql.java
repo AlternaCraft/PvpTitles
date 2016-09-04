@@ -577,7 +577,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     }
 
     @Override
-    public int purgeData() {
+    public int purgeData(int q) {
         int contador = 0;
 
         if (!MySQLConnection.isConnected(true)) {
@@ -595,11 +595,14 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 short id = rs.getShort("id");
                 String nombre = rs.getString("playerUUID");
                 Date fechaMod = rs.getDate("lastLogin");
+                
+                Calendar date = new GregorianCalendar(1978, Calendar.JANUARY, 1);
+                fechaMod = (fechaMod == null) ? date.getTime():fechaMod;
 
                 if (!plugin.getManager().params.getNoPurge().contains(nombre)) {
                     Calendar cFile = new GregorianCalendar();
                     cFile.setTime(fechaMod);
-                    cFile.add(6, plugin.getManager().params.getTimeP());
+                    cFile.add(6, q);
 
                     Date hoy = new Date();
                     Calendar cHoy = new GregorianCalendar();

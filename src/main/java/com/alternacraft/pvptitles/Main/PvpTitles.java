@@ -145,6 +145,8 @@
 //  Ver. 2.5.8  01/09/2016   Añadido opcion para editar el prefijo del plugin y
 //   arreglado fallo con el actualizador del config principal.
 //  Ver. 2.5.8  02/09/2016   Mejorada la gestion de errores
+//  Ver. 2.5.8  05/09/2016   Añadida opcion para indicar los dias de inactividad
+//   en el comando /pvppurge
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 

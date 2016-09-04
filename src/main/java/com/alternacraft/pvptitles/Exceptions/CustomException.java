@@ -103,7 +103,7 @@ public abstract class CustomException extends Exception {
 
     protected String getReportMessage() {
         return new StringBuilder()
-                .append("\n-------------------------------------------------------------\n")
+                .append("\n\n-------------------------------------------------------------\n")
                 .append(this.REPORT)
                 .append("\n-------------------------------------------------------------").toString();
     }

@@ -36,7 +36,7 @@ commands:
         permission: pvptitles.board
     pvpPurge:
         description: It cleans inactive users.
-        usage: /<command>
+        usage: /<command> [<inactive_days>]
         aliases: pvppurga
         permission: pvptitles.purge
     pvpReload:

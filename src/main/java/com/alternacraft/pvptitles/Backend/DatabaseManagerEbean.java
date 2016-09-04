@@ -409,7 +409,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public int purgeData() {
+    public int purgeData(int q) {
         int contador = 0;
 
         List<PlayerPT> allDates = ebeanServer.getDatabase().find(PlayerPT.class)
@@ -428,7 +428,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
             cFile.setTime(fechaFile);
 
             // Tiempo en config
-            cFile.add(GregorianCalendar.DAY_OF_YEAR, plugin.getManager().params.getTimeP());
+            cFile.add(GregorianCalendar.DAY_OF_YEAR, q);
 
             Date hoy = new Date();
             Calendar cHoy = new GregorianCalendar();

@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class DBException extends CustomException {
 
-    private static final String PREFIX = "0x";
+    private static final String PREFIX = "01x";
     
     // <editor-fold defaultstate="collapsed" desc="ERRORS">
     public static final String UNKNOWN_ERROR = "Unknown error";
