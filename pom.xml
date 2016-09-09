@@ -37,7 +37,7 @@
     </repositories> 
     
     <dependencies>
-        <!--Spigot-API-->
+        <!-- Spigot-API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -45,7 +45,7 @@
             <scope>provided</scope>
         </dependency>
         
-        <!--Updater-->
+        <!-- Updater -->
         <dependency>
             <groupId>net.gravitydevelopment.updater</groupId>
             <artifactId>updater</artifactId>
@@ -54,7 +54,7 @@
             <optional>false</optional>
         </dependency>
         
-        <!--Vault API-->
+        <!-- Vault API -->
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -64,7 +64,7 @@
             <type>jar</type>
         </dependency>
         
-        <!--Placeholder API-->
+        <!-- Placeholder API -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -73,7 +73,7 @@
             <scope>provided</scope>
         </dependency>
         
-        <!--ScoreBoardStats API-->
+        <!-- ScoreBoardStats API -->
         <dependency>
             <groupId>com.github.games647</groupId>
             <artifactId>scoreboardstats</artifactId>
@@ -102,7 +102,7 @@
             <scope>provided</scope>
         </dependency>        
                 
-        <!-- TESTING DEPENDENCY -->
+        <!-- TESTING DEPENDENCIES -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

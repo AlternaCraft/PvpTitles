@@ -2,7 +2,7 @@ name: PvpTitles
 version: 2.5.9
 description: Get epic titles in pvp
 database: true
-website: www.alternacraft.github.io/PvpTitles/
+website: alternacraft.github.io/PvpTitles/
 
 author: AlternaCraft
 
