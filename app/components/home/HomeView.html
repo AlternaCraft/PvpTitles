@@ -86,6 +86,33 @@
 
 <script type="application/javascript">
     if (typeof jQuery !== 'undefined') {
+        $(window).resize(function(e) {
+            if ($(window).width() <= "767") {
+                $("html, body, .bcontrols").unbind("click");
+                $(".bcontrols .arrow, .bcontrols .controls").css("display", "");
+            } else {
+                binder();
+            }
+        });
+
+        if ($(window).width() > "767") {
+            binder();
+        }
+
+        // For keeping the input open
+        $(".search-form .form-group input").focusin(function(e) {
+            $(".search-form .form-group").css({
+                "width": "100%",
+                "border-radius": "4px 25px 25px 4px"
+            });
+        });
+        $(".search-form .form-group input").focusout(function(e) {
+            $(".search-form .form-group").css("width", "");
+            $(".search-form .form-group").css("border-radius", "");
+        });
+    }
+
+    function binder() {
         var desplegado = false;
 
         $("html, body").click(function(e) {
@@ -103,18 +130,6 @@
                 desplegado = true;
             }
             e.stopPropagation();
-        });
-
-        // For keeping the input open
-        $(".search-form .form-group input").focusin(function(e) {
-            $(".search-form .form-group").css({
-                "width": "100%",
-                "border-radius": "4px 25px 25px 4px"
-            });
-        });
-        $(".search-form .form-group input").focusout(function(e) {
-            $(".search-form .form-group").css("width", "");
-            $(".search-form .form-group").css("border-radius", "");
         });
     }
 

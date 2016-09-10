@@ -453,6 +453,10 @@ table th {
   .error > p {
     width: 95%;
   }
+  aside a.button {
+    margin: auto;
+    margin-bottom: 20px;
+  }
   .search-form .form-group {
     max-width: none;
     margin-top: 0;
@@ -469,7 +473,11 @@ table th {
     width: auto;
     margin-top: 10px;
   }
+  .bcontrols .arrow {
+    display: none;
+  }
   .bcontrols .controls {
+    display: block;
     background: none;
     padding: 0;
   }

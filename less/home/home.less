@@ -162,6 +162,10 @@
 }
 
 .media-mixin(@break) when (@break =@break-small) {
+    aside a.button {
+        margin: auto;
+        margin-bottom: 20px;
+    }
     .search-form {
         .form-group {
             max-width: none;
@@ -179,7 +183,11 @@
         bottom: 0;
         width: auto;
         margin-top: 10px;
+        .arrow {
+            display: none;
+        }
         .controls {
+            display: block;
             background: none;
             padding: 0;
             .pagination {
