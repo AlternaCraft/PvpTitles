@@ -25,12 +25,12 @@ public class StrUtils {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
 
-    public static String splitToComponentTimes(int milli) {
+    public static String splitToComponentTimes(int s) {
         String resul = "";
 
         // Lógica
-        int hours = (int) milli / 3600;
-        int remainder = (int) milli - hours * 3600;
+        int hours = (int) s / 3600;
+        int remainder = (int) s - hours * 3600;
         int mins = remainder / 60;
         remainder = remainder - mins * 60;
         int secs = remainder;
