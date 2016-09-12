@@ -352,8 +352,8 @@ table th {
   border-radius: 4px 25px 25px 4px;
 }
 .search-form .form-group span.form-control-feedback {
-  top: -1px;
-  right: -2px;
+  top: -0.1em;
+  right: -0.1em;
   z-index: 2;
   color: #3596e0;
   font-size: 14px;
@@ -465,6 +465,10 @@ table th {
   .search-form .form-group:hover,
   .search-form .form-group.hover {
     width: 100%;
+  }
+  .search-form .form-group span.form-control-feedback {
+    top: 0;
+    right: 0;
   }
   .bcontrols {
     position: relative;
