@@ -4,7 +4,7 @@
   <groupId>com.alternacraft</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.5.8</version>
+  <version>2.5.9-SNAPSHOT</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -54,17 +54,14 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <artifactSet>
-                <includes>
-                  <include>net.gravitydevelopment.updater:updater</include>
-                </includes>
-              </artifactSet>
-              <relocations>
-                <relocation>
-                  <pattern>net.gravitydevelopment.updater</pattern>
-                  <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
-                </relocation>
-              </relocations>
+              <filters>
+                <filter>
+                  <artifact>com.alternacraft:aclib</artifact>
+                  <includes>
+                    <include>**/Updater*.*</include>
+                  </includes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
@@ -93,6 +90,13 @@
               </artifactItems>
             </configuration>
           </execution>
+          <execution>
+            <id>dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>tree</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -114,18 +118,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>tree</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>tree</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -138,10 +130,6 @@
       <url>http://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
     <repository>
-      <id>gravity-repo</id>
-      <url>http://repo.gravitydevelopment.net</url>
-    </repository>
-    <repository>
       <id>placeholderapi</id>
       <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
@@ -149,6 +137,10 @@
       <id>mvdw-software</id>
       <name>MVdW Public Repositories</name>
       <url>http://repo.mvdw-software.be/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>aclib-snapshots</id>
+      <url>https://oss.jfrog.org/oss-snapshot-local/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -158,6 +150,30 @@
       <version>1.10.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-simple</artifactId>
+          <groupId>com.googlecode.json-simple</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>gson</artifactId>
+          <groupId>com.google.code.gson</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ebean</artifactId>
+          <groupId>org.avaje</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>snakeyaml</artifactId>
+          <groupId>org.yaml</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>bungeecord-chat</artifactId>
           <groupId>net.md-5</groupId>
@@ -169,6 +185,12 @@
       <artifactId>VaultAPI</artifactId>
       <version>1.6</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>bukkit</artifactId>
+          <groupId>org.bukkit</groupId>
+        </exclusion>
+      </exclusions>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -183,6 +205,12 @@
       <artifactId>MVdWPlaceholderAPI</artifactId>
       <version>1.0.1-SNAPSHOT</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>bukkit</artifactId>
+          <groupId>org.bukkit</groupId>
+        </exclusion>
+      </exclusions>
       <optional>true</optional>
     </dependency>
     <dependency>

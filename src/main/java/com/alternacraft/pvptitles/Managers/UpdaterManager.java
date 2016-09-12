@@ -21,9 +21,9 @@ import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessag
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.util.regex.Pattern;
-import net.gravitydevelopment.updater.Updater;
-import net.gravitydevelopment.updater.Updater.UpdateResult;
-import net.gravitydevelopment.updater.Updater.UpdateType;
+import com.alternacraft.aclib.utils.Updater;
+import com.alternacraft.aclib.utils.Updater.UpdateResult;
+import com.alternacraft.aclib.utils.Updater.UpdateType;
 import org.bukkit.ChatColor;
 
 public class UpdaterManager {

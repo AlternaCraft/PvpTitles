@@ -20,11 +20,6 @@
         </repository>
         
         <repository>
-            <id>gravity-repo</id>
-            <url>http://repo.gravitydevelopment.net</url>
-        </repository>
-        
-        <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
@@ -33,6 +28,11 @@
             <id>mvdw-software</id>
             <name>MVdW Public Repositories</name>
             <url>http://repo.mvdw-software.be/content/groups/public/</url>
+        </repository>
+                
+        <repository>
+            <id>aclib-snapshots</id>
+            <url>https://oss.jfrog.org/oss-snapshot-local/</url>
         </repository>
     </repositories> 
     
@@ -43,15 +43,6 @@
             <artifactId>spigot-api</artifactId>
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        
-        <!-- Updater -->
-        <dependency>
-            <groupId>net.gravitydevelopment.updater</groupId>
-            <artifactId>updater</artifactId>
-            <version>2.3</version>
-            <scope>compile</scope>
-            <optional>false</optional>
         </dependency>
         
         <!-- Vault API -->
@@ -101,7 +92,15 @@
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>        
-                
+               
+        <!-- AlternaCraft LIB dependency -->
+        <dependency>
+            <groupId>com.alternacraft</groupId>
+            <artifactId>aclib</artifactId>    
+            <version>0.0.9-SNAPSHOT</version>      
+            <scope>compile</scope>
+        </dependency>
+                  
         <!-- TESTING DEPENDENCIES -->
         <dependency>
             <groupId>junit</groupId>
@@ -165,17 +164,14 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>net.gravitydevelopment.updater:updater</include>
-                                </includes>
-                            </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>net.gravitydevelopment.updater</pattern>
-                                    <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
-                                </relocation>
-                            </relocations>
+                            <filters> 
+                                <filter>
+                                    <artifact>com.alternacraft:aclib</artifact>
+                                    <includes>
+                                        <include>**/Updater*.*</include>
+                                    </includes>
+                                </filter>                 
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

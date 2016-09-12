@@ -39,8 +39,7 @@ import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -113,7 +112,7 @@ public class RankCommand implements CommandExecutor {
 
         LangType lang = Localizer.getLocale(player);
 
-        String[] lines = this.pt.getManager().templates.getFileContent(FILES.RANK_COMMAND);
+        List<String> lines = this.pt.getManager().templates.getFileContent(FILES.RANK_COMMAND);
 
         for (String line : lines) {
             String msg = line;

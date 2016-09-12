@@ -16,19 +16,22 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.List;
 
 public class UtilsFile {
 
     public static boolean exists(String path) {
         return exists(new File(path));
     }
-    
+
     public static boolean exists(File file) {
         return file.exists();
     }
@@ -36,14 +39,15 @@ public class UtilsFile {
     public static void writeFile(String path, String cont) {
         writeFile(new File(path), cont);
     }
-    
+
     public static void writeFile(File file, String cont) {
         FileWriter fichero = null;
 
         try {
             fichero = new FileWriter(file);
             fichero.write(cont);
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            LoggerManager.logError("Error creating file: '" + file.getName() + "'", null);
         } finally {
             try {
                 // Nuevamente aprovechamos el finally para 
@@ -57,10 +61,37 @@ public class UtilsFile {
         }
     }
 
-    public static String readFile(String path) {
-        return readFile(new File(path));
+    public static List<String> getFileLines(String path) {
+        return UtilsFile.getFileLines(new File(path));
+    }
+
+    public static List<String> getFileLines(File file) {
+        List<String> lines = null;
+        try {
+            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+        } catch (IOException ex) {
+            LoggerManager.logError("Error getting content from '" + file.getName() + "'", null);
+        }
+        return lines;
     }
     
+    public static String getFileAsString(String path) {
+        List<String> lines = UtilsFile.getFileLines(path);
+        StringBuilder res = new StringBuilder();
+        
+        for (String line : lines) { 
+            res.append(line.replace(" ", "")); // Optimization
+        }
+        
+        return res.toString();
+    }
+    
+    @Deprecated
+    public static String readFile(String path) {
+        return UtilsFile.readFile(new File(path));
+    }
+    
+    @Deprecated
     public static String readFile(File file) {
         BufferedReader br = null;
         
@@ -78,8 +109,8 @@ public class UtilsFile {
 
             return sb.toString();
 
-        } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
+            LoggerManager.logError("Error getting content from '" + file.getName() + "'", null);
         } finally {
             try {                
                 br.close();

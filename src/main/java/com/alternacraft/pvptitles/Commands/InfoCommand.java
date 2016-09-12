@@ -27,6 +27,7 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -53,7 +54,7 @@ public class InfoCommand implements CommandExecutor {
 
         Set<String> commands = pvpTitles.getDescription().getCommands().keySet();
 
-        String[] commandTemplate = this.pvpTitles.getManager().templates.getFileContent(FILES.INFO_COMMAND);
+        List<String> commandTemplate = this.pvpTitles.getManager().templates.getFileContent(FILES.INFO_COMMAND);
 
         for (String line : commandTemplate) {
             String msg = line;

@@ -549,7 +549,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         JSONParser parser = new JSONParser();
 
         try {
-            Object obj = parser.parse(UtilsFile.readFile(ruta));
+            Object obj = parser.parse(UtilsFile.getFileAsString(ruta));
             JSONObject jsonObject = (JSONObject) obj;
 
             JSONArray players = (JSONArray) jsonObject.get("Players");

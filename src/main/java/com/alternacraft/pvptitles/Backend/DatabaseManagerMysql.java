@@ -721,7 +721,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             return false;
         }
 
-        String[] sql = UtilsFile.readFile(ruta).split("\n");
+        List<String> sql = UtilsFile.getFileLines(ruta);
 
         for (String consulta : sql) {
             try {

@@ -22,7 +22,9 @@ import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TemplatesFile {
@@ -49,7 +51,7 @@ public class TemplatesFile {
     public static final String NEXT_RANK_TAG = CTV + "NEXTRANK" + CTV;
     public static final String VETO_TAG = CTV + "VETO" + CTV;
 
-    private final String DIRECTORY = new StringBuilder().append(
+    private final String TEMPLATES = new StringBuilder().append(
             PvpTitles.getInstance().getDataFolder()).append(
                     File.separator).append(
                     "Templates").append(
@@ -118,7 +120,7 @@ public class TemplatesFile {
     private final Map<String, CMDFile> templates = new HashMap<>();
 
     public TemplatesFile() {
-        File dir = new File(DIRECTORY);
+        File dir = new File(TEMPLATES);
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -126,17 +128,26 @@ public class TemplatesFile {
 
     private class CMDFile {
 
-        private String[] content = null;
+        private List<String> content = null;
         private File cmdFile = null;
 
         public CMDFile(String path) {
-            this.cmdFile = new File(DIRECTORY + path);
-            this.load();
+            this.cmdFile = new File(TEMPLATES + path);
         }
 
-        private void load() {
-            content = StrUtils.translateColors(UtilsFile.readFile(this.cmdFile))
-                    .split(System.getProperty("line.separator"));
+        public void load(String c) {
+            content = UtilsFile.getFileLines(this.cmdFile);
+            // Fix
+            if (this.content == null) {
+                this.content = Arrays.asList(c.split("\n"));
+            }
+            this.translate();
+        }
+
+        private void translate() {
+            for (int i = 0; i < content.size(); i++) {
+                content.set(i, StrUtils.translateColors(content.get(i)));
+            }
         }
 
         public boolean exists() {
@@ -148,7 +159,7 @@ public class TemplatesFile {
             UtilsFile.writeFile(this.cmdFile, c);
         }
 
-        public String[] getContent() {
+        public List<String> getContent() {
             return this.content;
         }
     }
@@ -158,6 +169,7 @@ public class TemplatesFile {
 
         for (FILES file : FILES.values()) {
             CMDFile f = new CMDFile(file.getPath());
+
             if (!f.exists()) {
                 try {
                     f.create(file.getContent());
@@ -165,12 +177,14 @@ public class TemplatesFile {
                     LoggerManager.logError("Template " + file.getPath() + " couldn't be created", null);
                 }
             }
+
+            f.load(file.getContent());
+
             templates.put(file.getPath(), f);
         }
     }
 
-    public String[] getFileContent(FILES file) {
+    public List<String> getFileContent(FILES file) {
         return templates.get(file.getPath()).getContent();
     }
-
 }

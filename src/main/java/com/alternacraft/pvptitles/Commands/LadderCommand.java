@@ -31,6 +31,7 @@ import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -62,7 +63,7 @@ public class LadderCommand implements CommandExecutor {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
-        String[] lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);
+        List<String> lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);
 
         for (String line : lines) {
             String msg = line;
