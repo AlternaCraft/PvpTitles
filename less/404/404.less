@@ -1,12 +1,11 @@
 // main: ../layout.less
 .error {
     text-align: center;
-    font-family: @font-family;
-
     &>h1 {
-        color: #555;
+        font-family: @font-family;
         font-size: 2.2em;
         font-weight: 400;
+        color: #555;
     }
     &>p {
         margin: 0 auto;
@@ -17,7 +16,7 @@
 .media-mixin(@break) when (@break =@break-small) {
     .error {
         &>h1 {
-            font-size: 1.5em;
+            font-size: 2em;
             margin: 0 0 0.3em;
         }
         &>p {

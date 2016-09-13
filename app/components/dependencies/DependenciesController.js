@@ -17,4 +17,12 @@ app.controller('DependenciesController', function ($scope, Dependencies, $routeP
             $scope.animated = "";
         }
     });
+
+    $scope.$watch('valid', function (nv, ov) {
+        if (!ov && nv && $scope.animated !== "") {
+            Dependencies.getDependencies($routeParams.id).success(function (data) {
+                $scope.dependencies = data;
+            });
+        }
+    });
 });

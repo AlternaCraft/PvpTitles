@@ -37,6 +37,8 @@
     <script src="bower_components/angular-resource/angular-resource.min.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="bower_components/matchmedia/matchMedia.js"></script>
+    <script src="bower_components/matchmedia-ng/matchmedia-ng.js"></script>
 
     <title>Pvptitles by AlternaCraft</title>
 </head>
@@ -55,7 +57,7 @@
         </div>
     </header>
 
-    <div ng-view>
+    <div ng-controller="OrientationController" ng-view>
     </div>
 
     <!-- Module -->
@@ -63,11 +65,12 @@
     <script src="app/app.routes.js"></script>
     <!-- Controllers -->
     <script src="app/components/home/HomeController.js"></script>
+    <script src="app/components/OrientationController.js"></script>
     <script src="app/components/javadoc/JavadocController.js"></script>
     <script src="app/components/dependencies/DependenciesController.js"></script>
     <!-- Directives & Filters -->
+    <script src="app/shared/orientation/orientationDirective.js"></script>
     <script src="app/shared/jd/JDDirective.js"></script>
-    <!--    <script src="app/shared/utils/animationDirective.js"></script>-->
     <script src="app/shared/utils/arrFilter.js"></script>
     <script src="app/shared/utils/CapFilter.js"></script>
     <script src="app/shared/utils/UIDirective.js"></script>

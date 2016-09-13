@@ -282,12 +282,12 @@ header.sticky a:first-of-type h2 {
 /* 404 */
 .error {
   text-align: center;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
 }
 .error > h1 {
-  color: #555;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 2.2em;
   font-weight: 400;
+  color: #555;
 }
 .error > p {
   margin: 0 auto;
@@ -447,7 +447,7 @@ table th {
     width: auto !important;
   }
   .error > h1 {
-    font-size: 1.5em;
+    font-size: 2em;
     margin: 0 0 0.3em;
   }
   .error > p {
@@ -468,7 +468,6 @@ table th {
   }
   .search-form .form-group span.form-control-feedback {
     top: 0;
-    right: 0;
   }
   .bcontrols {
     position: relative;
