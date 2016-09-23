@@ -54,7 +54,7 @@ permissions:
     pvptitles.*:
         description: Access to all commands.
         children:
-            - pvptitles.help: true            
+            - pvptitles.help: false           
             - pvptitles.rank: true
             - pvptitles.ladder: true
             - pvptitles.setRank: true
