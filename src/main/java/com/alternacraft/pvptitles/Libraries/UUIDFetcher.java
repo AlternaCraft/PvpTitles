@@ -83,10 +83,10 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
     }
 
     private static void writeBody(HttpURLConnection connection, String body) throws Exception {
-        OutputStream stream = connection.getOutputStream();
-        stream.write(body.getBytes());
-        stream.flush();
-        stream.close();
+        try (OutputStream stream = connection.getOutputStream()) {
+            stream.write(body.getBytes());
+            stream.flush();
+        }
     }
 
     private static HttpURLConnection createConnection() throws Exception {

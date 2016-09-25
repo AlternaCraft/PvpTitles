@@ -18,7 +18,6 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;

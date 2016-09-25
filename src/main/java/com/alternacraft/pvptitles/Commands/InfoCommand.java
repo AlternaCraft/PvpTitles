@@ -60,7 +60,7 @@ public class InfoCommand implements CommandExecutor {
             String msg = line;
             
             msg = msg
-                    .replace(PLUGIN_TAG, getPluginName())
+                    .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
                     .replace(VERSION_TAG, pvpTitles.getDescription().getVersion());
             
             if (msg.contains(COMMAND_TAG) || msg.contains(INFO_COMMAND_TAG)) {

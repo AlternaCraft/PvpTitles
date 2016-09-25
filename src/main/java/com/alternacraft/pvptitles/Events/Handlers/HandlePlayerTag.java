@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Events.Handlers;
 
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.ISHDENABLED;
@@ -27,8 +27,8 @@ import static com.alternacraft.pvptitles.Hook.HolographicHook.createHoloPlayer;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.removeHoloPlayer;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -187,7 +187,7 @@ public class HandlePlayerTag implements Listener {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
-            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = "";
             try {
@@ -265,7 +265,7 @@ public class HandlePlayerTag implements Listener {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
-            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = "";
             try {
@@ -307,7 +307,7 @@ public class HandlePlayerTag implements Listener {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
-                int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
+                int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = "";
                 try {
@@ -372,7 +372,7 @@ public class HandlePlayerTag implements Listener {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
-            int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
+            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = "";
             try {
@@ -426,7 +426,7 @@ public class HandlePlayerTag implements Listener {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
-                int totalTime = oldTime + plugin.getTimerManager().getPlayer(player).getTotalOnline();
+                int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = "";
                 try {

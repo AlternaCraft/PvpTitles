@@ -16,20 +16,20 @@
  */
 package com.alternacraft.pvptitles.Events.Handlers;
 
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameEvent;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.AntiFarmManager;
 import com.alternacraft.pvptitles.Managers.CleanTaskManager;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
@@ -87,15 +87,16 @@ public class HandlePlayerFame implements Listener {
         }
 
         // Time
-        TimedPlayer tPlayer = this.pvpTitles.getTimerManager().hasPlayer(player)
-                ? this.pvpTitles.getTimerManager().getPlayer(player) : new TimedPlayer(this.pvpTitles, player);
+        TimedPlayer tPlayer = this.pvpTitles.getManager().getTimerManager().hasPlayer(player)
+                ? this.pvpTitles.getManager().getTimerManager().getPlayer(player)
+                : new TimedPlayer(this.pvpTitles, player);
         tPlayer.startSession();
 
-        if (!this.pvpTitles.getTimerManager().hasPlayer(player)) {
-            this.pvpTitles.getTimerManager().addPlayer(tPlayer);
+        if (!this.pvpTitles.getManager().getTimerManager().hasPlayer(player)) {
+            this.pvpTitles.getManager().getTimerManager().addPlayer(tPlayer);
         }
 
-        this.pvpTitles.getMovementManager().addLastMovement(player);
+        this.pvpTitles.getManager().getMovementManager().addLastMovement(player);
 
         HandlePlayerTag.holoPlayerLogin(player);
     }
@@ -133,9 +134,9 @@ public class HandlePlayerFame implements Listener {
         HandlePlayerFame.KILLSTREAK.put(player.getUniqueId().toString(), 0);
 
         // Time
-        TimedPlayer tPlayer = this.pvpTitles.getTimerManager().getPlayer(player);
+        TimedPlayer tPlayer = this.pvpTitles.getManager().getTimerManager().getPlayer(player);
         tPlayer.stopSession();
-        this.pvpTitles.getMovementManager().removeLastMovement(player);
+        this.pvpTitles.getManager().getMovementManager().removeLastMovement(player);
     }
 
     /**
@@ -153,7 +154,7 @@ public class HandlePlayerFame implements Listener {
                 return;
             }
 
-            this.pvpTitles.getMovementManager().addLastMovement(player);
+            this.pvpTitles.getManager().getMovementManager().addLastMovement(player);
         }
     }
 

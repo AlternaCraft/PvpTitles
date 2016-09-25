@@ -25,9 +25,9 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_POINTS_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_POS_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_TAG;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class LadderCommand implements CommandExecutor {
             String msg = line;
 
             msg = msg
-                    .replace(PLUGIN_TAG, getPluginName())
+                    .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
                     .replace(TOP_TAG, String.valueOf(top));
             
             if (line.contains(TOP_POS_TAG) || line.contains(TOP_PLAYER_TAG)) {

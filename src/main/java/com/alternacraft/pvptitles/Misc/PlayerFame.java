@@ -75,7 +75,7 @@ public class PlayerFame implements Comparable {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
         
-        int session = plugin.getTimerManager().getPlayer(plugin.getServer()
+        int session = plugin.getManager().getTimerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
         return actual+session;

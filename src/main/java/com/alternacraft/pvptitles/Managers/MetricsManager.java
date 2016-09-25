@@ -16,11 +16,11 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
 import com.alternacraft.pvptitles.Libraries.Metrics;
 import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.IOException;
 

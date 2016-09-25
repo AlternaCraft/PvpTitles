@@ -61,6 +61,8 @@ public class ReloadCommand implements CommandExecutor {
 
         pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);
 
+        pvpTitles.getManager().getMovementManager().updateTimeAFK();
+        
         pvpTitles.getManager().getDbh().selectDB();
         new DBChecker(pvpTitles).setup();
 

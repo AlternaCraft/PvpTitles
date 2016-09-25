@@ -19,16 +19,15 @@ package com.alternacraft.pvptitles.Main.Handlers;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler.DBTYPE;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.Manager.messages;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.FileConfig;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigHandler {

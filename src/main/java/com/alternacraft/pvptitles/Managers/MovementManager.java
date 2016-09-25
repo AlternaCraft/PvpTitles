@@ -17,7 +17,7 @@
 package com.alternacraft.pvptitles.Managers;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,12 +27,11 @@ public class MovementManager {
 
     private PvpTitles plugin = null;
     private Map<UUID, Long> lastMovement = null;
-    private final int timeThreshold;
+    private int timeThreshold = 0;
 
     public MovementManager(PvpTitles plugin) {
         this.plugin = plugin;
-        this.lastMovement = new HashMap();        
-        this.timeThreshold = plugin.getManager().params.getAFKTime() * 60;
+        this.lastMovement = new HashMap();
     }
 
     public boolean isAFK(OfflinePlayer player) {
@@ -42,19 +41,32 @@ public class MovementManager {
         return getAFKTime(player) > 0; // Devuelve '0' si el comprobador esta desactivado
     }
 
+    /**
+     * Tiempo desde su ultimo movimiento hasta ahora menos el tiempo mínimo para
+     * que sea considerado AFK
+     *
+     * @param player OfflinePlayer
+     * @return Time
+     */
     public int getAFKTime(OfflinePlayer player) {
         long lastMove = this.lastMovement.get(player.getUniqueId());
         long currTime = System.currentTimeMillis();
-        int timeDiff = (int) ((currTime - lastMove) / 1000L);       
-        
+        int timeDiff = (int) ((currTime - lastMove) / 1000L);
+
         // 0 para evitar lios
-        return (plugin.getManager().params.isCheckAFK()) ? timeDiff - this.timeThreshold:0;
+        return (plugin.getManager().params.isCheckAFK()) ? timeDiff - this.timeThreshold : 0;
     }
 
     public boolean hasLastMovement(OfflinePlayer player) {
         return this.lastMovement.containsKey(player.getUniqueId());
     }
 
+    /**
+     * Última vez que se movió
+     *
+     * @param player OfflinePlayer
+     * @return Time in millis
+     */
     public long getLastMovement(OfflinePlayer player) {
         if (!hasLastMovement(player)) {
             return 0L;
@@ -62,9 +74,14 @@ public class MovementManager {
         return this.lastMovement.get(player.getUniqueId());
     }
 
+    /**
+     * Cuando le jugador se mueve registro la hora del sistema
+     *
+     * @param player OfflinePlayer
+     */
     public void addLastMovement(OfflinePlayer player) {
         if (isAFK(player)) {
-            TimedPlayer tPlayer = this.plugin.getTimerManager().getPlayer(player);
+            TimedPlayer tPlayer = this.plugin.getManager().getTimerManager().getPlayer(player);
             tPlayer.setAFKTime(tPlayer.getAFKTime() + getAFKTime(player));
         }
         this.lastMovement.put(player.getUniqueId(), System.currentTimeMillis());
@@ -72,5 +89,9 @@ public class MovementManager {
 
     public void removeLastMovement(OfflinePlayer player) {
         this.lastMovement.remove(player.getUniqueId());
+    }
+
+    public void updateTimeAFK() {
+        this.timeThreshold = plugin.getManager().params.getAFKTime() * 60;
     }
 }

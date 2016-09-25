@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
@@ -30,6 +29,7 @@ import com.alternacraft.pvptitles.Hook.HolographicHook;
 import com.alternacraft.pvptitles.Main.Handlers.ConfigHandler;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
 import static com.alternacraft.pvptitles.Main.Handlers.DBHandler.tipo;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
@@ -39,10 +39,12 @@ import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import static com.alternacraft.pvptitles.Managers.CleanTaskManager.TICKS;
 import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
+import com.alternacraft.pvptitles.Managers.MovementManager;
+import com.alternacraft.pvptitles.Managers.TimerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +70,10 @@ public final class Manager {
     // Handlers
     public ConfigHandler ch = null;
     public DBHandler dbh = null;
+
+    // Timers
+    private MovementManager movementManager = null;
+    private TimerManager timerManager = null;
 
     // Gestor de leaderboards
     private LeaderBoardManager lbm = null;
@@ -128,16 +134,21 @@ public final class Manager {
     public boolean setup(PvpTitles plugin) {
         this.pvpTitles = plugin;
 
-        this.lbm = new LeaderBoardManager(plugin);
-
-        this.ch = new ConfigHandler(this.pvpTitles);
+        this.ch = new ConfigHandler(plugin);
         this.ch.loadConfig(params);
 
-        this.dbh = new DBHandler(pvpTitles, this.ch.getConfig());
+        this.lbm = new LeaderBoardManager(plugin);
+
+        // Registro los managers del timing
+        this.timerManager = new TimerManager(plugin);
+        this.movementManager = new MovementManager(plugin);
+        this.movementManager.updateTimeAFK();
+
+        this.dbh = new DBHandler(plugin, this.ch.getConfig());
         this.dbh.selectDB();
 
         // RCP
-        if (!new DBChecker(pvpTitles).setup()) {
+        if (!new DBChecker(plugin).setup()) {
             return false;
         }
 
@@ -395,7 +406,7 @@ public final class Manager {
         this.eventoChecker = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
             @Override
             public void run() {
-                Set<TimedPlayer> tp = pvpTitles.getTimerManager().getTimedPlayers();
+                Set<TimedPlayer> tp = getTimerManager().getTimedPlayers();
 
                 for (TimedPlayer timedPlayer : tp) {
                     // Fix para evitar nullpointerexception
@@ -403,7 +414,7 @@ public final class Manager {
                         continue;
                     }
 
-                    int actualFame = 0;
+                    int actualFame;
                     try {
                         actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
                     } catch (DBException ex) {
@@ -411,7 +422,7 @@ public final class Manager {
                         return;
                     }
 
-                    int savedTimeB = 0;
+                    int savedTimeB;
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
@@ -481,6 +492,24 @@ public final class Manager {
      */
     public static LinkedList<Integer> reqTime() {
         return REQTIME;
+    }
+
+    /**
+     * Metódo para devolver el detector de AFK's
+     * 
+     * @return MovementManager
+     */
+    public MovementManager getMovementManager() {
+        return this.movementManager;
+    }
+
+    /**
+     * Metódo para devolver el gestor de tiempos de los jugadores
+     * 
+     * @return TimerManager
+     */
+    public TimerManager getTimerManager() {
+        return this.timerManager;
     }
 
     /**

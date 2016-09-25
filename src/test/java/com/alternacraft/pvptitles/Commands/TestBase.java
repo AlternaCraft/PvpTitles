@@ -24,16 +24,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @PrepareForTest({PvpTitles.class, Manager.class})
 abstract class TestBase {

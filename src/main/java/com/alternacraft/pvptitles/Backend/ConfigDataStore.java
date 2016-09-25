@@ -16,10 +16,11 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Main.PvpTitles;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
+import static org.bukkit.ChatColor.valueOf;
 
 public class ConfigDataStore {
 
@@ -149,7 +150,7 @@ public class ConfigDataStore {
 
     public void setNameS(String nameS) {
         if ("".equals(nameS) || "Custom".equals(nameS)) {
-            nameS = PvpTitles.getInstance().getServer().getServerName();
+            nameS = getInstance().getServer().getServerName();
         }
         this.nameS = nameS;
     }
@@ -415,6 +416,6 @@ public class ConfigDataStore {
      * @param color String con el nombre del color
      */
     private ChatColor getPrefixColor(String color) {
-        return ChatColor.valueOf(color.toUpperCase());
+        return valueOf(color.toUpperCase());
     }
 }

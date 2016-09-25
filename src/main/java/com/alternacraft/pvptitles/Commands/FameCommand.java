@@ -16,16 +16,16 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameAddEvent;
 import com.alternacraft.pvptitles.Events.FameSetEvent;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.UUID;
 import org.bukkit.Bukkit;

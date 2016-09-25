@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     25-09-2016
+// Last Change:     26-09-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -148,13 +148,13 @@
 //  Ver. 2.5.8  05/09/2016   Añadida opcion para indicar los dias de inactividad
 //   en el comando /pvppurge
 //  Ver. 2.5.9  12/09/2016   Arreglado un fallo con la lectura de las plantillas
-//  Ver. 2.6.0  25/09/2016   Mejorada la gestión de errores, añadido nuevo cmd,
+//  Ver. 2.6    25/09/2016   Mejorada la gestión de errores, añadido nuevo cmd,
 //   y añadidos nuevos locales
+//  Ver. 2.6    26/09/2016   Arreglado fallo importante con el detector AFK
+//   y eliminado espacio a la derecha del prefijo del plugin en las plantillas
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Commands.BoardCommand;
 import com.alternacraft.pvptitles.Commands.DBCommand;
@@ -169,6 +169,7 @@ import com.alternacraft.pvptitles.Events.Handlers.HandleInventory;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag;
 import com.alternacraft.pvptitles.Events.Handlers.HandleSign;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
 import com.alternacraft.pvptitles.Hook.MVdWPlaceholderHook;
@@ -176,13 +177,12 @@ import com.alternacraft.pvptitles.Hook.PlaceholderHook;
 import com.alternacraft.pvptitles.Hook.SBSHook;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
 import com.alternacraft.pvptitles.Managers.MetricsManager;
-import com.alternacraft.pvptitles.Managers.MovementManager;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
-import com.alternacraft.pvptitles.Managers.TimerManager;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -195,18 +195,15 @@ public class PvpTitles extends JavaPlugin {
     private static PvpTitles plugin = null;
 
     private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
-            + "PvPTitles" + ChatColor.WHITE + "] ";
+            + "PvPTitles" + ChatColor.WHITE + "]";
     
     // Custom prefix
-    private static String PLUGINPREFIX = PLUGINMODELPREFIX;
+    private static String PLUGINPREFIX = PLUGINMODELPREFIX + " ";
     
     public static Logger LOGGER = null;
     public static boolean debugMode = false;
 
     private Manager manager = null;
-
-    private MovementManager movementManager = null;
-    private TimerManager timerManager = null;
 
     private boolean works = true;
 
@@ -224,10 +221,6 @@ public class PvpTitles extends JavaPlugin {
 
         this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
-
-        // Registro los managers del timing
-        this.timerManager = new TimerManager(this);
-        this.movementManager = new MovementManager(this);
 
         /*
          * Cargo el contenido del config principal, la gestion de la bd y el resto
@@ -291,8 +284,8 @@ public class PvpTitles extends JavaPlugin {
     @Override
     public void onDisable() {
         if (this.works) {
-            this.timerManager.stopSessions();
-            Set<TimedPlayer> players = this.timerManager.getTimedPlayers();
+            this.manager.getTimerManager().stopSessions();
+            Set<TimedPlayer> players = this.manager.getTimerManager().getTimedPlayers();
 
             for (TimedPlayer next : players) {
                 try {
@@ -330,15 +323,15 @@ public class PvpTitles extends JavaPlugin {
             }
 
             // Times
-            TimedPlayer tPlayer = this.getTimerManager().hasPlayer(pl)
-                    ? this.getTimerManager().getPlayer(pl) : new TimedPlayer(this, pl);
+            TimedPlayer tPlayer = this.manager.getTimerManager().hasPlayer(pl)
+                    ? this.manager.getTimerManager().getPlayer(pl) : new TimedPlayer(this, pl);
             tPlayer.startSession();
 
-            if (!this.getTimerManager().hasPlayer(pl)) {
-                this.getTimerManager().addPlayer(tPlayer);
+            if (!this.manager.getTimerManager().hasPlayer(pl)) {
+                this.manager.getTimerManager().addPlayer(tPlayer);
             }
 
-            this.getMovementManager().addLastMovement(pl);
+            this.manager.getMovementManager().addLastMovement(pl);
         }
     }
 
@@ -360,15 +353,6 @@ public class PvpTitles extends JavaPlugin {
         }
     }
 
-    /* PLAYER TIME */
-    public MovementManager getMovementManager() {
-        return this.movementManager;
-    }
-
-    public TimerManager getTimerManager() {
-        return this.timerManager;
-    }
-
     public static String getPluginName() {
         return PLUGINPREFIX;
     }
@@ -377,6 +361,10 @@ public class PvpTitles extends JavaPlugin {
         PLUGINPREFIX = str;
     }
 
+    public static String getDefaultPluginName() {
+        return PLUGINMODELPREFIX;
+    }
+    
     public static PvpTitles getInstance() {
         return plugin;
     }

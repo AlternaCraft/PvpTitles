@@ -16,26 +16,24 @@
  */
 package com.alternacraft.pvptitles.Events.Handlers;
 
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameAddEvent;
 import com.alternacraft.pvptitles.Events.FameEvent;
 import com.alternacraft.pvptitles.Events.FameSetEvent;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -130,7 +128,7 @@ public class HandleFame implements Listener {
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
-            TimedPlayer tp = pt.getTimerManager().getPlayer(pl);
+            TimedPlayer tp = pt.getManager().getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
 
             try {

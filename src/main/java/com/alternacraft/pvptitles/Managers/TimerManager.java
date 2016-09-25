@@ -17,7 +17,7 @@
 package com.alternacraft.pvptitles.Managers;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
+import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.OfflinePlayer;

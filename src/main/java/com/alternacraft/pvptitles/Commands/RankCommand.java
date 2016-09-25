@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
@@ -32,9 +32,9 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.VETO_TAG;
 import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
@@ -92,7 +92,9 @@ public class RankCommand implements CommandExecutor {
         int seconds = 0;
         try {
             seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
-                    + pt.getTimerManager().getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId())).getTotalOnline();
+                    + pt.getManager().getTimerManager()
+                    .getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId()))
+                    .getTotalOnline();
         } catch (DBException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
@@ -119,7 +121,7 @@ public class RankCommand implements CommandExecutor {
 
             if (!line.isEmpty()) {
                 msg = msg
-                        .replace(PLUGIN_TAG, getPluginName())
+                        .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
                         .replace(RANK_TITLE_TAG, LangsFile.RANK_INFO_TITLE.getText(lang))
                         .replace(RANK_VALUE_TAG, rank)
                         .replace(FAME_TITLE_TAG, LangsFile.RANK_INFO_TAG.getText(lang)
