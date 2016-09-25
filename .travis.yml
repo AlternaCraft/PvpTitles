@@ -3,9 +3,10 @@ language: java
 jdk:
   - openjdk7
 
-before_script:
+install:
   - mvn install:install-file -Dfile=lib/ScoreboardStats_v0.9.10.jar -DgroupId=com.github.games647 -DartifactId=scoreboardstats -Dversion=0.9.8 -Dpackaging=jar
   - mvn install:install-file -Dfile=lib/HolographicDisplaysAPI_v2.1.7.jar -DgroupId=com.gmail.filoghost -DartifactId=holographic-displays -Dversion=2.1.7 -Dpackaging=jar
+  
 script: mvn test
 after_success:
   - bash <(curl -s https://codecov.io/bash)  
