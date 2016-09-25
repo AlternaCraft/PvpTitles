@@ -25,6 +25,7 @@ import static com.alternacraft.pvptitles.Main.Manager.messages;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.FileConfig;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -52,8 +53,8 @@ public class ConfigHandler {
      * @param reqTime Map<Integer, Integer>
      * @param params ConfigDataStore
      */
-    protected void loadData(Map<Integer, String> rankList, Map<Integer, Integer> reqFame, 
-            Map<Integer, Integer> reqTime, ConfigDataStore params) {
+    protected void loadData(LinkedList rankList, LinkedList reqFame, 
+            LinkedList reqTime, ConfigDataStore params) {
         // Set debug mode
         FileConfiguration config = getConfig();
         
@@ -65,26 +66,24 @@ public class ConfigHandler {
         List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
 
         rankList.clear();
-        for (int i = 0; i < configList.size(); i++) {
-            rankList.put(i, StrUtils.translateColors(configList.get(i)));
+        for (String rank : configList) {
+            rankList.add(StrUtils.translateColors(rank));
         }
-
+        
         reqFame.clear();
-        for (int i = 0; i < requFame.size(); i++) {
-            reqFame.put(i, requFame.get(i));
+        for (Integer fame : requFame) {
+            reqFame.add(fame);
         }
-
-        reqTime.clear();
+        
+        reqTime.clear();        
         for (int i = 0; i < configList.size(); i++) {
             int seconds = 0;
-
             if (requTime.size() >= (i + 1) && requTime.get(i) != null) {
                 seconds = requTime.get(i);
             }
-
-            reqTime.put(i, seconds);
+            reqTime.add(seconds);
         }
-
+        
         params.getAffectedWorlds().clear();
         params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
 

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -53,8 +52,6 @@ public class FileConfig {
 
     private FileConfiguration configFile = null;
     private File backupFile = null;
-
-    private String before = "";
 
     public FileConfig(PvpTitles pl) {
         plugin = pl;
@@ -116,7 +113,7 @@ public class FileConfig {
 
             String linea;
             while ((linea = br.readLine()) != null) {
-                if (linea.matches("\\s*-\\s?.+") && !linea.contains("#")) {
+                if (linea.matches("\\s*-\\s?.+")) {
                     continue;
                 }
                 String nline = replace(linea, newFile, oldFile);
@@ -136,69 +133,80 @@ public class FileConfig {
         showMessage(ChatColor.GREEN + "Just in case, check the result.");
     }
 
+    private String parent;
+
     private String replace(String line, YamlConfiguration newFile, YamlConfiguration oldFile) {
-        String resul = line;
-
-        for (String value : newFile.getKeys(true)) {
-            // Este parametro no se toca
-            if (value.equalsIgnoreCase("version")) {
-                continue;
-            }
-
-            String cValue = value;
-            String spaces = ""; // Estilo
-
-            // Para comprobar si el valor existe solo me hace falta el ultimo valor
-            if (value.contains(".")) {
-                String[] vals = value.split("\\.");
-                cValue = vals[vals.length - 1];
-
-                // Style fix
-                int i = 0;
-                while (i < StringUtils.countMatches(value, ".")) {
-                    spaces += "    ";
-                    i++;
-                }
-            }
-
-            if (line.contains(cValue + ":")) {
-                Object v = null;
-                // Previous structure
-                if (oldFile.contains(before + "." + cValue)) {
-                    v = oldFile.get(before + "." + cValue);
-                } else if (newFile.contains(before + "." + cValue)) {
-                    v = newFile.get(before + "." + cValue);
-                // New structure
-                } else if (oldFile.contains(value)) {
-                    v = oldFile.get(value);
-                } else {
-                    v = newFile.get(value);
-                }
-
-                resul = spaces + cValue + ":";
-
-                if (v instanceof List) {
-                    List<Object> vs = (List<Object>) v;
-                    for (Object v1 : vs) {
-                        String val = getFilteredString(v1.toString());
-                        resul += System.lineSeparator() + spaces + "- " + val;
-                    }
-                } else if (!(v instanceof MemorySection)) {
-                    resul += " " + getFilteredString(v.toString());
-                } else if (v instanceof MemorySection) {
-                    before = value;
-                }
-
-                resul += System.lineSeparator();
-                break;
-            }
+        // Ignore values
+        if (line.contains("Version") || line.matches(" *#+.*") || line.isEmpty()
+                || line.matches(" +")) {
+            return line + System.lineSeparator();
         }
 
-        return (resul.equals(line) ? resul + System.lineSeparator() : resul);
+        // Output
+        String res;
+        
+        // ** BEGIN FIND NODE ** //
+        String key = getKey(line);
+        String cKey = key;
+        
+        Object v = newFile.get(cKey); // Default value
+        
+        // Testing with parent (Maybe it is a children)
+        if (v == null) {
+            cKey = parent + "." + key;
+            v = newFile.get(cKey);
+        }
+        
+        // Going back
+        while (v == null && parent.contains(".")) {
+            parent = parent.substring(0, parent.lastIndexOf("."));
+            cKey = parent + "." + key;
+            v = newFile.get(cKey);
+        }
+        // ** END FIND NODE ** //
+
+        // Unhandled error
+        if (v == null) {
+            return line + System.lineSeparator();
+        }
+
+        // Style
+        String spaces = fillSpaces(cKey.split("\\.").length - 1);
+
+        // Old value <- This is the point
+        if (oldFile.contains(cKey)) {
+            v = oldFile.get(cKey);
+        }
+
+        // Default output
+        res = spaces + key + ":";
+        
+        // Object type
+        if (v instanceof List) {
+            List<Object> list = (List<Object>) v;
+            for (Object l : list) {
+                String val = getFilteredString(l.toString());
+                res += System.lineSeparator() + spaces + "- " + val;
+            }
+        } else if (v instanceof MemorySection) {
+            parent = cKey;            
+        } else {
+            res += " " + getFilteredString(v.toString());
+        }
+
+        return res += System.lineSeparator();
     }
 
-    public FileConfiguration getConfig() {
-        return this.configFile;
+    private String getKey(String str) {
+        return str.split(":")[0].replaceAll("\\s+", "");
+    }
+
+    private String fillSpaces(int c) {
+        String res = "";
+        for (int i = 0; i < c; i++) {
+            res += "    ";
+        }
+        return res;
     }
 
     private String getFilteredString(String str) {
@@ -212,5 +220,9 @@ public class FileConfig {
         }
 
         return str;
+    }
+
+    public FileConfiguration getConfig() {
+        return this.configFile;
     }
 }

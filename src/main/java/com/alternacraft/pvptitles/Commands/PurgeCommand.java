@@ -52,7 +52,6 @@ public class PurgeCommand implements CommandExecutor {
             try {
                 purgados = Integer.valueOf(args[0]);
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
                 sender.sendMessage(getPluginName() + ChatColor.RED + "You have to use a number!");
                 return false;
             }
@@ -66,6 +65,11 @@ public class PurgeCommand implements CommandExecutor {
             cantidad = dh.dbh.getDm().purgeData(pvpTitles.getManager().params.getTimeP());
         }
 
+        if (cantidad > 0) {
+            sender.sendMessage(getPluginName() + ChatColor.YELLOW +
+                    "Check out the user_changes.txt file to see the fixes");
+        }
+        
         sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).
                 replace("%cant%", String.valueOf(cantidad)));
 

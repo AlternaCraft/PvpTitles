@@ -16,6 +16,8 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.aclib.utils.Logger;
+import com.alternacraft.aclib.utils.UtilsFile;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
@@ -27,8 +29,8 @@ import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
+import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
-import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +39,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -142,7 +145,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Method world", w);
                 data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
-                throw new DBException(DBException.MULTIWORLD_ERROR, 
+                throw new DBException(DBException.MULTIWORLD_ERROR,
                         DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
             }
 
@@ -195,7 +198,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 data.put("Method world", w);
                 data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
-                throw new DBException(DBException.MULTIWORLD_ERROR, 
+                throw new DBException(DBException.MULTIWORLD_ERROR,
                         DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
             }
 
@@ -233,8 +236,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
         if (tPlayer == null) {
             HashMap<String, Object> data = new HashMap();
             data.put("Null Player?", tPlayer == null);
-            
-            throw new DBException(DBException.PLAYER_TIME_ERROR, 
+
+            throw new DBException(DBException.PLAYER_TIME_ERROR,
                     DBException.DB_METHOD.PLAYER_TIME_SAVING, data);
         }
 
@@ -418,24 +421,26 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .lt("lastLogin", new Date())
                 .findList();
 
+        Logger l = new Logger(plugin, "user_changes.txt");        
+        
         for (PlayerPT player : allDates) {
             if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
                 continue;
             }
 
-            Date fechaFile = player.getLastLogin();
-            Calendar cFile = new GregorianCalendar();
-            cFile.setTime(fechaFile);
+            Date lastLogin = player.getLastLogin();
+            Calendar lastLoginDate = new GregorianCalendar();
+            lastLoginDate.setTime(lastLogin);
 
             // Tiempo en config
-            cFile.add(GregorianCalendar.DAY_OF_YEAR, q);
+            lastLoginDate.add(GregorianCalendar.DAY_OF_YEAR, q);
 
-            Date hoy = new Date();
-            Calendar cHoy = new GregorianCalendar();
-            cHoy.setTime(hoy);
+            Date today = new Date();
+            Calendar actualDate = new GregorianCalendar();
+            actualDate.setTime(today);
 
             // cFile + timePurga < hoy
-            if (cFile.before(cHoy)) {
+            if (lastLoginDate.before(actualDate)) {
                 if (plugin.getManager().params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
@@ -444,13 +449,24 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                     for (WorldPlayerPT allPlayer : allPlayers) {
                         ebeanServer.getDatabase().delete(allPlayer);
-                    }
+                    }                    
                 }
 
                 ebeanServer.getDatabase().delete(player);
 
+                // Log settings
+                UUID uuid = UUID.fromString(player.getPlayerUUID());
+                int time = (int)((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
+                l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
+                        + " has been removed. AFK time: " 
+                        + StrUtils.splitToComponentTimes(time));
+                
                 contador++;
             }
+        }
+        
+        if (contador > 0) {
+            l.export();
         }
 
         return contador;
@@ -626,12 +642,50 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public String getDefaultFImport() {
-        return this.FILENAME_IMPORT;
+        return FILENAME_IMPORT;
     }
 
     @Override
     public String getDefaultFExport() {
-        return this.FILENAME_EXPORT;
+        return FILENAME_EXPORT;
+    }
+
+    @Override
+    public int repair() {
+        int q = 0;
+        boolean repaired = false;
+
+        List<PlayerPT> players = ebeanServer.getDatabase().find(PlayerPT.class).findList();
+        Logger l = new Logger(plugin, "db_changes.txt");
+
+        for (PlayerPT player : players) {
+            if (player.getPoints() < 0 || player.getPlayedTime() < 0) {
+                UUID uuid = UUID.fromString(player.getPlayerUUID());
+                String name = Bukkit.getOfflinePlayer(uuid).getName();
+
+                if (player.getPoints() < 0) {
+                    l.addMessage("[BAD FAME] Player \"" + name + "\" had "
+                            + player.getPoints()+ " and it was changed to 0");
+                    player.setPoints(0);
+                } 
+                
+                if (player.getPlayedTime() < 0) {
+                    l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
+                            + player.getPlayedTime() + " and it was changed to 0");
+                    player.setPlayedTime(0);
+                }
+                
+                ebeanServer.getDatabase().save(player);
+                repaired = true;
+                q++;
+            }
+        }
+
+        if (repaired) {            
+            l.export();
+        }
+
+        return q;
     }
 
     @Override

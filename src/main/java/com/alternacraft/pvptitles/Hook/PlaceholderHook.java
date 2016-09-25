@@ -19,7 +19,7 @@ package com.alternacraft.pvptitles.Hook;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -64,7 +64,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
         String rank = "";
         try {
             rank = Ranks.getRank(fame, seconds);
-        } catch (RandomException ex) {
+        } catch (RanksException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 

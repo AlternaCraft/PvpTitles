@@ -19,7 +19,7 @@ package com.alternacraft.pvptitles.Main;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Exceptions.DBException;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import com.alternacraft.pvptitles.Files.ModelsFile;
@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +63,7 @@ public final class Manager {
     // Variable que almacena el plugin
     private PvpTitles pvpTitles = null;
     // Instancia de la clase
-    private static final Manager instance = new Manager();
+    private static final Manager INSTANCE = new Manager();
 
     // Handlers
     public ConfigHandler ch = null;
@@ -72,9 +73,9 @@ public final class Manager {
     private LeaderBoardManager lbm = null;
 
     // Objetos para guardar los Titulos con sus respectivos puntos    
-    private static final Map<Integer, String> RANKLIST = new HashMap();
-    private static final Map<Integer, Integer> REQFAME = new HashMap();
-    private static final Map<Integer, Integer> REQTIME = new HashMap();
+    private static final LinkedList RANKLIST = new LinkedList();
+    private static final LinkedList REQFAME = new LinkedList();
+    private static final LinkedList REQTIME = new LinkedList();
 
     // Modelos
     public ArrayList<BoardModel> modelos = null;
@@ -113,7 +114,7 @@ public final class Manager {
      * @return Instancia de la clase
      */
     public static Manager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     // </editor-fold>
@@ -441,7 +442,7 @@ public final class Manager {
                                         getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
                             }
                         }
-                    } catch (RandomException ex) {
+                    } catch (RanksException ex) {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                     }
                 }
@@ -460,7 +461,7 @@ public final class Manager {
      *
      * @return Objeto que almacena la lista de titulos
      */
-    public static Map<Integer, String> rankList() {
+    public static LinkedList<String> rankList() {
         return RANKLIST;
     }
 
@@ -469,7 +470,7 @@ public final class Manager {
      *
      * @return Objeto que almacena la lista de puntos de fama
      */
-    public static Map<Integer, Integer> reqFame() {
+    public static LinkedList<Integer> reqFame() {
         return REQFAME;
     }
 
@@ -478,7 +479,7 @@ public final class Manager {
      *
      * @return Objeto que almacena la lista de dias
      */
-    public static Map<Integer, Integer> reqTime() {
+    public static LinkedList<Integer> reqTime() {
         return REQTIME;
     }
 

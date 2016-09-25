@@ -42,7 +42,7 @@ public class MetricsManager {
 
         boolean timeUsed = false;
 
-        for (Integer value : Manager.reqTime().values()) {
+        for (Integer value : Manager.reqTime()) {
             if (value > 0) {
                 timeUsed = true;
                 break;

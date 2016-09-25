@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Events.Handlers;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.HOLOPLAYERS;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.ISHDENABLED;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.RANK_LINE;
@@ -133,7 +133,7 @@ public class HandlePlayerTag implements Listener {
 
         try {
             rank = Ranks.getRank(fame, seconds);
-        } catch (RandomException ex) {
+        } catch (RanksException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 
@@ -192,7 +192,7 @@ public class HandlePlayerTag implements Listener {
             String rank = "";
             try {
                 rank = Ranks.getRank(fame, totalTime);
-            } catch (RandomException ex) {
+            } catch (RanksException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
@@ -270,7 +270,7 @@ public class HandlePlayerTag implements Listener {
             String rank = "";
             try {
                 rank = Ranks.getRank(fame, totalTime);
-            } catch (RandomException ex) {
+            } catch (RanksException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
@@ -313,7 +313,7 @@ public class HandlePlayerTag implements Listener {
                 try {
                     rank = Ranks.getRank(fame, totalTime);
 
-                } catch (RandomException ex) {
+                } catch (RanksException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 
@@ -377,7 +377,7 @@ public class HandlePlayerTag implements Listener {
             String rank = "";
             try {
                 rank = Ranks.getRank(fame, totalTime);
-            } catch (RandomException ex) {
+            } catch (RanksException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 
@@ -431,7 +431,7 @@ public class HandlePlayerTag implements Listener {
                 String rank = "";
                 try {
                     rank = Ranks.getRank(fame, totalTime);
-                } catch (RandomException ex) {
+                } catch (RanksException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
 

@@ -73,6 +73,18 @@ public class DBCommand implements CommandExecutor {
                             + filename + "' not found...");
                 }
                 break;
+            case "repair":
+                int changes = dm.repair();
+
+                if (changes > 0) {
+                    sender.sendMessage(getPluginName() + ChatColor.YELLOW +
+                            "Check out the db_changes.txt file to see the fixes");
+                }
+                
+                sender.sendMessage(getPluginName() + LangsFile.DB_REPAIR_RESULT
+                        .getText(messages).replace("%cant%", String.valueOf(changes)));
+
+                break;
             default:
                 return false;
         }

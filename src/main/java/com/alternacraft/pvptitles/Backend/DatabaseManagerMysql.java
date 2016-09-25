@@ -16,6 +16,8 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.aclib.utils.Logger;
+import com.alternacraft.aclib.utils.UtilsFile;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
@@ -27,8 +29,8 @@ import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Managers.Timer.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
+import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
-import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -45,6 +47,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -80,7 +83,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
     private static final String UPDATE_PLAYER_SERVERID = "update PlayerServer set serverID=? "
             + "where playerUUID like ? AND serverID=-1";
     private static final String UPDATE_PLAYERMETA_PLAYEDTIME = "update PlayerMeta set "
-            + "playedTime = playedTime+? where psid=?";
+            + "playedTime=playedTime+? where psid=?";
     private static final String UPDATE_PLAYERMETA_LASTLOGIN = "update PlayerMeta set "
             + "lastLogin=? where psid=?";
     private static final String UPDATE_PLAYERMETA_POINTS = "update PlayerMeta set "
@@ -220,7 +223,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     data.put("Method world", w);
                     data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
-                    throw new DBException(DBException.MULTIWORLD_ERROR, 
+                    throw new DBException(DBException.MULTIWORLD_ERROR,
                             DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
                 }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
@@ -259,7 +262,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     data.put("Method world", w);
                     data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
-                    throw new DBException(DBException.MULTIWORLD_ERROR, 
+                    throw new DBException(DBException.MULTIWORLD_ERROR,
                             DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
                 }
 
@@ -588,37 +591,51 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 + "inner join PlayerMeta on id=psid";
         String purge = "delete from PlayerServer where id=?";
 
+        Logger l = new Logger(plugin, "db_changes.txt");
+
         try {
             ResultSet rs = mysql.createStatement().executeQuery(data);
             rs.next();
             do {
                 short id = rs.getShort("id");
-                String nombre = rs.getString("playerUUID");
-                Date fechaMod = rs.getDate("lastLogin");
-                
+                String strUUID = rs.getString("playerUUID");
+                Date lastLogin = rs.getDate("lastLogin");
+
                 Calendar date = new GregorianCalendar(1978, Calendar.JANUARY, 1);
-                fechaMod = (fechaMod == null) ? date.getTime():fechaMod;
+                lastLogin = (lastLogin == null) ? date.getTime() : lastLogin;
 
-                if (!plugin.getManager().params.getNoPurge().contains(nombre)) {
-                    Calendar cFile = new GregorianCalendar();
-                    cFile.setTime(fechaMod);
-                    cFile.add(6, q);
+                if (!plugin.getManager().params.getNoPurge().contains(strUUID)) {
+                    Calendar lastLoginDate = new GregorianCalendar();
+                    lastLoginDate.setTime(lastLogin);
+                    lastLoginDate.add(6, q);
 
-                    Date hoy = new Date();
-                    Calendar cHoy = new GregorianCalendar();
-                    cHoy.setTime(hoy);
+                    Date today = new Date();
+                    Calendar actualDate = new GregorianCalendar();
+                    actualDate.setTime(today);
 
-                    if (cFile.before(cHoy)) {
-                        PreparedStatement borraUsr = mysql.prepareStatement(purge);
-                        borraUsr.setShort(1, id);
-                        borraUsr.executeUpdate();
+                    if (lastLoginDate.before(actualDate)) {
+                        PreparedStatement delUser = mysql.prepareStatement(purge);
+                        delUser.setShort(1, id);
+                        delUser.executeUpdate();
                         contador++;
+
+                        // Log settings
+                        UUID uuid = UUID.fromString(strUUID);
+                        int time = (int) ((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
+                        l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
+                                + " has been removed. AFK time: "
+                                + StrUtils.splitToComponentTimes(time));
                     }
                 }
             } while (rs.next());
         } catch (SQLException ex) {
             LoggerManager.logError(ex.getMessage(), ex);
         }
+
+        if (contador > 0) {
+            l.export();
+        }
+
         return contador;
     }
 
@@ -738,12 +755,74 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     @Override
     public String getDefaultFImport() {
-        return this.FILENAME_IMPORT;
+        return FILENAME_IMPORT;
     }
 
     @Override
     public String getDefaultFExport() {
-        return this.FILENAME_EXPORT;
+        return FILENAME_EXPORT;
+    }
+
+    @Override
+    public int repair() {
+        int q = 0;
+        boolean repaired = false;
+
+        if (!MySQLConnection.isConnected(true)) {
+            return q;
+        }
+
+        String data = "select id, playerUUID, points, playedTime from PlayerServer "
+                + "inner join PlayerMeta on id=psid";
+        String update = "update PlayerMeta set points=?,playedTime=? where psid=?";
+
+        Logger l = new Logger(plugin, "db_changes.txt");
+
+        try {
+            ResultSet rs = mysql.createStatement().executeQuery(data);
+            rs.next();
+            do {
+                short id = rs.getShort("id");
+
+                String strUUID = rs.getString("playerUUID");
+                int points = rs.getInt("points");
+                int playedTime = rs.getInt("playedTime");
+
+                if (points < 0 || playedTime < 0) {
+                    UUID uuid = UUID.fromString(strUUID);
+                    String name = Bukkit.getOfflinePlayer(uuid).getName();
+
+                    if (points < 0) {
+                        l.addMessage("[BAD FAME] Player \"" + name + "\" had "
+                                + points + " and it was changed to 0");
+                        points = 0;
+                    } 
+                    
+                    if (playedTime < 0) {
+                        l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
+                                + playedTime + " and it was changed to 0");
+                        playedTime = 0;
+                    }
+
+                    PreparedStatement fix = mysql.prepareStatement(update);
+                    fix.setInt(1, points);
+                    fix.setInt(2, playedTime);
+                    fix.setInt(3, id);
+                    fix.executeUpdate();
+                    
+                    repaired = true;
+                    q++;
+                }
+            } while (rs.next());
+        } catch (SQLException ex) {
+            LoggerManager.logError(ex.getMessage(), ex);
+        }
+
+        if (repaired) {            
+            l.export();
+        }
+        
+        return q;
     }
 
     @Override

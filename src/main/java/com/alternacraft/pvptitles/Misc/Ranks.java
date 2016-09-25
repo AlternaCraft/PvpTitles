@@ -16,9 +16,10 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.Manager;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -30,34 +31,31 @@ public class Ranks {
     private static int nextRankFame;
     private static int nextRankTime;
     private static String nextRankTitle;
-    
+
     /**
      * Método para recibir el rango segun los puntos que tenga el jugador
      *
      * @param fame Puntos pvp
      * @param seconds Cantidad de dias
      * @return String con el nombre del titulo
-     * @throws com.alternacraft.pvptitles.Exceptions.RandomException
+     * @throws com.alternacraft.pvptitles.Exceptions.RanksException
      */
-    public static String getRank(int fame, int seconds) throws RandomException {
+    public static String getRank(int fame, int seconds) throws RanksException {
         String rank = "";
 
-        Map<Integer, String> rankList = Manager.rankList();
-        Map<Integer, Integer> reqFame = Manager.reqFame();
-        Map<Integer, Integer> reqTime = Manager.reqTime();
+        LinkedList<String> rankList = Manager.rankList();
+        LinkedList<Integer> reqFame = Manager.reqFame();
+        LinkedList<Integer> reqTime = Manager.reqTime();
 
         /*
          Caso puntual para comprobar si los puntos son mayores que todos 
          los de la lista (Además evito que lance un NullPointerEx el bucle de debajo)
          */
-        if (fame >= reqFame.get(reqFame.values().size() - 1) && seconds
-                >= reqTime.get(reqTime.values().size() - 1)) {
+        if (fame >= reqFame.getLast() && seconds >= reqTime.getLast()) {
             nextRankFame = 0;
             nextRankTime = 0;
-            
-            rank = rankList.get(reqFame.values().size() - 1);
-        }
-        else {
+            rank = rankList.getLast();
+        } else {
             // Desde el primero hasta el penúltimo
             for (int i = 0; i < reqFame.size() - 1; i++) {
                 // Voy comprobando si esta entre los puntos que va obteniendo
@@ -67,26 +65,26 @@ public class Ranks {
                             nextRankFame = reqFame.get(j + 1) - fame;
                             nextRankTitle = rankList.get(j + 1);
                             nextRankTime = reqTime.get(j + 1) - seconds;
-                            
+
                             rank = rankList.get(j);
-                            
+
                             break;
                         }
                     }
                 }
             }
         }
-        
+
         if (rank.isEmpty()) {
             Map<String, Object> data = new LinkedHashMap<>();
-            
+
             data.put("Fame", fame);
             data.put("Seconds", seconds);
-            data.put("Available ranks", rankList.toString());
-            data.put("Fame required", reqFame.toString());            
-            data.put("Time required", reqTime.toString());
-            
-            throw new RandomException("getting rank", data);
+            data.put("Available ranks", rankList.size());
+            data.put("Fame required", reqFame);
+            data.put("Time required", reqTime);
+
+            throw new RanksException("getting rank", data);
         }
 
         return rank;

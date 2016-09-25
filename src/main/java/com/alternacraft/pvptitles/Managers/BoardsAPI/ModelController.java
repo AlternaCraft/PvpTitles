@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Managers.BoardsAPI;
 
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Misc.Params;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
@@ -186,7 +186,7 @@ public class ModelController {
                         try {
                             rank = Ranks.getRank(pf.get(value)
                                 .getFame(), pf.get(value).getSeconds());
-                        } catch (RandomException ex) {
+                        } catch (RanksException ex) {
                             LoggerManager.logError(ex.getCustomMessage(), null);
                         }
                         str = str.replace("<rank>", rank);

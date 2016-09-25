@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Events.Handlers;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.FameEvent;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -322,7 +322,7 @@ public class HandlePlayerFame implements Listener {
                 player.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(player))
                         .replace("%newRank%", newRank));
             }
-        } catch (RandomException ex) {
+        } catch (RanksException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 

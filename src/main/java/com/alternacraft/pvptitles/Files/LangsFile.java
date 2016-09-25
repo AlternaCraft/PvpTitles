@@ -186,8 +186,12 @@ public enum LangsFile {
             "&4You can not create it in an area occupied with other blocks"
     ),
     PURGE_RESULT(
-            "&aSe han eliminado %cant% registros",
-            "&aHave been removed %cant% users"
+            "&aSe han eliminado %cant% usuario/s",
+            "&a%cant% user/s have been removed"
+    ),
+    DB_REPAIR_RESULT(
+            "&aSe han corregido %cant% registro/s",
+            "&a%cant% record/s has been fixed"
     ),
     PLAYER_KILLED(
             "&aHas matado a %killed% y has recibido %fameRec% de %tag%",

@@ -17,7 +17,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="PROJECT DOCUMENTATION">
 // Proyect created: 15-02-2015
-// Last Change:     12-09-2016
+// Last Change:     25-09-2016
 // Author:          AlternaCraft;
 // 
 // History:
@@ -148,6 +148,8 @@
 //  Ver. 2.5.8  05/09/2016   Añadida opcion para indicar los dias de inactividad
 //   en el comando /pvppurge
 //  Ver. 2.5.9  12/09/2016   Arreglado un fallo con la lectura de las plantillas
+//  Ver. 2.6.0  25/09/2016   Mejorada la gestión de errores, añadido nuevo cmd,
+//   y añadidos nuevos locales
 // </editor-fold>
 package com.alternacraft.pvptitles.Main;
 

@@ -1,5 +1,5 @@
 name: PvpTitles
-version: 2.5.9
+version: 2.6.0
 description: Get epic titles in pvp
 database: true
 website: alternacraft.github.io/PvpTitles/
@@ -46,7 +46,7 @@ commands:
         permission: pvptitles.reload
     pvpDatabase:
         description: It allows to manage data from the database.
-        usage: /<command> export|import [<file_name>]
+        usage: /<command> export|import|repair [<file_name>]
         aliases: pvpdb
         permission: pvptitles.database
         

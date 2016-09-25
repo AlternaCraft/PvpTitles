@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -90,9 +91,15 @@ public abstract class CustomException extends Exception {
             extradata += "\n-----------------";
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 String key = entry.getKey();
-                Object value = entry.getValue();
+                Object value = entry.getValue();                
+                String v = value.toString();
+                
+                if (value instanceof Collection) {
+                    v = "(" + ((Collection) value).size() + ") " + v;
+                }
+                
                 extradata += new StringBuilder().append("\n- ").append(key)
-                        .append(": ").append(value).toString();
+                        .append(": ").append(v).toString();
             }
         } else if (this.custom_error != null) {
             extradata = "\nMore information: " + this.custom_error;
@@ -103,7 +110,7 @@ public abstract class CustomException extends Exception {
 
     protected String getReportMessage() {
         return new StringBuilder()
-                .append("\n\n-------------------------------------------------------------\n")
+                .append("\n-------------------------------------------------------------\n")
                 .append(this.REPORT)
                 .append("\n-------------------------------------------------------------").toString();
     }

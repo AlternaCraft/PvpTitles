@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
@@ -100,7 +100,7 @@ public class RankCommand implements CommandExecutor {
         String rank = "";
         try {
             rank = Ranks.getRank(fame, seconds);
-        } catch (RandomException ex) {
+        } catch (RanksException ex) {
             LoggerManager.logError(ex.getCustomMessage(), null);
         }
 

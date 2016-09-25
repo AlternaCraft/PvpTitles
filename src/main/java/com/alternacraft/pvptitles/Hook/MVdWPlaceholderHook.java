@@ -22,7 +22,7 @@ import be.maximvdw.placeholderapi.PlaceholderReplacer;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -65,7 +65,7 @@ public class MVdWPlaceholderHook {
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
-                    } catch (RandomException ex) {
+                    } catch (RanksException ex) {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 
@@ -100,7 +100,7 @@ public class MVdWPlaceholderHook {
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
-                    } catch (RandomException ex) {
+                    } catch (RanksException ex) {
                         LoggerManager.logError(ex.getCustomMessage(), null);
                     }
 

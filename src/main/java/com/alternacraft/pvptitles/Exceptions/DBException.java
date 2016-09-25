@@ -16,8 +16,6 @@
  */
 package com.alternacraft.pvptitles.Exceptions;
 
-import static com.alternacraft.pvptitles.Exceptions.DBException.POSSIBLE_ERRORS.DB_CONNECTION;
-import static com.alternacraft.pvptitles.Exceptions.DBException.POSSIBLE_ERRORS.NOT_FOUND;
 import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +25,7 @@ import java.util.Map;
  */
 public class DBException extends CustomException {
 
-    private static final String PREFIX = "01x";
+    private static final String PREFIX = "00x";
     
     // <editor-fold defaultstate="collapsed" desc="ERRORS">
     public static final String UNKNOWN_ERROR = "Unknown error";
@@ -57,14 +55,14 @@ public class DBException extends CustomException {
         BOARD_SEARCHING
     }
 
-    public enum POSSIBLE_ERRORS {
-        NOT_FOUND(0, "Couldn't find a reason for the error..."),
-        DB_CONNECTION(1, "The server has lost the MySQL connection");
+    private enum POSSIBLE_ERRORS {
+        NOT_FOUND("00", "Couldn't find a reason for the error..."),
+        DB_CONNECTION("01", "The server has lost the MySQL connection");
 
-        private int error_num = -1;
+        private String error_num = "-1";
         private String error_str = null;
 
-        private POSSIBLE_ERRORS(int num, String msg) {
+        private POSSIBLE_ERRORS(String num, String msg) {
             this.error_num = num;
             this.error_str = msg;
         }
@@ -128,12 +126,12 @@ public class DBException extends CustomException {
 
             if (k.contains("MySQL") && k.contains("connection")) {
                 if (((String)v).equals("false")) {
-                    possible_errors += "\n- " + DB_CONNECTION.getText();
+                    possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
                 }
             }
         }
 
-        return (possible_errors.isEmpty()) ? "\n- " + NOT_FOUND.getText() : possible_errors;
+        return (possible_errors.isEmpty()) ? "\n- " + POSSIBLE_ERRORS.NOT_FOUND.getText() : possible_errors;
     }
     
     private String getFilteredString(String str) {

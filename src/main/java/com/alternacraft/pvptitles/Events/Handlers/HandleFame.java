@@ -21,7 +21,7 @@ import com.alternacraft.pvptitles.Events.FameAddEvent;
 import com.alternacraft.pvptitles.Events.FameEvent;
 import com.alternacraft.pvptitles.Events.FameSetEvent;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
-import com.alternacraft.pvptitles.Exceptions.RandomException;
+import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
@@ -101,7 +101,7 @@ public class HandleFame implements Listener {
                         setValues(rank.get(rango), e.getOfflinePlayer());
                         break;
                     }
-                } catch (RandomException ex) {
+                } catch (RanksException ex) {
                     LoggerManager.logError(ex.getCustomMessage(), null);
                 }
             }
@@ -142,7 +142,7 @@ public class HandleFame implements Listener {
                     pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
                             pl, actualRank, newRank));
                 }
-            } catch (RandomException ex) {
+            } catch (RanksException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
         }
@@ -195,7 +195,7 @@ public class HandleFame implements Listener {
             String rank = "";
             try {
                 rank = Ranks.getRank(e.getFameTotal(), seconds);
-            } catch (RandomException ex) {
+            } catch (RanksException ex) {
                 LoggerManager.logError(ex.getCustomMessage(), null);
             }
 

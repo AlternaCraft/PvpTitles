@@ -176,6 +176,13 @@ public interface DatabaseManager {
     public String getDefaultFExport();
 
     /**
+     * Método para corregir valores de la base de datos
+     * 
+     * @return Cantidad de registros reparados
+     */
+    public int repair();
+    
+    /**
      * Método para actualizar la conexion a la base de datos
      *
      * @param connection Nueva conexión
