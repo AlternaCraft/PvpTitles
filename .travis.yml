@@ -12,11 +12,18 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)  
   - bash .utility/environment.sh
 
+before_deploy:
+  - ll
+  - cd target
+  - ll
+  - cd release
+  - ll
+  - mv target/PvpTitles*.jar target/release/PvpTitles.jar
 deploy:
   provider: releases
   api_key:
     secure: WwsxW35CB8vMBgRjb+3amXYaoFnFOulsvOXLpSpHt0CmiFkvZU1m02jmX27X2ShyK6tzz0M5guXrm3cpfpCpPuoCBgGMFx1wyzfJvW2qJ5aSXorzC23z+JxwEfogi8ceQ4sHGz8axhAHmTWtMRg5v4uZD8IIzkCZ/+16WXZCJSxMm3o4Z+cMrLldZqUQB728j+siqsOpjJ/La2TavnapjzuUVK4iaZfZ5rUxdvaSw54KTZp2MWFCkLTEvzsgyFGWmn3qEq6a2JLLKTREvWSdcI+YXbOLW59SjOttFPURLycnFRd40ne+EgQFziMQMOUYGAwIWzRpthqPC6e7GDkSPFSvGt4LpFmQK3zOrFUwFXiRI1ruuCm2/DVHo8fCNrhF7SNl7EQB26U/kVPr8oTaio6ZBVMqNH9a6BYbjLi0/mg6UlZd5I7gPVytxccAEtKhEHetdj+hK2BfZ0JsKTHWombpKO1zyFCSDQUHZ1X1npdr6n6F1YinC6hkhpuBx7ctgmtk/noS6EzwFdykoG85IiLaKDjzMb9wZNG3yDBYRAUTaAVTZAWyRg4RK/4sC9JV+YMbRehlyJVC3N2Ws+/LWDBsyepR4KiG7w6oXifImpmLDb0+XWuPrEHE5BfSgypDkaamPQUXEbzOip5Gr0Gnvof/LHqMz+Br9YHRQVRYR4Y=
-  file: target/dependency/PvpTitles.jar
+  file: target/release/PvpTitles.jar
   on:
     tags: true  
   
