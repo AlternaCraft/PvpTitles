@@ -13,11 +13,11 @@ after_success:
   - bash .utility/environment.sh
 
 before_deploy:
-  - ll
+  - ls
   - cd target
-  - ll
+  - ls
   - cd release
-  - ll
+  - ls
   - mv target/PvpTitles*.jar target/release/PvpTitles.jar
 deploy:
   provider: releases
