@@ -147,6 +147,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <outputFile>${basedir}/.utility/dependencies.txt</outputFile>
+        <custom.path>target/dependency/</custom.path>
     </properties>
     
     <build>
