@@ -4,7 +4,7 @@
   <groupId>com.alternacraft</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.6</version>
+  <version>2.6.1-SNAPSHOT</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -64,6 +64,12 @@
                   </includes>
                 </filter>
               </filters>
+              <relocations>
+                <relocation>
+                  <pattern>com.alternacraft.aclib</pattern>
+                  <shadedPattern>${project.groupId}.${project.artifactId}.ACLIB</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -287,7 +293,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <custom.path>target/dependency/</custom.path>
+    <custom.path>target/release/</custom.path>
     <outputFile>${basedir}/.utility/dependencies.txt</outputFile>
     <maven.compiler.source>1.7</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
