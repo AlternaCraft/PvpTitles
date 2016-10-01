@@ -5,7 +5,7 @@
     <!-- The Basics -->
     <groupId>com.alternacraft</groupId>
     <artifactId>PvpTitles</artifactId>
-    <version>2.6.1-SNAPSHOT</version>
+    <version>2.6.1</version>
     <packaging>jar</packaging>   
      
     <repositories>        
@@ -39,12 +39,6 @@
             <id>novaguilds-repo</id>
             <url>http://repo.novaguilds.pl/</url>
         </repository>
-
-        <!-- Incompatibility problem with jitpack...
-        <repository>
-            <id>aclib-snapshots</id>
-            <url>https://oss.jfrog.org/oss-snapshot-local/</url>
-        </repository> -->
     </repositories> 
     
     <dependencies>
@@ -108,14 +102,6 @@
             <version>0.9.13</version>
             <scope>provided</scope>
         </dependency>
-        
-        <!-- AlternaCraft LIB dependency -->
-        <dependency>
-            <groupId>com.github.AlternaCraft</groupId>
-            <artifactId>ACLIB</artifactId>
-            <version>v1.0.1-stable</version>    
-            <scope>compile</scope>
-        </dependency>
                   
         <!-- TESTING DEPENDENCIES -->
         <dependency>
@@ -169,40 +155,6 @@
         </resources>
         
         <plugins>            
-            <!-- Add utils to plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <!--<shadedArtifactAttached>true</shadedArtifactAttached>-->
-                            <filters> 
-                                <filter>
-                                    <artifact>com.alternacraft:aclib</artifact>
-                                    <includes>
-                                        <include>**/Updater*.*</include>
-                                        <include>**/Logger.*</include>
-                                        <include>**/UtilsFile.*</include>
-                                    </includes>
-                                </filter>                 
-                            </filters>     
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.alternacraft.aclib</pattern>
-                                    <shadedPattern>${project.groupId}.${project.artifactId}.ACLIB</shadedPattern>
-                                </relocation>
-                            </relocations>                        
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
             <!-- Copy artifacts to non-versioned jar name -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

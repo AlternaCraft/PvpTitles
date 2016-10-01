@@ -16,12 +16,22 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
-import com.alternacraft.aclib.utils.Updater;
-import com.alternacraft.aclib.utils.Updater.UpdateResult;
-import com.alternacraft.aclib.utils.Updater.UpdateType;
+
 import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
 import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Misc.Updater;
+import com.alternacraft.pvptitles.Misc.Updater.UpdateResult;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.DISABLED;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.FAIL_APIKEY;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.FAIL_BADID;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.FAIL_DBO;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.FAIL_DOWNLOAD;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.FAIL_NOVERSION;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.NO_UPDATE;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.SUCCESS;
+import static com.alternacraft.pvptitles.Misc.Updater.UpdateResult.UPDATE_AVAILABLE;
+import com.alternacraft.pvptitles.Misc.Updater.UpdateType;
 import java.io.File;
 import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
