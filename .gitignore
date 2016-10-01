@@ -7,7 +7,7 @@
 
 # Jetbrains
 *.iml
-./idea
+/.idea
 
 #Eclipse
 /.classpath
