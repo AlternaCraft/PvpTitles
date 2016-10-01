@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Commands;
+package com.alternacraft.pvptitles.Tests;
 
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
-import static com.alternacraft.pvptitles.Commands.TestBase.t;
+import com.alternacraft.pvptitles.Commands.FameCommand;
+import com.alternacraft.pvptitles.Commands.FameCommand;
+import static com.alternacraft.pvptitles.Tests.TestBase.t;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;

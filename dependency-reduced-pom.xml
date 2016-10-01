@@ -147,8 +147,12 @@
       <url>http://repo.mvdw-software.be/content/groups/public/</url>
     </repository>
     <repository>
-      <id>aclib-snapshots</id>
-      <url>https://oss.jfrog.org/oss-snapshot-local/</url>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <repository>
+      <id>novaguilds-repo</id>
+      <url>http://repo.novaguilds.pl/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -209,23 +213,9 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>com.github.games647</groupId>
-      <artifactId>scoreboardstats</artifactId>
-      <version>0.9.8</version>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>com.gmail.filoghost</groupId>
-      <artifactId>holographic-displays</artifactId>
-      <version>2.1.7</version>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>be.maximvdw</groupId>
       <artifactId>MVdWPlaceholderAPI</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.0.2-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -234,6 +224,19 @@
         </exclusion>
       </exclusions>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.gmail.filoghost</groupId>
+      <artifactId>holographicdisplays.api</artifactId>
+      <version>2.1.3</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.github.games647</groupId>
+      <artifactId>ScoreboardStats</artifactId>
+      <version>0.9.13</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Commands;
+package com.alternacraft.pvptitles.Tests;
 
 import com.alternacraft.pvptitles.Files.HologramsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
@@ -24,6 +24,7 @@ import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
+import com.alternacraft.pvptitles.Commands.BoardCommand;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import static org.junit.Assert.assertEquals;
