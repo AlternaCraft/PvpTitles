@@ -82,6 +82,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- ScoreboardStats -->
         <dependency>
             <groupId>com.github.games647</groupId>
             <artifactId>ScoreboardStats</artifactId>
@@ -89,6 +90,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- holographicdisplays API -->
         <dependency>
             <groupId>com.gmail.filoghost</groupId>
             <artifactId>holographicdisplays.api</artifactId>
