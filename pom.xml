@@ -5,7 +5,7 @@
     <!-- The Basics -->
     <groupId>com.alternacraft</groupId>
     <artifactId>PvpTitles</artifactId>
-    <version>2.6.1</version>
+    <version>2.6.2-SNAPSHOT</version>
     <packaging>jar</packaging>   
      
     <repositories>        
@@ -49,14 +49,6 @@
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Craftbukkit 
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency> -->
         
         <!-- Vault API -->
         <dependency>
@@ -102,7 +94,7 @@
             <version>0.9.13</version>
             <scope>provided</scope>
         </dependency>
-                  
+        
         <!-- TESTING DEPENDENCIES -->
         <dependency>
             <groupId>junit</groupId>

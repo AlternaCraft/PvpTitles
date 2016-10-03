@@ -1,23 +1,17 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,7 +33,7 @@ import org.json.simple.JSONValue;
  * If you are unsure about these rules, please read the plugin submission guidelines: http://goo.gl/8iU5l
  *
  * @author Gravity
- * @version 2.3
+ * @version 2.4
  */
 
 public class Updater {
@@ -387,10 +381,6 @@ public class Updater {
             // Unzip
             this.unzip(dFile.getAbsolutePath());
         }
-        if (this.announce) {
-            MessageManager.showMessage(ChatColor.YELLOW + 
-                    "Finished updating. Do reload to load it.");
-        }
     }
 
     /**
@@ -400,23 +390,29 @@ public class Updater {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
-            URL fileUrl = new URL(this.versionLink);
-            final int fileLength = fileUrl.openConnection().getContentLength();
+            URL fileUrl = followRedirects(this.versionLink);
+            
             in = new BufferedInputStream(fileUrl.openStream());
             fout = new FileOutputStream(new File(this.updateFolder, file.getName()));
-
-            final byte[] data = new byte[Updater.BYTE_SIZE];
-            int count;
-            if (this.announce) {
-                
+            
+            if (this.announce) {                
                 MessageManager.showMessage(ChatColor.AQUA + "About to download a new update: " + 
                         ChatColor.GREEN + this.versionName);
             }
+            
+            final byte[] data = new byte[Updater.BYTE_SIZE];
+            final int fileLength = fileUrl.openConnection().getContentLength();
+            
             long downloaded = 0;
+            int count, before = -1;
+                        
             while ((count = in.read(data, 0, Updater.BYTE_SIZE)) != -1) {
                 downloaded += count;
                 fout.write(data, 0, count);
                 final int percent = (int) ((downloaded * 100) / fileLength);
+                if (before == percent)
+                    continue;
+                before = percent;
                 if (this.announce && ((percent % 10) == 0)) {
                     MessageManager.showMessage("Downloading update: " 
                             + percent + "% of " + fileLength + " bytes.");
@@ -441,6 +437,33 @@ public class Updater {
                 this.plugin.getLogger().log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    private URL followRedirects(String location) throws IOException {
+        URL resourceUrl, base, next;
+        HttpURLConnection conn;
+        String redLoc;
+        while (true) {
+            resourceUrl = new URL(location);
+            conn = (HttpURLConnection) resourceUrl.openConnection();
+
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0...");
+
+            switch (conn.getResponseCode()) {
+                case HttpURLConnection.HTTP_MOVED_PERM:
+                case HttpURLConnection.HTTP_MOVED_TEMP:
+                    redLoc = conn.getHeaderField("Location");
+                    base = new URL(location);
+                    next = new URL(base, redLoc);  // Deal with relative URLs
+                    location = next.toExternalForm();
+                    continue;
+            }
+            break;
+        }
+        return conn.getURL();
     }
 
     /**
@@ -618,22 +641,7 @@ public class Updater {
      * @return true if Updater should consider the remote version an update, false if not.
      */
     public boolean shouldUpdate(String localVersion, String remoteVersion) {
-        String[] longL = localVersion.split(Pattern.quote("."));
-        String[] longR = remoteVersion.split(Pattern.quote("."));
-
-        int longitud = (longL.length <= longR.length) ? longL.length : longR.length;
-
-        for (int i = 0; i < longitud; i++) {
-            if (Integer.valueOf(longL[i]) < Integer.valueOf(longR[i])) {
-                return true;
-            }
-            else if (Integer.valueOf(longL[i]) > Integer.valueOf(longR[i])) {
-                return false;
-            }            
-        }
-        
-        // Si sale quiere decir que, en la longitud que recorre el bucle, son iguales
-        return longR.length > longL.length;
+        return !localVersion.equalsIgnoreCase(remoteVersion);
     }
 
     /**

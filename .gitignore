@@ -3,6 +3,7 @@
 /nbproject/
 /nbactions-deployer.xml
 /nb-configuration.xml
+/versions.txt
 
 # Dependencies
 /.utility/*.txt
