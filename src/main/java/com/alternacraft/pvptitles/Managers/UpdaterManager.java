@@ -77,7 +77,8 @@ public class UpdaterManager {
                     break;
                 case UPDATE_AVAILABLE:
                     showMessage(ChatColor.YELLOW + "A new update has been found: "
-                            + ChatColor.GREEN + updater.getLatestName());
+                            + ChatColor.GREEN + updater.getLatestName() + " (" 
+                            + updater.getLatestType() + ")");
                     showMessage(ChatColor.YELLOW + "http://dev.bukkit.org/bukkit-plugins/pvptitles");
             }
         }

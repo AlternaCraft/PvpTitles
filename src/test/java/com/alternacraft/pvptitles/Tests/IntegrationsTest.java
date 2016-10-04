@@ -21,11 +21,16 @@ import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.HologramsFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
 import com.alternacraft.pvptitles.Hook.MVdWPlaceholderHook;
+import com.alternacraft.pvptitles.Hook.SBSHook;
 import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
+import com.github.games647.scoreboardstats.ScoreboardStats;
+import com.github.games647.scoreboardstats.variables.ReplaceManager;
+import com.github.games647.scoreboardstats.variables.VariableReplacer;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import java.util.ArrayList;
@@ -42,14 +47,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HologramsFile.class, MessageManager.class, HologramsAPI.class,
@@ -59,6 +66,7 @@ public class IntegrationsTest extends TestBase {
     ConfigDataStore params = null;
     ServicesManager mockServices = null;
 
+    //<editor-fold defaultstate="collapsed" desc="HD">
     @Test
     public void testOnHolographic() {
         TestStructure ts = new TestStructure() {
@@ -99,7 +107,9 @@ public class IntegrationsTest extends TestBase {
 
         ts.premadeRun();
     }
-
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="PLACEHOLDER">
     @Test
     public void testOnMVdWPlaceholderHook() {
         TestStructure ts = new TestStructure() {
@@ -118,9 +128,13 @@ public class IntegrationsTest extends TestBase {
 
         ts.premadeRun();
     }
-
-    /* Incompatibility problem between Java versions, 1.8 required
-    @Test
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="SBS">
+    /* 
+     * Incompatibility problem between Java versions, 1.8 required
+     * @Test
+     */
     public void testOnSBSHook() {
         TestStructure ts = new TestStructure() {
             @Override
@@ -152,8 +166,9 @@ public class IntegrationsTest extends TestBase {
 
         ts.premadeRun();
     }
-    */
-
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="VAULT">
     @Test
     public void testOnVaultPermission() {
         TestStructure ts = new TestStructure() {
@@ -237,6 +252,7 @@ public class IntegrationsTest extends TestBase {
 
         ts.premadeRun();
     }
+    //</editor-fold>
 
     @Override
     void somethingElse() {
