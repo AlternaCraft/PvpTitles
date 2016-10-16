@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
+import com.alternacraft.pvptitles.Main.Managers.MessageManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Logger {
 
+    private static String logsfolder = "Logs";
+    
     private final List<String> messages;
+    private final String fullpath;
     private final String path;
 
     /**
@@ -44,25 +48,68 @@ public class Logger {
      */
     public Logger(String path, String name) {
         this.messages = new ArrayList();
-        this.path = path + name;
+        this.path = path + logsfolder + File.separator;
+        this.fullpath = this.path + name;
     }
 
+    /**
+     * Add a new record to log
+     * 
+     * @param str Record value
+     */
     public void addMessage(String str) {
         if (!messages.contains(str)) {
             messages.add(str);
         }
     }
 
-    public void export() {
-        if (UtilsFile.exists(path)) {
-            UtilsFile.delete(path);
+    /**
+     * Export records to log file
+     * 
+     * @param keepold Keep old values?
+     */
+    public void export(boolean keepold) {
+        // Creating log folder if not exists
+        if (!UtilsFile.exists(path)) {
+            if (!UtilsFile.createDir(path)) {
+                MessageManager.showError("Couldn't create Logs folder");
+                return;
+            }
         }
-
+        
         String all = "";
+        
+        if (keepold) {
+            // Recovering old values
+            List<String> oldcontent = new ArrayList<>();        
+            if (UtilsFile.exists(fullpath)) {
+                oldcontent = UtilsFile.getFileLines(fullpath);
+                UtilsFile.delete(fullpath);
+            }
+
+            // Writing old values            
+            if (oldcontent.size() > 0) {
+                for (String cont : oldcontent) {
+                    all += cont + "\n";
+                }
+                all += "\n";            
+            }
+        }
+        
+        // Writing new values
+        // Date
+        all += "---\n" + DateUtils.getCurrentTimeStamp() + "\n---\n";
         for (String message : messages) {
             all += message + "\n";
         }
-
-        UtilsFile.writeFile(path, all);
+        UtilsFile.writeFile(fullpath, all);
+    }
+    
+    public static String getLogsFolder() {
+        return logsfolder;
+    }
+    
+    public static void changeLogsFolderTo(String str) {
+        logsfolder = str;
     }
 }

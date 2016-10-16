@@ -24,11 +24,11 @@
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         
+        <!-- This is offline right now...
         <repository>
             <id>mvdw-software</id>
-            <name>MVdW Public Repositories</name>
             <url>http://repo.mvdw-software.be/content/groups/public/</url>
-        </repository>
+        </repository>-->
 
         <repository>
             <id>jitpack.io</id>
@@ -69,11 +69,17 @@
             <scope>provided</scope>
         </dependency>
         
-        <!--MVdWPlaceholderAPI-->
+        <!--MVdWPlaceholderAPI    
+                    
+            There is no repository for MVdWPlaceholderAPI so you have to install 
+            this by using the file into lib folder.
+                                    
+            mvn install:install-file -Dfile=lib/MVdWPlaceholderAPI.jar -DgroupId=be.maximvdw -DartifactId=MVdWPlaceholderAPI -Dversion=1.0.1-SNAPSHOT -Dpackaging=jar
+        -->
         <dependency>
             <groupId>be.maximvdw</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency> 

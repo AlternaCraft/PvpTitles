@@ -441,6 +441,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             // cFile + timePurga < hoy
             if (lastLoginDate.before(actualDate)) {
+                lastLoginDate.setTime(lastLogin); // Remove q time
+                
                 if (plugin.getManager().params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
@@ -466,7 +468,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
         
         if (contador > 0) {
-            l.export();
+            l.export(true);
         }
 
         return contador;
@@ -682,7 +684,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
 
         if (repaired) {            
-            l.export();
+            l.export(true);
         }
 
         return q;

@@ -24,23 +24,33 @@ public class StrUtils {
     public static String translateColors(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
-
+    
     public static String splitToComponentTimes(int s) {
         String resul = "";
-
-        // Lógica
-        int hours = (int) s / 3600;
-        int remainder = (int) s - hours * 3600;
-        int mins = remainder / 60;
+        int days, hours, mins, secs, remainder;
+        
+        // Lógica        
+        days = s / 3600 / 24;
+        remainder = s - days * 3600 * 24;
+        hours = remainder / 3600;        
+        remainder = remainder - hours * 3600;
+        mins = remainder / 60;
         remainder = remainder - mins * 60;
-        int secs = remainder;
+        secs = remainder;
 
         // Representación
-        resul += (hours > 0) ? (hours + "h ") : "";
-        if (hours > 0) {
+        resul += (days > 0) ? (days + "d ") : "";
+        if (days > 0) {
+            resul += hours + "h ";
             resul += mins + "m ";
-        } else {
-            resul += (mins > 0) ? (mins + "m ") : "";
+        }
+        else {
+            resul += (hours > 0) ? (hours + "h ") : "";
+            if (hours > 0) {
+                resul += mins + "m ";
+            } else {
+                resul += (mins > 0) ? (mins + "m ") : "";
+            }
         }
         resul += secs + "s";
 

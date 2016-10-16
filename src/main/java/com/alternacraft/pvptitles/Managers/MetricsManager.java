@@ -101,14 +101,14 @@ public class MetricsManager {
 
     public void sendData(final PvpTitles plugin) {
         try {
-            if (plugin.getManager().params.isMetrics()) {
+            if (plugin.getManager().params.isMetrics() || true) {
                 Metrics metrics = new Metrics(plugin);
 
-                setMWGraph(plugin, metrics); // MultiWorld
-                setTUGraph(metrics); // Time Usage
-                setPDBGraph(plugin, metrics); // Preferred Database
-                setDMGraph(plugin, metrics); // Display Mode
-                setDLGraph(plugin, metrics); // Default Lang
+                setMWGraph(plugin, metrics); // Multi world
+                setTUGraph(metrics); // Time usage as requirement
+                setPDBGraph(plugin, metrics); // Preferred database
+                setDMGraph(plugin, metrics); // Display mode
+                setDLGraph(plugin, metrics); // Default language
 
                 metrics.start();
             }

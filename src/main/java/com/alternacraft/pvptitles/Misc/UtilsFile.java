@@ -44,7 +44,7 @@ public class UtilsFile {
         try {
             fichero = new FileWriter(file);
             fichero.write(cont);
-        } catch (Exception ex) {
+        } catch (Exception ex) {            
             MessageManager.showError("Error creating file: '" + file.getName() + "'");
         } finally {
             try {
@@ -87,5 +87,9 @@ public class UtilsFile {
         if (!todelete.delete()) {
             todelete.deleteOnExit();
         }
+    }
+    
+    public static boolean createDir(String ruta) {
+        return new File(ruta).mkdir();
     }
 }

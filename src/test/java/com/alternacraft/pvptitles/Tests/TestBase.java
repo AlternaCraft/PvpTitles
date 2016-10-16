@@ -61,7 +61,7 @@ abstract class TestBase {
 
     @Before
     public void setUp() {
-        m("[ Cargando elementos comúnes ]");
+        m("[ Cargando elementos comunes ]");
 
         mockPlugin = PowerMockito.mock(PvpTitles.class);
         mockManager = PowerMockito.mock(Manager.class);

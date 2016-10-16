@@ -591,7 +591,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 + "inner join PlayerMeta on id=psid";
         String purge = "delete from PlayerServer where id=?";
 
-        Logger l = new Logger(plugin, "db_changes.txt");
+        Logger l = new Logger(plugin, "user_changes.txt");
 
         try {
             ResultSet rs = mysql.createStatement().executeQuery(data);
@@ -614,6 +614,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                     actualDate.setTime(today);
 
                     if (lastLoginDate.before(actualDate)) {
+                        lastLoginDate.setTime(lastLogin); // Remove q time
                         PreparedStatement delUser = mysql.prepareStatement(purge);
                         delUser.setShort(1, id);
                         delUser.executeUpdate();
@@ -633,7 +634,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         }
 
         if (contador > 0) {
-            l.export();
+            l.export(true);
         }
 
         return contador;
@@ -819,7 +820,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
         }
 
         if (repaired) {            
-            l.export();
+            l.export(true);
         }
         
         return q;
