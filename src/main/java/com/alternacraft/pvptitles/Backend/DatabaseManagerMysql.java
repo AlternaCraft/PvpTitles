@@ -111,7 +111,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
      * Constructor de la clase
      *
      * @param plugin Plugin
-     * @param mysql
+     * @param mysql Connection
      */
     public DatabaseManagerMysql(PvpTitles plugin, Connection mysql) {
         this.plugin = plugin;

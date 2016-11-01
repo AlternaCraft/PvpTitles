@@ -71,7 +71,7 @@ public class PvpTitles extends JavaPlugin {
     /**
      * Lo uso para probar el plugin desde el propio IDE
      *
-     * @param args
+     * @param args String[]
      */
     public static void main(String[] args) {
     }

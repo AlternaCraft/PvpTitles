@@ -101,10 +101,6 @@ public class HandlePlayerFame implements Listener {
         HandlePlayerTag.holoPlayerLogin(player);
     }
 
-    /**
-     *
-     * @param event
-     */
     @EventHandler
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
@@ -139,10 +135,6 @@ public class HandlePlayerFame implements Listener {
         this.pvpTitles.getManager().getMovementManager().removeLastMovement(player);
     }
 
-    /**
-     *
-     * @param event
-     */
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if (cm.params.isCheckAFK()) { // Optimizacion

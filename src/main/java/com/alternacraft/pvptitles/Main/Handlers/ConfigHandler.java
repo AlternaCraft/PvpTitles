@@ -47,9 +47,9 @@ public class ConfigHandler {
     /**
      * Método para cargar la informacion del config principal
      * 
-     * @param rankList Map<Integer, String>
-     * @param reqFame Map<Integer, Integer>
-     * @param reqTime Map<Integer, Integer>
+     * @param rankList Map
+     * @param reqFame Map
+     * @param reqTime Map
      * @param params ConfigDataStore
      */
     protected void loadData(LinkedList rankList, LinkedList reqFame, 

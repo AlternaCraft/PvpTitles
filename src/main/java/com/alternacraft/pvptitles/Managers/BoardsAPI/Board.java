@@ -46,37 +46,43 @@ public abstract class Board {
 
     /**
      * Método para comprobar si se puede crear un board
-     * @param jugadores
+     * 
+     * @param jugadores short
+     * 
      * @return Boolean
      */
     public abstract boolean isMaterializable(short jugadores);
     
     /**
      * Método para crear un board
-     * @param pf 
+     * @param pf List
      */
     public abstract void materialize(List<PlayerFame> pf);
     
     /**
      * Método para borrar un board
-     * @param jugadores 
+     * 
+     * @param jugadores short
      */
     public abstract void dematerialize(short jugadores);
     
     /**
      * Devuelve la información del board
+     * 
      * @return BoardData
      */
     public abstract BoardData getData();
     
     /**
      * Devuelve el modelo del board
+     * 
      * @return BoardModel
      */
     public abstract BoardModel getModel();
     
     /**
      * Devuelve el controlador del modelo
+     * 
      * @return ModelController
      */
     public abstract ModelController getModelController();

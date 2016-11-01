@@ -38,7 +38,7 @@ public class Ranks {
      * @param fame Puntos pvp
      * @param seconds Cantidad de dias
      * @return String con el nombre del titulo
-     * @throws com.alternacraft.pvptitles.Exceptions.RanksException
+     * @throws com.alternacraft.pvptitles.Exceptions.RanksException RanksException
      */
     public static String getRank(int fame, int seconds) throws RanksException {
         String rank = "";

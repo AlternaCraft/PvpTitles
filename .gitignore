@@ -1,7 +1,7 @@
 # Netbeans
 /target/
 /nbproject/
-/nbactions-deployer.xml
+/nbactions-release-profile.xml
 /nb-configuration.xml
 /versions.txt
 

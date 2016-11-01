@@ -413,8 +413,8 @@ public abstract class Ebean {
     /**
      * Method called near the end of prepareDatabase, before the dataSourceConfig is attached to the serverConfig.
      *
-     * @param dataSourceConfig
-     * @param serverConfig
+     * @param dataSourceConfig dataSourceConfig
+     * @param serverConfig serverConfig
      */
     protected void prepareDatabaseAdditionalConfig(DataSourceConfig dataSourceConfig, ServerConfig serverConfig) {}
 

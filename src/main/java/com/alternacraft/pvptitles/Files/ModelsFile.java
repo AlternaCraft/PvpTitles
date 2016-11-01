@@ -121,7 +121,7 @@ public class ModelsFile {
      *
      * @param ruta Ruta del fichero
      * @return Lista de objetos
-     * @throws java.io.IOException
+     * @throws java.io.IOException IOException
      */
     public ArrayList<BoardModel> readFile(String ruta) throws IOException {
         ArrayList<BoardModel> sm = new ArrayList();
