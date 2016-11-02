@@ -248,9 +248,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findUnique();
 
         if (plClass == null) {
-            plClass = new PlayerPT();
+            plClass = new PlayerPT();            
             plClass.setPlayerUUID(tPlayer.getUniqueId().toString());
             plClass.setPlayedTime(tPlayer.getTotalOnline());
+            plClass.setLastLogin(new Date());
         } else {
             plClass.setPlayedTime(tPlayer.getTotalOnline() + plClass.getPlayedTime());
         }

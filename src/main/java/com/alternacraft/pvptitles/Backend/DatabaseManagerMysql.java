@@ -78,7 +78,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
     private static final String CREATE_PLAYER = "insert into PlayerServer(playerUUID, serverID) values (?,?)";
     private static final String CREATE_MWPLAYER = "insert into PlayerWorld(psid, worldName) values (?,?)";
-    private static final String CREATE_PLAYERMETA = "insert into PlayerMeta(psid) values (?)";
+    private static final String CREATE_PLAYERMETA = "insert into PlayerMeta(psid, lastLogin) values (?,?)";
 
     private static final String UPDATE_PLAYER_SERVERID = "update PlayerServer set serverID=? "
             + "where playerUUID like ? AND serverID=-1";
@@ -149,9 +149,12 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 rs = playerExists.executeQuery();
                 if (rs.next()) {
                     psid = rs.getShort("id");
+                    java.util.Date utilDate = new java.util.Date();
+                    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
                     PreparedStatement registraPlayerMeta = mysql.prepareStatement(CREATE_PLAYERMETA);
                     registraPlayerMeta.setInt(1, psid);
+                    registraPlayerMeta.setDate(2, sqlDate);
                     registraPlayerMeta.executeUpdate();
                 }
             } else {

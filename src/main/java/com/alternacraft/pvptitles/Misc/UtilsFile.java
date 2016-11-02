@@ -17,11 +17,14 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.google.common.io.Files;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UtilsFile {
@@ -38,23 +41,36 @@ public class UtilsFile {
         writeFile(new File(path), cont);
     }
 
-    public static void writeFile(File file, String cont) {
-        FileWriter fichero = null;
-
+    public static void writeFile(File fout, String cont) {
+        FileOutputStream fos = null;
         try {
-            fichero = new FileWriter(file);
-            fichero.write(cont);
-        } catch (Exception ex) {            
-            MessageManager.showError("Error creating file: '" + file.getName() + "'");
+            fos = new FileOutputStream(fout);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+            String[] lines = cont.split("\n");
+            for (String line : lines) {
+                bw.write(line);
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException ex) {
+            MessageManager.showError(ex.getMessage());
         } finally {
             try {
-                if (null != fichero) {
-                    fichero.flush();
-                    fichero.close();
-                }
-            } catch (Exception e2) {
+                fos.close();
+            } catch (IOException ex) {
             }
         }
+    }
+
+    public static String getFileAsString(String path) {
+        List<String> lines = UtilsFile.getFileLines(path);
+        StringBuilder res = new StringBuilder();
+
+        for (String line : lines) {
+            res.append(line.replace(" ", "")); // Optimization
+        }
+
+        return res.toString();
     }
 
     public static List<String> getFileLines(String path) {
@@ -62,34 +78,38 @@ public class UtilsFile {
     }
 
     public static List<String> getFileLines(File file) {
-        List<String> lines = null;
         try {
-            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+            return Files.readLines(file, Charset.defaultCharset());
         } catch (IOException ex) {
-            MessageManager.showError("Error getting content from '" + file.getName() + "'");
+            MessageManager.showError(ex.getMessage());
         }
-        return lines;
+        return new ArrayList();
     }
-    
-    public static String getFileAsString(String path) {
-        List<String> lines = UtilsFile.getFileLines(path);
-        StringBuilder res = new StringBuilder();
-        
-        for (String line : lines) { 
-            res.append(line.replace(" ", "")); // Optimization
-        }
-        
-        return res.toString();
-    }
-    
-    public static void delete(String ruta) {
-        File todelete = new File(ruta);
+
+    public static void delete(String path) {
+        File todelete = new File(path);
         if (!todelete.delete()) {
             todelete.deleteOnExit();
         }
     }
-    
-    public static boolean createDir(String ruta) {
-        return new File(ruta).mkdir();
+
+    public static boolean createDirs(String path) {
+        return new File(path).mkdirs();
+    }
+
+    public static boolean createDirsFromFile(String path) {
+        return new File(path).getParentFile().mkdirs();
+    }
+
+    public static boolean createDir(String path) {
+        return new File(path).mkdir();
+    }
+
+    public static File[] getFilesIntoDir(String dir) {
+        File f = new File(dir);
+        if (f.exists()) {
+            return f.listFiles();
+        }
+        return new File[0];
     }
 }
