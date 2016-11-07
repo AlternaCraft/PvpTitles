@@ -44,6 +44,7 @@ import com.alternacraft.pvptitles.Managers.MetricsManager;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
+import com.alternacraft.pvptitles.Misc.Timer;
 import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -52,7 +53,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PvpTitles extends JavaPlugin {
-
+/*
+     * Measuring performance
+     */
+    public static final Timer PERFORMANCE = new Timer();
+    
     private static PvpTitles plugin = null;
 
     private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
@@ -120,17 +125,24 @@ public class PvpTitles extends JavaPlugin {
         this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
+                PERFORMANCE.start("Metrics event");
                 new MetricsManager().sendData(manager.getPvpTitles());
+                PERFORMANCE.recordValue("Metrics event");
+                
+                PERFORMANCE.start("Updater event");
                 new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
-
+                PERFORMANCE.recordValue("Updater event");
+                
                 /* 
                  * -> Integraciones <-
                  */
                 getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# STARTING INTEGRATION MODULE #");
-
+                
+                PERFORMANCE.start("Integrations");
                 checkExternalPlugins();
-
+                PERFORMANCE.recordValue("Integrations");
+                
                 getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# ENDING INTEGRATION MODULE #");
                 /*
@@ -152,7 +164,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().savePlayedTime(next);
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
             }
 
@@ -170,6 +182,8 @@ public class PvpTitles extends JavaPlugin {
                 } catch (SQLException ex) {
                 }
             }
+            
+            PERFORMANCE.saveToLog("performance.txt");
         }
 
         logMessage(LangsFile.PLUGIN_DISABLED.getText(Manager.messages));
@@ -181,7 +195,7 @@ public class PvpTitles extends JavaPlugin {
             try {
                 this.manager.dbh.getDm().playerConnection(pl);
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
                 continue;
             }
 

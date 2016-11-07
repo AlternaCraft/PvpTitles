@@ -320,7 +320,7 @@ public enum LangsFile {
 
             if (!compLocales(langFile, lang, langType)) {
                 LoggerManager.logError("Error loading " + langType.name() + " locales, "
-                        + "a new one has been created.", null);
+                        + "a new one has been created.");
             }
         }
     }
@@ -356,7 +356,7 @@ public enum LangsFile {
         try {
             newConfig.save(langFile);
         } catch (IOException ex) {
-            LoggerManager.logError(ex.getMessage(), null);
+            LoggerManager.logError(ex.getMessage());
         }
     }
 
@@ -374,7 +374,7 @@ public enum LangsFile {
                     createConfig(langFile, langType, true);
                     resul = false;
                 } catch (IOException ex) {
-                    LoggerManager.logError(ex.getMessage(), null);
+                    LoggerManager.logError(ex.getMessage());
                 }
             }
         }

@@ -25,7 +25,7 @@ import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import com.alternacraft.pvptitles.Misc.Logger;
+import com.alternacraft.pvptitles.Misc.PluginLogs;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
@@ -594,7 +594,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 + "inner join PlayerMeta on id=psid";
         String purge = "delete from PlayerServer where id=?";
 
-        Logger l = new Logger(plugin, "user_changes.txt");
+        PluginLogs l = new PluginLogs(plugin, "user_changes.txt");
 
         try {
             ResultSet rs = mysql.createStatement().executeQuery(data);
@@ -780,7 +780,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 + "inner join PlayerMeta on id=psid";
         String update = "update PlayerMeta set points=?,playedTime=? where psid=?";
 
-        Logger l = new Logger(plugin, "db_changes.txt");
+        PluginLogs l = new PluginLogs(plugin, "db_changes.txt");
 
         try {
             ResultSet rs = mysql.createStatement().executeQuery(data);

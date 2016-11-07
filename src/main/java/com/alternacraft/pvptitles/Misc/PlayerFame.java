@@ -72,7 +72,7 @@ public class PlayerFame implements Comparable {
         try {
             actual = plugin.getManager().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage());
         }
         
         int session = plugin.getManager().getTimerManager().getPlayer(plugin.getServer()

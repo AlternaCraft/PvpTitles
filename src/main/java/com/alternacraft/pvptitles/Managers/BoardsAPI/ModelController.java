@@ -187,7 +187,7 @@ public class ModelController {
                             rank = Ranks.getRank(pf.get(value)
                                 .getFame(), pf.get(value).getSeconds());
                         } catch (RanksException ex) {
-                            LoggerManager.logError(ex.getCustomMessage(), null);
+                            LoggerManager.logError(ex.getCustomMessage());
                         }
                         str = str.replace("<rank>", rank);
                         break;

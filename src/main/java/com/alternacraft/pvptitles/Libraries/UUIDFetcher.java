@@ -76,7 +76,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
                     Thread.sleep(100L);
                 }
             } catch (Exception ex) {
-                LoggerManager.logError(ex.getMessage(), null);
+                LoggerManager.logError(ex.getMessage());
             }
         }
         return uuidMap;

@@ -113,28 +113,19 @@ public class HandlePlayerTag implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
+        
+        int fame = 0, seconds = 0;
         String rank = null;
-
-        int fame = 0;
+                
         try {
             fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-        } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
-            return;
-        }
-
-        int seconds = 0;
-        try {
-            seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
-        } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
-            return;
-        }
-
-        try {
+            seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());            
             rank = Ranks.getRank(fame, seconds);
+        } catch (DBException ex) {
+            LoggerManager.logError(ex.getCustomMessage());
+            return;
         } catch (RanksException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage());
         }
 
         String format = event.getFormat();
@@ -171,29 +162,28 @@ public class HandlePlayerTag implements Listener {
     public static void holoPlayerLogin(Player player) {
         if (ISHDENABLED && HandlePlayerTag.cm.params.displayLikeHolo()) {
             String uuid = player.getUniqueId().toString();
-
-            // Holograms
-            int fame = 0;
+            
+            int totalTime, fame = 0, oldTime = 0;
+            String rank = "";
+            
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
-
-            String rank = "";
+            totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+            
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             HOLOPLAYERS.put(uuid, createHoloPlayer(player, rank));
@@ -255,14 +245,14 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -271,7 +261,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             if (canDisplayRank(player, rank)) {
@@ -297,14 +287,14 @@ public class HandlePlayerTag implements Listener {
                 try {
                     fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 int oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -314,7 +304,7 @@ public class HandlePlayerTag implements Listener {
                     rank = Ranks.getRank(fame, totalTime);
 
                 } catch (RanksException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 if (canDisplayRank(player, rank)) {
@@ -336,7 +326,7 @@ public class HandlePlayerTag implements Listener {
             Hologram h = HOLOPLAYERS.get(uuid);
             h.clearLines();
 
-            if (!event.getNewRank().equalsIgnoreCase(IGNORED_RANK) && hasIgnoredChatPermission(player)) {
+            if (canDisplayRank(player, event.getNewRank())) {
                 h.insertTextLine(0, RANK_LINE.replace("%rank%", event.getNewRank()));
             }
         }
@@ -362,14 +352,14 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             int oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -378,7 +368,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             if (canDisplayRank(player, rank)) {
@@ -416,14 +406,14 @@ public class HandlePlayerTag implements Listener {
                 try {
                     fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 int oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -432,7 +422,7 @@ public class HandlePlayerTag implements Listener {
                 try {
                     rank = Ranks.getRank(fame, totalTime);
                 } catch (RanksException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 if (canDisplayRank(player, rank)) {

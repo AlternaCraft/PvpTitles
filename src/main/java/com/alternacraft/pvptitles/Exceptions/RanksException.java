@@ -59,9 +59,7 @@ public class RanksException extends CustomException {
 
     @Override
     protected String getHeader() {
-        return new StringBuilder()
-                .append("Error ")
-                .append(this.getMessage()).toString();
+        return new StringBuilder().append(this.getMessage()).toString();
     }
 
     @Override

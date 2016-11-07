@@ -17,18 +17,11 @@
 package com.alternacraft.pvptitles.Main.Managers;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import net.md_5.bungee.api.ChatColor;
 
 public class MessageManager {
-
-    // Custom message
+    
     public static void showMessage(String msg) {
         PvpTitles.getInstance().getServer().getConsoleSender().sendMessage(
                 PvpTitles.getPluginName() + msg);
-    }
-
-    public static void showError(String msg) {
-        PvpTitles.getInstance().getServer().getConsoleSender().sendMessage(
-                PvpTitles.getPluginName() + ChatColor.RED + msg);
     }
 }

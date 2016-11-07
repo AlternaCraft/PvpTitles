@@ -84,7 +84,7 @@ public class Ranks {
             data.put("Fame required", reqFame);
             data.put("Time required", reqTime);
 
-            throw new RanksException("getting rank", data);
+            throw new RanksException("Error getting rank", data);
         }
 
         return rank;

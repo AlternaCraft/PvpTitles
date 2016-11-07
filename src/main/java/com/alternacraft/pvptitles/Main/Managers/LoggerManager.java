@@ -45,6 +45,10 @@ public class LoggerManager {
     }
 
     /* ERROR MANAGEMENT */
+    public static void logError(String message) {
+        logError(message, null);
+    }
+    
     public static void logError(String message, Exception ex) {
         PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
     }

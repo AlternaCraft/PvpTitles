@@ -21,7 +21,7 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.Logger;
+import com.alternacraft.pvptitles.Misc.PluginLogs;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -68,7 +68,7 @@ public class PurgeCommand implements CommandExecutor {
         if (cantidad > 0) {
             sender.sendMessage(getPluginName() + ChatColor.YELLOW +
                     "Check out to the user_changes.txt file (Inside of " 
-                            + Logger.getLogsFolder() + ") to see the affected players");
+                            + PluginLogs.getLogsFolder() + ") to see the affected players");
         }
         
         sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).

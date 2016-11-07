@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.google.common.io.Files;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,7 +53,7 @@ public class UtilsFile {
             }
             bw.close();
         } catch (IOException ex) {
-            MessageManager.showError(ex.getMessage());
+            LoggerManager.logError(ex.getMessage());
         } finally {
             try {
                 fos.close();
@@ -81,7 +81,7 @@ public class UtilsFile {
         try {
             return Files.readLines(file, Charset.defaultCharset());
         } catch (IOException ex) {
-            MessageManager.showError(ex.getMessage());
+            LoggerManager.logError(ex.getMessage());
         }
         return new ArrayList();
     }

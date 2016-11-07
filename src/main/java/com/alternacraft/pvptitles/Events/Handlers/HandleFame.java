@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 
 public class HandleFame implements Listener {
 
@@ -58,6 +59,7 @@ public class HandleFame implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFame(FameEvent e) {
+        PERFORMANCE.start("Handling fame");
         if (e.getOfflinePlayer() == null) {
             e.setCancelled(true);
             return;
@@ -89,7 +91,7 @@ public class HandleFame implements Listener {
                 try {
                     seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 try {
@@ -100,7 +102,7 @@ public class HandleFame implements Listener {
                         break;
                     }
                 } catch (RanksException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
             }
         }
@@ -126,7 +128,7 @@ public class HandleFame implements Listener {
             try {
                 oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
             TimedPlayer tp = pt.getManager().getTimerManager().getPlayer(pl);
             int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
@@ -141,9 +143,10 @@ public class HandleFame implements Listener {
                             pl, actualRank, newRank));
                 }
             } catch (RanksException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
         }
+        PERFORMANCE.recordValue("Handling fame");
     }
 
     private void setValues(Map<String, List<String>> data, OfflinePlayer pl) {
@@ -186,7 +189,7 @@ public class HandleFame implements Listener {
         try {
             seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage());
         }
 
         if (!e.isSilent()) {
@@ -194,7 +197,7 @@ public class HandleFame implements Listener {
             try {
                 rank = Ranks.getRank(e.getFameTotal(), seconds);
             } catch (RanksException ex) {
-                LoggerManager.logError(ex.getCustomMessage(), null);
+                LoggerManager.logError(ex.getCustomMessage());
             }
 
             if (e.getWorldname() != null) {

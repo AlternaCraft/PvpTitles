@@ -22,9 +22,48 @@ import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Misc.PluginLogs;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MetricsManager {
+
+    private final static String PATTERN = "(.*) \\((.*)\\) \\- (.*)";
+
+    private Map<String, Map<String, Object>> importLog(final PvpTitles plugin, String logname) {
+        Map<String, Map<String, Object>> pairs = new HashMap<>();
+
+        PluginLogs pl = new PluginLogs(plugin, logname);
+        pl.importLog();
+        List<String> lines = pl.getMessages();
+
+        for (String line : lines) {
+            if (!line.contains("---")
+                    && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
+                Pattern pattern = Pattern.compile(PATTERN);
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.find()) {
+                    String key = matcher.group(2);
+
+                    String id = matcher.group(1);
+                    Object v = matcher.group(3);
+
+                    if (!pairs.containsKey(key)) {
+                        pairs.put(key, new HashMap());
+                    }
+
+                    pairs.get(key).put(id, v);
+                }
+            }
+        }
+
+        return pairs;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
     private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
@@ -86,16 +125,20 @@ public class MetricsManager {
         addPlotter(defaultLang, Manager.messages.name(), 1);
     }
 
-    public void addPlotter(Graph g, String plotter, final int number) {
-        if (number == 0) {
+    private void setPerformanceGraph(final PvpTitles pvptitles, Metrics metrics, String db) {
+        Graph performanceGraph = metrics.createGraph(db + " performance");
+
+        Map<String, Object> pairs = importLog(pvptitles, "performance.txt").get(db.toUpperCase());
+
+        if (pairs == null) {
             return;
         }
-        g.addPlotter(new Metrics.Plotter(plotter) {
-            @Override
-            public int getValue() {
-                return number;
-            }
-        });
+
+        for (Map.Entry<String, Object> entry : pairs.entrySet()) {
+            String key = entry.getKey();
+            String value = (String) entry.getValue();
+            addPlotter(performanceGraph, key, Integer.valueOf(value));
+        }
     }
     // </editor-fold>
 
@@ -109,11 +152,25 @@ public class MetricsManager {
                 setPDBGraph(plugin, metrics); // Preferred database
                 setDMGraph(plugin, metrics); // Display mode
                 setDLGraph(plugin, metrics); // Default language
+                setPerformanceGraph(plugin, metrics, "Ebean"); // Ebean performance
+                setPerformanceGraph(plugin, metrics, "MySQL"); // MySQL performance
 
                 metrics.start();
             }
         } catch (IOException e) {
-            LoggerManager.logError(e.getMessage(), null);
+            LoggerManager.logError(e.getMessage());
         }
+    }
+
+    public void addPlotter(Graph g, String plotter, final int number) {
+        if (number == 0) {
+            return;
+        }
+        g.addPlotter(new Metrics.Plotter(plotter) {
+            @Override
+            public int getValue() {
+                return number;
+            }
+        });
     }
 }

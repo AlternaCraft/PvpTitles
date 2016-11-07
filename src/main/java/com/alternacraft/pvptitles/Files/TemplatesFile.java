@@ -174,7 +174,7 @@ public class TemplatesFile {
                 try {
                     f.create(file.getContent());
                 } catch (IOException ex) {
-                    LoggerManager.logError("Template " + file.getPath() + " couldn't be created", null);
+                    LoggerManager.logError("Template " + file.getPath() + " couldn't be created");
                 }
             }
 

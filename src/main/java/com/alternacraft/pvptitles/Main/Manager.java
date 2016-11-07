@@ -198,7 +198,7 @@ public final class Manager {
         try {
             carteles = pvpTitles.getManager().dbh.getDm().buscaBoards();
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage(), null);
+            LoggerManager.logError(ex.getCustomMessage());
         }
 
         lbm.vaciar(); // Evito duplicados
@@ -213,7 +213,7 @@ public final class Manager {
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage(), null);
+                    LoggerManager.logError(ex.getCustomMessage());
                 }
 
                 continue;
@@ -418,7 +418,7 @@ public final class Manager {
                     try {
                         actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage());
                         return;
                     }
 
@@ -426,7 +426,7 @@ public final class Manager {
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage());
                         return;
                     }
 
@@ -440,7 +440,7 @@ public final class Manager {
                             try {
                                 dbh.getDm().savePlayedTime(timedPlayer);
                             } catch (DBException ex) {
-                                LoggerManager.logError(ex.getCustomMessage(), null);
+                                LoggerManager.logError(ex.getCustomMessage());
                                 continue;
                             }
 
@@ -454,7 +454,7 @@ public final class Manager {
                             }
                         }
                     } catch (RanksException ex) {
-                        LoggerManager.logError(ex.getCustomMessage(), null);
+                        LoggerManager.logError(ex.getCustomMessage());
                     }
                 }
             }
