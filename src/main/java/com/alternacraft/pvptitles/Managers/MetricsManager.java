@@ -23,6 +23,8 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.PluginLogs;
+import com.alternacraft.pvptitles.Misc.UtilsFile;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -152,9 +154,13 @@ public class MetricsManager {
                 setPDBGraph(plugin, metrics); // Preferred database
                 setDMGraph(plugin, metrics); // Display mode
                 setDLGraph(plugin, metrics); // Default language
+                
                 setPerformanceGraph(plugin, metrics, "Ebean"); // Ebean performance
                 setPerformanceGraph(plugin, metrics, "MySQL"); // MySQL performance
-
+                
+                UtilsFile.delete(plugin.getDataFolder() + File.separator
+                + PluginLogs.getLogsFolder() + File.separator + "performance.txt");
+                
                 metrics.start();
             }
         } catch (IOException e) {
