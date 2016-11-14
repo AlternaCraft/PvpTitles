@@ -23,7 +23,7 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.PluginLogs;
+import com.alternacraft.pvptitles.Misc.PluginLog;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -80,7 +80,7 @@ public class DBCommand implements CommandExecutor {
                 if (changes > 0) {
                     sender.sendMessage(getPluginName() + ChatColor.YELLOW +
                             "Check out to the db_changes.txt file (Inside of " 
-                            + PluginLogs.getLogsFolder() + ") to see the fixes");
+                            + PluginLog.getLogsFolder() + ") to see the fixes");
                 }
                 
                 sender.sendMessage(getPluginName() + LangsFile.DB_REPAIR_RESULT

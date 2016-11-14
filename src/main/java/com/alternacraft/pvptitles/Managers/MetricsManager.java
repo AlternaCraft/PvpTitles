@@ -22,7 +22,7 @@ import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Misc.PluginLogs;
+import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class MetricsManager {
     private Map<String, Map<String, Object>> importLog(final PvpTitles plugin, String logname) {
         Map<String, Map<String, Object>> pairs = new HashMap<>();
 
-        PluginLogs pl = new PluginLogs(plugin, logname);
+        PluginLog pl = new PluginLog(plugin, logname);
         pl.importLog();
         List<String> lines = pl.getMessages();
 
@@ -159,7 +159,7 @@ public class MetricsManager {
                 setPerformanceGraph(plugin, metrics, "MySQL"); // MySQL performance
                 
                 UtilsFile.delete(plugin.getDataFolder() + File.separator
-                + PluginLogs.getLogsFolder() + File.separator + "performance.txt");
+                + PluginLog.getLogsFolder() + File.separator + "performance.txt");
                 
                 metrics.start();
             }

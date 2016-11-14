@@ -87,8 +87,12 @@ public class UtilsFile {
     }
 
     public static void delete(String path) {
+        delete(path, false);
+    }
+    
+    public static void delete(String path, boolean delete_on_exit) {
         File todelete = new File(path);
-        if (!todelete.delete()) {
+        if (!todelete.delete() && delete_on_exit) {
             todelete.deleteOnExit();
         }
     }

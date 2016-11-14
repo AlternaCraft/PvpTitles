@@ -20,7 +20,7 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import java.util.List;
 
 /**
- *
+ * 
  * <b>Limitaciones del objeto</b>
  * <ul>
  *  <li>
@@ -29,8 +29,6 @@ import java.util.List;
  *  </li>
  *  <li>No se puede combinar normal + progresivo</li>
  * </ul>
- * 
- * @author AlternaCraft
  */
 public abstract class Board {
 

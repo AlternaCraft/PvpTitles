@@ -22,10 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-/**
- *
- * @author AlternaCraft
- */
 public class Ranks {
 
     private static int nextRankFame;

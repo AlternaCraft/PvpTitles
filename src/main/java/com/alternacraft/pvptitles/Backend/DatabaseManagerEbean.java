@@ -25,7 +25,7 @@ import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import com.alternacraft.pvptitles.Misc.PluginLogs;
+import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
@@ -422,7 +422,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .lt("lastLogin", new Date())
                 .findList();
 
-        PluginLogs l = new PluginLogs(plugin, "user_changes.txt");        
+        PluginLog l = new PluginLog(plugin, "user_changes.txt");        
         
         for (PlayerPT player : allDates) {
             if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
@@ -659,7 +659,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         boolean repaired = false;
 
         List<PlayerPT> players = ebeanServer.getDatabase().find(PlayerPT.class).findList();
-        PluginLogs l = new PluginLogs(plugin, "db_changes.txt");
+        PluginLog l = new PluginLog(plugin, "db_changes.txt");
 
         for (PlayerPT player : players) {
             if (player.getPoints() < 0 || player.getPlayedTime() < 0) {

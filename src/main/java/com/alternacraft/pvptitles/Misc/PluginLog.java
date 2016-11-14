@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PluginLogs {
+public class PluginLog {
 
     private static String logsfolder = "Logs";
 
@@ -36,7 +36,7 @@ public class PluginLogs {
      * @param pl JavaPlugin
      * @param name File name
      */
-    public PluginLogs(JavaPlugin pl, String name) {
+    public PluginLog(JavaPlugin pl, String name) {
         this(pl.getDataFolder() + File.separator, name);
     }
 
@@ -46,7 +46,7 @@ public class PluginLogs {
      * @param path Path
      * @param name File name
      */
-    public PluginLogs(String path, String name) {
+    public PluginLog(String path, String name) {
         this.messages = new ArrayList();
         this.path = path + logsfolder + File.separator;
         this.fullpath = this.path + name;
