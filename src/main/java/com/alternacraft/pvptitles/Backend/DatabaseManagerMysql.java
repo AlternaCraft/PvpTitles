@@ -25,8 +25,8 @@ import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
+import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
@@ -302,9 +302,9 @@ public class DatabaseManagerMysql implements DatabaseManager {
         short psid = checkPlayerExists(tPlayer.getOfflinePlayer(), null);
 
         try {
-            int time = tPlayer.getTotalOnline();
+            long time = tPlayer.getTotalOnline();
             PreparedStatement playedTime = mysql.prepareStatement(UPDATE_PLAYERMETA_PLAYEDTIME);
-            playedTime.setInt(1, time);
+            playedTime.setLong(1, time);
             playedTime.setInt(2, psid);
             playedTime.executeUpdate();
             LoggerManager.logDebugInfo("Save played time: " + playedTime.toString());
@@ -315,8 +315,8 @@ public class DatabaseManagerMysql implements DatabaseManager {
     }
 
     @Override
-    public int loadPlayedTime(UUID playerUUID) throws DBException {
-        int time = 0;
+    public long loadPlayedTime(UUID playerUUID) throws DBException {
+        long time = 0;
 
         short psid = checkPlayerExists(plugin.getServer().getOfflinePlayer(playerUUID), null);
 
@@ -327,7 +327,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
             LoggerManager.logDebugInfo("Load played time: " + playedTime.toString());
 
             if (rs.next()) {
-                time = rs.getInt("playedTime");
+                time = rs.getLong("playedTime");
             }
         } catch (SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage());
@@ -412,7 +412,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
 
             for (ResultSet rs = mysql.createStatement().executeQuery(sql); rs.next(); rankedPlayers.add(pf)) {
                 pf = new PlayerFame(rs.getString("playerUUID"), rs.getInt("points"),
-                        rs.getInt("playedTime"), this.plugin);
+                        rs.getLong("playedTime"), this.plugin);
                 pf.setServer(rs.getShort("serverID"));
 
                 if (plugin.getManager().params.isMw_enabled()) {
@@ -667,7 +667,7 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 PlayerPT pl = new PlayerPT();
                 pl.setPlayerUUID(rs.getString("playerUUID"));
                 pl.setPoints(rs.getInt("points"));
-                pl.setPlayedTime(rs.getInt("playedTime"));
+                pl.setPlayedTime(rs.getLong("playedTime"));
                 pl.setLastLogin(rs.getDate("lastLogin"));
                 plClass.add(pl);
             }
@@ -776,9 +776,9 @@ public class DatabaseManagerMysql implements DatabaseManager {
             return q;
         }
 
-        String data = "select id, playerUUID, points, playedTime from PlayerServer "
+        String data = "select id, playerUUID, points, playedTime, lastLogin from PlayerServer "
                 + "inner join PlayerMeta on id=psid";
-        String update = "update PlayerMeta set points=?,playedTime=? where psid=?";
+        String update = "update PlayerMeta set points=?,playedTime=?,lastLogin=? where psid=?";
 
         PluginLog l = new PluginLog(plugin, "db_changes.txt");
 
@@ -789,10 +789,24 @@ public class DatabaseManagerMysql implements DatabaseManager {
                 short id = rs.getShort("id");
 
                 String strUUID = rs.getString("playerUUID");
-                int points = rs.getInt("points");
-                int playedTime = rs.getInt("playedTime");
+                int points = -1;
+                long playedTime = -1;
+                java.sql.Date lastLogin = null;
 
-                if (points < 0 || playedTime < 0) {
+                try {
+                    points = rs.getInt("points");
+                } catch (SQLException e) {
+                }
+
+                try {
+                    playedTime = rs.getLong("playedTime");
+                } catch (SQLException e) {
+                }
+
+                lastLogin = rs.getDate("lastLogin");
+
+                if (points < 0 || playedTime < 0 || playedTime >= 3153600000L
+                        || lastLogin == null) {
                     UUID uuid = UUID.fromString(strUUID);
                     String name = Bukkit.getOfflinePlayer(uuid).getName();
 
@@ -800,20 +814,27 @@ public class DatabaseManagerMysql implements DatabaseManager {
                         l.addMessage("[BAD FAME] Player \"" + name + "\" had "
                                 + points + " and it was changed to 0");
                         points = 0;
-                    } 
-                    
-                    if (playedTime < 0) {
+                    }
+
+                    if (playedTime < 0 || playedTime >= 3153600000L) {
                         l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
                                 + playedTime + " and it was changed to 0");
                         playedTime = 0;
                     }
 
+                    if (lastLogin == null) {
+                        l.addMessage("[BAD LAST LOGIN] Player \"" + name + "\" had "
+                                + "an invalid login date");
+                        lastLogin = new java.sql.Date(new Date().getTime());
+                    }
+
                     PreparedStatement fix = mysql.prepareStatement(update);
                     fix.setInt(1, points);
-                    fix.setInt(2, playedTime);
-                    fix.setInt(3, id);
+                    fix.setLong(2, playedTime);
+                    fix.setDate(3, lastLogin);
+                    fix.setInt(4, id);
                     fix.executeUpdate();
-                    
+
                     repaired = true;
                     q++;
                 }
@@ -822,10 +843,10 @@ public class DatabaseManagerMysql implements DatabaseManager {
             LoggerManager.logError(ex.getMessage(), ex);
         }
 
-        if (repaired) {            
+        if (repaired) {
             l.export(true);
         }
-        
+
         return q;
     }
 

@@ -89,7 +89,7 @@ public class RankCommand implements CommandExecutor {
 
         int racha = HandlePlayerFame.getKillStreakFrom(uuid);
 
-        int seconds = 0;
+        long seconds = 0;
         try {
             seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
                     + pt.getManager().getTimerManager()
@@ -107,7 +107,7 @@ public class RankCommand implements CommandExecutor {
         }
 
         int rankup = Ranks.fameToRankUp();
-        int timeup = Ranks.nextRankTime();
+        long timeup = Ranks.nextRankTime();
 
         String nextRank = Ranks.nextRankTitle();
         String tag = pt.getManager().params.getTag();

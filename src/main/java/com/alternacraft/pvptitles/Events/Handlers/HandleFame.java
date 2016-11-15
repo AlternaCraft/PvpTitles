@@ -27,6 +27,7 @@ import com.alternacraft.pvptitles.Hook.VaultHook;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
@@ -40,7 +41,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 
 public class HandleFame implements Listener {
 
@@ -87,7 +87,7 @@ public class HandleFame implements Listener {
         Map<String, Map<String, List<String>>> rank = pt.getManager().rewards.get("onRank");
         if (rank != null) {
             for (String rango : rank.keySet()) {
-                int seconds = 0;
+                long seconds = 0;
                 try {
                     seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
                 } catch (DBException ex) {
@@ -124,14 +124,14 @@ public class HandleFame implements Listener {
             int fameA = e.getFame();
             int fameD = e.getFameTotal();
 
-            int oldTime = 0;
+            long oldTime = 0;
             try {
                 oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage());
             }
             TimedPlayer tp = pt.getManager().getTimerManager().getPlayer(pl);
-            int totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
+            long totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
 
             try {
                 String actualRank = Ranks.getRank(fameA, totalTime);
@@ -185,7 +185,7 @@ public class HandleFame implements Listener {
         }
 
         Player pl = (Player) e.getOfflinePlayer();
-        int seconds = 0;
+        long seconds = 0;
         try {
             seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
         } catch (DBException ex) {

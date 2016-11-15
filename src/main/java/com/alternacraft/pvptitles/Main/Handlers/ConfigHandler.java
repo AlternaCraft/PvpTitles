@@ -60,9 +60,9 @@ public class ConfigHandler {
         PvpTitles.setPluginName(StrUtils.translateColors(config.getString("PluginPrefix")));        
         PvpTitles.debugMode = config.getBoolean("Debug");
 
-        List<String> configList = (List<String>) config.getList("RankNames");
-        List<Integer> requFame = (List<Integer>) config.getList("ReqFame");
-        List<Integer> requTime = (List<Integer>) config.getList("ReqTime");
+        List<String> configList = config.getStringList("RankNames");
+        List<Integer> requFame = config.getIntegerList("ReqFame");
+        List<Long> requTime = config.getLongList("ReqTime");
 
         rankList.clear();
         for (String rank : configList) {
@@ -76,7 +76,7 @@ public class ConfigHandler {
         
         reqTime.clear();        
         for (int i = 0; i < configList.size(); i++) {
-            int seconds = 0;
+            long seconds = 0;
             if (requTime.size() >= (i + 1) && requTime.get(i) != null) {
                 seconds = requTime.get(i);
             }

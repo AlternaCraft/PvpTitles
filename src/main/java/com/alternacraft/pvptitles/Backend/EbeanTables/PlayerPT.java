@@ -35,7 +35,7 @@ public class PlayerPT implements Serializable {
 
     private int points = 0;
 
-    private int playedTime = 0;
+    private long playedTime = 0;
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastLogin = null;
@@ -56,11 +56,11 @@ public class PlayerPT implements Serializable {
         this.points = points;
     }
 
-    public int getPlayedTime() {
+    public long getPlayedTime() {
         return playedTime;
     }
 
-    public void setPlayedTime(int playedTime) {
+    public void setPlayedTime(long playedTime) {
         this.playedTime = playedTime;
     }
 

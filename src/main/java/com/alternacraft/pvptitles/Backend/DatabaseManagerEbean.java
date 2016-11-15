@@ -25,8 +25,8 @@ import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
+import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
@@ -260,9 +260,9 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public int loadPlayedTime(UUID playerUUID) throws DBException {
+    public long loadPlayedTime(UUID playerUUID) throws DBException {
         PlayerPT plClass = null;
-        int time = 0;
+        long time = 0;
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
                 .select("playerUUID, playedTime")
@@ -507,7 +507,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         if (plClass != null && plClass.size() > 0) {
             for (int j = 0; j < plClass.size(); j++) {
                 PlayerPT next = plClass.get(j);
-
+                
                 String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
                 sql += "insert into PlayerServer(id, playerUUID, serverID) select "
@@ -662,7 +662,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         PluginLog l = new PluginLog(plugin, "db_changes.txt");
 
         for (PlayerPT player : players) {
-            if (player.getPoints() < 0 || player.getPlayedTime() < 0) {
+            if (player.getPoints() < 0 || player.getPlayedTime() < 0 || player.getLastLogin() == null) {
                 UUID uuid = UUID.fromString(player.getPlayerUUID());
                 String name = Bukkit.getOfflinePlayer(uuid).getName();
 
@@ -672,10 +672,16 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     player.setPoints(0);
                 } 
                 
-                if (player.getPlayedTime() < 0) {
+                if (player.getPlayedTime() < 0 || player.getPlayedTime() >= 3153600000L) {
                     l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
                             + player.getPlayedTime() + " and it was changed to 0");
                     player.setPlayedTime(0);
+                }
+                
+                if (player.getLastLogin() == null) {
+                    l.addMessage("[BAD LAST LOGIN] Player \"" + name + "\" had "
+                            + "an invalid login date");
+                    player.setLastLogin(new Date());
                 }
                 
                 ebeanServer.getDatabase().save(player);

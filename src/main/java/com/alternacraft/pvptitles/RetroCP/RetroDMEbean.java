@@ -26,6 +26,7 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import static com.alternacraft.pvptitles.RetroCP.DBChecker.EBEAN_MW_CREATED;
+import static com.alternacraft.pvptitles.RetroCP.DBChecker.EBEAN_NEW_STRUCTURE_CREATED;
 import static com.alternacraft.pvptitles.RetroCP.DBChecker.EBEAN_TIME_CREATED;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
@@ -60,10 +61,11 @@ public class RetroDMEbean {
     }
     // </editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="UTILS">
     public void conversor() {
         File file = new File((new StringBuilder()).append(
                 pt.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         "players").toString()); // Players
 
         if (file.exists()) {
@@ -77,14 +79,14 @@ public class RetroDMEbean {
 
                 String nPlayer = item.getName().substring(0, item.getName().indexOf('.'));
                 int fame = yaml.getInt("Fame");
-                
+
                 UUID uuid = UUIDFetcher.getIDPlayer(nPlayer);
-                
+
                 // No repes
                 PlayerPT pl = (PlayerPT) ebeanServer.getDatabase().find(PlayerPT.class)
                         .where("playerUUID like :name OR playerUUID like :uuid")
-                            .setParameter("name", nPlayer)
-                            .setParameter("uuid", uuid.toString())                        
+                        .setParameter("name", nPlayer)
+                        .setParameter("uuid", uuid.toString())
                         .findUnique();
 
                 if (pl == null) {
@@ -105,7 +107,7 @@ public class RetroDMEbean {
 
             File backup = new File((new StringBuilder()).append(
                     this.pt.getDataFolder()).append( // Ruta
-                            File.separator).append( // Separador
+                    File.separator).append( // Separador
                             "you_can_delete_this").toString()); // Players
 
             if (backup.exists()) {
@@ -126,43 +128,82 @@ public class RetroDMEbean {
         List<PlayerPT> plClass = (List<PlayerPT>) ebeanServer.getDatabase().find(PlayerPT.class)
                 .findList();
 
-        // Compruebo si esa vacia
+        // Compruebo si esta vacia
         if (plClass == null || plClass.isEmpty()) {
             return;
         }
 
         for (PlayerPT player : plClass) {
-            if (!player.getPlayerUUID().matches(UUID_REGEX)) {                
+            if (!player.getPlayerUUID().matches(UUID_REGEX)) {
                 player.setPlayerUUID(UUIDFetcher.getIDPlayer(player.getPlayerUUID()).toString());
             }
         }
 
         ebeanServer.getDatabase().save(plClass);
     }
+    //</editor-fold>
 
     public void exportarData(int status) {
         String ruta = new StringBuilder().append(
                 pt.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         FILENAME).toString();
 
         // Estilo
         JsonParser parser = new JsonParser();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        JSONObject jo = new JSONObject();
+        JSONObject json = new JSONObject();
 
         JSONArray jsPlayers = new JSONArray();
         JSONArray jsSigns = new JSONArray();
         JSONArray jsWorldPlayers = new JSONArray();
 
+        if (status >= EBEAN_NEW_STRUCTURE_CREATED) {
+            newVersions(json, jsPlayers, jsSigns, jsWorldPlayers);
+        } else {
+            oldVersions(json, status, jsPlayers, jsSigns, jsWorldPlayers);
+        }
+
+        // Escribo el fichero
+        JsonElement el = parser.parse(json.toJSONString());
+        UtilsFile.writeFile(ruta, gson.toJson(el));
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="READ DATA">
+    private void newVersions(JSONObject json, JSONArray jsPlayers,
+            JSONArray jsSigns, JSONArray jsWorldPlayers) {
+        List<PlayerPT> plClass = (List<PlayerPT>) ebeanServer.getDatabase().
+                find(PlayerPT.class).findList();
+        List<SignPT> stClass = (List<SignPT>) ebeanServer.getDatabase().
+                find(SignPT.class).findList();
+        List<WorldPlayerPT> pwClass = (List<WorldPlayerPT>) ebeanServer.getDatabase().
+                find(WorldPlayerPT.class).findList();
+
+        for (PlayerPT player : plClass) {
+            jsPlayers.add(TagsClass.createPlayer(player));
+        }
+        json.put("Players", jsPlayers);
+
+        for (SignPT sign : stClass) {
+            jsSigns.add(TagsClass.createSign(sign));
+        }
+        json.put("Signs", jsSigns);
+
+        for (WorldPlayerPT pWorld : pwClass) {
+            jsWorldPlayers.add(TagsClass.createPlayerW(pWorld));
+        }
+        json.put("PlayersPerWorld", jsWorldPlayers);
+    }
+
+    private void oldVersions(JSONObject json, int status, JSONArray jsPlayers,
+            JSONArray jsSigns, JSONArray jsWorldPlayers) {
         List<PlayerTable> plClass = (List<PlayerTable>) ebeanServer.getDatabase().
                 find(PlayerTable.class).findList();
-
         List<SignTable> stClass = (List<SignTable>) ebeanServer.getDatabase().
                 find(SignTable.class).findList();
-
         List<PlayerWTable> pwClass = null;
+
         if (status >= EBEAN_MW_CREATED) {
             pwClass = (List<PlayerWTable>) ebeanServer.getDatabase().
                     find(PlayerWTable.class).findList();
@@ -181,10 +222,10 @@ public class RetroDMEbean {
             pltClass.setLastLogin(next.getUltMod());
 
             if (status >= EBEAN_TIME_CREATED) {
-                for (TimeTable pltime : ttClass) {
-                    if (pltime.getPlayerName().equals(pltClass.getPlayerUUID())) {
-                        pltClass.setPlayedTime(pltime.getPlayedTime());
-                        ttClass.remove(pltime);
+                for (TimeTable time : ttClass) {
+                    if (time.getPlayerName().equals(pltClass.getPlayerUUID())) {
+                        pltClass.setPlayedTime(time.getPlayedTime());
+                        ttClass.remove(time);
                         break;
                     }
                 }
@@ -192,36 +233,33 @@ public class RetroDMEbean {
 
             jsPlayers.add(TagsClass.createPlayer(pltClass));
         }
-        jo.put("Players", jsPlayers);
+        json.put("Players", jsPlayers);
 
         if (status >= EBEAN_MW_CREATED) {
-            for (PlayerWTable next : pwClass) {
+            for (PlayerWTable pWorld : pwClass) {
                 WorldPlayerPT wppt = new WorldPlayerPT();
-                wppt.setPlayerUUID(next.getPlayerName());
-                wppt.setPoints(next.getFamePoints());
-                wppt.setWorld(next.getWorld());
+                wppt.setPlayerUUID(pWorld.getPlayerName());
+                wppt.setPoints(pWorld.getFamePoints());
+                wppt.setWorld(pWorld.getWorld());
 
                 jsWorldPlayers.add(TagsClass.createPlayerW(wppt));
             }
-            jo.put("PlayersPerWorld", jsWorldPlayers);
+            json.put("PlayersPerWorld", jsWorldPlayers);
         }
 
-        for (SignTable next : stClass) {
+        for (SignTable sign : stClass) {
             SignPT spt = new SignPT();
-            spt.setName(next.getNombre());
-            spt.setModel(next.getModelo());
-            spt.setOrientation(next.getOrientacion());
-            spt.setBlockface((short) next.getBlockface());
-            spt.setWorld(next.getWorld());
-            spt.setX(next.getX());
-            spt.setY(next.getY());
-            spt.setZ(next.getZ());
+            spt.setName(sign.getNombre());
+            spt.setModel(sign.getModelo());
+            spt.setOrientation(sign.getOrientacion());
+            spt.setBlockface((short) sign.getBlockface());
+            spt.setWorld(sign.getWorld());
+            spt.setX(sign.getX());
+            spt.setY(sign.getY());
+            spt.setZ(sign.getZ());
             jsSigns.add(TagsClass.createSign(spt));
         }
-        jo.put("Signs", jsSigns);
-
-        // Escribo el fichero
-        JsonElement el = parser.parse(jo.toJSONString());
-        UtilsFile.writeFile(ruta, gson.toJson(el));
+        json.put("Signs", jsSigns);
     }
+    //</editor-fold>
 }

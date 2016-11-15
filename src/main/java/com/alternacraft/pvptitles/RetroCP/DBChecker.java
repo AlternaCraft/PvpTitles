@@ -69,15 +69,15 @@ public class DBChecker {
         try {
             ebeanserver.getDatabase().find(PlayerPT.class).findList(); // Cualquiera de las nuevas vale
             status = EBEAN_NEW_STRUCTURE_CREATED;
-        } catch (Exception ex) {
+        } catch (Exception e1) {
             try {
                 ebeanserver.getDatabase().find(PlayerWTable.class).findList();
                 status = EBEAN_MW_CREATED;
                 ebeanserver.getDatabase().find(TimeTable.class).findList();
                 status = EBEAN_TIME_CREATED;
-            } catch (Exception e) {
+            } catch (Exception e2) {
             }
-
+            
             rdm.exportarData(status);
 
             showMessage(ChatColor.RED + "Ebean database structure has changed...");

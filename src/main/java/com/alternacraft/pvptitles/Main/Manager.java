@@ -422,7 +422,7 @@ public final class Manager {
                         return;
                     }
 
-                    int savedTimeB;
+                    long savedTimeB;
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
@@ -431,7 +431,7 @@ public final class Manager {
                     }
 
                     try {
-                        int savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
+                        long savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
 
                         String rankB = Ranks.getRank(actualFame, savedTimeB);
                         String rankA = Ranks.getRank(actualFame, savedTimeA);
@@ -490,7 +490,7 @@ public final class Manager {
      *
      * @return Objeto que almacena la lista de dias
      */
-    public static LinkedList<Integer> reqTime() {
+    public static LinkedList<Long> reqTime() {
         return REQTIME;
     }
 

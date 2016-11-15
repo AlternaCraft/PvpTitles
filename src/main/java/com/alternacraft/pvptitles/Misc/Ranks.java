@@ -25,7 +25,7 @@ import java.util.Map;
 public class Ranks {
 
     private static int nextRankFame;
-    private static int nextRankTime;
+    private static long nextRankTime;
     private static String nextRankTitle;
 
     /**
@@ -36,12 +36,12 @@ public class Ranks {
      * @return String con el nombre del titulo
      * @throws com.alternacraft.pvptitles.Exceptions.RanksException RanksException
      */
-    public static String getRank(int fame, int seconds) throws RanksException {
+    public static String getRank(int fame, long seconds) throws RanksException {
         String rank = "";
 
         LinkedList<String> rankList = Manager.rankList();
         LinkedList<Integer> reqFame = Manager.reqFame();
-        LinkedList<Integer> reqTime = Manager.reqTime();
+        LinkedList<Long> reqTime = Manager.reqTime();
 
         /*
          Caso puntual para comprobar si los puntos son mayores que todos 
@@ -101,7 +101,7 @@ public class Ranks {
      *
      * @return Entero con los dias
      */
-    public static int nextRankTime() {
+    public static long nextRankTime() {
         return (nextRankTime < 0) ? 0 : nextRankTime;
     }
 

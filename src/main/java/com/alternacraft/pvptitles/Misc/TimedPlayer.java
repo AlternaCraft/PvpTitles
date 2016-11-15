@@ -29,7 +29,7 @@ public class TimedPlayer {
     private UUID uuid = null;
     private Set<Session> sessions = null;
     private Session activeSession = null;
-    private int afkTime = 0;
+    private long afkTime = 0;
 
     public TimedPlayer(PvpTitles plugin, OfflinePlayer player) {
         this(plugin, player.getUniqueId());
@@ -73,21 +73,21 @@ public class TimedPlayer {
         return true;
     }
 
-    public int getTotalOnline() {
+    public long getTotalOnline() {
         OfflinePlayer player = this.plugin.getServer().getOfflinePlayer(getUniqueId());
 
-        int timeOnline = 0;
+        long timeOnline = 0;
 
         for (Session s : this.sessions) {
             if (s.equals(getSession())) {
-                timeOnline += (int) ((System.currentTimeMillis() - s.getStartTime()) / 1000L);
+                timeOnline += (long) ((System.currentTimeMillis() - s.getStartTime()) / 1000L);
                 timeOnline -= getAFKTime();
 
                 if (this.plugin.getManager().getMovementManager().isAFK(player)) {
                     timeOnline -= this.plugin.getManager().getMovementManager().getAFKTime(player);
                 }
             } else {
-                timeOnline += (int) ((s.getStopTime() - s.getStartTime()) / 1000L);
+                timeOnline += (long) ((s.getStopTime() - s.getStartTime()) / 1000L);
             }
         }
 
@@ -140,11 +140,11 @@ public class TimedPlayer {
         this.sessions = sessions;
     }
 
-    public int getAFKTime() {
+    public long getAFKTime() {
         return afkTime;
     }
 
-    public void setAFKTime(int afkTime) {
+    public void setAFKTime(long afkTime) {
         this.afkTime = afkTime;
     }
 }

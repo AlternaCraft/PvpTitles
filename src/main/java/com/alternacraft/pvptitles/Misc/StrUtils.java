@@ -25,9 +25,9 @@ public class StrUtils {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
     
-    public static String splitToComponentTimes(int s) {
+    public static String splitToComponentTimes(long s) {
         String resul = "";
-        int days, hours, mins, secs, remainder;
+        long days, hours, mins, secs, remainder;
         
         // Lógica        
         days = s / 3600 / 24;

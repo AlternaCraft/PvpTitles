@@ -23,6 +23,7 @@ import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.AntiFarmManager;
 import com.alternacraft.pvptitles.Managers.CleanTaskManager;
@@ -41,7 +42,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 
 public class HandlePlayerFame implements Listener {
     
@@ -314,7 +314,7 @@ public class HandlePlayerFame implements Listener {
                 .replace("%fameRec%", Integer.toString(fameRec))
                 .replace("%tag%", tag));
 
-        int seconds = 0;
+        long seconds = 0;
         try {
             seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {

@@ -25,12 +25,12 @@ import org.bukkit.ChatColor;
 public class PlayerFame implements Comparable {
     private String uuid = null;
     private int fame = 0;
-    private int seconds = 0;
+    private long seconds = 0;
     private short server = 0;
     private String world = "";
     private PvpTitles plugin = null;
     
-    public PlayerFame(String name, int fame, int seconds, PvpTitles pl) {
+    public PlayerFame(String name, int fame, long seconds, PvpTitles pl) {
         this.uuid = name;
         this.fame = fame;
         this.seconds = seconds;
@@ -63,19 +63,19 @@ public class PlayerFame implements Comparable {
         this.server = server;
     }
 
-    public int getSeconds() {        
+    public long getSeconds() {        
         return this.seconds;
     }
     
-    public int getRealSeconds() {
-        int actual = 0;
+    public long getRealSeconds() {
+        long actual = 0;
         try {
             actual = plugin.getManager().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
             LoggerManager.logError(ex.getCustomMessage());
         }
         
-        int session = plugin.getManager().getTimerManager().getPlayer(plugin.getServer()
+        long session = plugin.getManager().getTimerManager().getPlayer(plugin.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
         return actual+session;

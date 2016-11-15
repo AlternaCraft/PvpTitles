@@ -55,7 +55,7 @@ public class MVdWPlaceholderHook {
                         LoggerManager.logError(ex.getCustomMessage());
                     }
 
-                    int seconds = 0;
+                    long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
@@ -90,7 +90,7 @@ public class MVdWPlaceholderHook {
                         LoggerManager.logError(ex.getCustomMessage());
                     }
 
-                    int seconds = 0;
+                    long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {

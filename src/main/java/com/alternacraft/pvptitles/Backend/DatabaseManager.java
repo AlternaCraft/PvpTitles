@@ -83,7 +83,7 @@ public interface DatabaseManager {
      * @return Entero con los minutos transcurridos
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public int loadPlayedTime(UUID playerUUID) throws DBException;
+    public long loadPlayedTime(UUID playerUUID) throws DBException;
 
     /**
      * Método para recibir el top deseado de jugadores ordenado de mejor a peor

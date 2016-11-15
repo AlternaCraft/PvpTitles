@@ -114,7 +114,8 @@ public class HandlePlayerTag implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
         
-        int fame = 0, seconds = 0;
+        int fame = 0;
+        long seconds = 0;
         String rank = null;
                 
         try {
@@ -163,7 +164,8 @@ public class HandlePlayerTag implements Listener {
         if (ISHDENABLED && HandlePlayerTag.cm.params.displayLikeHolo()) {
             String uuid = player.getUniqueId().toString();
             
-            int totalTime, fame = 0, oldTime = 0;
+            int fame = 0;
+            long totalTime, oldTime = 0;
             String rank = "";
             
             try {
@@ -248,14 +250,14 @@ public class HandlePlayerTag implements Listener {
                 LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int oldTime = 0;
+            long oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = "";
             try {
@@ -290,14 +292,14 @@ public class HandlePlayerTag implements Listener {
                     LoggerManager.logError(ex.getCustomMessage());
                 }
 
-                int oldTime = 0;
+                long oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage());
                 }
 
-                int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = "";
                 try {
@@ -355,14 +357,14 @@ public class HandlePlayerTag implements Listener {
                 LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int oldTime = 0;
+            long oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 LoggerManager.logError(ex.getCustomMessage());
             }
 
-            int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
             String rank = "";
             try {
@@ -409,14 +411,14 @@ public class HandlePlayerTag implements Listener {
                     LoggerManager.logError(ex.getCustomMessage());
                 }
 
-                int oldTime = 0;
+                long oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     LoggerManager.logError(ex.getCustomMessage());
                 }
 
-                int totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
                 String rank = "";
                 try {

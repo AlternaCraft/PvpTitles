@@ -83,7 +83,7 @@ public class MetricsManager {
 
         boolean timeUsed = false;
 
-        for (Integer value : Manager.reqTime()) {
+        for (Long value : Manager.reqTime()) {
             if (value > 0) {
                 timeUsed = true;
                 break;
