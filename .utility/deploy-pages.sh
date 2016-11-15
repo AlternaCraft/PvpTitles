@@ -36,6 +36,7 @@ cp $HOME/dependencies-latest/* ./dependencies/$VERSION
 
 # Save the latest javadoc
 git rm -rf --ignore-unmatch ./javadoc/$VERSION
+mkdir -p javadoc/$VERSION
 cp -Rf $HOME/javadoc-latest ./javadoc/$VERSION
 
 # Add and commit new files
