@@ -1,5 +1,10 @@
 # PvpTitles 2015 Edition
-[![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles) [![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles) [ ![Download](https://api.bintray.com/packages/alternacraft/maven/PvpTitles/images/download.svg) ](https://www.github.com/alternacraft/PvpTitles/releases) [![Web](https://img.shields.io/badge/Web-alternacraft.github.io%2FPvpTitles%2F-yellow.svg)](https://alternacraft.github.io/PvpTitles) [![IRC](https://img.shields.io/badge/IRC-%23PvpTitles-yellow.svg)](http://webchat.freenode.net/?channels=%23PvpTitles)
+[![Build Status](https://travis-ci.org/AlternaCraft/PvpTitles.svg)](https://travis-ci.org/AlternaCraft/PvpTitles)
+[![codecov](https://codecov.io/gh/AlternaCraft/PvpTitles/branch/2.x/graph/badge.svg)](https://codecov.io/gh/AlternaCraft/PvpTitles)
+[![Dependency Status](https://www.versioneye.com/user/projects/5794d448ad95290045bef97b/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5794d448ad95290045bef97b)
+[![Download](https://api.bintray.com/packages/alternacraft/maven/PvpTitles/images/download.svg)](https://www.github.com/alternacraft/PvpTitles/releases)
+[![Web](https://img.shields.io/badge/Web-alternacraft.github.io%2FPvpTitles%2F-yellow.svg)](https://alternacraft.github.io/PvpTitles) 
+[![IRC](https://img.shields.io/badge/IRC-%23PvpTitles-yellow.svg)](http://webchat.freenode.net/?channels=%23PvpTitles) 
 
 PvpTitles is a [Bukkit](https://github.com/Bukkit/Bukkit) / [Spigot](https://github.com/SpigotMC/Spigot-API) plugin which is based on the [PvP titles plugin](https://github.com/dreanor/PvPTitles) by [asc_dreanor](https://github.com/dreanor). These titles reflect a player's success in defeating other players by earning titles after a specific amount of Kills.
 
