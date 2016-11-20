@@ -49,7 +49,7 @@ public class Inventories {
     public static List<Player> closeInventories() {
         List<Player> viewers = new ArrayList();
         List<Inventory> openedtemp = new ArrayList<>(opened);
-        
+
         for (Inventory inv : openedtemp) {
             while (!inv.getViewers().isEmpty()) {
                 Player pl = (Player) inv.getViewers().get(0);
@@ -57,17 +57,17 @@ public class Inventories {
                 viewers.add(pl);
             }
         }
-        
+
         return viewers;
     }
 
-    public static void reloadInventories(List<Player> viewers) {        
-        List<Board> boards = PvpTitles.getInstance().getManager().getLbm().getBoards();        
+    public static void reloadInventories(List<Player> viewers) {
+        List<Board> boards = PvpTitles.getInstance().getManager().getLbm().getBoards();
         for (Player viewer : viewers) {
-            viewer.openInventory(createInventory(boards, Localizer.getLocale(viewer)).get(0));            
+            viewer.openInventory(createInventory(boards, Localizer.getLocale(viewer)).get(0));
         }
     }
-    
+
     public static Map<Integer, Inventory> createInventory(List<Board> cs, LangType lt) {
         Map<Integer, Inventory> inventories = new HashMap();
 
@@ -85,7 +85,7 @@ public class Inventories {
                 for (int j = 0; cont < cs.size() && j < (MAX_BOARDS_PER_PAGE); j++, cont++) {
                     Board board = cs.get(cont);
 
-                    ItemStack item = new ItemStack((board instanceof SignBoard) 
+                    ItemStack item = new ItemStack((board instanceof SignBoard)
                             ? Material.SIGN : Material.ITEM_FRAME);
                     String[] lore = null;
                     String modelo = "Model: " + board.getData().getModelo();
@@ -142,23 +142,23 @@ public class Inventories {
                     LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
             }
 
-            item = new ItemStack(Material.WOOL, 1, DyeColor.YELLOW.getData());
+            item = new ItemStack(Material.WOOL, 1, (byte) 4);
             createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         } else if (vuelta > 0) {
             content = new String[]{LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
 
-            item = new ItemStack(Material.WOOL, 1, DyeColor.YELLOW.getData());
+            item = new ItemStack(Material.WOOL, 1, (byte) 4);
             createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         }
 
         // items de ayuda
-        item = new ItemStack(Material.WOOL, 1, DyeColor.GREEN.getData());
+        item = new ItemStack(Material.WOOL, 1, (byte) 5);
         createDisplay(item, inv, 25, LangsFile.BOARD_INVENTORY_ACTION1.getText(lt),
                 new String[]{LangsFile.BOARD_INVENTORY_INFO1.getText(lt)});
 
-        item = new ItemStack(Material.WOOL, 1, DyeColor.RED.getData());
+        item = new ItemStack(Material.WOOL, 1, (byte) 14);
         createDisplay(item, inv, 26, LangsFile.BOARD_INVENTORY_ACTION2.getText(lt),
                 new String[]{LangsFile.BOARD_INVENTORY_INFO2.getText(lt)});
     }
