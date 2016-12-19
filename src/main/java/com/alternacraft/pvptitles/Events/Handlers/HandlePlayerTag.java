@@ -113,14 +113,14 @@ public class HandlePlayerTag implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
-        
+
         int fame = 0;
         long seconds = 0;
         String rank = null;
-                
+
         try {
             fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-            seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());            
+            seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
             rank = Ranks.getRank(fame, seconds);
         } catch (DBException ex) {
             LoggerManager.logError(ex.getCustomMessage());
@@ -163,11 +163,11 @@ public class HandlePlayerTag implements Listener {
     public static void holoPlayerLogin(Player player) {
         if (ISHDENABLED && HandlePlayerTag.cm.params.displayLikeHolo()) {
             String uuid = player.getUniqueId().toString();
-            
+
             int fame = 0;
             long totalTime, oldTime = 0;
             String rank = "";
-            
+
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
@@ -181,7 +181,7 @@ public class HandlePlayerTag implements Listener {
             }
 
             totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
-            
+
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
@@ -193,7 +193,7 @@ public class HandlePlayerTag implements Listener {
             // Fix reload
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                     || player.isSneaking() || !canDisplayRank(player, rank)) {
-                HOLOPLAYERS.get(uuid).removeLine(0);
+                HOLOPLAYERS.get(uuid).clearLines();
             }
         }
     }
@@ -216,13 +216,40 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
             Hologram h = HOLOPLAYERS.get(player.getUniqueId().toString());
+            h.clearLines();
 
             Location l = new Location(event.getTo().getWorld(),
                     event.getTo().getX(),
                     event.getTo().getY() + TITLE_HEIGHT,
                     event.getTo().getZ());
-
             h.teleport(l);
+
+            int fame = 0;
+            try {
+                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            } catch (DBException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+            }
+
+            long oldTime = 0;
+            try {
+                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+            }
+
+            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+
+            String rank = "";
+            try {
+                rank = Ranks.getRank(fame, totalTime);
+            } catch (RanksException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+            }
+
+            if (canDisplayRank(player, rank)) {
+                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
+            }
         }
     }
 
@@ -233,9 +260,7 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
-            if (!StrUtils.isHologramEmpty(h)) {
-                h.removeLine(0);
-            }
+            h.clearLines();
 
             Location l = new Location(player.getLocation().getWorld(),
                     player.getLocation().getX(),
@@ -342,6 +367,7 @@ public class HandlePlayerTag implements Listener {
         // Holograms
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
+            h.clearLines();
 
             Location l = new Location(event.getRespawnLocation().getWorld(),
                     event.getRespawnLocation().getX(),
@@ -385,9 +411,7 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
-            if (!StrUtils.isHologramEmpty(h)) {
-                h.removeLine(0);
-            }
+            h.clearLines();
         }
     }
 
@@ -398,12 +422,9 @@ public class HandlePlayerTag implements Listener {
 
         if (HOLOPLAYERS.containsKey(uuid)) {
             Hologram h = HOLOPLAYERS.get(uuid);
+            h.clearLines();
 
-            if (event.isSneaking()) {
-                if (!StrUtils.isHologramEmpty(h)) {
-                    h.removeLine(0);
-                }
-            } else if (!player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            if (!event.isSneaking() && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 int fame = 0;
                 try {
                     fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());

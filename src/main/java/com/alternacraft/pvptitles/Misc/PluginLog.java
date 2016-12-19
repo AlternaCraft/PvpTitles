@@ -18,7 +18,9 @@ package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -101,8 +103,7 @@ public class PluginLog {
         }
 
         // Writing new values
-        // Date
-        all += "---\n" + DateUtils.getCurrentTimeStamp() + "\n---\n";
+        all += "---\n" + getCurrentTimeStamp("yyyy-MM-dd HH:mm:ss") + "\n---\n";
         for (String message : messages) {
             all += message + "\n";
         }
@@ -118,6 +119,13 @@ public class PluginLog {
 
     public List<String> getMessages() {
         return this.messages;
+    }
+
+    private String getCurrentTimeStamp(String format) {
+        SimpleDateFormat sdfDate = new SimpleDateFormat(format);
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
     }
 
     //<editor-fold defaultstate="collapsed" desc="STATIC">
