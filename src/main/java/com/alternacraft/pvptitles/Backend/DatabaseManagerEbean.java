@@ -447,7 +447,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 if (plugin.getManager().params.isMw_enabled()) {
                     List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
-                            .lt("playerUUID", player.getPlayerUUID())
+                            .ieq("playerUUID", player.getPlayerUUID())
                             .findList();
 
                     for (WorldPlayerPT allPlayer : allPlayers) {
