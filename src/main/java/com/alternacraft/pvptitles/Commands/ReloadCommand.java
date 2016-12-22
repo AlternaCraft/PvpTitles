@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
+import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
@@ -91,6 +92,10 @@ public class ReloadCommand implements CommandExecutor {
             HolographicHook.deleteHoloPlayers();
         }
 
+        // Just in case
+        HandlePlayerFame.ALREADY_LOGGED.clear();
+        HandlePlayerFame.ALREADY_VISITED.clear();
+        
         sender.sendMessage(getPluginName() + LangsFile.PLUGIN_RELOAD.getText(messages));
 
         return true;

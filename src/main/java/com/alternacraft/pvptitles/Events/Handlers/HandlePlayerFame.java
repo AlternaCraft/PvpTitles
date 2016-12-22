@@ -31,9 +31,14 @@ import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,11 +49,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class HandlePlayerFame implements Listener {
-    
+
     /**
      * contante TICKS para saber el tiempo en segundos
      */
     private static final int TICKS = 20;
+
+    // To get a better performance
+    public static final Map<UUID, Date> ALREADY_LOGGED = new HashMap();
+    public static final Map<UUID, List<String>> ALREADY_VISITED = new HashMap();
 
     // Variable temporal
     private static final Map<String, Integer> KILLSTREAK = new HashMap();
@@ -80,14 +89,16 @@ public class HandlePlayerFame implements Listener {
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
 
-        PERFORMANCE.start("Player connection");
-        try {
-            cm.dbh.getDm().playerConnection(player);
-        } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
-            return;
+        if (shouldDoPlayerConnection(player, false)) {
+            PERFORMANCE.start("Player connection");
+            try {
+                cm.dbh.getDm().playerConnection(player);
+            } catch (DBException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+                return;
+            }
+            PERFORMANCE.recordValue("Player connection");
         }
-        PERFORMANCE.recordValue("Player connection");
 
         PERFORMANCE.start("Player AFK enabling");
         // Time
@@ -102,7 +113,7 @@ public class HandlePlayerFame implements Listener {
 
         this.pvpTitles.getManager().getMovementManager().addLastMovement(player);
         PERFORMANCE.recordValue("Player AFK enabling");
-        
+
         PERFORMANCE.start("Player holograms");
         HandlePlayerTag.holoPlayerLogin(player);
         PERFORMANCE.recordValue("Player holograms");
@@ -112,13 +123,16 @@ public class HandlePlayerFame implements Listener {
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
 
-        PERFORMANCE.start("Player connection");
-        try {
-            cm.dbh.getDm().playerConnection(player);
-        } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+        if (this.pvpTitles.getManager().params.isMw_enabled() 
+                && shouldDoPlayerConnection(player, true)) {
+            PERFORMANCE.start("Player changing world");
+            try {
+                cm.dbh.getDm().playerConnection(player);
+            } catch (DBException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+            }
+            PERFORMANCE.recordValue("Player changing world");
         }
-        PERFORMANCE.recordValue("Player connection");
     }
 
     /**
@@ -129,14 +143,17 @@ public class HandlePlayerFame implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        PERFORMANCE.start("Player connection");
-        try {
-            cm.dbh.getDm().playerConnection(player);
-        } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
-            return;
+
+        if (shouldDoPlayerConnection(player, false)) {
+            PERFORMANCE.start("Player leaving");
+            try {
+                cm.dbh.getDm().playerConnection(player);
+            } catch (DBException ex) {
+                LoggerManager.logError(ex.getCustomMessage());
+                return;
+            }
+            PERFORMANCE.recordValue("Player leaving");
         }
-        PERFORMANCE.recordValue("Player connection");
 
         HandlePlayerFame.KILLSTREAK.put(player.getUniqueId().toString(), 0);
 
@@ -356,5 +373,46 @@ public class HandlePlayerFame implements Listener {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Método para mejorar el rendimiento del playerConnection
+     *
+     * @param player Player
+     * @param changeworld Player changed world?
+     *
+     * @return should connect?
+     */
+    public static boolean shouldDoPlayerConnection(Player player, boolean changeworld) {
+        boolean s = false;
+
+        if (ALREADY_LOGGED.containsKey(player.getUniqueId())) {
+            Date before = ALREADY_LOGGED.get(player.getUniqueId());
+            int msdaytime = 1000 * 60 * 60 * 12; // Twelve hours
+            Date minimum = new Date(before.getTime() + msdaytime);
+
+            if (new Date().after(minimum)) {
+                ALREADY_LOGGED.put(player.getUniqueId(), new Date());
+                s = true;
+            }
+            else if (changeworld) {
+                World world = player.getWorld();
+                if (!ALREADY_VISITED.get(player.getUniqueId()).contains(world.getName())) {
+                    ALREADY_VISITED.get(player.getUniqueId()).add(world.getName());
+                    s = true;
+                }
+            }
+        } else {
+            ALREADY_LOGGED.put(player.getUniqueId(), new Date());
+            final String world = player.getWorld().getName();
+            ALREADY_VISITED.put(player.getUniqueId(), new ArrayList() {
+                {
+                    this.add(world);
+                }
+            });
+            s = true;
+        }
+
+        return s;
     }
 }

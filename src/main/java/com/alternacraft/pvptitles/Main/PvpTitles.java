@@ -53,11 +53,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PvpTitles extends JavaPlugin {
-/*
+
+    /*
      * Measuring performance
      */
     public static final Timer PERFORMANCE = new Timer();
-    
+
     private static PvpTitles plugin = null;
 
     private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
@@ -128,21 +129,21 @@ public class PvpTitles extends JavaPlugin {
                 PERFORMANCE.start("Metrics event");
                 new MetricsManager().sendData(manager.getPvpTitles());
                 PERFORMANCE.recordValue("Metrics event");
-                
+
                 PERFORMANCE.start("Updater event");
                 new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
                 PERFORMANCE.recordValue("Updater event");
-                
+
                 /* 
                  * -> Integraciones <-
                  */
                 getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# STARTING INTEGRATION MODULE #");
-                
+
                 PERFORMANCE.start("Integrations");
                 checkExternalPlugins();
                 PERFORMANCE.recordValue("Integrations");
-                
+
                 getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
                         + "# ENDING INTEGRATION MODULE #");
                 /*
@@ -182,7 +183,7 @@ public class PvpTitles extends JavaPlugin {
                 } catch (SQLException ex) {
                 }
             }
-            
+
             PERFORMANCE.saveToLog("performance.txt");
         }
 
@@ -192,11 +193,13 @@ public class PvpTitles extends JavaPlugin {
     private void checkOnlinePlayers() {
         // Creo las sesiones en caso de reload, gestiono la fama y los inventarios
         for (Player pl : this.getServer().getOnlinePlayers()) {
-            try {
-                this.manager.dbh.getDm().playerConnection(pl);
-            } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage());
-                continue;
+            if (HandlePlayerFame.shouldDoPlayerConnection(pl, false)) {
+                try {
+                    this.manager.dbh.getDm().playerConnection(pl);
+                } catch (DBException ex) {
+                    LoggerManager.logError(ex.getCustomMessage());
+                    continue;
+                }
             }
 
             // Times
