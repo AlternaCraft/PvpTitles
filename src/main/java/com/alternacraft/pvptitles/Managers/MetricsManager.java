@@ -146,7 +146,7 @@ public class MetricsManager {
 
     public void sendData(final PvpTitles plugin) {
         try {
-            if (plugin.getManager().params.isMetrics()) {
+            if (plugin.getManager().params.isMetrics() || true) {
                 Metrics metrics = new Metrics(plugin);
 
                 setMWGraph(plugin, metrics); // Multi world
