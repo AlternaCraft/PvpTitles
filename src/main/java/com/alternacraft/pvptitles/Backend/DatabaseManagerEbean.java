@@ -248,7 +248,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .findUnique();
 
         if (plClass == null) {
-            plClass = new PlayerPT();            
+            plClass = new PlayerPT();
             plClass.setPlayerUUID(tPlayer.getUniqueId().toString());
             plClass.setPlayedTime(tPlayer.getTotalOnline());
             plClass.setLastLogin(new Date());
@@ -414,6 +414,10 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public int purgeData(int q) {
+        return checkUsers(q, ebeanServer.getDatabase().find(WorldPlayerPT.class).findList().size() > 0);
+    }
+
+    private int checkUsers(int q, boolean complete) {
         int contador = 0;
 
         List<PlayerPT> allDates = ebeanServer.getDatabase().find(PlayerPT.class)
@@ -422,8 +426,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 .lt("lastLogin", new Date())
                 .findList();
 
-        PluginLog l = new PluginLog(plugin, "user_changes.txt");        
-        
+        PluginLog l = new PluginLog(plugin, "user_changes.txt");
+
         for (PlayerPT player : allDates) {
             if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
                 continue;
@@ -442,34 +446,38 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             // cFile + timePurga < hoy
             if (lastLoginDate.before(actualDate)) {
-                lastLoginDate.setTime(lastLogin); // Remove q time
-                
-                if (plugin.getManager().params.isMw_enabled()) {
-                    List<WorldPlayerPT> allPlayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                if (complete) {
+                    List<WorldPlayerPT> mwplayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
                             .where()
                             .ieq("playerUUID", player.getPlayerUUID())
                             .findList();
 
-                    for (WorldPlayerPT allPlayer : allPlayers) {
-                        ebeanServer.getDatabase().delete(allPlayer);
-                    }                    
+                    if (mwplayers != null) {
+                        ebeanServer.getDatabase().delete(mwplayers);
+                    }
+                } else {
+                    ebeanServer.getDatabase().delete(player);
+
+                    lastLoginDate.setTime(lastLogin); // Remove q time
+
+                    // Log settings
+                    UUID uuid = UUID.fromString(player.getPlayerUUID());
+                    int time = (int) ((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
+                    l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
+                            + " has been removed. AFK time: "
+                            + StrUtils.splitToComponentTimes(time));
+
+                    contador++;
                 }
-
-                ebeanServer.getDatabase().delete(player);
-
-                // Log settings
-                UUID uuid = UUID.fromString(player.getPlayerUUID());
-                int time = (int)((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
-                l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
-                        + " has been removed. AFK time: " 
-                        + StrUtils.splitToComponentTimes(time));
-                
-                contador++;
             }
         }
-        
-        if (contador > 0) {
-            l.export(true);
+
+        if (complete) {
+            contador = checkUsers(q, false);
+        } else {
+            if (contador > 0) {
+                l.export(true);
+            }
         }
 
         return contador;
@@ -507,7 +515,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
         if (plClass != null && plClass.size() > 0) {
             for (int j = 0; j < plClass.size(); j++) {
                 PlayerPT next = plClass.get(j);
-                
+
                 String fecha = new java.sql.Date(next.getLastLogin().getTime()).toString();
 
                 sql += "insert into PlayerServer(id, playerUUID, serverID) select "
@@ -668,29 +676,29 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                 if (player.getPoints() < 0) {
                     l.addMessage("[BAD FAME] Player \"" + name + "\" had "
-                            + player.getPoints()+ " and it was changed to 0");
+                            + player.getPoints() + " and it was changed to 0");
                     player.setPoints(0);
-                } 
-                
+                }
+
                 if (player.getPlayedTime() < 0 || player.getPlayedTime() >= 3153600000L) {
                     l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
                             + player.getPlayedTime() + " and it was changed to 0");
                     player.setPlayedTime(0);
                 }
-                
+
                 if (player.getLastLogin() == null) {
                     l.addMessage("[BAD LAST LOGIN] Player \"" + name + "\" had "
                             + "an invalid login date");
                     player.setLastLogin(new Date());
                 }
-                
+
                 ebeanServer.getDatabase().save(player);
                 repaired = true;
                 q++;
             }
         }
 
-        if (repaired) {            
+        if (repaired) {
             l.export(true);
         }
 

@@ -44,7 +44,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -83,10 +83,10 @@ public class HandlePlayerFame implements Listener {
     /**
      * Método para crear el jugador en caso de que no exista
      *
-     * @param event Evento PlayerLoginEvent
+     * @param event Evento PlayerJoinEvent
      */
     @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         if (shouldDoPlayerConnection(player, false)) {
