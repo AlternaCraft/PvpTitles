@@ -72,7 +72,7 @@ function filter(data) {
                 content.title = title(line);
             }
             // Caso lista
-            else if (line.charAt(0) == '*') {
+            else if (line.charAt(0) == '-') {
                 content.list.push(body(line));
             }
             // Caso negrita
@@ -90,7 +90,7 @@ function title(str) {
 }
 
 function body(str) {
-    return str.substring(1, str.length);
+    return str.substring(2, str.length);
 }
 
 function bold(str) {
