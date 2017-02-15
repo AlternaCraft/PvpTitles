@@ -62,7 +62,7 @@ function filter(data) {
     };
 
     if (data !== undefined) {
-        var arr = data.split("\r\n");
+        var arr = data.split("\n");
 
         for (var j = 0; j < arr.length; j++) {
             var line = arr[j];
