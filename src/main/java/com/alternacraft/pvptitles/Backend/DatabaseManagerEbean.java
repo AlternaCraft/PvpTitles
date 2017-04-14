@@ -54,9 +54,9 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private final PvpTitles plugin;
-    private Ebean ebeanServer = null;
+    private EbeanConnection ebeanServer = null;
 
-    public DatabaseManagerEbean(PvpTitles plugin, Ebean ebeanServer) {
+    public DatabaseManagerEbean(PvpTitles plugin, EbeanConnection ebeanServer) {
         this.plugin = plugin;
         this.ebeanServer = ebeanServer;
     }
@@ -707,7 +707,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public void updateConnection(Object connection) {
-        this.ebeanServer = (Ebean) connection;
+        this.ebeanServer = (EbeanConnection) connection;
     }
     // </editor-fold>
 }

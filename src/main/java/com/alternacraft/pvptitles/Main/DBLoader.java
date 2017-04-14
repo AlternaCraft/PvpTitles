@@ -20,7 +20,7 @@ import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
 import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
 import com.alternacraft.pvptitles.Backend.DatabaseManagerMysql;
-import com.alternacraft.pvptitles.Backend.Ebean;
+import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
@@ -47,7 +47,7 @@ public class DBLoader {
         MYSQL;
     }
 
-    public Ebean ebeanServer = null;
+    public EbeanConnection ebeanServer = null;
     public Connection mysql = null;
 
     private PvpTitles pvpTitles = null;
@@ -99,7 +99,7 @@ public class DBLoader {
      * Método para iniciar la bd con ebean
      */
     private void initializeDatabase() {
-        ebeanServer = new Ebean(this.pvpTitles) {
+        ebeanServer = new EbeanConnection(this.pvpTitles) {
             @Override
             protected java.util.List<Class<?>> getDatabaseClasses() {
                 List<Class<?>> list = new ArrayList<>();

@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.RetroCP;
 
-import com.alternacraft.pvptitles.Backend.Ebean;
+import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
@@ -53,9 +53,9 @@ public class RetroDMEbean {
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private PvpTitles pt = null;
-    private Ebean ebeanServer = null;
+    private EbeanConnection ebeanServer = null;
 
-    public RetroDMEbean(PvpTitles pt, Ebean ebeanServer) {
+    public RetroDMEbean(PvpTitles pt, EbeanConnection ebeanServer) {
         this.pt = pt;
         this.ebeanServer = ebeanServer;
     }

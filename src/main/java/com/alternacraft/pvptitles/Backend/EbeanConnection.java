@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class Ebean {
+public abstract class EbeanConnection {
     private JavaPlugin javaPlugin;
     private ClassLoader classLoader;
     private Level loggerLevel;
@@ -49,7 +49,7 @@ public abstract class Ebean {
      * 
      * @param javaPlugin Plugin instancing this database
      */
-    public Ebean(JavaPlugin javaPlugin) {
+    public EbeanConnection(JavaPlugin javaPlugin) {
         //Store the JavaPlugin
         this.javaPlugin = javaPlugin;
 

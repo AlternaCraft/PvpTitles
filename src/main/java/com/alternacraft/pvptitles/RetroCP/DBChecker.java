@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.RetroCP;
 
-import com.alternacraft.pvptitles.Backend.Ebean;
+import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
@@ -61,7 +61,7 @@ public class DBChecker {
 
     @SuppressWarnings("UnusedAssignment")
     public boolean checkEbeanDB() {
-        Ebean ebeanserver = plugin.getManager().dbh.ebeanServer;
+        EbeanConnection ebeanserver = plugin.getManager().dbh.ebeanServer;
         RetroDMEbean rdm = new RetroDMEbean(plugin, ebeanserver);
 
         int status = EBEAN_OLD_VERSION;
