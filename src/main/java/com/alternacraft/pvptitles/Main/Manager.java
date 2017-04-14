@@ -26,11 +26,8 @@ import com.alternacraft.pvptitles.Files.RewardsFile;
 import com.alternacraft.pvptitles.Files.ServersFile;
 import com.alternacraft.pvptitles.Files.TemplatesFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
-import com.alternacraft.pvptitles.Main.Handlers.ConfigHandler;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
-import static com.alternacraft.pvptitles.Main.Handlers.DBHandler.tipo;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
+import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -68,8 +65,8 @@ public final class Manager {
     private static final Manager INSTANCE = new Manager();
 
     // Handlers
-    public ConfigHandler ch = null;
-    public DBHandler dbh = null;
+    public ConfigLoader ch = null;
+    public DBLoader dbh = null;
 
     // Timers
     private MovementManager movementManager = null;
@@ -134,7 +131,7 @@ public final class Manager {
     public boolean setup(PvpTitles plugin) {
         this.pvpTitles = plugin;
 
-        this.ch = new ConfigHandler(plugin);
+        this.ch = new ConfigLoader(plugin);
         this.ch.loadConfig(params);
 
         this.lbm = new LeaderBoardManager(plugin);
@@ -144,7 +141,7 @@ public final class Manager {
         this.movementManager = new MovementManager(plugin);
         this.movementManager.updateTimeAFK();
 
-        this.dbh = new DBHandler(plugin, this.ch.getConfig());
+        this.dbh = new DBLoader(plugin, this.ch.getConfig());
         this.dbh.selectDB();
 
         // RCP
@@ -158,7 +155,7 @@ public final class Manager {
         this.loadRewards();
         this.loadTemplates();
 
-        if (tipo == DBHandler.DBTYPE.MYSQL) {
+        if (tipo == DBLoader.DBTYPE.MYSQL) {
             this.loadServers();
         }
 
@@ -198,7 +195,7 @@ public final class Manager {
         try {
             carteles = pvpTitles.getManager().dbh.getDm().buscaBoards();
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         lbm.vaciar(); // Evito duplicados
@@ -213,7 +210,7 @@ public final class Manager {
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage());
+                    CustomLogger.logError(ex.getCustomMessage());
                 }
 
                 continue;
@@ -418,7 +415,7 @@ public final class Manager {
                     try {
                         actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                         return;
                     }
 
@@ -426,7 +423,7 @@ public final class Manager {
                     try {
                         savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                         return;
                     }
 
@@ -440,7 +437,7 @@ public final class Manager {
                             try {
                                 dbh.getDm().savePlayedTime(timedPlayer);
                             } catch (DBException ex) {
-                                LoggerManager.logError(ex.getCustomMessage());
+                                CustomLogger.logError(ex.getCustomMessage());
                                 continue;
                             }
 
@@ -454,7 +451,7 @@ public final class Manager {
                             }
                         }
                     } catch (RanksException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
                 }
             }
@@ -535,7 +532,7 @@ public final class Manager {
      *
      * @return ConfigHandler
      */
-    public ConfigHandler getCh() {
+    public ConfigLoader getCh() {
         return ch;
     }
 
@@ -544,7 +541,7 @@ public final class Manager {
      *
      * @return DBHandler
      */
-    public DBHandler getDbh() {
+    public DBLoader getDbh() {
         return dbh;
     }
     // </editor-fold>

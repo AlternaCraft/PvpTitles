@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Main.Handlers;
+package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
@@ -25,8 +25,7 @@ import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
-import com.alternacraft.pvptitles.Main.PvpTitles;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.SignTable;
@@ -38,7 +37,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class DBHandler {
+public class DBLoader {
 
     private DatabaseManager dm = null;
     public static DBTYPE tipo = null;
@@ -54,7 +53,7 @@ public class DBHandler {
     private PvpTitles pvpTitles = null;
     private FileConfiguration config = null;
 
-    public DBHandler(PvpTitles pvpTitles, FileConfiguration config) {
+    public DBLoader(PvpTitles pvpTitles, FileConfiguration config) {
         this.pvpTitles = pvpTitles;
         this.config = config;
     }

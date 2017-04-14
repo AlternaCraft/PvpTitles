@@ -22,7 +22,7 @@ import com.alternacraft.pvptitles.Commands.FameCommand;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import static com.alternacraft.pvptitles.Tests.TestBase.t;
 import java.util.UUID;
@@ -119,7 +119,7 @@ public class FameCommandTest extends TestBase {
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(mockOPlayer);
 
         // Database
-        DBHandler mockDBHandler = mock(DBHandler.class);
+        DBLoader mockDBHandler = mock(DBLoader.class);
         mockManager.dbh = mockDBHandler;
 
         mockDM = mock(DatabaseManager.class);

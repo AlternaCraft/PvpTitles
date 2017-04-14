@@ -19,12 +19,11 @@ package com.alternacraft.pvptitles.Hook;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import be.maximvdw.placeholderapi.PlaceholderReplacer;
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
-import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
+import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import org.bukkit.ChatColor;
@@ -40,7 +39,7 @@ public class MVdWPlaceholderHook {
 
     public void setup() {
         if (plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            MessageManager.showMessage(ChatColor.YELLOW + "MVdWPlaceholderAPI " + ChatColor.AQUA + "integrated correctly.");
+            CustomLogger.showMessage(ChatColor.YELLOW + "MVdWPlaceholderAPI " + ChatColor.AQUA + "integrated correctly.");
 
             PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_valid_rank",
                     new PlaceholderReplacer() {
@@ -52,21 +51,21 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
                     } catch (RanksException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     if (!canDisplayRank(player, rank)) {
@@ -87,21 +86,21 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
                     } catch (RanksException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     return rank;
@@ -118,7 +117,7 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        LoggerManager.logError(ex.getCustomMessage());
+                        CustomLogger.logError(ex.getCustomMessage());
                     }
 
                     return String.valueOf(fame);

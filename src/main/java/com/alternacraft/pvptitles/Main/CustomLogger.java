@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Main.Managers;
+package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.LOGGER;
 import static com.alternacraft.pvptitles.Main.PvpTitles.debugMode;
 import java.util.logging.Level;
 
-public class LoggerManager {
+public class CustomLogger {
 
     private static final String MYSQL_CRAP_REGEX = "com.*: ";
 
@@ -51,6 +51,12 @@ public class LoggerManager {
     
     public static void logError(String message, Exception ex) {
         PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
+    }
+    
+    /* Custom message */
+    public static void showMessage(String msg) {
+        PvpTitles.getInstance().getServer().getConsoleSender().sendMessage(
+                PvpTitles.getPluginName() + msg);
     }
     
 }

@@ -17,7 +17,7 @@
 package com.alternacraft.pvptitles.Tests;
 
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-@PrepareForTest({PvpTitles.class, Manager.class, MessageManager.class})
+@PrepareForTest({PvpTitles.class, Manager.class, CustomLogger.class})
 abstract class TestBase {
 
     protected final String PLUGINDATAFOLDER = "target/test-stuff";
@@ -99,7 +99,7 @@ abstract class TestBase {
         }).when(mockLogger).log(any(Level.class), anyString(), any(Exception.class));
 
         // Message manager
-        PowerMockito.mockStatic(MessageManager.class);
+        PowerMockito.mockStatic(CustomLogger.class);
         
         this.somethingElse();
     }

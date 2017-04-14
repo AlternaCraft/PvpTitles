@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
@@ -54,7 +54,7 @@ public class DBCommand implements CommandExecutor {
         switch (args[0]) {
             case "export":
                 if (args.length > 1) {
-                    filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".sql" : ".json");
+                    filename = args[1] + ((DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".sql" : ".json");
                 } else {
                     filename = pvpTitles.getManager().dbh.getDm().getDefaultFExport();
                 }
@@ -63,7 +63,7 @@ public class DBCommand implements CommandExecutor {
                 break;
             case "import":
                 if (args.length > 1) {
-                    filename = args[1] + ((DBHandler.tipo == DBHandler.DBTYPE.EBEAN) ? ".json" : ".sql");
+                    filename = args[1] + ((DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".json" : ".sql");
                 } else {
                     filename = pvpTitles.getManager().dbh.getDm().getDefaultFImport();
                 }

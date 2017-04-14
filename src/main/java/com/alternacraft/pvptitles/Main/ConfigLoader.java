@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Main.Handlers;
+package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler.DBTYPE;
+import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.Manager.messages;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.FileConfig;
 import com.alternacraft.pvptitles.Misc.StrUtils;
@@ -30,12 +29,12 @@ import java.util.List;
 import java.util.ListIterator;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class ConfigHandler {
+public class ConfigLoader {
     // Configuracion del config principal
     private FileConfig customConfig = null;
     private PvpTitles pvpTitles = null;
     
-    public ConfigHandler(PvpTitles pvpTitles) {
+    public ConfigLoader(PvpTitles pvpTitles) {
         this.pvpTitles = pvpTitles;        
     }
     
@@ -97,7 +96,7 @@ public class ConfigHandler {
 
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
         if (params.isPvpTitles_Bridge()) {
-            DBHandler.tipo = DBTYPE.MYSQL;
+            DBLoader.tipo = DBTYPE.MYSQL;
 
             params.setHost(config.getString("Mysql.host"));
             params.setPort((short) config.getInt("Mysql.port"));
@@ -105,7 +104,7 @@ public class ConfigHandler {
             params.setUser(config.getString("Mysql.user"));
             params.setPass(config.getString("Mysql.pass"));
         } else {
-            DBHandler.tipo = DBTYPE.EBEAN;
+            DBLoader.tipo = DBTYPE.EBEAN;
         }
         params.setMultiS((short) config.getInt("MultiS"));
         params.setNameS(config.getString("NameS"));
@@ -153,9 +152,9 @@ public class ConfigHandler {
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
         if (configList.size() != requFame.size()) {
-            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            LoggerManager.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
         }
     }    
 

@@ -16,12 +16,11 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
-import static com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag.canDisplayRank;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
+import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
@@ -36,7 +35,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
         super(plugin, "pvptitles");
         this.plugin = plugin;
 
-        MessageManager.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
+        CustomLogger.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
     }
 
     @Override
@@ -49,14 +48,14 @@ public class PlaceholderHook extends EZPlaceholderHook {
         try {
             fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         long seconds = 0;
         try {
             seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
@@ -65,7 +64,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
         try {
             rank = Ranks.getRank(fame, seconds);
         } catch (RanksException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         if (id.equals("rank")) {

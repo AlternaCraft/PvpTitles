@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Files;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
@@ -174,7 +174,7 @@ public class TemplatesFile {
                 try {
                     f.create(file.getContent());
                 } catch (IOException ex) {
-                    LoggerManager.logError("Template " + file.getPath() + " couldn't be created");
+                    CustomLogger.logError("Template " + file.getPath() + " couldn't be created");
                 }
             }
 

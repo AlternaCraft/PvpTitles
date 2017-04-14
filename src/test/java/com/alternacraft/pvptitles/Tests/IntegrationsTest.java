@@ -23,7 +23,7 @@ import com.alternacraft.pvptitles.Hook.HolographicHook;
 import com.alternacraft.pvptitles.Hook.MVdWPlaceholderHook;
 import com.alternacraft.pvptitles.Hook.SBSHook;
 import com.alternacraft.pvptitles.Hook.VaultHook;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -59,7 +59,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({HologramsFile.class, MessageManager.class, HologramsAPI.class,
+@PrepareForTest({HologramsFile.class, CustomLogger.class, HologramsAPI.class,
     PlaceholderAPI.class, JavaPlugin.class})
 public class IntegrationsTest extends TestBase {
 
@@ -256,7 +256,7 @@ public class IntegrationsTest extends TestBase {
 
     @Override
     void somethingElse() {
-        PowerMockito.mockStatic(MessageManager.class);
+        PowerMockito.mockStatic(CustomLogger.class);
 
         // The code
         params = mock(ConfigDataStore.class);

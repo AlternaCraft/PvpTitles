@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
-import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Updater;
 import com.alternacraft.pvptitles.Misc.Updater.UpdateResult;

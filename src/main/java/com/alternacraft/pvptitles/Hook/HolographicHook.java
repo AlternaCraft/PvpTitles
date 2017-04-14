@@ -16,9 +16,9 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Files.HologramsFile;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -63,8 +63,8 @@ public class HolographicHook {
         ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
         
         if (ISHDENABLED) {
-            MessageManager.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
-            MessageManager.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
+            CustomLogger.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
+            CustomLogger.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
                     + " scoreboards per holograms " + ChatColor.AQUA + "loaded correctly."
             );
             

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Events.Handlers;
+package com.alternacraft.pvptitles.Listeners;
 
 import com.alternacraft.pvptitles.Events.BoardEvent;
 import com.alternacraft.pvptitles.Files.LangsFile;

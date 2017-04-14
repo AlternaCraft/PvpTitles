@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,15 +36,17 @@ public class Timer {
         return this.timeAtStart.get(id);
     }
 
-    public void recordValue(String id) {
-        String cid = id + " (" + DBHandler.tipo + ")";
+    public long recordValue(String id) {
+        String cid = id + " (" + DBLoader.tipo + ")";
         long finalTime = System.currentTimeMillis();
 
         if (!this.register.containsKey(cid)) {
             this.register.put(cid, new ArrayList());
         }
-
-        this.register.get(cid).add((finalTime - this.timeAtStart.get(id)));
+        
+        long elapsedtime = finalTime - this.timeAtStart.get(id);
+        this.register.get(cid).add(elapsedtime);
+        return elapsedtime;
     }
     
     public void saveToLog(String filename) {
@@ -64,6 +66,6 @@ public class Timer {
             pl.addMessage(key + " - " + total);
         }
         
-        pl.export(false);
+        pl.export(true);
     }
 }

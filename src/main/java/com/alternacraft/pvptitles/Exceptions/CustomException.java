@@ -102,7 +102,7 @@ public abstract class CustomException extends Exception {
                         .append(": ").append(v).toString();
             }
         } else if (this.custom_error != null) {
-            extradata = "\nMore information: " + this.custom_error;
+            extradata = "\n\nMore information: " + this.custom_error;
         }
 
         return extradata;

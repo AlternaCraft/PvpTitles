@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Exceptions;
 
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +95,7 @@ public class DBException extends CustomException {
     // <editor-fold defaultstate="collapsed" desc="ERROR ELEMENTS">
     @Override
     protected String getHeader() {
-        return new StringBuilder("(" + DBHandler.tipo.toString() + " ERROR) ")
+        return new StringBuilder("(" + DBLoader.tipo.toString() + " ERROR) ")
                 .append("On ").append(getFilteredString(this.type.toString()))
                 .append(" gets \"").append(this.getMessage()).append("\"").toString();
     }
@@ -125,10 +125,15 @@ public class DBException extends CustomException {
             Object v = entry.getValue();
 
             if (k.contains("MySQL") && k.contains("connection")) {
-                if (((String)v).equals("false")) {
+                if (((String) v).equals("false")) {
                     possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
                 }
             }
+        }
+        
+        if (this.data.isEmpty() && (this.custom_error.contains("connection closed") 
+                || this.custom_error.contains("Communications link failure"))) {
+            possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
         }
 
         return (possible_errors.isEmpty()) ? "\n- " + POSSIBLE_ERRORS.NOT_FOUND.getText() : possible_errors;

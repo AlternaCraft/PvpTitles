@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class PluginLog {
         // Creating log folder if not exists
         if (!UtilsFile.exists(path)) {
             if (!UtilsFile.createDirs(path)) {
-                LoggerManager.logError("Couldn't create Logs folder");
+                CustomLogger.logError("Couldn't create Logs folder");
                 return;
             }
         }

@@ -18,8 +18,8 @@ package com.alternacraft.pvptitles.RetroCP;
 
 import com.alternacraft.pvptitles.Backend.Ebean;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
-import static com.alternacraft.pvptitles.Main.Handlers.DBHandler.tipo;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
+import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;

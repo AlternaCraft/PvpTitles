@@ -17,7 +17,7 @@
 package com.alternacraft.pvptitles.RetroCP;
 
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import static com.alternacraft.pvptitles.RetroCP.DBChecker.MYSQL_TIME_CREATED;
@@ -120,7 +120,7 @@ public class RetroDMMysql {
                         + ");\n";
             }
         } catch (SQLException ex) {
-            LoggerManager.logError(ex.getMessage(), ex);
+            CustomLogger.logError(ex.getMessage(), ex);
         }
 
         UtilsFile.writeFile(ruta, sql);

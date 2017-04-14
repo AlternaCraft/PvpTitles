@@ -20,7 +20,7 @@ import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
 import com.alternacraft.pvptitles.Libraries.Metrics;
 import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
@@ -164,7 +164,7 @@ public class MetricsManager {
                 metrics.start();
             }
         } catch (IOException e) {
-            LoggerManager.logError(e.getMessage());
+            CustomLogger.logError(e.getMessage());
         }
     }
 

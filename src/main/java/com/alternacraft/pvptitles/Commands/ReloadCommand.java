@@ -17,14 +17,14 @@
 package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.HEIGHT_PER_ROW;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler.DBTYPE;
-import static com.alternacraft.pvptitles.Main.Handlers.DBHandler.tipo;
+import com.alternacraft.pvptitles.Main.DBLoader;
+import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
+import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
@@ -53,7 +53,7 @@ public class ReloadCommand implements CommandExecutor {
             return false;
         }
 
-        if (DBHandler.tipo.equals(DBHandler.DBTYPE.MYSQL)) {
+        if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)) {
             try {
                 MySQLConnection.closeConnection();
             } catch (SQLException ex) {

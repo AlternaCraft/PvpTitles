@@ -16,11 +16,10 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.github.games647.scoreboardstats.ScoreboardStats;
@@ -49,7 +48,7 @@ public class SBSHook {
                 replaceManager = sbs.getReplaceManager();
                 registerReplacerInterface(replaceManager);
 
-                MessageManager.showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
+                CustomLogger.showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
             }
         }
     }
@@ -62,14 +61,14 @@ public class SBSHook {
                 try {
                     fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage());
+                    CustomLogger.logError(ex.getCustomMessage());
                 }
 
                 long seconds = 0;
                 try {
                     seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage());
+                    CustomLogger.logError(ex.getCustomMessage());
                 }
 
                 int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
@@ -87,7 +86,7 @@ public class SBSHook {
                         try {
                             rank = Ranks.getRank(fame, seconds);
                         } catch (RanksException ex) {
-                            LoggerManager.logError(ex.getCustomMessage());
+                            CustomLogger.logError(ex.getCustomMessage());
                         }
                         replaceEvent.setScoreOrText(rank);
                         break;

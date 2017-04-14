@@ -21,7 +21,7 @@ import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.UtilsFile;

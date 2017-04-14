@@ -16,7 +16,8 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Main.Managers.MessageManager;
+
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -436,7 +437,7 @@ public class Updater {
             fout = new FileOutputStream(new File(this.updateFolder, file.getName()));
 
             if (this.announce) {
-                MessageManager.showMessage(ChatColor.AQUA + "About to download a new update: "
+                showMessage(ChatColor.AQUA + "About to download a new update: "
                         + ChatColor.GREEN + this.versionName);
             }
 
@@ -455,7 +456,7 @@ public class Updater {
                 }
                 before = percent;
                 if (this.announce && ((percent % 10) == 0)) {
-                    MessageManager.showMessage("Downloading update: "
+                    showMessage("Downloading update: "
                             + percent + "% of " + fileLength + " bytes.");
                 }
             }

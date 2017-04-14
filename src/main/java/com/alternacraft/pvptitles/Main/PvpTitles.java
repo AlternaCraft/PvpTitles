@@ -25,11 +25,11 @@ import com.alternacraft.pvptitles.Commands.LadderCommand;
 import com.alternacraft.pvptitles.Commands.PurgeCommand;
 import com.alternacraft.pvptitles.Commands.RankCommand;
 import com.alternacraft.pvptitles.Commands.ReloadCommand;
-import com.alternacraft.pvptitles.Events.Handlers.HandleFame;
-import com.alternacraft.pvptitles.Events.Handlers.HandleInventory;
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerTag;
-import com.alternacraft.pvptitles.Events.Handlers.HandleSign;
+import com.alternacraft.pvptitles.Listeners.HandleFame;
+import com.alternacraft.pvptitles.Listeners.HandleInventory;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
+import com.alternacraft.pvptitles.Listeners.HandleSign;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hook.HolographicHook;
@@ -37,10 +37,7 @@ import com.alternacraft.pvptitles.Hook.MVdWPlaceholderHook;
 import com.alternacraft.pvptitles.Hook.PlaceholderHook;
 import com.alternacraft.pvptitles.Hook.SBSHook;
 import com.alternacraft.pvptitles.Hook.VaultHook;
-import com.alternacraft.pvptitles.Main.Handlers.DBHandler;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import static com.alternacraft.pvptitles.Main.Managers.LoggerManager.logMessage;
-import com.alternacraft.pvptitles.Managers.MetricsManager;
+import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
@@ -126,9 +123,11 @@ public class PvpTitles extends JavaPlugin {
         this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                PERFORMANCE.start("Metrics event");
-                new MetricsManager().sendData(manager.getPvpTitles());
-                PERFORMANCE.recordValue("Metrics event");
+                /* No operative...
+                    PERFORMANCE.start("Metrics event");
+                    new MetricsManager().sendData(manager.getPvpTitles());
+                    PERFORMANCE.recordValue("Metrics event");
+                */
 
                 PERFORMANCE.start("Updater event");
                 new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
@@ -165,7 +164,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().savePlayedTime(next);
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage());
+                    CustomLogger.logError(ex.getCustomMessage());
                 }
             }
 
@@ -177,7 +176,7 @@ public class PvpTitles extends JavaPlugin {
             // Inventories
             Inventories.closeInventories();
 
-            if (DBHandler.tipo.equals(DBHandler.DBTYPE.MYSQL)) {
+            if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)) {
                 try {
                     MySQLConnection.closeConnection();
                 } catch (SQLException ex) {
@@ -197,7 +196,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().playerConnection(pl);
                 } catch (DBException ex) {
-                    LoggerManager.logError(ex.getCustomMessage());
+                    CustomLogger.logError(ex.getCustomMessage());
                     continue;
                 }
             }

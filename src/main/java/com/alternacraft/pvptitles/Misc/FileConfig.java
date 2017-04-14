@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import com.alternacraft.pvptitles.Main.CustomLogger;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.BufferedReader;
 import java.io.File;
@@ -120,7 +120,7 @@ public class FileConfig {
                 fw.write(nline);
             }
         } catch (IOException ex) {
-            LoggerManager.logDebugInfo(Level.SEVERE, null, ex);
+            CustomLogger.logDebugInfo(Level.SEVERE, null, ex);
         }
 
         if (outFile.exists()) {

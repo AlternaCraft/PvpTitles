@@ -14,16 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Events.Handlers;
+package com.alternacraft.pvptitles.Listeners;
 
 import com.alternacraft.pvptitles.Events.FameEvent;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.AntiFarmManager;
 import com.alternacraft.pvptitles.Managers.CleanTaskManager;
@@ -56,7 +55,7 @@ public class HandlePlayerFame implements Listener {
     private static final int TICKS = 20;
 
     // To get a better performance
-    public static final Map<UUID, Date> ALREADY_LOGGED = new HashMap();
+    public static final Map<UUID, Long> ALREADY_LOGGED = new HashMap();
     public static final Map<UUID, List<String>> ALREADY_VISITED = new HashMap();
 
     // Variable temporal
@@ -90,17 +89,14 @@ public class HandlePlayerFame implements Listener {
         Player player = event.getPlayer();
 
         if (shouldDoPlayerConnection(player, false)) {
-            PERFORMANCE.start("Player connection");
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage());
+                CustomLogger.logError(ex.getCustomMessage());
                 return;
             }
-            PERFORMANCE.recordValue("Player connection");
         }
 
-        PERFORMANCE.start("Player AFK enabling");
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getManager().getTimerManager().hasPlayer(player)
                 ? this.pvpTitles.getManager().getTimerManager().getPlayer(player)
@@ -112,11 +108,8 @@ public class HandlePlayerFame implements Listener {
         }
 
         this.pvpTitles.getManager().getMovementManager().addLastMovement(player);
-        PERFORMANCE.recordValue("Player AFK enabling");
 
-        PERFORMANCE.start("Player holograms");
         HandlePlayerTag.holoPlayerLogin(player);
-        PERFORMANCE.recordValue("Player holograms");
     }
 
     @EventHandler
@@ -125,13 +118,11 @@ public class HandlePlayerFame implements Listener {
 
         if (this.pvpTitles.getManager().params.isMw_enabled() 
                 && shouldDoPlayerConnection(player, true)) {
-            PERFORMANCE.start("Player changing world");
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage());
+                CustomLogger.logError(ex.getCustomMessage());
             }
-            PERFORMANCE.recordValue("Player changing world");
         }
     }
 
@@ -145,24 +136,20 @@ public class HandlePlayerFame implements Listener {
         Player player = event.getPlayer();
 
         if (shouldDoPlayerConnection(player, false)) {
-            PERFORMANCE.start("Player leaving");
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage());
+                CustomLogger.logError(ex.getCustomMessage());
                 return;
             }
-            PERFORMANCE.recordValue("Player leaving");
         }
 
         HandlePlayerFame.KILLSTREAK.put(player.getUniqueId().toString(), 0);
 
-        PERFORMANCE.start("Player AFK disabling");
         // Time
         TimedPlayer tPlayer = this.pvpTitles.getManager().getTimerManager().getPlayer(player);
         tPlayer.stopSession();
         this.pvpTitles.getManager().getMovementManager().removeLastMovement(player);
-        PERFORMANCE.recordValue("Player AFK disabling");
     }
 
     @EventHandler
@@ -194,7 +181,6 @@ public class HandlePlayerFame implements Listener {
             }
         }
 
-        PERFORMANCE.start("Player killing");
         if (death.getEntity().getKiller() instanceof Player) {
             int kills = 0;
 
@@ -217,7 +203,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
             } catch (DBException ex) {
-                LoggerManager.logError(ex.getCustomMessage());
+                CustomLogger.logError(ex.getCustomMessage());
                 return; // Le bajaria los puntos posteriormente
             }
 
@@ -243,7 +229,6 @@ public class HandlePlayerFame implements Listener {
             this.calculateRank(death.getEntity().getName(), killer, fame, kills);
             HandlePlayerFame.KILLSTREAK.put(killeruuid, kills);
         }
-        PERFORMANCE.recordValue("Player killing");
     }
 
     /**
@@ -322,7 +307,7 @@ public class HandlePlayerFame implements Listener {
         try {
             this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
             return;
         }
 
@@ -335,7 +320,7 @@ public class HandlePlayerFame implements Listener {
         try {
             seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
             return;
         }
 
@@ -348,7 +333,7 @@ public class HandlePlayerFame implements Listener {
                         .replace("%newRank%", newRank));
             }
         } catch (RanksException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         FameEvent event = new FameEvent(player, fameAntes, fameRec);
@@ -387,12 +372,12 @@ public class HandlePlayerFame implements Listener {
         boolean s = false;
 
         if (ALREADY_LOGGED.containsKey(player.getUniqueId())) {
-            Date before = ALREADY_LOGGED.get(player.getUniqueId());
+            Date before = new Date(ALREADY_LOGGED.get(player.getUniqueId()));
             int msdaytime = 1000 * 60 * 60 * 12; // Twelve hours
             Date minimum = new Date(before.getTime() + msdaytime);
 
             if (new Date().after(minimum)) {
-                ALREADY_LOGGED.put(player.getUniqueId(), new Date());
+                ALREADY_LOGGED.put(player.getUniqueId(), new Date().getTime());
                 s = true;
             }
             else if (changeworld) {
@@ -403,7 +388,7 @@ public class HandlePlayerFame implements Listener {
                 }
             }
         } else {
-            ALREADY_LOGGED.put(player.getUniqueId(), new Date());
+            ALREADY_LOGGED.put(player.getUniqueId(), new Date().getTime());
             final String world = player.getWorld().getName();
             ALREADY_VISITED.put(player.getUniqueId(), new ArrayList() {
                 {

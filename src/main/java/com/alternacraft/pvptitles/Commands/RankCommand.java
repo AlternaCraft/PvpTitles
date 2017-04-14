@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Events.Handlers.HandlePlayerFame;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
@@ -32,7 +32,7 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.VETO_TAG;
 import com.alternacraft.pvptitles.Main.Manager;
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
@@ -84,7 +84,7 @@ public class RankCommand implements CommandExecutor {
         try {
             fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         int racha = HandlePlayerFame.getKillStreakFrom(uuid);
@@ -96,14 +96,14 @@ public class RankCommand implements CommandExecutor {
                     .getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId()))
                     .getTotalOnline();
         } catch (DBException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         String rank = "";
         try {
             rank = Ranks.getRank(fame, seconds);
         } catch (RanksException ex) {
-            LoggerManager.logError(ex.getCustomMessage());
+            CustomLogger.logError(ex.getCustomMessage());
         }
 
         int rankup = Ranks.fameToRankUp();

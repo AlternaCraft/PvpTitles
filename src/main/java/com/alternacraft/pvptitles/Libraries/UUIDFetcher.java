@@ -21,7 +21,7 @@
  */
 package com.alternacraft.pvptitles.Libraries;
 
-import com.alternacraft.pvptitles.Main.Managers.LoggerManager;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.google.common.collect.ImmutableList;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -76,7 +76,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
                     Thread.sleep(100L);
                 }
             } catch (Exception ex) {
-                LoggerManager.logError(ex.getMessage());
+                CustomLogger.logError(ex.getMessage());
             }
         }
         return uuidMap;

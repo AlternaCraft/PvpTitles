@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import static com.alternacraft.pvptitles.Main.Managers.MessageManager.showMessage;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -46,11 +46,11 @@ public class VaultHook {
         ECONOMY_ENABLED = this.setupEconomy();        
 
         if (PERMISSIONS_ENABLED)
-            showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
+            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
         if (CHAT_ENABLED)
-            showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
+            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
         if (ECONOMY_ENABLED)
-            showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
+            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
     }
     
     private boolean setupPermissions() {
