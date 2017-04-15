@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 AlternaCraft
+ * Copyright (C) 2017 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,8 @@ public class ConfigLoader {
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
         if (params.isPvpTitles_Bridge()) {
             DBLoader.tipo = DBTYPE.MYSQL;
-
+            
+            params.setUse_ssl(config.getBoolean("Mysql.enableSSL"));
             params.setHost(config.getString("Mysql.host"));
             params.setPort((short) config.getInt("Mysql.port"));
             params.setDb(config.getString("Mysql.database"));

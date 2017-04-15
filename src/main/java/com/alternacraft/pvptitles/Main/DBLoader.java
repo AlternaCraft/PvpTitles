@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 AlternaCraft
+ * Copyright (C) 2017 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,8 @@ public class DBLoader {
         ConfigDataStore params = pvpTitles.getManager().params;
 
         MySQLConnection.connectDB(params.getHost() + ":" + params.getPort()
-                + "/" + params.getDb(), params.getUser(), params.getPass(), reconnect);
+                + "/" + params.getDb(), params.getUser(), params.getPass(), 
+                params.isUse_ssl(), reconnect);
 
         // No lo cambio porque sigue usando mysql (reconnect)
         if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION && !reconnect) {

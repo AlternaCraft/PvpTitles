@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 AlternaCraft
+ * Copyright (C) 2017 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ public class ConfigDataStore {
 
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
+    private boolean use_ssl = false;
     // Datos de la conexion a MySQL
     private String host = "localhost";
     private short port = 3306;
@@ -122,6 +123,10 @@ public class ConfigDataStore {
 
     public void setPvpTitles_Bridge(boolean PvpTitles_Bridge) {
         this.PvpTitles_Bridge = PvpTitles_Bridge;
+    }
+
+    public void setUse_ssl(boolean use_ssl) {
+        this.use_ssl = use_ssl;
     }
 
     public void setHost(String host) {
@@ -258,6 +263,10 @@ public class ConfigDataStore {
 
     public boolean isPvpTitles_Bridge() {
         return PvpTitles_Bridge;
+    }
+
+    public boolean isUse_ssl() {
+        return use_ssl;
     }
 
     public String getHost() {

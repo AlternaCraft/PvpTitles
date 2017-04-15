@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 AlternaCraft
+ * Copyright (C) 2017 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ public class MySQLConnection {
      * constante DRIVER para definir el conector jdbc
      */
     private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String SUPRESS_WARNING = "?verifyServerCertificate=false&useSSL=";
 
     private static Connection conexion;
 
@@ -55,12 +56,15 @@ public class MySQLConnection {
      * @param ruta Host + puerto + db
      * @param user String con el usuario
      * @param pass String con la clave
+     * @param ssl Boolean sobre el uso de SSL
      * @param reconnect Sin mostrar mensajes
      */
-    public static void connectDB(String ruta, String user, String pass, boolean reconnect) {
+    public static void connectDB(String ruta, String user, String pass, boolean ssl, 
+            boolean reconnect) {
         try {
             Class.forName(DRIVER);
-            conexion = DriverManager.getConnection("jdbc:mysql://" + ruta, user, pass);
+            conexion = DriverManager.getConnection("jdbc:mysql://" + ruta 
+                    + SUPRESS_WARNING + ssl, user, pass);
             estado_conexion = Estado.CONECTADO;
         } catch (ClassNotFoundException ex) {
             if (!reconnect) CustomLogger.logError("MySQL library not found");

@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.5.8
+Version: 2.6.7
 ################
 
 ############################################################
@@ -38,6 +38,7 @@ ErrorFormat: 2
 # True to hook {connect} into the existing server MySQL.
 Mysql:
     enable: false    
+    enableSSL: false
     
     host: localhost
     port: 3306
