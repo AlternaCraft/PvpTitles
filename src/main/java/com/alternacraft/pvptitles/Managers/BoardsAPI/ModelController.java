@@ -24,8 +24,6 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ModelController {
 

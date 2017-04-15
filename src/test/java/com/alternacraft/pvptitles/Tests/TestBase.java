@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Tests;
 
-import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.util.Arrays;

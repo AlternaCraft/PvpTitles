@@ -16,10 +16,10 @@
  */
 package com.alternacraft.pvptitles.Hook;
 
-import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
-import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
+import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.Ranks;

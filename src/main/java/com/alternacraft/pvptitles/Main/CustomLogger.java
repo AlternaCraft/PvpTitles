@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.LOGGER;
 import static com.alternacraft.pvptitles.Main.PvpTitles.debugMode;
 import java.util.logging.Level;

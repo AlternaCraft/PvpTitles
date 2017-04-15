@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
-import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
@@ -31,8 +30,9 @@ import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.VETO_TAG;
-import com.alternacraft.pvptitles.Main.Manager;
+import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
