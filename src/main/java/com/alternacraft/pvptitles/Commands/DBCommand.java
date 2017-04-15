@@ -17,13 +17,16 @@
 package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PluginLog;
+import com.alternacraft.pvptitles.Misc.UtilsFile;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -58,8 +61,14 @@ public class DBCommand implements CommandExecutor {
                 } else {
                     filename = pvpTitles.getManager().dbh.getDm().getDefaultFExport();
                 }
-                dm.DBExport(filename);
-                sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Exported correctly");
+
+                try {
+                    dm.DBExport(filename);
+                    sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Exported correctly");
+                } catch (DBException ex) {
+                    CustomLogger.logError(ex.getCustomMessage());
+                }
+
                 break;
             case "import":
                 if (args.length > 1) {
@@ -67,24 +76,38 @@ public class DBCommand implements CommandExecutor {
                 } else {
                     filename = pvpTitles.getManager().dbh.getDm().getDefaultFImport();
                 }
-                if (dm.DBImport(filename)) {
-                    sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Imported correctly");
-                } else {
-                    sender.sendMessage(getPluginName() + ChatColor.RED + "File '"
+
+                try {
+                    if (dm.DBImport(filename)) {
+                        sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Imported correctly");
+                    }
+                    else {
+                        sender.sendMessage(getPluginName() + ChatColor.RED + "File '"
                             + filename + "' not found...");
-                }
+                    }                    
+                } catch (DBException ex) {
+                    CustomLogger.logError(ex.getCustomMessage());
+                }               
+
                 break;
             case "repair":
-                int changes = dm.repair();
+                int changes = 0;
 
-                if (changes > 0) {
-                    sender.sendMessage(getPluginName() + ChatColor.YELLOW +
-                            "Check out to the db_changes.txt file (Inside of " 
-                            + PluginLog.getLogsFolder() + ") to see the fixes");
+                try {
+                    changes = dm.repair();
+
+                    if (changes > 0) {
+                        sender.sendMessage(getPluginName() + ChatColor.YELLOW
+                                + "Check out to the db_changes.txt file (Inside of "
+                                + PluginLog.getLogsFolder() + ") to see the fixes");
+                    }
+
+                    sender.sendMessage(getPluginName() + LangsFile.DB_REPAIR_RESULT
+                            .getText(messages).replace("%cant%", String.valueOf(changes)));
+
+                } catch (DBException ex) {
+                    CustomLogger.logError(ex.getCustomMessage());
                 }
-                
-                sender.sendMessage(getPluginName() + LangsFile.DB_REPAIR_RESULT
-                        .getText(messages).replace("%cant%", String.valueOf(changes)));
 
                 break;
             default:

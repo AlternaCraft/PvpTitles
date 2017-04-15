@@ -23,6 +23,7 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
@@ -39,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.OptimisticLockException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -46,6 +48,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class DatabaseManagerEbean implements DatabaseManager {
 
@@ -65,16 +68,14 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     @Override
     public void playerConnection(Player player) throws DBException {
-        PlayerPT plClass = null;
-
         if (player == null) {
-            HashMap data = new HashMap();
-            data.put("Null player?", (player == null));
-            throw new DBException(DBException.PLAYER_CONNECTION_ERROR,
-                    DBException.DB_METHOD.PLAYER_CONNECTION);
+            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_CONNECTION);
         }
 
+        PlayerPT plClass = null;
         UUID playerUUID = player.getUniqueId();
+
+        PERFORMANCE.start("Player connection");
 
         plClass = ebeanServer.getDatabase().find(PlayerPT.class)
                 .select("playerUUID")
@@ -109,121 +110,121 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(plwClass);
             }
         }
+
+        PERFORMANCE.recordValue("Player connection");
     }
 
     /* TABLA PLAYERS */
     @Override
     public void savePlayerFame(UUID playerUUID, int fame, String w) throws DBException {
-        // Multiworld + mundo permitido
-        OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
-
-        PlayerPT plClass = null;
-
-        // Base
-        plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                .select("playerUUID")
-                .where()
-                .ieq("playerUUID", playerUUID.toString())
-                .findUnique();
-
-        if (plClass == null) {
-            plClass = new PlayerPT();
-
-            plClass.setPlayerUUID(playerUUID.toString());
-            plClass.setLastLogin(new Date());
-
-            ebeanServer.getDatabase().save(plClass);
+        if (playerUUID == null) {
+            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_SAVING);
         }
 
-        WorldPlayerPT plwClass = null;
+        try {
+            if (plugin.getManager().params.isMw_enabled()) {
+                // Multiworld + mundo permitido
+                OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
-        if (plugin.getManager().params.isMw_enabled()) {
-            if (w == null && !pl.isOnline()) {
-                HashMap<String, Object> data = new HashMap();
-                data.put("Player", pl.getName());
-                data.put("Player Online", pl.isOnline());
-                data.put("Method world", w);
-                data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
+                if (w == null && !pl.isOnline()) {
+                    HashMap<String, Object> data = new HashMap();
+                    data.put("Player", pl.getName());
+                    data.put("Player Online", pl.isOnline());
+                    data.put("Method world", w);
+                    data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
-                throw new DBException(DBException.MULTIWORLD_ERROR,
-                        DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
+                    throw new DBException(DBException.MULTIWORLD_ERROR,
+                            DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
+                }
+
+                String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
+
+                PERFORMANCE.start("Saving playerfame MW");
+                WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                        .select("playerUUID, world")
+                        .where()
+                        .ieq("playerUUID", playerUUID.toString())
+                        .ieq("world", world)
+                        .findUnique();
+                PERFORMANCE.recordValue("Saving playerfame MW");
+
+                if (plwClass == null) {
+                    plwClass = new WorldPlayerPT();
+
+                    plwClass.setPlayerUUID(playerUUID.toString());
+                    plwClass.setWorld(world);
+                }
+
+                plwClass.setPoints(fame);
+                ebeanServer.getDatabase().save(plwClass);
+            } else {
+                PERFORMANCE.start("Saving playerfame");
+                PlayerPT plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                        .select("playerUUID")
+                        .where()
+                        .ieq("playerUUID", playerUUID.toString())
+                        .findUnique();
+                PERFORMANCE.recordValue("Saving playerfame");
+                plClass.setPoints(fame);
+                ebeanServer.getDatabase().save(plClass);
             }
-
-            String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
-
-            plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
-                    .select("playerUUID, world")
-                    .where()
-                    .ieq("playerUUID", playerUUID.toString())
-                    .ieq("world", world)
-                    .findUnique();
-
-            if (plwClass == null) {
-                plwClass = new WorldPlayerPT();
-
-                plwClass.setPlayerUUID(playerUUID.toString());
-                plwClass.setWorld(world);
-            }
-
-            plwClass.setPoints(fame);
-            ebeanServer.getDatabase().save(plwClass);
-        } else {
-            // Base
-            plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                    .select("playerUUID")
-                    .where()
-                    .ieq("playerUUID", playerUUID.toString())
-                    .findUnique();
-
-            plClass.setPoints(fame);
-            ebeanServer.getDatabase().save(plClass);
+        } catch (NullPointerException | OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage());
         }
     }
 
     @Override
     public int loadPlayerFame(UUID playerUUID, String w) throws DBException {
-        int points = 0;
-
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
 
         if (pl == null) {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_LOADING);
         }
 
-        if (plugin.getManager().params.isMw_enabled()) {
-            if (w == null && !pl.isOnline()) {
-                HashMap<String, Object> data = new HashMap();
-                data.put("Player", pl.getName());
-                data.put("Player Online", pl.isOnline());
-                data.put("Method world", w);
-                data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
+        int points = 0;
 
-                throw new DBException(DBException.MULTIWORLD_ERROR,
-                        DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
+        try {
+            if (plugin.getManager().params.isMw_enabled()) {
+                if (w == null && !pl.isOnline()) {
+                    HashMap<String, Object> data = new HashMap();
+                    data.put("Player", pl.getName());
+                    data.put("Player Online", pl.isOnline());
+                    data.put("Method world", w);
+                    data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
+
+                    throw new DBException(DBException.MULTIWORLD_ERROR,
+                            DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
+                }
+
+                String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
+
+                PERFORMANCE.start("Loading playerfame MW");
+                WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                        .select("playerUUID, world, points")
+                        .where()
+                        .ieq("playerUUID", playerUUID.toString())
+                        .ieq("world", world)
+                        .findUnique();
+                PERFORMANCE.recordValue("Loading playerfame MW");
+
+                if (plwClass != null) {
+                    points = plwClass.getPoints();
+                }
+            } else {
+                PERFORMANCE.start("Loading playerfame");
+                PlayerPT plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                        .select("playerUUID, points")
+                        .where()
+                        .ieq("playerUUID", playerUUID.toString())
+                        .findUnique();
+                PERFORMANCE.recordValue("Loading playerfame");
+
+                if (plClass != null) {
+                    points = plClass.getPoints();
+                }
             }
-
-            String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
-
-            WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
-                    .select("playerUUID, world, points")
-                    .where()
-                    .ieq("playerUUID", playerUUID.toString())
-                    .ieq("world", world)
-                    .findUnique();
-
-            if (plwClass != null) {
-                points = plwClass.getPoints();
-            }
-        } else {
-            PlayerPT plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                    .select("playerUUID, points")
-                    .where()
-                    .ieq("playerUUID", playerUUID.toString())
-                    .findUnique();
-
-            if (plClass != null) {
-                points = plClass.getPoints();
-            }
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_LOADING, ex.getMessage());
         }
 
         return points;
@@ -231,47 +232,59 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public void savePlayedTime(TimedPlayer tPlayer) throws DBException {
+        if (tPlayer == null) {
+            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_SAVING);
+        }
+
         PlayerPT plClass = null;
 
-        if (tPlayer == null) {
-            HashMap<String, Object> data = new HashMap();
-            data.put("Null Player?", tPlayer == null);
+        try {
+            PERFORMANCE.start("Saving playedtime");
+            plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID")
+                    .where()
+                    .ieq("playerUUID", tPlayer.getUniqueId().toString())
+                    .findUnique();
+            PERFORMANCE.recordValue("Saving playedtime");
 
-            throw new DBException(DBException.PLAYER_TIME_ERROR,
-                    DBException.DB_METHOD.PLAYER_TIME_SAVING, data);
+            if (plClass == null) {
+                plClass = new PlayerPT();
+                plClass.setPlayerUUID(tPlayer.getUniqueId().toString());
+                plClass.setPlayedTime(tPlayer.getTotalOnline());
+                plClass.setLastLogin(new Date());
+            } else {
+                plClass.setPlayedTime(tPlayer.getTotalOnline() + plClass.getPlayedTime());
+            }
+
+            ebeanServer.getDatabase().save(plClass);
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage());
         }
-
-        plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                .select("playerUUID")
-                .where()
-                .ieq("playerUUID", tPlayer.getUniqueId().toString())
-                .findUnique();
-
-        if (plClass == null) {
-            plClass = new PlayerPT();
-            plClass.setPlayerUUID(tPlayer.getUniqueId().toString());
-            plClass.setPlayedTime(tPlayer.getTotalOnline());
-            plClass.setLastLogin(new Date());
-        } else {
-            plClass.setPlayedTime(tPlayer.getTotalOnline() + plClass.getPlayedTime());
-        }
-
-        ebeanServer.getDatabase().save(plClass);
     }
 
     @Override
     public long loadPlayedTime(UUID playerUUID) throws DBException {
+        if (playerUUID == null) {
+            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_LOADING);
+        }
+
         PlayerPT plClass = null;
         long time = 0;
 
-        plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                .select("playerUUID, playedTime")
-                .where()
-                .ieq("playerUUID", playerUUID.toString())
-                .findUnique();
+        try {
+            PERFORMANCE.start("Loading playedtime");
+            plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID, playedTime")
+                    .where()
+                    .ieq("playerUUID", playerUUID.toString())
+                    .findUnique();
+            PERFORMANCE.recordValue("Loading playedtime");
 
-        if (plClass != null) {
-            time = plClass.getPlayedTime();
+            if (plClass != null) {
+                time = plClass.getPlayedTime();
+            }
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage());
         }
 
         return time;
@@ -284,6 +297,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
         List<PlayerPT> allPlayers;
 
         ArrayList<PlayerFame> rankedPlayers = new ArrayList();
+
+        PERFORMANCE.start("TOP");
 
         try {
             if (plugin.getManager().params.isMw_enabled()) {
@@ -317,8 +332,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
                             .findUnique();
 
                     PlayerFame pf = new PlayerFame(allPlayersW.get(i).getPlayerUUID(),
-                            allPlayersW.get(i).getPoints(), time.getPlayedTime(),
-                            this.plugin);
+                            allPlayersW.get(i).getPoints(), time.getPlayedTime());
 
                     pf.setWorld(allPlayersW.get(i).getWorld());
                     rankedPlayers.add(pf);
@@ -332,14 +346,15 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                 for (int i = 0; i < allPlayers.size(); i++) {
                     PlayerFame pf = new PlayerFame(allPlayers.get(i).getPlayerUUID(),
-                            allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime(),
-                            this.plugin);
+                            allPlayers.get(i).getPoints(), allPlayers.get(i).getPlayedTime());
                     rankedPlayers.add(pf);
                 }
             }
         } catch (Exception ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage());
         }
+
+        PERFORMANCE.recordValue("TOP");
 
         return rankedPlayers;
     }
@@ -348,7 +363,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="BOARDS...">
     /* TABLA CARTELES */
     @Override
-    public void registraBoard(SignBoard sb) throws DBException {
+    public void saveBoard(SignBoard sb) throws DBException {
+        if (sb == null) {
+            throw new DBException("Board is null", DBException.DB_METHOD.BOARD_SAVING);
+        }
+
         try {
             SignPT st = new SignPT();
             st.setName(sb.getData().getNombre());
@@ -358,18 +377,24 @@ public class DatabaseManagerEbean implements DatabaseManager {
             st.setBlockface(sb.getData().getPrimitiveBlockface());
 
             ebeanServer.getDatabase().save(st);
-        } catch (Exception ex) {
+        } catch (OptimisticLockException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage());
         }
     }
 
     @Override
-    public void modificaBoard(Location l) {
-        // Nothing yet
+    public void updateBoard(Location l) throws DBException {
+        if (l == null) {
+            throw new DBException("Location is null", DBException.DB_METHOD.BOARD_UPDATING);
+        }
     }
 
     @Override
-    public void borraBoard(Location l) throws DBException {
+    public void deleteBoard(Location l) throws DBException {
+        if (l == null) {
+            throw new DBException("Location is null", DBException.DB_METHOD.BOARD_REMOVING);
+        }
+
         try {
             SignPT st = ebeanServer.getDatabase().find(SignPT.class)
                     .where()
@@ -380,111 +405,120 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     .findUnique();
 
             ebeanServer.getDatabase().delete(st);
-        } catch (Exception ex) {
+        } catch (OptimisticLockException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
         }
     }
 
     @Override
-    public ArrayList<SignBoardData> buscaBoards() {
+    public ArrayList<SignBoardData> findBoards() throws DBException {
         List<SignPT> plClass = null;
 
-        plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
+        try {
+            plClass = ebeanServer.getDatabase().find(SignPT.class).findList();
 
-        ArrayList<SignBoardData> sbd = new ArrayList();
+            ArrayList<SignBoardData> sbd = new ArrayList();
 
-        for (SignPT signPT : plClass) {
-            Location l = new Location(plugin.getServer().getWorld(signPT.getWorld()), signPT.getX(), signPT.getY(), signPT.getZ());
-            SignBoardData bds = new SignBoardData(signPT.getName(), signPT.getModel(), "", l);
-            bds.setOrientacion(signPT.getOrientation());
-            bds.setBlockface(signPT.getBlockface());
+            for (SignPT signPT : plClass) {
+                Location l = new Location(plugin.getServer().getWorld(signPT.getWorld()), signPT.getX(), signPT.getY(), signPT.getZ());
+                SignBoardData bds = new SignBoardData(signPT.getName(), signPT.getModel(), "", l);
+                bds.setOrientacion(signPT.getOrientation());
+                bds.setBlockface(signPT.getBlockface());
 
-            sbd.add(bds);
+                sbd.add(bds);
+            }
+
+            return sbd;
+
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
         }
-
-        return sbd;
     }
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OTHERS...">
     @Override
-    public String getServerName(short id) {
+    public String getServerName(short id) throws DBException {
         return this.plugin.getManager().params.getNameS();
     }
 
     @Override
-    public int purgeData(int q) {
+    public int purgeData(int q) throws DBException {
         return checkUsers(q, ebeanServer.getDatabase().find(WorldPlayerPT.class).findList().size() > 0);
     }
 
-    private int checkUsers(int q, boolean complete) {
+    private int checkUsers(int q, boolean complete) throws DBException {
         int contador = 0;
 
-        List<PlayerPT> allDates = ebeanServer.getDatabase().find(PlayerPT.class)
-                .select("playerUUID, lastLogin")
-                .where()
-                .lt("lastLogin", new Date())
-                .findList();
+        try {
+            List<PlayerPT> allDates = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID, lastLogin")
+                    .where()
+                    .lt("lastLogin", new Date())
+                    .findList();
 
-        PluginLog l = new PluginLog(plugin, "user_changes.txt");
+            PluginLog l = new PluginLog(plugin, "user_changes.txt");
 
-        for (PlayerPT player : allDates) {
-            if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
-                continue;
-            }
+            for (PlayerPT player : allDates) {
+                if (plugin.getManager().params.getNoPurge().contains(player.getPlayerUUID())) {
+                    continue;
+                }
 
-            Date lastLogin = player.getLastLogin();
-            Calendar lastLoginDate = new GregorianCalendar();
-            lastLoginDate.setTime(lastLogin);
+                Date lastLogin = player.getLastLogin();
+                Calendar lastLoginDate = new GregorianCalendar();
+                lastLoginDate.setTime(lastLogin);
 
-            // Tiempo en config
-            lastLoginDate.add(GregorianCalendar.DAY_OF_YEAR, q);
+                // Tiempo en config
+                lastLoginDate.add(GregorianCalendar.DAY_OF_YEAR, q);
 
-            Date today = new Date();
-            Calendar actualDate = new GregorianCalendar();
-            actualDate.setTime(today);
+                Date today = new Date();
+                Calendar actualDate = new GregorianCalendar();
+                actualDate.setTime(today);
 
-            // cFile + timePurga < hoy
-            if (lastLoginDate.before(actualDate)) {
-                if (complete) {
-                    List<WorldPlayerPT> mwplayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
-                            .where()
-                            .ieq("playerUUID", player.getPlayerUUID())
-                            .findList();
+                // cFile + timePurga < hoy
+                if (lastLoginDate.before(actualDate)) {
+                    if (complete) {
+                        List<WorldPlayerPT> mwplayers = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                                .where()
+                                .ieq("playerUUID", player.getPlayerUUID())
+                                .findList();
 
-                    if (mwplayers != null) {
-                        ebeanServer.getDatabase().delete(mwplayers);
+                        if (mwplayers != null) {
+                            ebeanServer.getDatabase().delete(mwplayers);
+                        }
+                    } else {
+                        ebeanServer.getDatabase().delete(player);
+
+                        lastLoginDate.setTime(lastLogin); // Remove q time
+
+                        // Log settings
+                        UUID uuid = UUID.fromString(player.getPlayerUUID());
+                        int time = (int) ((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
+                        l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
+                                + " has been removed. AFK time: "
+                                + StrUtils.splitToComponentTimes(time));
+
+                        contador++;
                     }
-                } else {
-                    ebeanServer.getDatabase().delete(player);
-
-                    lastLoginDate.setTime(lastLogin); // Remove q time
-
-                    // Log settings
-                    UUID uuid = UUID.fromString(player.getPlayerUUID());
-                    int time = (int) ((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
-                    l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
-                            + " has been removed. AFK time: "
-                            + StrUtils.splitToComponentTimes(time));
-
-                    contador++;
                 }
             }
-        }
 
-        if (complete) {
-            contador = checkUsers(q, false);
-        } else {
-            if (contador > 0) {
-                l.export(true);
+            if (complete) {
+                contador = checkUsers(q, false);
+            } else {
+                if (contador > 0) {
+                    l.export(true);
+                }
             }
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PURGE_DATA, ex.getMessage());
         }
 
         return contador;
     }
 
     @Override
-    public void DBExport(String filename) {
+    public void DBExport(String filename) throws DBException {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                 File.separator).append( // Separador
                         filename).toString();
@@ -498,15 +532,22 @@ public class DatabaseManagerEbean implements DatabaseManager {
         sql += MySQLConnection.getTablePlayerWorld() + "\n";
         sql += MySQLConnection.getTableSigns() + "\n";
 
-        List<PlayerPT> plClass = (List<PlayerPT>) ebeanServer.getDatabase().
-                find(PlayerPT.class).findList();
-
-        List<WorldPlayerPT> pwClass = (List<WorldPlayerPT>) ebeanServer.getDatabase().
-                find(WorldPlayerPT.class).findList();
-
-        List<SignPT> stClass = (List<SignPT>) ebeanServer.getDatabase().
-                find(SignPT.class).findList();
-
+        List<PlayerPT> plClass = null;
+        List<WorldPlayerPT> pwClass = null;
+        List<SignPT> stClass = null;
+                
+        try {
+            plClass = (List<PlayerPT>) ebeanServer.getDatabase().
+                    find(PlayerPT.class).findList();
+            pwClass = (List<WorldPlayerPT>) ebeanServer.getDatabase().
+                    find(WorldPlayerPT.class).findList();
+            stClass = (List<SignPT>) ebeanServer.getDatabase().
+                    find(SignPT.class).findList();
+        } 
+        catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage());
+        }
+        
         boolean mw = pwClass != null && pwClass.size() > 0;
 
         sql += "insert into Servers values (" + serverID + ", '" + plugin.getManager().params.getNameS() + "')"
@@ -564,7 +605,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public boolean DBImport(String filename) {
+    public boolean DBImport(String filename) throws DBException {
         String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                 File.separator).append( // Separador
                         filename).toString();
@@ -643,9 +684,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
                 ebeanServer.getDatabase().save(wppt);
             }
-
-        } catch (org.json.simple.parser.ParseException ex) {
-            CustomLogger.logError(ex.getMessage(), ex);
+        } catch (ParseException | OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage());
         }
 
         return true;
@@ -662,44 +702,48 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public int repair() {
+    public int repair() throws DBException {
         int q = 0;
         boolean repaired = false;
 
-        List<PlayerPT> players = ebeanServer.getDatabase().find(PlayerPT.class).findList();
-        PluginLog l = new PluginLog(plugin, "db_changes.txt");
+        try {
+            List<PlayerPT> players = ebeanServer.getDatabase().find(PlayerPT.class).findList();
+            PluginLog l = new PluginLog(plugin, "db_changes.txt");
 
-        for (PlayerPT player : players) {
-            if (player.getPoints() < 0 || player.getPlayedTime() < 0 || player.getLastLogin() == null) {
-                UUID uuid = UUID.fromString(player.getPlayerUUID());
-                String name = Bukkit.getOfflinePlayer(uuid).getName();
+            for (PlayerPT player : players) {
+                if (player.getPoints() < 0 || player.getPlayedTime() < 0 || player.getLastLogin() == null) {
+                    UUID uuid = UUID.fromString(player.getPlayerUUID());
+                    String name = Bukkit.getOfflinePlayer(uuid).getName();
 
-                if (player.getPoints() < 0) {
-                    l.addMessage("[BAD FAME] Player \"" + name + "\" had "
-                            + player.getPoints() + " and it was changed to 0");
-                    player.setPoints(0);
+                    if (player.getPoints() < 0) {
+                        l.addMessage("[BAD FAME] Player \"" + name + "\" had "
+                                + player.getPoints() + " and it was changed to 0");
+                        player.setPoints(0);
+                    }
+
+                    if (player.getPlayedTime() < 0 || player.getPlayedTime() >= 3153600000L) {
+                        l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
+                                + player.getPlayedTime() + " and it was changed to 0");
+                        player.setPlayedTime(0);
+                    }
+
+                    if (player.getLastLogin() == null) {
+                        l.addMessage("[BAD LAST LOGIN] Player \"" + name + "\" had "
+                                + "an invalid login date");
+                        player.setLastLogin(new Date());
+                    }
+
+                    ebeanServer.getDatabase().save(player);
+                    repaired = true;
+                    q++;
                 }
-
-                if (player.getPlayedTime() < 0 || player.getPlayedTime() >= 3153600000L) {
-                    l.addMessage("[BAD PLAYED TIME] Player \"" + name + "\" had "
-                            + player.getPlayedTime() + " and it was changed to 0");
-                    player.setPlayedTime(0);
-                }
-
-                if (player.getLastLogin() == null) {
-                    l.addMessage("[BAD LAST LOGIN] Player \"" + name + "\" had "
-                            + "an invalid login date");
-                    player.setLastLogin(new Date());
-                }
-
-                ebeanServer.getDatabase().save(player);
-                repaired = true;
-                q++;
             }
-        }
 
-        if (repaired) {
-            l.export(true);
+            if (repaired) {
+                l.export(true);
+            }
+        } catch (OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.REPAIR, ex.getMessage());
         }
 
         return q;

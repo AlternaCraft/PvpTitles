@@ -52,7 +52,12 @@ public class DBException extends CustomException {
         BOARD_SAVING,
         BOARD_REMOVING,
         BOARD_UPDATING,
-        BOARD_SEARCHING
+        BOARD_SEARCHING,
+        SERVER_NAME,
+        PURGE_DATA,
+        DB_EXPORT,
+        DB_IMPORT,
+        REPAIR
     }
 
     private enum POSSIBLE_ERRORS {
@@ -131,8 +136,8 @@ public class DBException extends CustomException {
             }
         }
         
-        if (this.data.isEmpty() && (this.custom_error.contains("connection closed") 
-                || this.custom_error.contains("Communications link failure"))) {
+        if (this.custom_error.contains("connection closed") 
+                || this.custom_error.contains("Communications link failure")) {
             possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
         }
 

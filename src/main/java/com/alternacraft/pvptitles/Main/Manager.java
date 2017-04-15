@@ -193,7 +193,7 @@ public final class Manager {
     public void loadSavedBoards() {
         List<SignBoardData> carteles = new ArrayList<>();
         try {
-            carteles = pvpTitles.getManager().dbh.getDm().buscaBoards();
+            carteles = pvpTitles.getManager().dbh.getDm().findBoards();
         } catch (DBException ex) {
             CustomLogger.logError(ex.getCustomMessage());
         }
@@ -206,7 +206,7 @@ public final class Manager {
 
             if (bm == null) {
                 try {
-                    pvpTitles.getManager().dbh.getDm().borraBoard(cartel.getLocation());
+                    pvpTitles.getManager().dbh.getDm().deleteBoard(cartel.getLocation());
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {

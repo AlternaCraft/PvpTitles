@@ -18,6 +18,8 @@ package com.alternacraft.pvptitles.RetroCP;
 
 import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
+import com.alternacraft.pvptitles.Exceptions.DBException;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -28,6 +30,8 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 
 public class DBChecker {
@@ -90,7 +94,11 @@ public class DBChecker {
         rdm.conversor();
         rdm.conversorUUID();
 
-        plugin.getManager().getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
+        try {
+            plugin.getManager().getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
+        } catch (DBException ex) {
+            CustomLogger.logError(ex.getMessage());
+        }
         UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
                 File.separator).append(RetroDMEbean.FILENAME).toString());
 
@@ -115,8 +123,12 @@ public class DBChecker {
         } catch (SQLException ex) {
         }
 
-        plugin.getManager().getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
-        UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                File.separator).append(RetroDMMysql.FILENAME).toString());
+        try {
+            plugin.getManager().getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
+            UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
+                File.separator).append(RetroDMMysql.FILENAME).toString());            
+        } catch (DBException ex) {
+            CustomLogger.logError(ex.getMessage());
+        }                
     }
 }

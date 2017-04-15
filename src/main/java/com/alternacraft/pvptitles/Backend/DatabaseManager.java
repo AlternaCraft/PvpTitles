@@ -102,7 +102,7 @@ public interface DatabaseManager {
      * @param sb SignBoard
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public void registraBoard(SignBoard sb) throws DBException;
+    public void saveBoard(SignBoard sb) throws DBException;
 
     /**
      * Método para modificar la id del server de un cartel
@@ -110,7 +110,7 @@ public interface DatabaseManager {
      * @param l Location
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public void modificaBoard(Location l) throws DBException;
+    public void updateBoard(Location l) throws DBException;
 
     /**
      * Método para borrar un cartel de la base de datos
@@ -118,7 +118,7 @@ public interface DatabaseManager {
      * @param l Localicación del cartel base
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public void borraBoard(Location l) throws DBException;
+    public void deleteBoard(Location l) throws DBException;
 
     /**
      * Método para buscar las tablas de puntuaciones de la base de datos
@@ -126,7 +126,7 @@ public interface DatabaseManager {
      * @return ArrayList con todas ellas
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public ArrayList<SignBoardData> buscaBoards() throws DBException;
+    public ArrayList<SignBoardData> findBoards() throws DBException;
 
     /**
      * Método para recibir el nombre del servidor según su ID
@@ -134,23 +134,28 @@ public interface DatabaseManager {
      * @param id int
      *
      * @return String
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
-    public String getServerName(short id);
+    public String getServerName(short id) throws DBException;
 
     /**
      * Método para borrar los datos de los jugadores inactivos
      *
      * @param q Entero con la cantidad de dias necesarios para ser inactivo
+     * 
      * @return Entero con la cantidad de ficheros borrados
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
-    public int purgeData(int q);
+    public int purgeData(int q) throws DBException;
 
     /**
      * Método para exportar todos los datos de la base de datos
      *
      * @param filename String
+     * 
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
-    public void DBExport(String filename);
+    public void DBExport(String filename) throws DBException;
 
     /**
      * Método para importar todos los datos desde un fichero
@@ -158,8 +163,9 @@ public interface DatabaseManager {
      * @param filename String
      *
      * @return False si no se pudo importar
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
-    public boolean DBImport(String filename);
+    public boolean DBImport(String filename) throws DBException;
 
     /**
      * Método para recibir el nombre del fichero por defecto para importar
@@ -179,8 +185,9 @@ public interface DatabaseManager {
      * Método para corregir valores de la base de datos
      * 
      * @return Cantidad de registros reparados
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException
      */
-    public int repair();
+    public int repair() throws DBException;
     
     /**
      * Método para actualizar la conexion a la base de datos

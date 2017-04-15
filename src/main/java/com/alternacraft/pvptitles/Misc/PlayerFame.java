@@ -18,8 +18,9 @@ package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import com.alternacraft.pvptitles.Main.PvpTitles;
+import com.alternacraft.pvptitles.Main.Manager;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class PlayerFame implements Comparable {
@@ -28,18 +29,16 @@ public class PlayerFame implements Comparable {
     private long seconds = 0;
     private short server = 0;
     private String world = "";
-    private PvpTitles plugin = null;
     
-    public PlayerFame(String name, int fame, long seconds, PvpTitles pl) {
+    public PlayerFame(String name, int fame, long seconds) {
         this.uuid = name;
         this.fame = fame;
         this.seconds = seconds;
-        this.plugin = pl;
     }
     
     public String getName() {
         UUID playerUUID = UUID.fromString(this.uuid);
-        String nombre = plugin.getServer().getOfflinePlayer(playerUUID).getName();
+        String nombre = Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
         return (nombre == null) ? "<?>":nombre;
     }
     
@@ -70,12 +69,12 @@ public class PlayerFame implements Comparable {
     public long getRealSeconds() {
         long actual = 0;
         try {
-            actual = plugin.getManager().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+            actual = Manager.getInstance().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
             CustomLogger.logError(ex.getCustomMessage());
         }
         
-        long session = plugin.getManager().getTimerManager().getPlayer(plugin.getServer()
+        long session = Manager.getInstance().getTimerManager().getPlayer(Bukkit.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
         
         return actual+session;
@@ -89,8 +88,8 @@ public class PlayerFame implements Comparable {
         this.world = world;
     }
     
-    public String getServerName() {
-        return plugin.getManager().dbh.getDm().getServerName(this.server);
+    public String getServerName() throws DBException {
+        return Manager.getInstance().dbh.getDm().getServerName(this.server);
     }
     
     public String getMWName() {

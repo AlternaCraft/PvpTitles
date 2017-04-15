@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Managers.BoardsAPI;
 
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Misc.Params;
@@ -23,6 +24,8 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ModelController {
 
@@ -198,7 +201,11 @@ public class ModelController {
                         str = str.replace("<pos>", String.valueOf(value + 1));
                         break;
                     case SERVER:
-                        str = str.replace("<server>", pf.get(value).getServerName());
+                        try {
+                            str = str.replace("<server>", pf.get(value).getServerName());
+                        } catch (DBException ex) {
+                            CustomLogger.logError(ex.getMessage());
+                        }
                         break;
                     case WORLD:
                         str = str.replace("<world>", pf.get(value).getWorld());

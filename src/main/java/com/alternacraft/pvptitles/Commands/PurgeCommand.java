@@ -16,12 +16,16 @@
  */
 package com.alternacraft.pvptitles.Commands;
 
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PluginLog;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,16 +46,16 @@ public class PurgeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
         LangsFile.LangType messages = (sender instanceof Player) ? Localizer.getLocale((Player) sender) : Manager.messages;
 
-        int cantidad = 0;
+        int cantidad, purgetime;
 
         if (args.length > 1) {
             sender.sendMessage(getPluginName() + LangsFile.COMMAND_ARGUMENTS.getText(messages));
             return false;
         } else if (args.length == 1) {
-            int purgados = 0;
+            int purgados;
             try {
                 purgados = Integer.valueOf(args[0]);
-            } catch (Exception ex) {
+            } catch (NumberFormatException ex) {
                 sender.sendMessage(getPluginName() + ChatColor.RED + "You have to use a number!");
                 return false;
             }
@@ -59,20 +63,27 @@ public class PurgeCommand implements CommandExecutor {
                 sender.sendMessage(getPluginName() + ChatColor.RED + "Number has to be above 0");
                 return true;
             } else {
-                cantidad = dh.dbh.getDm().purgeData(purgados);
+                purgetime = purgados;
             }
         } else {
-            cantidad = dh.dbh.getDm().purgeData(pvpTitles.getManager().params.getTimeP());
+            purgetime = pvpTitles.getManager().params.getTimeP();
         }
 
-        if (cantidad > 0) {
-            sender.sendMessage(getPluginName() + ChatColor.YELLOW +
-                    "Check out to the user_changes.txt file (Inside of " 
-                            + PluginLog.getLogsFolder() + ") to see the affected players");
+        try {
+            cantidad = dh.dbh.getDm().purgeData(purgetime);
+
+            if (cantidad > 0) {
+                sender.sendMessage(getPluginName() + ChatColor.YELLOW
+                        + "Check out to the user_changes.txt file (Inside of "
+                        + PluginLog.getLogsFolder() + ") to see the affected players");
+            }
+
+            sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).
+                    replace("%cant%", String.valueOf(cantidad)));
+
+        } catch (DBException ex) {
+            CustomLogger.logError(ex.getMessage());
         }
-        
-        sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).
-                replace("%cant%", String.valueOf(cantidad)));
 
         return true;
     }

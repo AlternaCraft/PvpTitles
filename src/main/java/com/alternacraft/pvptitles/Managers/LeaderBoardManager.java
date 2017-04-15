@@ -89,7 +89,7 @@ public class LeaderBoardManager {
             // Tipos predefinidos
             if (b instanceof SignBoard) {
                 try {
-                    pt.getManager().dbh.getDm().registraBoard((SignBoard) b);
+                    pt.getManager().dbh.getDm().saveBoard((SignBoard) b);
                 } catch (DBException ex) {
                     CustomLogger.logError(ex.getCustomMessage());
                     return false;
@@ -177,7 +177,7 @@ public class LeaderBoardManager {
                 // Tipos predefinidos
                 if (bo instanceof SignBoard) {
                     try {
-                        pt.getManager().dbh.getDm().borraBoard(bo.getData().getLocation());
+                        pt.getManager().dbh.getDm().deleteBoard(bo.getData().getLocation());
                     } catch (DBException ex) {
                         CustomLogger.logError(ex.getCustomMessage());
                         return;
