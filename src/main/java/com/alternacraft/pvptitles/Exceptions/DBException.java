@@ -104,9 +104,10 @@ public class DBException extends CustomException {
     protected List getHeader() {
         return new ArrayList() {
             {
-                this.add(new StringBuilder().append(R).append("(").append(DBLoader.tipo.toString())
-                        .append(" ERROR) On ").append(getFilteredString(type.toString()))
-                        .append(" gets \"").append(getMessage()).append("\"").toString());
+                this.add(new StringBuilder().append(R)
+                        .append("(").append(DBLoader.tipo.toString()).append(") On ")
+                        .append(getFilteredString(type.toString())).append(" gets \"")
+                        .append(getMessage()).append("\"").toString());
             }
         };
     }

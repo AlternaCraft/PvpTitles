@@ -18,10 +18,11 @@ package com.alternacraft.pvptitles.Main;
 
 import static com.alternacraft.pvptitles.Main.PvpTitles.LOGGER;
 import static com.alternacraft.pvptitles.Main.PvpTitles.debugMode;
+import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.logging.Level;
 
 public class CustomLogger {
-
+    
     private static final String MYSQL_CRAP_REGEX = "com.*: ";
 
     public static void logMessage(String msg) {
@@ -52,16 +53,29 @@ public class CustomLogger {
         PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
     }
     
+    private static final String ERROR = "&4ERROR: &r";
+    private static final String INFO = "&eINFO: &r";
+    
+    /* CONSOLE SENDER */    
     public static void logArrayError(Object[] messages) {
         for (Object msg : messages) {            
-            showMessage(msg.toString());
+            showMessage(ERROR + msg.toString());
         }
     }
-    
-    /* Custom message */
     public static void showMessage(String msg) {
-        PvpTitles.getInstance().getServer().getConsoleSender().sendMessage(
-                PvpTitles.getPluginName() + msg);
+        PvpTitles.getInstance().getServer().getConsoleSender()
+                .sendMessage(prepareString(msg));
+    }
+    
+    /**
+     * Prepares a message, adding the plugin prefix and the space after it, all
+     * before the message.
+     *
+     * @param message The message
+     * @return The prepared message
+     */
+    public static String prepareString(String message) {
+        return StrUtils.translateColors(PvpTitles.getPluginName() + "&r" + message);
     }
     
 }
