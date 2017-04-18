@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class PluginLog {
      * @param name File name
      */
     public PluginLog(JavaPlugin pl, String name) {
-        this(pl.getDataFolder() + File.separator, name);
+        this(PvpTitles.PLUGIN_DIR, name);
     }
 
     /**

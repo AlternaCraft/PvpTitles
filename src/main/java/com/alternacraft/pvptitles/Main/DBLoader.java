@@ -40,7 +40,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class DBLoader {
 
-    private DatabaseManager dm = null;
+    private static final String EBEAN_DB = "PvpTitles.db";
+    private static final String SQLITE_DB = "PvpLite.db";
     
     public static DBTYPE tipo = null;
     public static enum DBTYPE {
@@ -54,6 +55,8 @@ public class DBLoader {
 
     private PvpTitles pvpTitles = null;
     private FileConfiguration config = null;
+    
+    private DatabaseManager dm = null;
 
     public DBLoader(PvpTitles pvpTitles, FileConfiguration config) {
         this.pvpTitles = pvpTitles;
@@ -72,7 +75,7 @@ public class DBLoader {
                 this.sql = new MySQLConnection();
             }
             else {
-                this.sql = new SQLiteConnection(PvpTitles.PLUGIN_DIR, "PvpLite.db");
+                this.sql = new SQLiteConnection(PvpTitles.PLUGIN_DIR, SQLITE_DB);
             }
             
             this.sqlConnect(false);
@@ -113,10 +116,8 @@ public class DBLoader {
             protected java.util.List<Class<?>> getDatabaseClasses() {
                 List<Class<?>> list = new ArrayList<>();
                 
-                String ruta = (new StringBuilder()).append(
-                        pvpTitles.getDataFolder()).append( // Ruta
-                                File.separator).append( // Separador
-                                "PvpTitles.db").toString();
+                String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
+                        .append(EBEAN_DB).toString();
                 
                 if (new File(ruta).length() > 0)  {
                     /* OLD */

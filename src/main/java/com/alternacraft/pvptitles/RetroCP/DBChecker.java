@@ -97,8 +97,8 @@ public class DBChecker {
         } catch (DBException ex) {
             CustomLogger.logError(ex.getMessage());
         }
-        UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                File.separator).append(RetroDMEbean.FILENAME).toString());
+        UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append(RetroDMEbean.FILENAME).toString());
 
         return true;
     }
@@ -123,8 +123,8 @@ public class DBChecker {
 
         try {
             plugin.getManager().getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
-            UtilsFile.delete(new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                File.separator).append(RetroDMMysql.FILENAME).toString());            
+            UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
+                    .append(RetroDMMysql.FILENAME).toString());            
         } catch (DBException ex) {
             CustomLogger.logError(ex.getMessage());
         }                

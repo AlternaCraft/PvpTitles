@@ -62,23 +62,23 @@ public class AntiFarmManager {
     public void cleanAllVictims(String killer) {
         killers.get(killer).cleanAll();
     }
-    
+
     public void vetar(String killer, long time) {
         vetados.put(killer, time);
     }
-    
+
     public boolean isVetado(String killer) {
         return vetados.containsKey(killer);
     }
-    
+
     public void cleanVeto(String killer) {
         vetados.remove(killer);
     }
-    
+
     public int getVetoTime(String killer) {
-        return (int) ((vetados.get(killer)+(plugin.getManager().params.getTimeV()*1000L) - System.currentTimeMillis()) / 1000L);
+        return (int) ((vetados.get(killer) + (plugin.getManager().params.getTimeV() * 1000L) - System.currentTimeMillis()) / 1000L);
     }
-    
+
     public PvpTitles getPlugin() {
         return plugin;
     }

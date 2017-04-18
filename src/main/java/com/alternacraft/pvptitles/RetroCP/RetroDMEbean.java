@@ -63,10 +63,8 @@ public class RetroDMEbean {
 
     //<editor-fold defaultstate="collapsed" desc="UTILS">
     public void conversor() {
-        File file = new File((new StringBuilder()).append(
-                pt.getDataFolder()).append( // Ruta
-                File.separator).append( // Separador
-                        "players").toString()); // Players
+        File file = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append("players").toString()); // Players
 
         if (file.exists()) {
             int contador = 0;
@@ -105,10 +103,8 @@ public class RetroDMEbean {
             showMessage(ChatColor.YELLOW + "" + contador + " user/s " + ChatColor.AQUA
                     + "imported correctly");
 
-            File backup = new File((new StringBuilder()).append(
-                    this.pt.getDataFolder()).append( // Ruta
-                    File.separator).append( // Separador
-                            "you_can_delete_this").toString()); // Players
+            File backup = new File((new StringBuilder(PvpTitles.PLUGIN_DIR))
+                    .append("you_can_delete_this").toString()); // Players
 
             if (backup.exists()) {
                 // Elimino la carpeta si ya existia
@@ -144,10 +140,7 @@ public class RetroDMEbean {
     //</editor-fold>
 
     public void exportarData(int status) {
-        String ruta = new StringBuilder().append(
-                pt.getDataFolder()).append( // Ruta
-                File.separator).append( // Separador
-                        FILENAME).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR).append(FILENAME).toString();
 
         // Estilo
         JsonParser parser = new JsonParser();

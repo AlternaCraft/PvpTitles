@@ -31,7 +31,7 @@ ErrorFormat: 2
 # Options (No case sensitive):
 # - Ebean - WILL BE REMOVED IN NEXT VERSIONS
 # - SQLite - Like Ebean but faster (Should use this)
-DefaultDatabase: SQLite
+DefaultDatabase: Ebean
 
 ############################################################
 # +------------------------------------------------------+ #

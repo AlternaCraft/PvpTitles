@@ -158,8 +158,8 @@ public class MetricsManager {
                 setPerformanceGraph(plugin, metrics, "Ebean"); // Ebean performance
                 setPerformanceGraph(plugin, metrics, "MySQL"); // MySQL performance
                 
-                UtilsFile.delete(plugin.getDataFolder() + File.separator
-                + PluginLog.getLogsFolder() + File.separator + "performance.txt");
+                UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder() 
+                        + File.separator + "performance.txt");
                 
                 metrics.start();
             }

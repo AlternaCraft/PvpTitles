@@ -257,15 +257,11 @@ public final class Manager {
      * Método para cargar los locales
      */
     public void loadLang() {
-        File oldMessages = new File(new StringBuilder().append(
-                pvpTitles.getDataFolder()).append(
-                        File.separator).append(
-                        "messages.yml").toString());
+        File oldMessages = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append("messages.yml").toString());
 
-        File newMessages = new File(new StringBuilder().append(
-                pvpTitles.getDataFolder()).append(
-                        File.separator).append(
-                        "messages_old.yml").toString());
+        File newMessages = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append("messages_old.yml").toString());
 
         if (oldMessages.exists()) {
             oldMessages.renameTo(newMessages);

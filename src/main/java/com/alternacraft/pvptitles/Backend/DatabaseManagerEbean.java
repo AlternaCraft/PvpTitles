@@ -653,9 +653,7 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public boolean DBImport(String filename) throws DBException {
-        String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                File.separator).append( // Separador
-                        filename).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR).append(filename).toString();
 
         if (!UtilsFile.exists(ruta)) {
             return false;
