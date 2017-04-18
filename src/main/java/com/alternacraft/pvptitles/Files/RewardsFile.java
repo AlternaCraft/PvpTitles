@@ -24,8 +24,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class RewardsFile {
     /* Compatibility file */
-    public File oldCommandsFile = new File(PvpTitles.PLUGIN_DIR + "commands.yml");        
-    public File rewardsFile = new File(PvpTitles.PLUGIN_DIR + "rewards.yml");        
+    public File oldCommandsFile = new File(PvpTitles.PLUGIN_DIR, "commands.yml");        
+    public File rewardsFile = new File(PvpTitles.PLUGIN_DIR, "rewards.yml");        
     
     public RewardsFile() {
     }

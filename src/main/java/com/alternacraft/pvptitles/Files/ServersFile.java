@@ -23,7 +23,7 @@ import java.util.Arrays;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ServersFile {
-    public File serversFile = new File(PvpTitles.PLUGIN_DIR + "servers.yml");        
+    public File serversFile = new File(PvpTitles.PLUGIN_DIR, "servers.yml");        
     
     public ServersFile() {
     }

@@ -97,7 +97,7 @@ public class ConfigurationFileTest extends TestBase {
         // Save config test file      
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(config);
         try {
-            yaml.save(new File(PLUGINDATAFOLDER + "/config.yml"));
+            yaml.save(new File(PLUGINDATAFOLDER, "config.yml"));
         } catch (IOException ex) {
             Logger.getLogger(ConfigurationFileTest.class.getName()).log(Level.SEVERE, null, ex);
         }

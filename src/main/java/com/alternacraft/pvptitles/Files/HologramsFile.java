@@ -32,7 +32,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class HologramsFile {
 
-    private static final File HOLOSFILE = new File(PvpTitles.PLUGIN_DIR + "holograms.yml");
+    private static final File HOLOSFILE = new File(PvpTitles.PLUGIN_DIR, "holograms.yml");
     private static YamlConfiguration holosConf = null;
 
     public static YamlConfiguration load() {

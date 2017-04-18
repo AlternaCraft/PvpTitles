@@ -56,8 +56,7 @@ public class FileConfig {
     public FileConfig(PvpTitles pl) {
         plugin = pl;
 
-        File cfile = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append("config.yml").toString());
+        File cfile = new File(PvpTitles.PLUGIN_DIR, "config.yml");
 
         if (!cfile.exists() || mismatchVersion(cfile)) {
             pl.saveDefaultConfig();
@@ -72,8 +71,7 @@ public class FileConfig {
     }
 
     private boolean mismatchVersion(File cFile) {
-        File bFile = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append("config.backup.yml").toString());
+        File bFile = new File(PvpTitles.PLUGIN_DIR, "config.backup.yml");
 
         YamlConfiguration configV = YamlConfiguration.loadConfiguration(cFile);
 
@@ -99,8 +97,7 @@ public class FileConfig {
         YamlConfiguration newFile = YamlConfiguration.loadConfiguration(outFile);
         YamlConfiguration oldFile = YamlConfiguration.loadConfiguration(backupFile);
 
-        File temp = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append("config_temp.yml").toString());
+        File temp = new File(PvpTitles.PLUGIN_DIR, "config_temp.yml");
 
         try (BufferedReader br = new BufferedReader(new FileReader(outFile));
                 FileWriter fw = new FileWriter(temp)) {

@@ -63,8 +63,7 @@ public class RetroDMEbean {
 
     //<editor-fold defaultstate="collapsed" desc="UTILS">
     public void conversor() {
-        File file = new File(new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append("players").toString()); // Players
+        File file = new File(PvpTitles.PLUGIN_DIR, "players"); // Players
 
         if (file.exists()) {
             int contador = 0;
@@ -103,8 +102,7 @@ public class RetroDMEbean {
             showMessage(ChatColor.YELLOW + "" + contador + " user/s " + ChatColor.AQUA
                     + "imported correctly");
 
-            File backup = new File((new StringBuilder(PvpTitles.PLUGIN_DIR))
-                    .append("you_can_delete_this").toString()); // Players
+            File backup = new File(PvpTitles.PLUGIN_DIR, "you_can_delete_this"); // Players
 
             if (backup.exists()) {
                 // Elimino la carpeta si ya existia

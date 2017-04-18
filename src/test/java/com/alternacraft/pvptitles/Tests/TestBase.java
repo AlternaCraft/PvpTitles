@@ -63,7 +63,8 @@ abstract class TestBase {
     public void setUp() {
         m("[ Cargando elementos comunes ]");
 
-        mockPlugin = PowerMockito.mock(PvpTitles.class);
+        PvpTitles.PLUGIN_DIR = PLUGINDATAFOLDER;
+        mockPlugin = PowerMockito.mock(PvpTitles.class);        
         mockManager = PowerMockito.mock(Manager.class);
 
         mockPlayer = mock(Player.class);
