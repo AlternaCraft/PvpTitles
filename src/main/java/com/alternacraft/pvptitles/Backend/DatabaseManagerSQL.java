@@ -22,7 +22,9 @@ import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
 import com.alternacraft.pvptitles.Libraries.SQLConnection;
+import com.alternacraft.pvptitles.Libraries.SQLConnection.STATUS_AVAILABLE;
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
@@ -130,8 +132,9 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         if (pl == null || !sql.isConnected(true)) {
             HashMap data = new HashMap();
-            data.put("Null player?", (pl == null));
-            data.put("MySQL connection?", false);
+            data.put("Null player", (pl == null));
+            data.put(DBLoader.tipo.name() + " connection", 
+                    sql.status == STATUS_AVAILABLE.CONNECTED);
 
             throw new DBException("Error checking if player is registered",
                     DBException.DB_METHOD.PLAYER_CONNECTION, data);
@@ -257,7 +260,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public void savePlayerFame(UUID playerUUID, int fame, String w) throws DBException {
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
-
+        
         if (pl == null) {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_SAVING);
         }

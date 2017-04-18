@@ -118,7 +118,7 @@ public class FameCommand implements CommandExecutor {
                     try {
                         fameA = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
@@ -140,7 +140,7 @@ public class FameCommand implements CommandExecutor {
                                     replace("%tag%", this.dm.params.getTag())
                             );
                         } catch (DBException ex) {
-                            CustomLogger.logError(ex.getCustomMessage());
+                            CustomLogger.logArrayError(ex.getCustomStackTrace());
                             event.setCancelled(true);
                         }
                     } else {
@@ -171,20 +171,20 @@ public class FameCommand implements CommandExecutor {
                             try {
                                 fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                             } catch (DBException ex) {
-                                CustomLogger.logError(ex.getCustomMessage());
+                                CustomLogger.logArrayError(ex.getCustomStackTrace());
                             }
                         } else {
                             try {
                                 fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), args[2]);
                             } catch (DBException ex) {
-                                CustomLogger.logError(ex.getCustomMessage());
+                                CustomLogger.logArrayError(ex.getCustomStackTrace());
                             }
                         }
                     } else {
                         try {
                             fameTotal = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), null);
                         } catch (DBException ex) {
-                            CustomLogger.logError(ex.getCustomMessage());
+                            CustomLogger.logArrayError(ex.getCustomStackTrace());
                         }
                     }
 
@@ -227,7 +227,7 @@ public class FameCommand implements CommandExecutor {
                     try {
                         fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     fameTotal = (fameTotal < 0) ? 0 : fameTotal;
@@ -250,7 +250,7 @@ public class FameCommand implements CommandExecutor {
                             sender.sendMessage(getPluginName() + LangsFile.FAME_SET.getText(messages).
                                     replace("%tag%", this.dm.params.getTag()));
                         } catch (DBException ex) {
-                            CustomLogger.logError(ex.getCustomMessage());
+                            CustomLogger.logArrayError(ex.getCustomStackTrace());
                             event.setCancelled(true);
                         }
                     } else {

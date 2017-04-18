@@ -51,21 +51,21 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
                     } catch (RanksException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     if (!canDisplayRank(player, rank)) {
@@ -86,21 +86,21 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     long seconds = 0;
                     try {
                         seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     String rank = "";
                     try {
                         rank = Ranks.getRank(fame, seconds);
                     } catch (RanksException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     return rank;
@@ -117,7 +117,7 @@ public class MVdWPlaceholderHook {
                     try {
                         fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
                     return String.valueOf(fame);

@@ -60,7 +60,7 @@ public class LadderCommand implements CommandExecutor {
         try {
             rankedPlayers = pvpTitles.getManager().dbh.getDm().getTopPlayers(top, "");
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         List<String> lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);

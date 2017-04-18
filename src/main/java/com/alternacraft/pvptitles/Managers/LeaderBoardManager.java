@@ -77,7 +77,7 @@ public class LeaderBoardManager {
             try {
                 pf = this.pt.getManager().dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
             short jugadores = (short) pf.size();
 
@@ -91,7 +91,7 @@ public class LeaderBoardManager {
                 try {
                     pt.getManager().dbh.getDm().saveBoard((SignBoard) b);
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                     return false;
                 }
             } else if (b instanceof HologramBoard) {
@@ -119,7 +119,7 @@ public class LeaderBoardManager {
                         cs.getModel().getCantidad(), cs.getData().getServer()
                 ));
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
             boards.add(cs);
         }
@@ -132,7 +132,7 @@ public class LeaderBoardManager {
                 pf = pt.getManager().dbh.getDm().getTopPlayers(
                         board.getModel().getCantidad(), board.getData().getServer());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
             
             board.dematerialize((short) pf.size());
@@ -148,7 +148,7 @@ public class LeaderBoardManager {
                     jugadores = (short) pt.getManager().dbh.getDm().getTopPlayers(
                             bo.getModel().getCantidad(), bo.getData().getServer()).size();
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 Player pl = null;
@@ -179,7 +179,7 @@ public class LeaderBoardManager {
                     try {
                         pt.getManager().dbh.getDm().deleteBoard(bo.getData().getLocation());
                     } catch (DBException ex) {
-                        CustomLogger.logError(ex.getCustomMessage());
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
                         return;
                     }
                 } else if (bo instanceof HologramBoard) {

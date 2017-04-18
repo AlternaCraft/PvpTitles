@@ -92,7 +92,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
                 return;
             }
         }
@@ -121,7 +121,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
         }
     }
@@ -139,7 +139,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 cm.dbh.getDm().playerConnection(player);
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
                 return;
             }
         }
@@ -203,7 +203,7 @@ public class HandlePlayerFame implements Listener {
             try {
                 fame = this.cm.dbh.getDm().loadPlayerFame(killer.getUniqueId(), null);
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
                 return; // Le bajaria los puntos posteriormente
             }
 
@@ -307,7 +307,7 @@ public class HandlePlayerFame implements Listener {
         try {
             this.cm.dbh.getDm().savePlayerFame(player.getUniqueId(), fameDespues, null);
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
             return;
         }
 
@@ -320,7 +320,7 @@ public class HandlePlayerFame implements Listener {
         try {
             seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
             return;
         }
 
@@ -333,7 +333,7 @@ public class HandlePlayerFame implements Listener {
                         .replace("%newRank%", newRank));
             }
         } catch (RanksException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         FameEvent event = new FameEvent(player, fameAntes, fameRec);

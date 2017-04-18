@@ -17,14 +17,48 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
+/**
+ * Custom exception.
+ * <ul>This add some extras:
+ *  <li>Structured messages
+ *      <ul>There are three type:
+ *          <li>Simplified. Just for indicating an error</li>
+ *          <li>Essential. Essential information for finding a reason</li>
+ *          <li>Full. Complete error</li>
+ *      </ul>
+ *  </li>
+ *  <li>How to report</li>
+ *  <li>Functionality for finding a possible reason of the error</li>
+ * </ul>
+ *
+ * @author AlternaCraft
+ */
 public abstract class CustomException extends Exception {
 
-    protected final String REPORT = "If you don't know the error cause, please, report it.\n"
-            + "https://dev.bukkit.org/projects/pvptitles/issues/create";
+    protected static final PvpTitles PLUGIN = PvpTitles.getInstance();
+
+    protected static final String NAME = PLUGIN.getDescription().getName();
+    protected static final String VERSION = PLUGIN.getDescription().getVersion();
+
+    protected static final ChatColor A = ChatColor.YELLOW;
+    protected static final ChatColor V = ChatColor.GREEN;
+    protected static final ChatColor G = ChatColor.GRAY;
+    protected static final ChatColor R = ChatColor.RED;
+    protected static final ChatColor L = ChatColor.RESET;
+
+    protected final List REPORT = new ArrayList(2) {
+        {
+            this.add(A + "If you don't know the error cause please, report it.");
+            this.add(A + "https://dev.bukkit.org/projects/pvptitles/issues/create");
+        }
+    };
 
     protected static final short SIMPLIFIED = 0;
     protected static final short ESSENTIAL = 1;
@@ -33,7 +67,7 @@ public abstract class CustomException extends Exception {
     protected Map<String, Object> data = new LinkedHashMap();
     protected String custom_error = null;
 
-    // <editor-fold defaultstate="collapsed" desc="CONSTRUCTS">    
+    // <editor-fold defaultstate="collapsed" desc="CONSTRUCTORS">    
     public CustomException(String message) {
         super(message);
     }
@@ -49,85 +83,108 @@ public abstract class CustomException extends Exception {
     }
     // </editor-fold>
 
-    public String getCustomMessage() {
-        int n = PvpTitles.getInstance().getManager().params.getErrorFormat();
+    public Object[] getCustomStackTrace() {
+        int n = PLUGIN.getManager().params.getErrorFormat();
+        List result = new ArrayList();
 
         switch (n) {
             case SIMPLIFIED:
-                return getHeader();
+                result.addAll(getHeader());
+                break;
             case ESSENTIAL:
-                return new StringBuilder(getHeader())
-                        .append(getBody())
-                        .append("\n").toString();
+                result.addAll(getHeader());
+                result.addAll(getBody());
+                break;
             case FULL:
-                return new StringBuilder(getHeader())
-                        .append(getExtraData())
-                        .append(getBody())
-                        .append(getPossibleReasons())
-                        .append(getReportMessage()).toString();
-            default:
-                return "";
+                result.add("-------------------------------------------------------------");
+                result.addAll(getHeader());
+                result.add("-------------------------------------------------------------");
+                result.addAll(getExtraData());
+                result.addAll(getBody());
+                result.addAll(getPossibleReasons());
+                result.addAll(getReportMessage());
         }
+
+        return result.toArray();
     }
 
     // <editor-fold defaultstate="collapsed" desc="ABSTRACT METHODS">
-    protected abstract String getHeader();
-    protected abstract String getPossibleReasons();
+    protected abstract List getHeader();
+
+    protected abstract List getPossibleReasons();
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="DEFAULT TEMPLATES">
-    protected String getBody() {
-        return new StringBuilder()
-                .append("\n\nStackTrace:")
-                .append("\n-----------")
-                .append(getSource()).toString();
-    }
-
-    protected String getExtraData() {
-        String extradata = "";
-
-        if (!this.data.isEmpty()) {
-            extradata = "\n\nMore information:";
-            extradata += "\n-----------------";
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();                
-                String v = value.toString();
-                
-                if (value instanceof Collection) {
-                    v = "(" + ((Collection) value).size() + ") " + v;
-                }
-                
-                extradata += new StringBuilder().append("\n- ").append(key)
-                        .append(": ").append(v).toString();
+    protected List getBody() {
+        return new ArrayList<String>() {
+            {
+                this.add("          " + G + "====== " + V + "STACK TRACE" + G + " ======");
+                this.addAll(getSource());
+                this.add("          " + G + "====== " + V + "DUMP" + G + " ======");
+                this.addAll(getPluginInformation());
             }
-        } else if (this.custom_error != null) {
-            extradata = "\n\nMore information: " + this.custom_error;
-        }
-
-        return extradata;
+        };
     }
 
-    protected String getReportMessage() {
-        return new StringBuilder()
-                .append("\n-------------------------------------------------------------\n")
-                .append(this.REPORT)
-                .append("\n-------------------------------------------------------------").toString();
+    protected List getExtraData() {
+        return new ArrayList<String>() {
+            {
+                this.add("          " + G + "====== " + V + "MORE INFORMATION" + G + " ======");
+                if (!data.isEmpty()) {
+                    for (Map.Entry<String, Object> entry : data.entrySet()) {
+                        String key = entry.getKey();
+                        Object value = entry.getValue();
+                        this.add(new StringBuilder().append("- ").append(key)
+                                .append(": ").append(value).toString());
+                    }
+                } else if (custom_error != null) {
+                    this.add(custom_error);
+                }
+            }
+        };
+    }
+
+    protected List getReportMessage() {
+        return new ArrayList<String>() {
+            {
+                this.add("-------------------------------------------------------------");
+                this.addAll(REPORT);
+                this.add("-------------------------------------------------------------");
+            }
+        };
     }
     // </editor-fold>
 
     /* UTILS */
-    protected String getSource() {
-        String source = "";
-
-        for (int i = 0; i < this.getStackTrace().length; i++) {
-            String str = this.getStackTrace()[i].toString();
-            if (str.contains(PvpTitles.getInstance().getDescription().getName().toLowerCase())) {
-                source += "\n" + str;
+    protected List getSource() {
+        return new ArrayList() {
+            {
+                for (StackTraceElement stackTrace : getStackTrace()) {
+                    String str = stackTrace.toString();
+                    if (str.contains(NAME.toLowerCase())) {                        
+                        this.add(
+                          new StringBuilder()
+                                .append(stackTrace.getClassName()
+                                        .replace("com.alternacraft.pvptitles.", ""))
+                                .append("(")
+                                  .append(stackTrace.getMethodName())
+                                  .append(" -> ")
+                                  .append(stackTrace.getLineNumber())
+                                .append(")").toString()
+                        );
+                    }
+                }
             }
-        }
-
-        return source;
+        };
     }
 
+    protected List getPluginInformation() {
+        return new ArrayList<String>() {
+            {
+                this.add(G + "Plugin name: " + L + NAME);
+                this.add(G + "Plugin version: " + L + VERSION);
+                this.add(G + "Bukkit version: " + L + Bukkit.getBukkitVersion());
+            }
+        };
+    }
 }

@@ -120,10 +120,10 @@ public class HandlePlayerTag implements Listener {
             long seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
             rank = Ranks.getRank(fame, seconds);
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
             return;
         } catch (RanksException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         String format = event.getFormat();
@@ -168,13 +168,13 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -182,7 +182,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             HOLOPLAYERS.put(uuid, createHoloPlayer(player, rank));
@@ -225,14 +225,14 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -241,7 +241,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             if (canDisplayRank(player, rank)) {
@@ -269,14 +269,14 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -285,7 +285,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             if (canDisplayRank(player, rank)) {
@@ -311,14 +311,14 @@ public class HandlePlayerTag implements Listener {
                 try {
                     fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -328,7 +328,7 @@ public class HandlePlayerTag implements Listener {
                     rank = Ranks.getRank(fame, totalTime);
 
                 } catch (RanksException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 if (canDisplayRank(player, rank)) {
@@ -377,14 +377,14 @@ public class HandlePlayerTag implements Listener {
             try {
                 fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
                 oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -393,7 +393,7 @@ public class HandlePlayerTag implements Listener {
             try {
                 rank = Ranks.getRank(fame, totalTime);
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             if (canDisplayRank(player, rank)) {
@@ -426,14 +426,14 @@ public class HandlePlayerTag implements Listener {
                 try {
                     fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
                     oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
@@ -442,7 +442,7 @@ public class HandlePlayerTag implements Listener {
                 try {
                     rank = Ranks.getRank(fame, totalTime);
                 } catch (RanksException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 if (canDisplayRank(player, rank)) {

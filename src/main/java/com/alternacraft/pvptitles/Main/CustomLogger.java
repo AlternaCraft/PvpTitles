@@ -52,6 +52,12 @@ public class CustomLogger {
         PvpTitles.LOGGER.log(Level.SEVERE, message, ex);
     }
     
+    public static void logArrayError(Object[] messages) {
+        for (Object msg : messages) {            
+            showMessage(msg.toString());
+        }
+    }
+    
     /* Custom message */
     public static void showMessage(String msg) {
         PvpTitles.getInstance().getServer().getConsoleSender().sendMessage(

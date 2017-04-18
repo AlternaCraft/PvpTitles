@@ -169,7 +169,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().savePlayedTime(next);
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
             }
 
@@ -203,7 +203,7 @@ public class PvpTitles extends JavaPlugin {
                 try {
                     this.manager.dbh.getDm().playerConnection(pl);
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                     continue;
                 }
             }

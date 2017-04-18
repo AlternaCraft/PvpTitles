@@ -58,7 +58,7 @@ public class HandleFame implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFame(FameEvent e) {
-        Player pl = (Player) e.getOfflinePlayer();
+        OfflinePlayer pl = e.getOfflinePlayer();
         
         if (pl == null) {
             e.setCancelled(true);
@@ -69,7 +69,7 @@ public class HandleFame implements Listener {
         try {
             seconds = dm.dbh.getDm().loadPlayedTime(pl.getUniqueId());
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
         
         // Comandos
@@ -102,7 +102,7 @@ public class HandleFame implements Listener {
                         break;
                     }
                 } catch (RanksException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
             }
         }
@@ -135,7 +135,7 @@ public class HandleFame implements Listener {
                             pl, actualRank, newRank));
                 }
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
         }
     }
@@ -180,7 +180,7 @@ public class HandleFame implements Listener {
         try {
             seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         if (!e.isSilent()) {
@@ -188,7 +188,7 @@ public class HandleFame implements Listener {
             try {
                 rank = Ranks.getRank(e.getFameTotal(), seconds);
             } catch (RanksException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             if (e.getWorldname() != null) {

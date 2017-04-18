@@ -84,7 +84,7 @@ public class RankCommand implements CommandExecutor {
         try {
             fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         int racha = HandlePlayerFame.getKillStreakFrom(uuid);
@@ -96,14 +96,14 @@ public class RankCommand implements CommandExecutor {
                     .getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId()))
                     .getTotalOnline();
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         String rank = "";
         try {
             rank = Ranks.getRank(fame, seconds);
         } catch (RanksException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         int rankup = Ranks.fameToRankUp();

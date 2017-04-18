@@ -17,7 +17,9 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import com.alternacraft.pvptitles.Main.DBLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,49 +101,53 @@ public class DBException extends CustomException {
 
     // <editor-fold defaultstate="collapsed" desc="ERROR ELEMENTS">
     @Override
-    protected String getHeader() {
-        return new StringBuilder("(" + DBLoader.tipo.toString() + " ERROR) ")
-                .append("On ").append(getFilteredString(this.type.toString()))
-                .append(" gets \"").append(this.getMessage()).append("\"").toString();
-    }
-
-    @Override
-    protected String getBody() {
-        return new StringBuilder()
-                .append("\n\nStackTrace:")
-                .append("\n-----------")
-                .append(getSource()).toString();
+    protected List getHeader() {
+        return new ArrayList() {
+            {
+                this.add(new StringBuilder().append(R).append("(").append(DBLoader.tipo.toString())
+                        .append(" ERROR) On ").append(getFilteredString(type.toString()))
+                        .append(" gets \"").append(getMessage()).append("\"").toString());
+            }
+        };
     }
     
     @Override
-    protected String getPossibleReasons() {
-        return new StringBuilder()
-                .append("\n\nPossible reason/s for the error:")
-                .append("\n--------------------------------")
-                .append(getPossibleErrors()).append("\n").toString();
+    protected List getPossibleReasons() {
+        return new ArrayList<String>() {
+            {
+                this.add("          " + G + "====== " + V + "POSSIBLE REASONS" + G + " ======");
+                this.addAll(getPossibleErrors());
+            }
+        };
     }
     // </editor-fold>
 
-    private String getPossibleErrors() {
-        String possible_errors = "";
+    private List getPossibleErrors() {
+        List<String> possible_errors = new ArrayList();
 
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
             String k = entry.getKey();
             Object v = entry.getValue();
 
             if (k.contains("MySQL") && k.contains("connection")) {
-                if (((String) v).equals("false")) {
-                    possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
+                if (!(boolean) v) {
+                    possible_errors.add(new StringBuilder("- ")
+                                .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
                 }
             }
         }
         
-        if (this.custom_error.contains("connection closed") 
-                || this.custom_error.contains("Communications link failure")) {
-            possible_errors += "\n- " + POSSIBLE_ERRORS.DB_CONNECTION.getText();
+        if (this.custom_error != null) {
+            if (this.custom_error.contains("connection closed") 
+                    || this.custom_error.contains("Communications link failure")) {
+                possible_errors.add(new StringBuilder("- ")
+                                    .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
+            }
         }
 
-        return (possible_errors.isEmpty()) ? "\n- " + POSSIBLE_ERRORS.NOT_FOUND.getText() : possible_errors;
+        return (possible_errors.isEmpty()) ? 
+                new ArrayList() {{ this.add(POSSIBLE_ERRORS.NOT_FOUND.getText()); }}
+                : possible_errors;
     }
     
     private String getFilteredString(String str) {

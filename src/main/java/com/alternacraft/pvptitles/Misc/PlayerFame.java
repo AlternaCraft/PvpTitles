@@ -71,7 +71,7 @@ public class PlayerFame implements Comparable {
         try {
             actual = Manager.getInstance().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
         
         long session = Manager.getInstance().getTimerManager().getPlayer(Bukkit.getServer()

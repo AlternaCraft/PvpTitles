@@ -48,14 +48,14 @@ public class PlaceholderHook extends EZPlaceholderHook {
         try {
             fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         long seconds = 0;
         try {
             seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
@@ -64,7 +64,7 @@ public class PlaceholderHook extends EZPlaceholderHook {
         try {
             rank = Ranks.getRank(fame, seconds);
         } catch (RanksException ex) {
-            CustomLogger.logError(ex.getCustomMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         if (id.equals("rank")) {

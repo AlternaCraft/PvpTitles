@@ -65,7 +65,7 @@ public class DBCommand implements CommandExecutor {
                     dm.DBExport(filename);
                     sender.sendMessage(getPluginName() + ChatColor.YELLOW + "Exported correctly");
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 break;
@@ -85,7 +85,7 @@ public class DBCommand implements CommandExecutor {
                             + filename + "' not found...");
                     }                    
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }               
 
                 break;
@@ -105,7 +105,7 @@ public class DBCommand implements CommandExecutor {
                             .getText(messages).replace("%cant%", String.valueOf(changes)));
 
                 } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 break;

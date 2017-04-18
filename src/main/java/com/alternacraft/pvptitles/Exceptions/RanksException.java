@@ -17,6 +17,8 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class RanksException extends CustomException {
@@ -58,21 +60,27 @@ public class RanksException extends CustomException {
     }
 
     @Override
-    protected String getHeader() {
-        return new StringBuilder().append(this.getMessage()).toString();
+    protected List getHeader() {
+        return new ArrayList() {
+            {
+                this.add(getMessage());
+            }
+        };
     }
 
     @Override
-    protected String getPossibleReasons() {
-        return new StringBuilder()
-                .append("\n\nPossible reason/s for the error:")
-                .append("\n--------------------------------")
-                .append(getPossibleErrors()).append("\n").toString();
+    protected List getPossibleReasons() {
+        return new ArrayList<String>() {
+            {
+                this.add("          ====== " + V + "POSSIBLE REASONS" + G + " ======");
+                this.addAll(getPossibleErrors());
+            }
+        };
     }
     // </editor-fold>
 
-    private String getPossibleErrors() {
-        String possible_errors = "";
+    private List getPossibleErrors() {
+        List<String> possible_errors = new ArrayList();
 
         for (Map.Entry<String, Object> entry : this.data.entrySet()) {
             String k = entry.getKey();
@@ -81,7 +89,8 @@ public class RanksException extends CustomException {
             if (k.equals("Seconds") || k.equals("Fame")) {
                 if (((int) v) < 0) {
                     if (!possible_errors.contains(POSSIBLE_ERRORS.CORRUPTED_DATA.getText())) {
-                        possible_errors += "\n- " + POSSIBLE_ERRORS.CORRUPTED_DATA.getText();
+                        possible_errors.add(new StringBuilder("- ")
+                                .append(POSSIBLE_ERRORS.CORRUPTED_DATA.getText()).toString());
                     }
                 }
             }
@@ -95,15 +104,16 @@ public class RanksException extends CustomException {
                     int has = (Integer) this.data.get("Seconds");
 
                     if (has < min || has > max) {
-                        possible_errors += "\n- "
-                                + POSSIBLE_ERRORS.BAD_EXTREMS.getText();
+                        possible_errors.add(new StringBuilder("- ")
+                                .append(POSSIBLE_ERRORS.BAD_EXTREMS.getText()).toString());
                     }
                 }
             }
         }
 
-        return (possible_errors.isEmpty()) ? "\n- "
-                + POSSIBLE_ERRORS.NOT_FOUND.getText() : possible_errors;
+        return (possible_errors.isEmpty()) ? 
+                new ArrayList() {{ this.add(POSSIBLE_ERRORS.NOT_FOUND.getText()); }}
+                : possible_errors;
     }
 
 }
