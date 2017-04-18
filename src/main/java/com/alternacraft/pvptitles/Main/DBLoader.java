@@ -19,19 +19,20 @@ package com.alternacraft.pvptitles.Main;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Backend.DatabaseManager;
 import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
-import com.alternacraft.pvptitles.Backend.DatabaseManagerMysql;
+import com.alternacraft.pvptitles.Backend.DatabaseManagerSQL;
 import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
+import com.alternacraft.pvptitles.Backend.SQLiteConnection;
+import com.alternacraft.pvptitles.Libraries.SQLConnection;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.SignTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.TimeTable;
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
@@ -40,15 +41,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class DBLoader {
 
     private DatabaseManager dm = null;
+    
     public static DBTYPE tipo = null;
-
     public static enum DBTYPE {
         EBEAN,
-        MYSQL;
+        MYSQL,
+        SQLITE;
     }
 
     public EbeanConnection ebeanServer = null;
-    public Connection mysql = null;
+    public SQLConnection sql = null;
 
     private PvpTitles pvpTitles = null;
     private FileConfiguration config = null;
@@ -58,29 +60,36 @@ public class DBLoader {
         this.config = config;
     }
 
-    public void selectDB() {
-        switch (tipo) {
-            case EBEAN:
-                // Ebean server
-                this.loadConfiguration();
-                this.initializeDatabase();
-
-                dm = new DatabaseManagerEbean(pvpTitles, ebeanServer);
-                break;                
-            case MYSQL:
-                // MySQL server
-                this.mysqlConnect(false);
-
-                if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION) {
-                    tipo = DBTYPE.EBEAN;
-                    selectDB();
-                } else {
-                    dm = new DatabaseManagerMysql(pvpTitles, mysql);
-                }
-                break;
+    public void selectDB() {        
+        if (tipo == DBTYPE.EBEAN) {
+            // Ebean server
+            this.loadConfiguration();
+            this.initializeDatabase();
+            
+            dm = new DatabaseManagerEbean(pvpTitles, ebeanServer);                       
+        } else {
+            if (tipo == DBTYPE.MYSQL) {
+                this.sql = new MySQLConnection();
+            }
+            else {
+                this.sql = new SQLiteConnection(PvpTitles.PLUGIN_DIR, "PvpLite.db");
+            }
+            
+            this.sqlConnect(false);
+            
+            if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED)) {
+                tipo = DBTYPE.EBEAN;
+                selectDB();
+                return;
+            } else {
+                dm = new DatabaseManagerSQL(pvpTitles, sql);
+            }
         }
+        
+        showMessage(ChatColor.YELLOW + tipo.name() + " database " 
+                + ChatColor.AQUA + "loaded correctly.");
     }
-
+    
     // Ebean
     /**
      * Método para establecer la configuracion de la bd de ebeans
@@ -135,40 +144,38 @@ public class DBLoader {
                 config.getString("database.isolation"),
                 PvpTitles.debugMode,
                 config.getBoolean("database.rebuild")
-        );
-
-        showMessage(ChatColor.YELLOW + "Ebean database " + ChatColor.AQUA + "loaded correctly.");
+        );        
     }
 
     /**
-     * Conexion a MySQL
+     * Conexion a SQL Database
+     * 
      * @param reconnect Intentar conectar de nuevo a la bd de forma silenciosa
      */
-    public void mysqlConnect(boolean reconnect) {
-        ConfigDataStore params = pvpTitles.getManager().params;
+    public void sqlConnect(boolean reconnect) {
+        ConfigDataStore params = pvpTitles.getManager().params;       
 
-        MySQLConnection.connectDB(params.getHost() + ":" + params.getPort()
-                + "/" + params.getDb(), params.getUser(), params.getPass(), 
-                params.isUse_ssl(), reconnect);
+        if (tipo == DBTYPE.MYSQL) {
+            this.sql.connectDB(reconnect, params.getHost() + ":" + params.getPort()
+                    + "/" + params.getDb(), params.getUser(), params.getPass(), 
+                    String.valueOf(params.isUse_ssl()));
+        } else {
+            this.sql.connectDB(reconnect);
+        }
 
-        // No lo cambio porque sigue usando mysql (reconnect)
-        if (MySQLConnection.estado_conexion == MySQLConnection.Estado.SIN_CONEXION && !reconnect) {
+        if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED) && !reconnect) {
             tipo = DBTYPE.EBEAN;
         } else {
-            tipo = DBTYPE.MYSQL;
-            mysql = MySQLConnection.getConnection();
-
             if (!reconnect) {            
-                MySQLConnection.creaDefault();
-                MySQLConnection.registraServer(params.getMultiS(), params.getNameS());
-                showMessage(ChatColor.YELLOW + "MySQL database " + ChatColor.AQUA + "loaded correctly.");
+                this.sql.load();
+                this.sql.registraServer(params.getMultiS(), params.getNameS());
             }
             else {
-                dm.updateConnection(mysql);
+                dm.updateConnection(this.sql);
             }
         }
-    }
-
+    } 
+    
     /**
      * Método para recibir el gestor de la base de datos
      *

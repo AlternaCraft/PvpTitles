@@ -21,6 +21,7 @@ import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
+import com.alternacraft.pvptitles.Libraries.SQLConnection;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.PERFORMANCE;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
@@ -74,43 +75,51 @@ public class DatabaseManagerEbean implements DatabaseManager {
         PlayerPT plClass = null;
         UUID playerUUID = player.getUniqueId();
 
-        PERFORMANCE.start("Player connection");
+        try {
+            PERFORMANCE.start("Player connection");
 
-        plClass = ebeanServer.getDatabase().find(PlayerPT.class)
-                .select("playerUUID")
-                .where()
-                .ieq("playerUUID", playerUUID.toString())
-                .findUnique();
-
-        if (plClass == null) {
-            plClass = new PlayerPT();
-            plClass.setPlayerUUID(playerUUID.toString());
-        }
-
-        plClass.setLastLogin(new Date());
-
-        ebeanServer.getDatabase().save(plClass);
-
-        // MultiWorld   
-        if (plugin.getManager().params.isMw_enabled()) {
-            WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
-                    .select("playerUUID, world")
+            plClass = ebeanServer.getDatabase().find(PlayerPT.class)
+                    .select("playerUUID")
                     .where()
                     .ieq("playerUUID", playerUUID.toString())
-                    .ieq("world", player.getWorld().getName())
                     .findUnique();
 
-            if (plwClass == null) {
-                plwClass = new WorldPlayerPT();
-
-                plwClass.setPlayerUUID(playerUUID.toString());
-                plwClass.setWorld(player.getWorld().getName());
-
-                ebeanServer.getDatabase().save(plwClass);
+            if (plClass == null) {
+                plClass = new PlayerPT();
+                plClass.setPlayerUUID(playerUUID.toString());
             }
-        }
 
-        PERFORMANCE.recordValue("Player connection");
+            plClass.setLastLogin(new Date());
+
+            ebeanServer.getDatabase().save(plClass);
+
+            // MultiWorld   
+            if (plugin.getManager().params.isMw_enabled()) {
+                WorldPlayerPT plwClass = ebeanServer.getDatabase().find(WorldPlayerPT.class)
+                        .select("playerUUID, world")
+                        .where()
+                        .ieq("playerUUID", playerUUID.toString())
+                        .ieq("world", player.getWorld().getName())
+                        .findUnique();
+
+                if (plwClass == null) {
+                    plwClass = new WorldPlayerPT();
+
+                    plwClass.setPlayerUUID(playerUUID.toString());
+                    plwClass.setWorld(player.getWorld().getName());
+
+                    ebeanServer.getDatabase().save(plwClass);
+                }
+            }
+
+            PERFORMANCE.recordValue("Player connection");
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
+        }
     }
 
     /* TABLA PLAYERS */
@@ -168,7 +177,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(plClass);
             }
         } catch (NullPointerException | OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
 
@@ -222,8 +235,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     points = plClass.getPoints();
                 }
             }
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_LOADING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_LOADING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         return points;
@@ -256,8 +273,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
             }
 
             ebeanServer.getDatabase().save(plClass);
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
 
@@ -282,8 +303,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
             if (plClass != null) {
                 time = plClass.getPlayedTime();
             }
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         return time;
@@ -349,8 +374,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     rankedPlayers.add(pf);
                 }
             }
-        } catch (Exception ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage());
+        } catch (final Exception ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         PERFORMANCE.recordValue("TOP");
@@ -376,8 +405,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
             st.setBlockface(sb.getData().getPrimitiveBlockface());
 
             ebeanServer.getDatabase().save(st);
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
 
@@ -404,8 +437,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     .findUnique();
 
             ebeanServer.getDatabase().delete(st);
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
 
@@ -429,8 +466,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
             return sbd;
 
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
 
@@ -509,8 +550,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     l.export(true);
                 }
             }
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PURGE_DATA, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PURGE_DATA, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         return contador;
@@ -525,16 +570,16 @@ public class DatabaseManagerEbean implements DatabaseManager {
         short serverID = plugin.getManager().params.getMultiS();
 
         String sql = "";
-        sql += MySQLConnection.getTableServers() + "\n";
-        sql += MySQLConnection.getTablePlayerServer() + "\n";
-        sql += MySQLConnection.getTablePlayerMeta() + "\n";
-        sql += MySQLConnection.getTablePlayerWorld() + "\n";
-        sql += MySQLConnection.getTableSigns() + "\n";
+        sql += SQLConnection.getTableServers() + "\n";
+        sql += SQLConnection.getTablePlayerServer() + "\n";
+        sql += SQLConnection.getTablePlayerMeta() + "\n";
+        sql += SQLConnection.getTablePlayerWorld() + "\n";
+        sql += SQLConnection.getTableSigns() + "\n";
 
         List<PlayerPT> plClass = null;
         List<WorldPlayerPT> pwClass = null;
         List<SignPT> stClass = null;
-                
+
         try {
             plClass = (List<PlayerPT>) ebeanServer.getDatabase().
                     find(PlayerPT.class).findList();
@@ -542,11 +587,14 @@ public class DatabaseManagerEbean implements DatabaseManager {
                     find(WorldPlayerPT.class).findList();
             stClass = (List<SignPT>) ebeanServer.getDatabase().
                     find(SignPT.class).findList();
-        } 
-        catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
-        
+
         boolean mw = pwClass != null && pwClass.size() > 0;
 
         sql += "insert into Servers values (" + serverID + ", '" + plugin.getManager().params.getNameS() + "')"
@@ -684,7 +732,11 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(wppt);
             }
         } catch (ParseException | OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage());
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         return true;
@@ -741,8 +793,12 @@ public class DatabaseManagerEbean implements DatabaseManager {
             if (repaired) {
                 l.export(true);
             }
-        } catch (OptimisticLockException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.REPAIR, ex.getMessage());
+        } catch (final OptimisticLockException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.REPAIR, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
 
         return q;

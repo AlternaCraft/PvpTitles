@@ -256,11 +256,8 @@ public enum LangsFile {
         CUSTOM_RU;
     }
 
-    private static final String DIRECTORY = new StringBuilder().append(
-            PvpTitles.getInstance().getDataFolder()).append(
-                    File.separator).append(
-                        "Langs").append(
-                            File.separator).toString();
+    private static final String DIRECTORY = new StringBuilder(PvpTitles.PLUGIN_DIR)
+            .append("Langs").append(File.separator).toString();
 
     private final HashMap<LangType, String> messages = new HashMap();
 

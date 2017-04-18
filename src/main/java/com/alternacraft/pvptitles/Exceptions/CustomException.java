@@ -24,7 +24,7 @@ import java.util.Map;
 public abstract class CustomException extends Exception {
 
     protected final String REPORT = "If you don't know the error cause, please, report it.\n"
-            + "http://dev.bukkit.org/bukkit-plugins/pvptitles/create-ticket/";
+            + "https://dev.bukkit.org/projects/pvptitles/issues/create";
 
     protected static final short SIMPLIFIED = 0;
     protected static final short ESSENTIAL = 1;
@@ -124,8 +124,6 @@ public abstract class CustomException extends Exception {
             String str = this.getStackTrace()[i].toString();
             if (str.contains(PvpTitles.getInstance().getDescription().getName().toLowerCase())) {
                 source += "\n" + str;
-            } else {
-                break;
             }
         }
 

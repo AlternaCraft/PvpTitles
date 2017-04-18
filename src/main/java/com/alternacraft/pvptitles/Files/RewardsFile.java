@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Files;
 
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,8 +24,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class RewardsFile {
     /* Compatibility file */
-    public File oldCommandsFile = new File("plugins/PvpTitles/commands.yml");        
-    public File rewardsFile = new File("plugins/PvpTitles/rewards.yml");        
+    public File oldCommandsFile = new File(PvpTitles.PLUGIN_DIR + "commands.yml");        
+    public File rewardsFile = new File(PvpTitles.PLUGIN_DIR + "rewards.yml");        
     
     public RewardsFile() {
     }

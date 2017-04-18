@@ -19,6 +19,7 @@ package com.alternacraft.pvptitles.RetroCP;
 import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Exceptions.DBException;
+import com.alternacraft.pvptitles.Libraries.SQLConnection;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
@@ -27,7 +28,6 @@ import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.TimeTable;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.bukkit.ChatColor;
@@ -104,15 +104,15 @@ public class DBChecker {
     }
 
     public void checkMySQLDB() {
-        Connection mysql = plugin.getManager().dbh.mysql;
-        RetroDMMysql rdm = new RetroDMMysql(plugin, mysql);
+        SQLConnection mysql = plugin.getManager().dbh.sql;
+        RetroDMMysql rdm = new RetroDMMysql(plugin, mysql.getConnection());
 
         int status = MYSQL_OLD_VERSION;
 
         try {
-            ResultSet rs = mysql.createStatement().executeQuery("show tables like 'SignsServer'");
+            ResultSet rs = mysql.getConnection().createStatement().executeQuery("show tables like 'SignsServer'");
             if (rs.next()) {
-                rs = mysql.createStatement().executeQuery("show tables like 'PlayersTime'");
+                rs = mysql.getConnection().createStatement().executeQuery("show tables like 'PlayersTime'");
                 if (rs.next()) {
                     status = MYSQL_TIME_CREATED;
                 }

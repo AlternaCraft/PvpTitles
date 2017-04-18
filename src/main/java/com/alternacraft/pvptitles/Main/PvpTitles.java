@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Commands.BoardCommand;
 import com.alternacraft.pvptitles.Commands.DBCommand;
 import com.alternacraft.pvptitles.Commands.FameCommand;
@@ -37,11 +36,13 @@ import com.alternacraft.pvptitles.Listeners.HandleInventory;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Listeners.HandleSign;
+import static com.alternacraft.pvptitles.Main.CustomLogger.logError;
 import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Timer;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -57,10 +58,12 @@ public class PvpTitles extends JavaPlugin {
     public static final Timer PERFORMANCE = new Timer();
 
     private static PvpTitles plugin = null;
-
+    
     private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "]";
 
+    public static String PLUGIN_DIR;
+    
     // Custom prefix
     private static String PLUGINPREFIX = PLUGINMODELPREFIX + " ";
 
@@ -82,6 +85,8 @@ public class PvpTitles extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        PLUGIN_DIR = new StringBuilder(this.getDataFolder().toString())
+                .append(File.separator).toString();
 
         this.manager = Manager.getInstance();
         PvpTitles.LOGGER = this.getLogger();
@@ -176,10 +181,12 @@ public class PvpTitles extends JavaPlugin {
             // Inventories
             Inventories.closeInventories();
 
-            if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)) {
+            if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)
+                    || DBLoader.tipo.equals(DBLoader.DBTYPE.SQLITE)) {
                 try {
-                    MySQLConnection.closeConnection();
+                    this.manager.dbh.sql.closeConnection();
                 } catch (SQLException ex) {
+                    logError(ex.getMessage(), ex);
                 }
             }
 

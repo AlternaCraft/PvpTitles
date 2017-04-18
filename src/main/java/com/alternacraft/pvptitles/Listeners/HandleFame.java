@@ -58,11 +58,20 @@ public class HandleFame implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFame(FameEvent e) {
-        if (e.getOfflinePlayer() == null) {
+        Player pl = (Player) e.getOfflinePlayer();
+        
+        if (pl == null) {
             e.setCancelled(true);
             return;
         }
 
+        long seconds = 0;
+        try {
+            seconds = dm.dbh.getDm().loadPlayedTime(pl.getUniqueId());
+        } catch (DBException ex) {
+            CustomLogger.logError(ex.getCustomMessage());
+        }
+        
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             Map<String, Map<String, List<String>>> kills = pt.getManager().rewards.get("onKill");
@@ -83,15 +92,8 @@ public class HandleFame implements Listener {
         }
 
         Map<String, Map<String, List<String>>> rank = pt.getManager().rewards.get("onRank");
-        if (rank != null) {
+        if (rank != null) {            
             for (String rango : rank.keySet()) {
-                long seconds = 0;
-                try {
-                    seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logError(ex.getCustomMessage());
-                }
-
                 try {
                     String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
                     String newRank = StrUtils.removeColors(Ranks.getRank(e.getFameTotal(), seconds));
@@ -117,19 +119,11 @@ public class HandleFame implements Listener {
 
         // Nuevo rango
         if (e.getOfflinePlayer().isOnline()) {
-            Player pl = (Player) e.getOfflinePlayer();
-
             int fameA = e.getFame();
             int fameD = e.getFameTotal();
 
-            long oldTime = 0;
-            try {
-                oldTime = dm.getDbh().getDm().loadPlayedTime(pl.getUniqueId());
-            } catch (DBException ex) {
-                CustomLogger.logError(ex.getCustomMessage());
-            }
             TimedPlayer tp = pt.getManager().getTimerManager().getPlayer(pl);
-            long totalTime = oldTime + ((tp == null) ? 0 : tp.getTotalOnline());
+            long totalTime = seconds + ((tp == null) ? 0 : tp.getTotalOnline());
 
             try {
                 String actualRank = Ranks.getRank(fameA, totalTime);

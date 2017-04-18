@@ -19,7 +19,6 @@ package com.alternacraft.pvptitles.Files;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -232,10 +231,8 @@ public class ModelsFile {
      * @return Contenido del archivo
      */
     public ArrayList<BoardModel> makeFile(PvpTitles pl) {
-        String ruta = new StringBuilder().append(
-                pl.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
-                        FILENAME).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append(FILENAME).toString();
         FileWriter fichero = null;
         PrintWriter pw = null;
 

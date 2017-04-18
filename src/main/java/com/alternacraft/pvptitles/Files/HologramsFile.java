@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class HologramsFile {
 
-    private static final File HOLOSFILE = new File("plugins/PvpTitles/holograms.yml");
+    private static final File HOLOSFILE = new File(PvpTitles.PLUGIN_DIR + "holograms.yml");
     private static YamlConfiguration holosConf = null;
 
     public static YamlConfiguration load() {

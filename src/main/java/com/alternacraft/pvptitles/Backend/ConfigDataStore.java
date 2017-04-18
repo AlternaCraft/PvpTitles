@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,9 @@ public class ConfigDataStore {
     private boolean alert = true;
     // Atributo para guardar el tipo de formato para el error
     private short errorFormat = 2;
-
+    // Atributo para almacenar la base de datos por defecto
+    private DBTYPE defaultDB = DBTYPE.EBEAN;
+    
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
     private boolean use_ssl = false;
@@ -220,6 +223,10 @@ public class ConfigDataStore {
         this.errorFormat = errorFormat;
     }
 
+    public void setDefaultDB(DBTYPE defaultDB) {
+        this.defaultDB = defaultDB;
+    }
+
     public void setTitle(boolean title) {
         this.title = title;
     }
@@ -385,6 +392,10 @@ public class ConfigDataStore {
         return errorFormat;
     }
 
+    public DBTYPE getDefaultDB() {
+        return defaultDB;
+    }
+
     public boolean displayInChat() {
         return displayInChat;
     }
@@ -420,7 +431,7 @@ public class ConfigDataStore {
     // ** ************** ** \\    
 
     /**
-     * Método para convertir el nombre del color a un valor valido
+     * Método para convertir el nombre del color a un valor válido
      *
      * @param color String con el nombre del color
      */

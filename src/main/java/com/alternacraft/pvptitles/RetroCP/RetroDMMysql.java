@@ -21,7 +21,6 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import static com.alternacraft.pvptitles.RetroCP.DBChecker.MYSQL_TIME_CREATED;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,10 +42,7 @@ public class RetroDMMysql {
     // </editor-fold>
 
     public void exportarData(int status) {
-        String ruta = new StringBuilder().append(
-                pt.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
-                        FILENAME).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR).append(FILENAME).toString();
 
         String sql = "";
 

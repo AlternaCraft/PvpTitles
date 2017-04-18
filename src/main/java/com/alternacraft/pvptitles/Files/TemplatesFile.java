@@ -51,11 +51,9 @@ public class TemplatesFile {
     public static final String NEXT_RANK_TAG = CTV + "NEXTRANK" + CTV;
     public static final String VETO_TAG = CTV + "VETO" + CTV;
 
-    private final String TEMPLATES = new StringBuilder().append(
-            PvpTitles.getInstance().getDataFolder()).append(
-                    File.separator).append(
-                    "Templates").append(
-                    File.separator).toString();
+    private final String TEMPLATES = new StringBuilder(PvpTitles.PLUGIN_DIR)
+            .append("Templates")
+            .append(File.separator).toString();
 
     public enum FILES {
         TAGS_DESCRIPTION("INFO.txt", ""

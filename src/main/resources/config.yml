@@ -28,6 +28,11 @@ Debug: false
 # 2 - All data
 ErrorFormat: 2
 
+# Options (No case sensitive):
+# - Ebean - WILL BE REMOVED IN NEXT VERSIONS
+# - SQLite - Like Ebean but faster (Should use this)
+DefaultDatabase: SQLite
+
 ############################################################
 # +------------------------------------------------------+ #
 # |                 MYSQL-PVPTITLES BRIDGE               | #
@@ -37,7 +42,7 @@ ErrorFormat: 2
 # False to work with ebean
 # True to hook {connect} into the existing server MySQL.
 Mysql:
-    enable: false    
+    enable: false       
     enableSSL: false
     
     host: localhost
@@ -86,7 +91,7 @@ LBRefresh: 1
 # Time to check new Rank (Time requirement) (IN SECONDS)
 RankChecker: 30
 
-# ** You can disable the events (if you don't need them) putting in the fields '-1' ** #
+# ** You can disable the events (if you don't need them) putting in the fields '-1' **
 
 ############################################################
 # +------------------------------------------------------+ #

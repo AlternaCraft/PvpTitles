@@ -28,34 +28,124 @@ import java.util.ListIterator;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigLoader {
+
     // Configuracion del config principal
     private FileConfig customConfig = null;
     private PvpTitles pvpTitles = null;
-    
+
     public ConfigLoader(PvpTitles pvpTitles) {
-        this.pvpTitles = pvpTitles;        
+        this.pvpTitles = pvpTitles;
     }
-    
+
     public void loadConfig(ConfigDataStore params) {
-        customConfig = new FileConfig(pvpTitles);        
+        customConfig = new FileConfig(pvpTitles);
         loadData(Manager.rankList(), Manager.reqFame(), Manager.reqTime(), params);
     }
-    
+
     /**
      * Método para cargar la informacion del config principal
-     * 
+     *
      * @param rankList Map
      * @param reqFame Map
      * @param reqTime Map
      * @param params ConfigDataStore
      */
-    protected void loadData(LinkedList rankList, LinkedList reqFame, 
+    protected void loadData(LinkedList rankList, LinkedList reqFame,
             LinkedList reqTime, ConfigDataStore params) {
         // Set debug mode
         FileConfiguration config = getConfig();
-        
-        PvpTitles.setPluginName(StrUtils.translateColors(config.getString("PluginPrefix")));        
+
+        PvpTitles.setPluginName(StrUtils.translateColors(config.getString("PluginPrefix")));
         PvpTitles.debugMode = config.getBoolean("Debug");
+
+        // PLUGIN CONTROL
+        params.setMetrics(config.getBoolean("Metrics"));
+        params.setUpdate(config.getBoolean("Update"));
+        params.setAlert(config.getBoolean("Alert"));
+        params.setErrorFormat((short) config.getInt("ErrorFormat"));
+        String defdb = config.getString("DefaultDatabase");
+        try {
+            params.setDefaultDB(DBTYPE.valueOf(defdb.toUpperCase()));
+        } catch (Exception ex) {
+            CustomLogger.logError("Bad name for default database; Using Ebean per default...");
+        }
+
+        // MYSQL-PVPTITLES BRIDGE
+        params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
+        if (params.isPvpTitles_Bridge()) {
+            DBLoader.tipo = DBTYPE.MYSQL;
+
+            params.setUse_ssl(config.getBoolean("Mysql.enableSSL"));
+            params.setHost(config.getString("Mysql.host"));
+            params.setPort((short) config.getInt("Mysql.port"));
+            params.setDb(config.getString("Mysql.database"));
+            params.setUser(config.getString("Mysql.user"));
+            params.setPass(config.getString("Mysql.pass"));
+        } else {
+            DBLoader.tipo = params.getDefaultDB();
+        }
+        params.setMultiS((short) config.getInt("MultiS"));
+        params.setNameS(config.getString("NameS"));
+
+        // MULTIWORLD
+        params.setMw_enabled(config.getBoolean("MW.enable"));
+        params.setTitle(config.getBoolean("MW-filter.title"));
+        params.setPoints(config.getBoolean("MW-filter.points"));
+        params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
+        params.getAffectedWorlds().clear();
+        params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
+        // Todos los mundos a minusculas
+        ListIterator<String> iterator = params.getAffectedWorlds().listIterator();
+        while (iterator.hasNext()) {
+            iterator.set(iterator.next().toLowerCase());
+        }
+
+        // Events
+        params.setLBRefresh((short) config.getInt("LBRefresh"));
+        params.setRankChecker((short) config.getInt("RankChecker"));
+
+        // PURGE
+        params.setTimeP((short) config.getInt("TimeP"));
+        params.getNoPurge().clear();
+        params.getNoPurge().addAll(config.getStringList("NoPurge"));
+
+        // ANTIFARM
+        params.setKills((short) config.getInt("Kills"));
+        params.setTimeV((short) config.getInt("TimeV"));
+        params.setTimeL((short) config.getInt("TimeL"));
+
+        params.setCheckAFK(config.getBoolean("CheckAFK"));
+        params.setAFKTime((short) config.getInt("AFKTime"));
+
+        params.setMod((float) config.getDouble("Mod"));
+
+        // CHAT & TITLES
+        String lang = config.getString("DefaultLang");
+
+        if (!"ES".equals(lang) && !"EN".equals(lang)) {
+            try {
+                messages = LangsFile.LangType.valueOf("CUSTOM_" + lang);
+            } catch (Exception ex) {
+                CustomLogger.logError(ex.getMessage(), ex);
+            }
+        } else {
+            messages = LangsFile.LangType.valueOf(lang);
+        }
+
+        if (messages == null) {
+            messages = LangsFile.LangType.EN;
+        }
+
+        params.setTag(config.getString("Tag"));
+        params.setPrefixColor(config.getString("PrefixColor"));
+        params.setTop((short) config.getInt("Top"));
+
+        params.setPrefix(config.getString("Prefix"));
+
+        params.displayInChat(config.getBoolean("DisplayTitleInChat"));
+        params.displayLikeHolo(config.getBoolean("DisplayTitleOverPlayer"));
+        params.setHolotagformat(StrUtils.translateColors(config.getString("HoloTitleFormat")));
+        params.setHoloHeightMod((short) config.getInt("HoloHeightModifier"));
 
         List<String> configList = config.getStringList("RankNames");
         List<Integer> requFame = config.getIntegerList("ReqFame");
@@ -65,13 +155,13 @@ public class ConfigLoader {
         for (String rank : configList) {
             rankList.add(StrUtils.translateColors(rank));
         }
-        
+
         reqFame.clear();
         for (Integer fame : requFame) {
             reqFame.add(fame);
         }
-        
-        reqTime.clear();        
+
+        reqTime.clear();
         for (int i = 0; i < configList.size(); i++) {
             long seconds = 0;
             if (requTime.size() >= (i + 1) && requTime.get(i) != null) {
@@ -79,83 +169,13 @@ public class ConfigLoader {
             }
             reqTime.add(seconds);
         }
-        
-        params.getAffectedWorlds().clear();
-        params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
-
-        // Todos los mundos a minusculas
-        ListIterator<String> iterator = params.getAffectedWorlds().listIterator();
-        while (iterator.hasNext()) {
-            iterator.set(iterator.next().toLowerCase());
-        }
-
-        params.getNoPurge().clear();
-        params.getNoPurge().addAll(config.getStringList("NoPurge"));
-
-        params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
-        if (params.isPvpTitles_Bridge()) {
-            DBLoader.tipo = DBTYPE.MYSQL;
-            
-            params.setUse_ssl(config.getBoolean("Mysql.enableSSL"));
-            params.setHost(config.getString("Mysql.host"));
-            params.setPort((short) config.getInt("Mysql.port"));
-            params.setDb(config.getString("Mysql.database"));
-            params.setUser(config.getString("Mysql.user"));
-            params.setPass(config.getString("Mysql.pass"));
-        } else {
-            DBLoader.tipo = DBTYPE.EBEAN;
-        }
-        params.setMultiS((short) config.getInt("MultiS"));
-        params.setNameS(config.getString("NameS"));
-
-        String lang = config.getString("DefaultLang");
-        
-        if (!"ES".equals(lang) && !"EN".equals(lang)) {
-            try {
-                messages = LangsFile.LangType.valueOf("CUSTOM_"+lang);
-            }
-            catch (Exception ex){}
-        }
-        else {
-            messages = LangsFile.LangType.valueOf(lang);
-        }
-        
-        if (messages == null) {
-            messages = LangsFile.LangType.EN;
-        }
-
-        params.displayInChat(config.getBoolean("DisplayTitleInChat"));
-        params.displayLikeHolo(config.getBoolean("DisplayTitleOverPlayer"));
-        params.setHolotagformat(StrUtils.translateColors(config.getString("HoloTitleFormat")));
-        params.setHoloHeightMod((short) config.getInt("HoloHeightModifier"));
-        params.setPrefixColor(config.getString("PrefixColor"));
-        params.setTag(config.getString("Tag"));
-        params.setPrefix(config.getString("Prefix"));
-        params.setTop((short) config.getInt("Top"));
-        params.setLBRefresh((short) config.getInt("LBRefresh"));
-        params.setRankChecker((short) config.getInt("RankChecker"));
-        params.setMod((float) config.getDouble("Mod"));
-        params.setKills((short) config.getInt("Kills"));
-        params.setTimeP((short) config.getInt("TimeP"));
-        params.setTimeV((short) config.getInt("TimeV"));
-        params.setTimeL((short) config.getInt("TimeL"));
-        params.setCheckAFK(config.getBoolean("CheckAFK"));
-        params.setAFKTime((short) config.getInt("AFKTime"));
-        params.setUpdate(config.getBoolean("Update"));
-        params.setAlert(config.getBoolean("Alert"));
-        params.setMetrics(config.getBoolean("Metrics"));
-        params.setErrorFormat((short) config.getInt("ErrorFormat"));
-        params.setMw_enabled(config.getBoolean("MW.enable"));
-        params.setTitle(config.getBoolean("MW-filter.title"));
-        params.setPoints(config.getBoolean("MW-filter.points"));
-        params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
 
         if (configList.size() != requFame.size()) {
             CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
             CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
             CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
         }
-    }    
+    }
 
     public FileConfiguration getConfig() {
         return customConfig.getConfig();
