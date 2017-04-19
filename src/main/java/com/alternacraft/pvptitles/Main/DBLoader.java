@@ -26,7 +26,7 @@ import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Backend.SQLiteConnection;
-import com.alternacraft.pvptitles.Libraries.SQLConnection;
+import com.alternacraft.pvptitles.Backend.SQLConnection;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerTable;
 import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
@@ -81,7 +81,7 @@ public class DBLoader {
             this.sqlConnect(false);
             
             if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED)) {
-                tipo = DBTYPE.EBEAN;
+                //tipo = DBTYPE.EBEAN;
                 selectDB();
                 return;
             } else {
@@ -158,18 +158,18 @@ public class DBLoader {
 
         if (tipo == DBTYPE.MYSQL) {
             this.sql.connectDB(reconnect, params.getHost() + ":" + params.getPort()
-                    + "/" + params.getDb(), params.getUser(), params.getPass(), 
-                    String.valueOf(params.isUse_ssl()));
+                    + "/" + params.getDb(), String.valueOf(params.isUse_ssl()),
+                    params.getUser(), params.getPass());
         } else {
             this.sql.connectDB(reconnect);
         }
 
         if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED) && !reconnect) {
-            tipo = DBTYPE.EBEAN;
+            tipo = (tipo == DBTYPE.SQLITE) ? DBTYPE.EBEAN : params.getDefaultDB();
         } else {
             if (!reconnect) {            
                 this.sql.load();
-                this.sql.registraServer(params.getMultiS(), params.getNameS());
+                this.sql.updateServer(params.getMultiS(), params.getNameS());
             }
             else {
                 dm.updateConnection(this.sql);

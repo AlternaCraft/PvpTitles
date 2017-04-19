@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.alternacraft.pvptitles.Libraries;
+package com.alternacraft.pvptitles.Backend;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
@@ -71,11 +71,13 @@ public abstract class SQLConnection {
         return valida;
     }
     
-    public void closeConnection() throws SQLException {
-        if (!connection.isClosed()) {
-            connection.close();
-            status = STATUS_AVAILABLE.NOT_CONNECTED;
-        }
+    public void closeConnection() {
+        try {
+            if (!connection.isClosed()) {
+                connection.close();
+                status = STATUS_AVAILABLE.NOT_CONNECTED;
+            }
+        } catch (SQLException ex) {}
     }
     
     protected void update(String sql) {
@@ -153,7 +155,7 @@ public abstract class SQLConnection {
             + ")";
     }         
     
-    public void registraServer(short id, String nombre) {
+    public void updateServer(short id, String nombre) {
         String insert = "insert into Servers values (?,?)";
         String update = "update Servers set name=? where id=?";
         try {
@@ -167,8 +169,7 @@ public abstract class SQLConnection {
                 updateIS.setString(1, nombre);
                 updateIS.setShort(2, id);
                 updateIS.executeUpdate();
-            } catch (SQLException ex1) {
-            }
+            } catch (SQLException ex1) {}
         }
     }    
     

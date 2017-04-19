@@ -36,14 +36,12 @@ import com.alternacraft.pvptitles.Listeners.HandleInventory;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Listeners.HandleSign;
-import static com.alternacraft.pvptitles.Main.CustomLogger.logError;
 import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Timer;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -183,11 +181,7 @@ public class PvpTitles extends JavaPlugin {
 
             if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)
                     || DBLoader.tipo.equals(DBLoader.DBTYPE.SQLITE)) {
-                try {
-                    this.manager.dbh.sql.closeConnection();
-                } catch (SQLException ex) {
-                    logError(ex.getMessage(), ex);
-                }
+                this.manager.dbh.sql.closeConnection();
             }
 
             PERFORMANCE.saveToLog("performance.txt");

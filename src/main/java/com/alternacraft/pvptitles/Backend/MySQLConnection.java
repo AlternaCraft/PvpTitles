@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Libraries.SQLConnection;
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.Manager;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -33,8 +33,7 @@ public class MySQLConnection extends SQLConnection {
      * Constructor en caso de que quiera un acceso personalizado
      * 
      * @param reconnect Sin mostrar mensajes
-     * 
-     * @param args
+     * @param args Para indicar datos de acceso a la base de datos.
      */
     @Override
     public void connectDB(boolean reconnect, String... args) {
@@ -49,7 +48,7 @@ public class MySQLConnection extends SQLConnection {
         } catch (SQLException ex) {
             if (!reconnect) CustomLogger.logError(((ex.getErrorCode() == 0)
                     ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode())
-                    + "; Using Ebean per default...");
+                    + "; Using " + Manager.getInstance().params.getDefaultDB() + " per default...");
             this.status = STATUS_AVAILABLE.NOT_CONNECTED;
         }
     }

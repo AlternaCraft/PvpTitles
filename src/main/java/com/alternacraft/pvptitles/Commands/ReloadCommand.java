@@ -21,7 +21,6 @@ import com.alternacraft.pvptitles.Hook.HolographicHook;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
 import static com.alternacraft.pvptitles.Hook.HolographicHook.HEIGHT_PER_ROW;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
-import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.Manager;
@@ -29,7 +28,6 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
-import java.sql.SQLException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -52,11 +50,8 @@ public class ReloadCommand implements CommandExecutor {
             return false;
         }
 
-        if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)) {
-            try {
-                this.pvpTitles.getManager().dbh.sql.closeConnection();
-            } catch (SQLException ex) {
-            }
+        if (tipo.equals(DBTYPE.MYSQL) || tipo.equals(DBTYPE.SQLITE)) {
+            this.pvpTitles.getManager().dbh.sql.closeConnection();
         }
 
         pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);

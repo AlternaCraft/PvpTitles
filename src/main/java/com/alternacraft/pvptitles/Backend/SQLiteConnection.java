@@ -1,6 +1,5 @@
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Libraries.SQLConnection;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;

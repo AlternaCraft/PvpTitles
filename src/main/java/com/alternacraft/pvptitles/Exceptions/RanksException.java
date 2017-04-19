@@ -16,9 +16,9 @@
  */
 package com.alternacraft.pvptitles.Exceptions;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 public class RanksException extends CustomException {
