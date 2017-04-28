@@ -505,7 +505,15 @@ public class DatabaseManagerSQL implements DatabaseManager {
             }
         }
 
-        sql += mundos + " order by points DESC limit " + cant;
+        sql += mundos;
+        
+        if (plugin.getManager().params.isMw_enabled()) {
+            sql += " order by PlayerWorld.points";
+        } else {
+            sql += " order by points";
+        }
+        
+        sql += " DESC limit " + cant;
         // </editor-fold>
         CustomLogger.logDebugInfo("Top players: " + sql);
 
@@ -522,7 +530,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     pf.setServer(rs.getShort("serverID"));
 
                     if (plugin.getManager().params.isMw_enabled()) {
-                        pf.setFame(rs.getInt("PlayerWorld.points"));
+                        pf.setFame(rs.getInt("points"));
                         pf.setWorld(rs.getString("worldName"));
                     }
 
