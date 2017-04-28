@@ -74,6 +74,13 @@ public class PurgeCommand implements CommandExecutor {
                 sender.sendMessage(getPluginName() + ChatColor.YELLOW
                         + "Check out to the user_changes.txt file (Inside of "
                         + PluginLog.getLogsFolder() + ") to see the affected players");
+                if (purgetime == 0) {
+                    sender.sendMessage(getPluginName() + ChatColor.RED
+                            + "You used '0' as time value. You should use the command "
+                            + "'/pvpreload' for avoiding errors. Also, "
+                            + "if any player, inside of the server, were affected, "
+                            + "you have to restart your server for keeping stability...");
+                }
             }
 
             sender.sendMessage(getPluginName() + LangsFile.PURGE_RESULT.getText(messages).
