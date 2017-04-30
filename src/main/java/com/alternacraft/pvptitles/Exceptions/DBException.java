@@ -98,6 +98,10 @@ public class DBException extends CustomException {
     public DB_METHOD getType() {
         return type;
     }
+    
+    public void setMethod(DB_METHOD dbm) {
+        this.type = dbm;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="ERROR ELEMENTS">
     @Override

@@ -19,9 +19,9 @@ package com.alternacraft.pvptitles.Backend;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
 import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
+import com.alternacraft.pvptitles.Backend.SQLConnection.STATUS_AVAILABLE;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
-import com.alternacraft.pvptitles.Backend.SQLConnection.STATUS_AVAILABLE;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -81,7 +81,6 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
     private static final String CREATE_PLAYER = "insert into PlayerServer(id, playerUUID, serverID) values (?,?,?)";
     private static final String CREATE_MWPLAYER = "insert into PlayerWorld(psid, worldName) values (?,?)";
-    private static final String CREATE_PLAYERMETA = "insert into PlayerMeta(psid, lastLogin) values (?,?)";
 
     private static final String UPDATE_PLAYER_SERVERID = "update PlayerServer set serverID=? "
             + "where playerUUID like ? AND serverID=-1";
@@ -160,20 +159,6 @@ public class DatabaseManagerSQL implements DatabaseManager {
                             registraPlayer.setString(2, uuid);
                             registraPlayer.setInt(3, plugin.getManager().params.getMultiS());
                             registraPlayer.executeUpdate();
-
-                            try (ResultSet pe = playerExists.executeQuery()) {
-                                if (pe.next()) {
-                                    psid = pe.getInt("id");
-                                    java.util.Date utilDate = new java.util.Date();
-                                    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-                                    PreparedStatement registraPlayerMeta = sql.getConnection()
-                                            .prepareStatement(CREATE_PLAYERMETA);
-                                    registraPlayerMeta.setInt(1, psid);
-                                    registraPlayerMeta.setDate(2, sqlDate);
-                                    registraPlayerMeta.executeUpdate();
-                                }
-                            }
                         }
                     } else {
                         psid = rs.getInt("id");
@@ -235,12 +220,9 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         int psid = checkPlayerExists(player, player.getWorld().getName());
         try {
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
             try (PreparedStatement modFecha = sql.getConnection()
                     .prepareStatement(UPDATE_PLAYERMETA_LASTLOGIN)) {
-                modFecha.setDate(1, sqlDate);
+                modFecha.setDate(1, new java.sql.Date(System.currentTimeMillis()));
                 modFecha.setInt(2, psid);
                 modFecha.executeUpdate();
                 CustomLogger.logDebugInfo("Update last login: " + modFecha.toString());
@@ -721,7 +703,13 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 do {
                     int id = rs.getInt("id");
                     String strUUID = rs.getString("playerUUID");
-                    Date lastLogin = rs.getDate("lastLogin");
+                    
+                    Date lastLogin;
+                    if (sql instanceof MySQLConnection) {
+                        lastLogin = rs.getDate("lastLogin");
+                    } else {
+                        lastLogin = new Date(rs.getInt("lastLogin"));
+                    }
 
                     Calendar date = new GregorianCalendar(1978, Calendar.JANUARY, 1);
                     lastLogin = (lastLogin == null) ? date.getTime() : lastLogin;
@@ -794,7 +782,12 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     pl.setPlayerUUID(prs.getString("playerUUID"));
                     pl.setPoints(prs.getInt("points"));
                     pl.setPlayedTime(prs.getLong("playedTime"));
-                    pl.setLastLogin(prs.getDate("lastLogin"));
+                    // Int to date
+                    if (sql instanceof MySQLConnection) {
+                        pl.setLastLogin(prs.getDate("lastLogin"));
+                    } else {
+                        pl.setLastLogin(new Date(prs.getInt("lastLogin")));
+                    }                                        
                     plClass.add(pl);
                 }
             }
@@ -914,8 +907,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         try {
             try (ResultSet rs = sql.getConnection().createStatement().executeQuery(data)) {
-                rs.next();
-                do {
+                while(rs.next()) {
                     int id = rs.getInt("id");
 
                     String strUUID = rs.getString("playerUUID");
@@ -933,7 +925,12 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     } catch (SQLException e) {
                     }
 
-                    lastLogin = rs.getDate("lastLogin");
+                    // Int to date
+                    if (sql instanceof MySQLConnection) {
+                        lastLogin = rs.getDate("lastLogin");
+                    } else {
+                        lastLogin = new java.sql.Date(rs.getInt("lastLogin"));
+                    }  
 
                     if (points < 0 || playedTime < 0 || playedTime >= 3153600000L
                             || lastLogin == null) {
@@ -968,7 +965,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                         repaired = true;
                         q++;
                     }
-                } while (rs.next());
+                }
             }
         } catch (final SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.REPAIR, ex.getMessage()) {

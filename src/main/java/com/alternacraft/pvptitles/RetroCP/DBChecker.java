@@ -18,8 +18,8 @@ package com.alternacraft.pvptitles.RetroCP;
 
 import com.alternacraft.pvptitles.Backend.EbeanConnection;
 import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
-import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Backend.SQLConnection;
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
@@ -94,7 +94,7 @@ public class DBChecker {
         try {
             plugin.getManager().getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
         UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
                 .append(RetroDMEbean.FILENAME).toString());
@@ -125,7 +125,7 @@ public class DBChecker {
             UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
                     .append(RetroDMMysql.FILENAME).toString());            
         } catch (DBException ex) {
-            CustomLogger.logError(ex.getMessage());
+            CustomLogger.logArrayError(ex.getCustomStackTrace());            
         }                
     }
 }

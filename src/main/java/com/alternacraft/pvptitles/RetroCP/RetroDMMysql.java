@@ -116,7 +116,7 @@ public class RetroDMMysql {
                         + ");\n";
             }
         } catch (SQLException ex) {
-            CustomLogger.logError(ex.getMessage(), ex);
+            CustomLogger.logError(ex.getMessage());
         }
 
         UtilsFile.writeFile(ruta, sql);

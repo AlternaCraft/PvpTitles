@@ -39,6 +39,8 @@ public class SQLiteConnection extends SQLConnection {
         try {
             Class.forName(DRIVER_SQLITE);
             connection = DriverManager.getConnection("jdbc:sqlite:" + this.filedir + this.filename);
+            // Enable key update on foreign changes
+            connection.createStatement().execute("PRAGMA foreign_keys = ON");
             status = STATUS_AVAILABLE.CONNECTED;
         } catch (ClassNotFoundException ex) {
             if (!reconnect) CustomLogger.logError("SQLite library not found");
@@ -57,5 +59,12 @@ public class SQLiteConnection extends SQLConnection {
         update(getTablePlayerMeta());
         update(getTablePlayerWorld());
         update(getTableSigns());
+        update(getTriggerMeta());
+    }
+    
+    public static String getTriggerMeta() {
+        return "CREATE TRIGGER IF NOT EXISTS 'create_player_meta' AFTER INSERT ON 'PlayerServer' "
+                + "BEGIN INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver;"
+                + "UPDATE PlayerMeta SET lastlogin = (SELECT DATE()) WHERE psid = (SELECT max(id) FROM playerserver); END;";
     }
 }

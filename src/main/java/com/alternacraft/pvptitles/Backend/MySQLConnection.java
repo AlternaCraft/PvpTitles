@@ -60,5 +60,17 @@ public class MySQLConnection extends SQLConnection {
         update(getTablePlayerMeta() + INNO_DB);
         update(getTablePlayerWorld() + INNO_DB);
         update(getTableSigns() + INNO_DB);
+        update(getTriggerMeta());
+        update(getTriggerMeta2());
     }   
+    
+    public static String getTriggerMeta() {
+        return "CREATE TRIGGER `create_player_meta` AFTER INSERT ON `playerserver`"
+                + " FOR EACH ROW INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver";
+    }
+
+    public static String getTriggerMeta2() {
+        return "CREATE TRIGGER `update_lastlogin` AFTER INSERT ON `playerserver`"
+                + " FOR EACH ROW UPDATE playermeta SET lastlogin = (SELECT CURDATE()) WHERE psid = (SELECT max(id) FROM playerserver)";
+    }
 }

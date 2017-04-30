@@ -85,12 +85,9 @@ public abstract class SQLConnection {
             try {
                 this.connection.createStatement().execute(sql);
             } catch (SQLException ex) {
-                CustomLogger.logError(ex.getMessage(), ex);
             }
         }
-    }    
-   
-    /* ID as INTEGER! */
+    }
     
     public static String getTableServers() {
         return 
@@ -153,7 +150,7 @@ public abstract class SQLConnection {
                 + "FOREIGN KEY (serverID) REFERENCES Servers(id)"
                 + "ON UPDATE CASCADE ON DELETE CASCADE"
             + ")";
-    }         
+    }
     
     public void updateServer(short id, String nombre) {
         String insert = "insert into Servers values (?,?)";

@@ -29,7 +29,7 @@ Debug: false
 ErrorFormat: 2
 
 # Options (No case sensitive):
-# - Ebean - The usual (Reported a bad performance)
+# - Ebean - Default so far (Reported a bad performance)
 # - SQLite - Like Ebean but faster (Should use this)
 DefaultDatabase: Ebean
 
