@@ -4,7 +4,7 @@
   <groupId>com.alternacraft</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.6.1-SNAPSHOT</version>
+  <version>2.6.9-SNAPSHOT</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -45,36 +45,6 @@
     <finalName>${project.name}-${project.version}</finalName>
     <plugins>
       <plugin>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.4.3</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <filters>
-                <filter>
-                  <artifact>com.alternacraft:aclib</artifact>
-                  <includes>
-                    <include>**/Updater*.*</include>
-                    <include>**/Logger.*</include>
-                    <include>**/UtilsFile.*</include>
-                  </includes>
-                </filter>
-              </filters>
-              <relocations>
-                <relocation>
-                  <pattern>com.alternacraft.aclib</pattern>
-                  <shadedPattern>${project.groupId}.${project.artifactId}.ACLIB</shadedPattern>
-                </relocation>
-              </relocations>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.10</version>
         <executions>
@@ -106,6 +76,31 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <artifactSet>
+            <includes>
+              <include>org.bstats:*</include>
+            </includes>
+          </artifactSet>
+          <relocations>
+            <relocation>
+              <pattern>org.bstats</pattern>
+              <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -143,7 +138,6 @@
     </repository>
     <repository>
       <id>mvdw-software</id>
-      <name>MVdW Public Repositories</name>
       <url>http://repo.mvdw-software.be/content/groups/public/</url>
     </repository>
     <repository>
@@ -154,12 +148,16 @@
       <id>novaguilds-repo</id>
       <url>http://repo.novaguilds.pl/</url>
     </repository>
+    <repository>
+      <id>bstats-repo</id>
+      <url>http://repo.bstats.org/content/repositories/releases/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.10.2-R0.1-SNAPSHOT</version>
+      <version>1.11-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -208,7 +206,7 @@
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.5.1</version>
+      <version>2.7.1</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
@@ -235,7 +233,7 @@
     <dependency>
       <groupId>com.github.games647</groupId>
       <artifactId>ScoreboardStats</artifactId>
-      <version>0.9.13</version>
+      <version>0.10</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -253,32 +251,32 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>1.6.5</version>
+      <version>1.7.0RC4</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <artifactId>powermock-module-junit4-common</artifactId>
           <groupId>org.powermock</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito</artifactId>
-      <version>1.6.5</version>
+      <version>1.7.0RC4</version>
       <scope>test</scope>
       <exclusions>
-        <exclusion>
-          <artifactId>mockito-core</artifactId>
-          <groupId>org.mockito</groupId>
-        </exclusion>
         <exclusion>
           <artifactId>powermock-api-mockito-common</artifactId>
           <groupId>org.powermock</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>hamcrest-core</artifactId>
-          <groupId>org.hamcrest</groupId>
+          <artifactId>mockito-core</artifactId>
+          <groupId>org.mockito</groupId>
         </exclusion>
       </exclusions>
     </dependency>

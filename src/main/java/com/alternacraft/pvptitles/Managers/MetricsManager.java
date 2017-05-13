@@ -16,21 +16,18 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
-import com.alternacraft.pvptitles.Backend.DatabaseManagerEbean;
-import com.alternacraft.pvptitles.Libraries.Metrics;
-import com.alternacraft.pvptitles.Libraries.Metrics.Graph;
-import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bstats.Metrics;
 
 public class MetricsManager {
 
@@ -69,114 +66,108 @@ public class MetricsManager {
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
     private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
-        Graph mwUsedGraph = metrics.createGraph("MultiWorld usage");
-
-        if (plugin.getManager().params.isMw_enabled()) {
-            addPlotter(mwUsedGraph, "Enabled", 1);
-        } else {
-            addPlotter(mwUsedGraph, "Disabled", 1);
-        }
+        metrics.addCustomChart(new Metrics.SimplePie("multiworld_usage") {
+            @Override
+            public String getValue() {
+                return (plugin.getManager().params.isMw_enabled()) ? "Enabled" : "Disabled";
+            }
+        });
     }
 
     private void setTUGraph(Metrics metrics) {
-        Graph timeUsageGraph = metrics.createGraph("Req. Time usage");
+        metrics.addCustomChart(new Metrics.SimplePie("time_as_requirement") {
+            @Override
+            public String getValue() {
+                boolean timeUsed = false;
 
-        boolean timeUsed = false;
+                for (Long value : Manager.reqTime()) {
+                    if (value > 0) {
+                        timeUsed = true;
+                        break;
+                    }
+                }
 
-        for (Long value : Manager.reqTime()) {
-            if (value > 0) {
-                timeUsed = true;
-                break;
+                return (timeUsed) ? "Enabled" : "Disabled";
             }
-        }
-
-        if (timeUsed) {
-            addPlotter(timeUsageGraph, "Enabled", 1);
-        } else {
-            addPlotter(timeUsageGraph, "Disabled", 1);
-        }
+        });
     }
 
     private void setPDBGraph(final PvpTitles plugin, Metrics metrics) {
-        Graph preferreddb = metrics.createGraph("Preferred DB");
-
-        if (plugin.getManager().dbh.getDm() instanceof DatabaseManagerEbean) {
-            addPlotter(preferreddb, "Ebean", 1);
-        } else {
-            addPlotter(preferreddb, "MySQL", 1);
-        }
+        metrics.addCustomChart(new Metrics.SimplePie("preferred_db") {
+            @Override
+            public String getValue() {
+                return DBLoader.tipo.toString();
+            }
+        });
     }
 
     private void setDMGraph(final PvpTitles plugin, Metrics metrics) {
-        Graph displayMode = metrics.createGraph("Display mode");
-
-        if (plugin.getManager().params.displayInChat() && plugin.getManager().params.displayLikeHolo()) {
-            addPlotter(displayMode, "Both", 1);
-        } else {
-            if (plugin.getManager().params.displayInChat()) {
-                addPlotter(displayMode, "Chat", 1);
+        metrics.addCustomChart(new Metrics.SimplePie("display_mode") {
+            @Override
+            public String getValue() {
+                if (plugin.getManager().params.displayInChat()
+                        && plugin.getManager().params.displayLikeHolo()) {
+                    return "Both";
+                } else {
+                    if (plugin.getManager().params.displayInChat()) {
+                        return "Chat";
+                    }
+                    if (plugin.getManager().params.displayLikeHolo()) {
+                        return "Holograms";
+                    }
+                }
+                return null;
             }
-            if (plugin.getManager().params.displayLikeHolo()) {
-                addPlotter(displayMode, "Holograms", 1);
-            }
-        }
+        });
     }
 
     private void setDLGraph(final PvpTitles plugin, Metrics metrics) {
-        Graph defaultLang = metrics.createGraph("Default lang");
-        addPlotter(defaultLang, Manager.messages.name(), 1);
+        metrics.addCustomChart(new Metrics.SimplePie("default_language") {
+            @Override
+            public String getValue() {
+                return Manager.messages.name();
+            }
+        });
     }
 
-    private void setPerformanceGraph(final PvpTitles pvptitles, Metrics metrics, String db) {
-        Graph performanceGraph = metrics.createGraph(db + " performance");
+    private void setPerformanceGraph(final PvpTitles pvptitles, Metrics metrics, final String db) {
+        metrics.addCustomChart(new Metrics.AdvancedPie("general_statistics") {
+            @Override
+            public HashMap<String, Integer> getValues(HashMap<String, Integer> hm) {
+                Map<String, Object> pairs = importLog(pvptitles, "performance.txt").get(db.toUpperCase());
 
-        Map<String, Object> pairs = importLog(pvptitles, "performance.txt").get(db.toUpperCase());
+                if (pairs != null) {
+                    for (Map.Entry<String, Object> entry : pairs.entrySet()) {
+                        String key = entry.getKey();
+                        String value = (String) entry.getValue();
+                        hm.put(key, Integer.valueOf(value));
+                    }
+                }
+                
+                return hm;
+            }
 
-        if (pairs == null) {
-            return;
-        }
-
-        for (Map.Entry<String, Object> entry : pairs.entrySet()) {
-            String key = entry.getKey();
-            String value = (String) entry.getValue();
-            addPlotter(performanceGraph, key, Integer.valueOf(value));
-        }
+        });
     }
     // </editor-fold>
 
-    public void sendData(final PvpTitles plugin) {
-        try {
-            if (plugin.getManager().params.isMetrics()) {
-                Metrics metrics = new Metrics(plugin);
+    public void sendData(PvpTitles plugin) {
+        if (plugin.getManager().params.isMetrics()) {
+            Metrics metrics = new Metrics(plugin);
 
-                setMWGraph(plugin, metrics); // Multi world
-                setTUGraph(metrics); // Time usage as requirement
-                setPDBGraph(plugin, metrics); // Preferred database
-                setDMGraph(plugin, metrics); // Display mode
-                setDLGraph(plugin, metrics); // Default language
-                
-                setPerformanceGraph(plugin, metrics, "Ebean"); // Ebean performance
-                setPerformanceGraph(plugin, metrics, "MySQL"); // MySQL performance
-                
-                UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder() 
-                        + File.separator + "performance.txt");
-                
-                metrics.start();
-            }
-        } catch (IOException e) {
-            CustomLogger.logError(e.getMessage());
-        }
-    }
+            setMWGraph(plugin, metrics); // Multi world
+            setTUGraph(metrics); // Time usage as requirement
+            setPDBGraph(plugin, metrics); // Preferred database
+            setDMGraph(plugin, metrics); // Display mode
+            setDLGraph(plugin, metrics); // Default language
 
-    public void addPlotter(Graph g, String plotter, final int number) {
-        if (number == 0) {
-            return;
-        }
-        g.addPlotter(new Metrics.Plotter(plotter) {
-            @Override
-            public int getValue() {
-                return number;
+            // DB's performance
+            for (DBLoader.DBTYPE value : DBLoader.DBTYPE.values()) {
+                setPerformanceGraph(plugin, metrics, value.name());
             }
-        });
+
+            UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
+                    + File.separator + "performance.txt");
+        }
     }
 }

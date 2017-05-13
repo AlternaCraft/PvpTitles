@@ -37,6 +37,7 @@ import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Listeners.HandleSign;
 import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
+import com.alternacraft.pvptitles.Managers.MetricsManager;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
@@ -126,11 +127,9 @@ public class PvpTitles extends JavaPlugin {
         this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                /* No operative...
-                    PERFORMANCE.start("Metrics event");
-                    new MetricsManager().sendData(manager.getPvpTitles());
-                    PERFORMANCE.recordValue("Metrics event");
-                */
+                PERFORMANCE.start("Metrics event");
+                new MetricsManager().sendData(manager.getPvpTitles());
+                PERFORMANCE.recordValue("Metrics event");
 
                 PERFORMANCE.start("Updater event");
                 new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());

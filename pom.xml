@@ -5,7 +5,7 @@
     <!-- The Basics -->
     <groupId>com.alternacraft</groupId>
     <artifactId>PvpTitles</artifactId>
-    <version>2.6.8</version>
+    <version>2.6.9-SNAPSHOT</version>
     <packaging>jar</packaging>   
      
     <repositories>        
@@ -38,6 +38,11 @@
             <id>novaguilds-repo</id>
             <url>http://repo.novaguilds.pl/</url>
         </repository>
+        
+        <repository>
+            <id>bstats-repo</id>
+            <url>http://repo.bstats.org/content/repositories/releases/</url>
+        </repository>        
     </repositories> 
     
     <dependencies>
@@ -100,6 +105,13 @@
             <artifactId>ScoreboardStats</artifactId>
             <version>0.10</version>
             <scope>provided</scope>
+        </dependency>
+        
+        <!-- BStats -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>1.1</version>
         </dependency>
         
         <!-- TESTING DEPENDENCIES -->
@@ -185,6 +197,35 @@
                         <phase>prepare-package</phase>
                         <goals>                         
                             <goal>tree</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- BStats -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.bstats:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <!-- Replace this with your package! -->
+                            <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>

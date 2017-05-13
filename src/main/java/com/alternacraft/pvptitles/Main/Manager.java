@@ -455,6 +455,15 @@ public final class Manager {
         );
     }
 
+    public void stopTasks() {
+        if (this.eventoChecker != -1) {
+            pvpTitles.getServer().getScheduler().cancelTask(eventoChecker);
+        }
+        if (this.eventoActualizador != -1) {
+            pvpTitles.getServer().getScheduler().cancelTask(eventoActualizador);
+        }
+    }
+    
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SOME GETTERS...">
     /**
