@@ -32,6 +32,7 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
+import static com.alternacraft.pvptitles.Misc.TagsClass.PlayerWorld.world;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.google.gson.Gson;
@@ -108,6 +109,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     // Optimization
     private final Map<String, Integer> playerids = new HashMap();
+    private final Map<String, List<String>> playerworlds = new HashMap();
 
     private final PvpTitles plugin;
     private SQLConnection sql;
@@ -177,7 +179,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 if (w == null && !pl.isOnline()) {
                     return -1;
                 }
-                String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
+                final String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
                 try (PreparedStatement mwplayerExists = sql.getConnection()
                         .prepareStatement(MWPLAYER_EXISTS)) {
@@ -194,6 +196,18 @@ public class DatabaseManagerSQL implements DatabaseManager {
                         }
                     }
                 }
+                
+                // Controlar que mundos han sido comprobados
+                if (this.playerworlds.containsKey(uuid) 
+                        && !this.playerworlds.get(uuid).contains(world)) {
+                    this.playerworlds.get(uuid).add(world);
+                } else {
+                    this.playerworlds.put(uuid, new ArrayList() {
+                        {
+                            this.add(world);
+                        }
+                    });
+                }
             }
         } catch (final SQLException ex) {
             throw new DBException("Error checking if player exists",
@@ -209,8 +223,15 @@ public class DatabaseManagerSQL implements DatabaseManager {
         return psid;
     }
 
-    private int playerID(String uuid) throws DBException {
-        return (this.playerids.containsKey(uuid)) ? this.playerids.get(uuid) : -1;
+    private int playerID(String uuid, String world) throws DBException {
+        int id = (this.playerids.containsKey(uuid)) ? this.playerids.get(uuid) : -1;
+        if (plugin.getManager().params.isMw_enabled() && world != null) {
+            if (!this.playerworlds.containsKey(uuid) 
+                    || !this.playerworlds.get(uuid).contains(world)) {
+                id = -1;
+            }
+        }
+        return id;                
     }
 
     @Override
@@ -245,7 +266,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_SAVING);
         }
 
-        int psid = playerID(playerUUID.toString());
+        int psid = playerID(playerUUID.toString(), w);
         if (psid == -1) {
             psid = checkPlayerExists(pl, w);
         }
@@ -302,7 +323,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         int fama = 0;
 
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
-        int psid = playerID(playerUUID.toString());
+        int psid = playerID(playerUUID.toString(), w);
         if (psid == -1) {
             psid = checkPlayerExists(pl, w);
         }
@@ -365,7 +386,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_SAVING);
         }
 
-        int psid = playerID(tPlayer.getOfflinePlayer().getUniqueId().toString());
+        int psid = playerID(tPlayer.getOfflinePlayer().getUniqueId().toString(), null);
         if (psid == -1) {
             psid = checkPlayerExists(tPlayer.getOfflinePlayer(), null);
         }
@@ -399,7 +420,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         long time = 0;
 
-        int psid = playerID(playerUUID.toString());
+        int psid = playerID(playerUUID.toString(), null);
         if (psid == -1) {
             psid = checkPlayerExists(plugin.getServer().getOfflinePlayer(playerUUID), null);
         }
@@ -730,6 +751,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                             contador++;
 
                             this.playerids.remove(strUUID);
+                            this.playerworlds.remove(strUUID);
 
                             // Log settings
                             UUID uuid = UUID.fromString(strUUID);
