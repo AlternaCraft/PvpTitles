@@ -25,7 +25,7 @@ import com.alternacraft.pvptitles.Files.ModelsFile;
 import com.alternacraft.pvptitles.Files.RewardsFile;
 import com.alternacraft.pvptitles.Files.ServersFile;
 import com.alternacraft.pvptitles.Files.TemplatesFile;
-import com.alternacraft.pvptitles.Hook.HolographicHook;
+import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;

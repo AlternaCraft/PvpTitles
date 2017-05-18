@@ -17,9 +17,9 @@
 package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Hook.HolographicHook;
-import static com.alternacraft.pvptitles.Hook.HolographicHook.DEFAULT_TITLE_HEIGHT;
-import static com.alternacraft.pvptitles.Hook.HolographicHook.HEIGHT_PER_ROW;
+import com.alternacraft.pvptitles.Hooks.HolographicHook;
+import static com.alternacraft.pvptitles.Hooks.HolographicHook.DEFAULT_TITLE_HEIGHT;
+import static com.alternacraft.pvptitles.Hooks.HolographicHook.HEIGHT_PER_ROW;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;

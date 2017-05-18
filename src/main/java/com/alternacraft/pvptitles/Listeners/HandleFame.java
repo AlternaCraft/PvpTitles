@@ -23,7 +23,7 @@ import com.alternacraft.pvptitles.Events.RankChangedEvent;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Hook.VaultHook;
+import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;

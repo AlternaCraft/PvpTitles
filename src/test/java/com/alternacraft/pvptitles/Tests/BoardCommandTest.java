@@ -19,7 +19,7 @@ package com.alternacraft.pvptitles.Tests;
 import com.alternacraft.pvptitles.Commands.BoardCommand;
 import com.alternacraft.pvptitles.Files.HologramsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
-import com.alternacraft.pvptitles.Hook.HolographicHook;
+import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;

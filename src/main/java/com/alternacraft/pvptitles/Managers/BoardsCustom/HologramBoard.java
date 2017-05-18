@@ -17,7 +17,7 @@
 package com.alternacraft.pvptitles.Managers.BoardsCustom;
 
 import com.alternacraft.pvptitles.Files.HologramsFile;
-import com.alternacraft.pvptitles.Hook.HolographicHook;
+import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
