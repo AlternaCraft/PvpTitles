@@ -698,8 +698,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         try {
             try (ResultSet rs = sql.getConnection().createStatement().executeQuery(data)) {
-                rs.next();
-                do {
+                while (rs.next()) {
                     int id = rs.getInt("id");
                     String strUUID = rs.getString("playerUUID");
                     
@@ -740,7 +739,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                                     + StrUtils.splitToComponentTimes(time));
                         }
                     }
-                } while (rs.next());
+                }
             }
         } catch (final SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PURGE_DATA, ex.getMessage()) {
