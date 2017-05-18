@@ -64,7 +64,7 @@ public class DBException extends CustomException {
 
     private enum POSSIBLE_ERRORS {
         NOT_FOUND("00", "Couldn't find a reason for the error..."),
-        DB_CONNECTION("01", "The server has lost the MySQL connection");
+        DB_CONNECTION("01", "The server has lost the " + DBLoader.tipo.name() + " connection");
 
         private String error_num = "-1";
         private String error_str = null;
@@ -134,7 +134,7 @@ public class DBException extends CustomException {
             String k = entry.getKey();
             Object v = entry.getValue();
 
-            if (k.contains("MySQL") && k.contains("connection")) {
+            if (k.contains(DBLoader.tipo.name()) && k.contains("connection")) {
                 if (!(boolean) v) {
                     possible_errors.add(new StringBuilder("- ")
                                 .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
