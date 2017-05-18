@@ -16,8 +16,8 @@
  */
 package com.alternacraft.pvptitles.Tests;
 
-import com.alternacraft.pvptitles.Misc.Updater;
-import com.alternacraft.pvptitles.Misc.Updater.UpdateResult;
+import com.alternacraft.pvptitles.Libraries.Updater;
+import com.alternacraft.pvptitles.Libraries.Updater.UpdateResult;
 import java.io.File;
 import java.util.Arrays;
 import org.bukkit.Server;

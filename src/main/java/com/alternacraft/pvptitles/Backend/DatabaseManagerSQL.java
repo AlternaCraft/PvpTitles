@@ -148,14 +148,13 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
                 try (ResultSet rs = playerExists.executeQuery()) {
                     if (!rs.next()) {
-                        int newid; // Avoid error with sqlite
                         try (ResultSet rss = sql.getConnection().createStatement()
                                 .executeQuery("select max(id) from PlayerServer")) {
-                            newid = (rss.next()) ? rss.getInt("max(id)") + 1 : 0;
+                            psid = (rss.next()) ? rss.getInt("max(id)") + 1 : 0;
                         }                        
                         try (PreparedStatement registraPlayer = sql.getConnection()
                                 .prepareStatement(CREATE_PLAYER)) {
-                            registraPlayer.setInt(1, newid);
+                            registraPlayer.setInt(1, psid);
                             registraPlayer.setString(2, uuid);
                             registraPlayer.setInt(3, plugin.getManager().params.getMultiS());
                             registraPlayer.executeUpdate();
