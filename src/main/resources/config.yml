@@ -29,9 +29,9 @@ Debug: false
 ErrorFormat: 2
 
 # Options (No case sensitive):
-# - Ebean - Default so far (Reported a bad performance)
+# - Ebean - Use with care, a bad performance was reported
 # - SQLite - Like Ebean but faster (Should use this)
-DefaultDatabase: Ebean
+DefaultDatabase: SQLite
 
 ############################################################
 # +------------------------------------------------------+ #
