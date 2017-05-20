@@ -32,7 +32,6 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
-import static com.alternacraft.pvptitles.Misc.TagsClass.PlayerWorld.world;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.google.gson.Gson;

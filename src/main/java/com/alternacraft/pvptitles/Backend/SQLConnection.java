@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

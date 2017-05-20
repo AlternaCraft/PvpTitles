@@ -61,6 +61,9 @@ public class MetricsManager {
             }
         }
 
+        UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
+                + File.separator + "performance.txt");
+
         return pairs;
     }
 
@@ -143,7 +146,7 @@ public class MetricsManager {
                         hm.put(key, Integer.valueOf(value));
                     }
                 }
-                
+
                 return hm;
             }
 
@@ -165,9 +168,6 @@ public class MetricsManager {
             for (DBLoader.DBTYPE value : DBLoader.DBTYPE.values()) {
                 setPerformanceGraph(plugin, metrics, value.name());
             }
-
-            UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
-                    + File.separator + "performance.txt");
         }
     }
 }

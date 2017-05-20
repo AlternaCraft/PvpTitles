@@ -16,9 +16,6 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
-import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
-import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
-import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Libraries.Updater;
 import com.alternacraft.pvptitles.Libraries.Updater.UpdateResult;
 import static com.alternacraft.pvptitles.Libraries.Updater.UpdateResult.DISABLED;
@@ -31,6 +28,9 @@ import static com.alternacraft.pvptitles.Libraries.Updater.UpdateResult.NO_UPDAT
 import static com.alternacraft.pvptitles.Libraries.Updater.UpdateResult.SUCCESS;
 import static com.alternacraft.pvptitles.Libraries.Updater.UpdateResult.UPDATE_AVAILABLE;
 import com.alternacraft.pvptitles.Libraries.Updater.UpdateType;
+import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
+import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import org.bukkit.ChatColor;
 
