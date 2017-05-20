@@ -61,7 +61,7 @@ public class SBSHook {
                 try {
                     fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
                 } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    //CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long seconds = 0;
