@@ -885,9 +885,9 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         String servers = "select * from Servers";
 
-        String playerserver = "select playerUUID, serverID from PlayerServer";
-        String playermeta = "select * from PlayerMeta where psid=(select max(id) from PlayerServer)";
-        String playerworld = "select * from PlayerWorld where psid=(select max(id) from PlayerServer)";
+        String playerserver = "select * from PlayerServer";
+        String playermeta = "select points, playedTime, lastLogin from PlayerMeta where psid=?";
+        String playerworld = "select worldName, points from PlayerWorld where psid=?";
 
         String signs = "select * from Signs";
 
@@ -905,7 +905,11 @@ public class DatabaseManagerSQL implements DatabaseManager {
                             + "max(id)+1, '" + ps.getString("playerUUID") + "', "
                             + ps.getShort("serverID") + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
 
-                    try (ResultSet pm = this.sql.getConnection().createStatement().executeQuery(playermeta)) {
+                    int id = ps.getInt("id");
+                    
+                    PreparedStatement statement = this.sql.getConnection().prepareStatement(playermeta);
+                    statement.setInt(1, id);                    
+                    try (ResultSet pm = statement.executeQuery()) {
                         if (pm.next()) {
                             sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
                                     + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
@@ -915,7 +919,9 @@ public class DatabaseManagerSQL implements DatabaseManager {
                         }
                     }
 
-                    try (ResultSet pw = this.sql.getConnection().createStatement().executeQuery(playerworld)) {
+                    statement = this.sql.getConnection().prepareStatement(playerworld);
+                    statement.setInt(1, id);
+                    try (ResultSet pw = statement.executeQuery()) {
                         while (pw.next()) {
                             sql_to_export += "insert into PlayerWorld(psid, worldName, points) select "
                                     + "max(id), '" + pw.getString("worldName") + "', "
