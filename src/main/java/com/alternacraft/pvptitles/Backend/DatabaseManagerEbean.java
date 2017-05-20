@@ -51,9 +51,6 @@ import org.json.simple.parser.ParseException;
 
 public class DatabaseManagerEbean implements DatabaseManager {
 
-    private static final String FILENAME_IMPORT = "database.json";
-    private static final String FILENAME_EXPORT = "database.sql";
-
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR">
     private final PvpTitles plugin;
     private EbeanConnection ebeanServer = null;
@@ -497,9 +494,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public void DBExport(String filename) throws DBException {
-        String ruta = new StringBuilder().append(plugin.getDataFolder()).append( // Ruta
-                File.separator).append( // Separador
-                        filename).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append(filename).toString();
 
         short serverID = plugin.getManager().params.getMultiS();
 
@@ -587,7 +583,8 @@ public class DatabaseManagerEbean implements DatabaseManager {
 
     @Override
     public boolean DBImport(String filename) throws DBException {
-        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR).append(filename).toString();
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append(filename).toString();
 
         if (!UtilsFile.exists(ruta)) {
             return false;
@@ -672,16 +669,6 @@ public class DatabaseManagerEbean implements DatabaseManager {
         }
 
         return true;
-    }
-
-    @Override
-    public String getDefaultFImport() {
-        return FILENAME_IMPORT;
-    }
-
-    @Override
-    public String getDefaultFExport() {
-        return FILENAME_EXPORT;
     }
 
     @Override

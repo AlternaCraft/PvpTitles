@@ -59,9 +59,6 @@ import org.json.simple.JSONObject;
 
 public class DatabaseManagerSQL implements DatabaseManager {
 
-    private static final String FILENAME_IMPORT = "database.sql";
-    private static final String FILENAME_EXPORT = "database.json";
-
     // Players
     private static final String PLAYER_EXISTS = "select id from PlayerServer "
             + "where playerUUID like ? AND (serverID=? OR serverID=-1)";
@@ -779,6 +776,11 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
     @Override
     public void DBExport(String filename) throws DBException {
+        toJSON(filename + ".json");
+        toSQL(filename + ".sql");
+    }
+    
+    private void toJSON(String filename) throws DBException {
         String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
                 .append(filename).toString();
 
@@ -874,6 +876,84 @@ public class DatabaseManagerSQL implements DatabaseManager {
         JsonElement el = parser.parse(jo.toJSONString());
         UtilsFile.writeFile(ruta, gson.toJson(el));
     }
+    
+    private void toSQL(String filename) throws DBException {
+        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
+                .append(filename).toString();
+
+        String sql_to_export = "";
+
+        String servers = "select * from Servers";
+
+        String playerserver = "select playerUUID, serverID from PlayerServer";
+        String playermeta = "select * from PlayerMeta where psid=(select max(id) from PlayerServer)";
+        String playerworld = "select * from PlayerWorld where psid=(select max(id) from PlayerServer)";
+
+        String signs = "select * from Signs";
+
+        try {
+            try (ResultSet sv = this.sql.getConnection().createStatement().executeQuery(servers)) {
+                while (sv.next()) {
+                    sql_to_export += "insert into Servers(id, name) values (" + sv.getInt("id")
+                            + ", '" + sv.getString("name") + "') ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
+                }
+            }
+
+            try (ResultSet ps = this.sql.getConnection().createStatement().executeQuery(playerserver)) {
+                while (ps.next()) {
+                    sql_to_export += "insert into PlayerServer(id, playerUUID, serverID) select "
+                            + "max(id)+1, '" + ps.getString("playerUUID") + "', "
+                            + ps.getShort("serverID") + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
+
+                    try (ResultSet pm = this.sql.getConnection().createStatement().executeQuery(playermeta)) {
+                        if (pm.next()) {
+                            sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                                    + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
+                                    + ", '" + pm.getDate("lastLogin") + "' from PlayerServer "
+                                    + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
+                                    + "lastLogin=VALUES(lastLogin);\n";
+                        }
+                    }
+
+                    try (ResultSet pw = this.sql.getConnection().createStatement().executeQuery(playerworld)) {
+                        while (pw.next()) {
+                            sql_to_export += "insert into PlayerWorld(psid, worldName, points) select "
+                                    + "max(id), '" + pw.getString("worldName") + "', "
+                                    + pw.getInt("points") + " from PlayerServer "
+                                    + "ON DUPLICATE KEY UPDATE worldName=VALUES"
+                                    + "(worldName),points=VALUES(points);\n";
+                        }
+                    }
+                }
+            }
+
+            try (ResultSet s = this.sql.getConnection().createStatement().executeQuery(signs)) {
+                if (s.next()) {
+                    sql_to_export += "insert into Signs values";
+                    s.previous();
+                    while (s.next()) {
+                        sql_to_export += "('" + s.getString("name") + "', '" + s.getString("signModel")
+                                + "', '" + s.getString("dataModel") + "', '" + s.getString("orientation")
+                                + "', " + s.getShort("blockface") + ", " + s.getShort("serverID")
+                                + ", '" + s.getString("world") + "', " + s.getInt("x")
+                                + ", " + s.getInt("y") + ", " + s.getInt("z") + "),";
+                    }
+                    sql_to_export = sql_to_export.substring(0, sql_to_export.length() - 1); // Quito la coma sobrante
+                    sql_to_export += " ON DUPLICATE KEY UPDATE name=VALUES(name),signModel=VALUES(signModel),"
+                            + "dataModel=VALUES(dataModel),orientation=VALUES(orientation),"
+                            + "blockface=VALUES(blockface);";
+                }
+            }
+        } catch (final SQLException ex) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
+        }
+
+        UtilsFile.writeFile(ruta, sql_to_export);        
+    }
 
     @Override
     public boolean DBImport(String filename) throws DBException {
@@ -901,16 +981,6 @@ public class DatabaseManagerSQL implements DatabaseManager {
         }
 
         return true;
-    }
-
-    @Override
-    public String getDefaultFImport() {
-        return FILENAME_IMPORT;
-    }
-
-    @Override
-    public String getDefaultFExport() {
-        return FILENAME_EXPORT;
     }
 
     @Override

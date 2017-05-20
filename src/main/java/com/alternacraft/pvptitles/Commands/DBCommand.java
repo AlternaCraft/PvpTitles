@@ -34,6 +34,8 @@ import org.bukkit.entity.Player;
 
 public class DBCommand implements CommandExecutor {
 
+    private static final String FILENAME_EXPORT_IMPORT = "database";
+    
     private PvpTitles pvpTitles = null;
 
     public DBCommand(PvpTitles pvpTitles) {
@@ -56,10 +58,11 @@ public class DBCommand implements CommandExecutor {
         switch (args[0]) {
             case "export":
                 if (args.length > 1) {
-                    filename = args[1] + ((DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".sql" : ".json");
+                    filename = args[1];
                 } else {
-                    filename = pvpTitles.getManager().dbh.getDm().getDefaultFExport();
+                    filename = FILENAME_EXPORT_IMPORT;
                 }
+                filename += (DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".sql" : "";
 
                 try {
                     dm.DBExport(filename);
@@ -71,10 +74,11 @@ public class DBCommand implements CommandExecutor {
                 break;
             case "import":
                 if (args.length > 1) {
-                    filename = args[1] + ((DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".json" : ".sql");
+                    filename = args[1];
                 } else {
-                    filename = pvpTitles.getManager().dbh.getDm().getDefaultFImport();
+                    filename = FILENAME_EXPORT_IMPORT;
                 }
+                filename += (DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".json" : ".sql";
 
                 try {
                     if (dm.DBImport(filename)) {

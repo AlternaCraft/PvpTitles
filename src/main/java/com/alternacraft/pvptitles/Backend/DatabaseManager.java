@@ -168,20 +168,6 @@ public interface DatabaseManager {
     public boolean DBImport(String filename) throws DBException;
 
     /**
-     * Método para recibir el nombre del fichero por defecto para importar
-     *
-     * @return String
-     */
-    public String getDefaultFImport();
-
-    /**
-     * Método para recibir el nombre del fichero por defecto para exportar
-     *
-     * @return String
-     */
-    public String getDefaultFExport();
-
-    /**
      * Método para corregir valores de la base de datos
      * 
      * @return Cantidad de registros reparados
