@@ -1,0 +1,16 @@
+com.alternacraft.pvptitles.Backend
+com.alternacraft.pvptitles.Backend.EbeanTables
+com.alternacraft.pvptitles.Commands
+com.alternacraft.pvptitles.Events
+com.alternacraft.pvptitles.Exceptions
+com.alternacraft.pvptitles.Files
+com.alternacraft.pvptitles.Hook
+com.alternacraft.pvptitles.Libraries
+com.alternacraft.pvptitles.Listeners
+com.alternacraft.pvptitles.Main
+com.alternacraft.pvptitles.Managers
+com.alternacraft.pvptitles.Managers.BoardsAPI
+com.alternacraft.pvptitles.Managers.BoardsCustom
+com.alternacraft.pvptitles.Misc
+com.alternacraft.pvptitles.RetroCP
+com.alternacraft.pvptitles.RetroCP.oldTables
