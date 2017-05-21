@@ -7,7 +7,7 @@ if [[ ! -z $TRAVIS_TAG ]]; then
   
   # Skipping snapshots
   if [[ ! $VERSION =~ "SNAPSHOT" ]]; then
-    bash .travis/parse-dependencies.sh && bash .utility/deploy-pages.sh $VERSION
+    bash .travis/parse-dependencies.sh && bash .travis/deploy-pages.sh $VERSION
   fi
 else
   mvn deploy --settings ~/settings.xml
