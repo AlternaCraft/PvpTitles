@@ -5,7 +5,7 @@
 /nb-configuration.xml
 
 # Dependencies
-/.utility/*.txt
+/.travis/*.txt
 
 # Jetbrains
 /*.iml

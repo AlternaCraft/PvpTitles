@@ -16,11 +16,11 @@ JAVADOC="javadoc-latest"
 # GATHERING THE DATA
 echo "Getting dependencies file..."
 mkdir -p $HOME/$DEPENDENCIES
-cp .utility/dependencies.json $HOME/$DEPENDENCIES
+cp .travis/dependencies.json $HOME/$DEPENDENCIES
 
 echo "Getting deploy key..."
 mkdir -p $HOME/$KEYS
-cp .utility/deploy_key.enc $HOME/$KEYS
+cp .travis/deploy_key.enc $HOME/$KEYS
 
 echo "Creating javadoc..."
 mvn -q javadoc:javadoc

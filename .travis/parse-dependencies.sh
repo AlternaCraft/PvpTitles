@@ -1,5 +1,5 @@
 #!/bin/bash
-FILE_DEPS='.utility/dependencies.txt'
+FILE_DEPS='.travis/dependencies.txt'
 
 # Transforming dependencies to JSON
 DEPS=`cat $FILE_DEPS`
@@ -21,4 +21,4 @@ done`
 JSON_DEPS=`echo ${JSON_DEPS:0:${#JSON_DEPS}-1}`"]"
 
 # Build the final JSON
-echo $JSON_DEPS > .utility/dependencies.json
+echo $JSON_DEPS > .travis/dependencies.json

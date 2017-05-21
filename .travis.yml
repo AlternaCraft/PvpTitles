@@ -1,11 +1,13 @@
 sudo: false
 language: java
 jdk:
-- openjdk7
+  - openjdk7
+
 script: mvn clean install
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-- bash .utility/environment.sh
+  - bash <(curl -s https://codecov.io/bash)
+  - bash .travis/environment.sh
+
 deploy:
   provider: releases
   api_key:
@@ -14,13 +16,10 @@ deploy:
   skip_cleanup: true
   on:
     tags: true  
+    
 notifications:
   email: false
-  irc:
-    channels:
-    - irc://freenode/pvptitles
-    use_notice: true
-    skip_join: true
+
 env:
   global:
   - ENCRYPTION_LABEL: 5795a2fbb362
