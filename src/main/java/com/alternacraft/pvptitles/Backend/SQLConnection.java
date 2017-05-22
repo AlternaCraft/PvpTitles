@@ -45,11 +45,9 @@ public abstract class SQLConnection {
     }
 
     public boolean isConnected(boolean reconnect) {
-        boolean iniciada = false, valida = false;
+        boolean valida = false;
 
-        iniciada = (connection != null);
-
-        if (iniciada) {
+        if (connection != null) {
             try {
                 valida = connection.isValid(3) && !connection.isClosed();
 
@@ -64,6 +62,8 @@ public abstract class SQLConnection {
                 }
             } catch (SQLException ex) {
                 status = STATUS_AVAILABLE.NOT_CONNECTED;
+            } catch (AbstractMethodError ex) {
+                valida = true; // Should continue?
             }
         }
 
@@ -76,18 +76,18 @@ public abstract class SQLConnection {
                 connection.close();
                 status = STATUS_AVAILABLE.NOT_CONNECTED;
             }
-        } catch (SQLException ex) {}
+        } catch (SQLException | AbstractMethodError ex) {}
     }
     
     protected void update(String sql) {
         if (isConnected(true)) {
             try {
                 this.connection.createStatement().execute(sql);
-            } catch (SQLException ex) {
-            }
+            } catch (SQLException ex) {}
         }
     }
     
+    //<editor-fold defaultstate="collapsed" desc="DEFAULT TABLES">
     public static String getTableServers() {
         return 
             "create table IF NOT EXISTS Servers ("
@@ -149,7 +149,8 @@ public abstract class SQLConnection {
                 + "FOREIGN KEY (serverID) REFERENCES Servers(id)"
                 + "ON UPDATE CASCADE ON DELETE CASCADE"
             + ")";
-    }
+    }    
+    //</editor-fold>
     
     public void updateServer(short id, String nombre) {
         String insert = "insert into Servers values (?,?)";
