@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.6.7
+Version: 2.7
 ################
 
 ############################################################
@@ -103,7 +103,7 @@ RankChecker: 30
 TimeP: 20
 # List of players who will not be deleted with the command (Case sensitive)
 NoPurge:
-    - Player1
+- Player1
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -112,13 +112,13 @@ NoPurge:
 ############################################################
 
 ## KILLSTREAKS ##
-# Maximum deaths of a player (To the same player) during "TimeL"
+# Maximum number of deaths on the same player during "TimeL"
 Kills: 3
-# Veto time [Stop get points by low] (in seconds)
-TimeV: 300
-# Necessary to clean the deaths made on a player (In seconds)
-TimeL: 300
+# Necessary time to clean the deaths on a player (In seconds)
 # It is restarted for each death
+CleanerTime: 300
+# Veto time [Stops getting points by law] (in seconds)
+VetoTime: 300
 
 ## PLAYED TIME ##
 # Enable/Disable checking afk
@@ -126,10 +126,108 @@ CheckAFK: true
 # AFK Time (Time to considerer a player as afk player in minutes)
 AFKTime: 5
 
+############################################################
+# +------------------------------------------------------+ #
+# |                      MULTIPLIERS                     | #
+# +------------------------------------------------------+ #
+############################################################
+
+## MULTIPLIERS ##
+#
+# Configure custom multipliers to increase or decrease the amount of <reward>
+# that a player receives. By default, the multiplier is 1 (Nothing changes).
+#
+# You can use a decimal value, greater than zero, to define the multiplier.
+# The result of the operation will be rounded. 
+#
+# Available multipliers: 
+# -> Rewards (Configured in rewards.yml)
+#    -> RMoney (Use "money" keyword inside of the reward)
+#    -> RPoints (Use "points" keyword inside of the reward)
+#    -> RTime (Use "time" keyword inside of the reward)
+# -> Defaults (General)
+#    -> Points (Per kill)
+#    -> Time (Played time)
+#
+# ---
+# Permission format: pvptitles.mp.<reward_name>.<custom_name>
+# ---
+# In addition, there are some keywords to group the multipliers:
+# - pvptitles.mp.*.<custom_name> (ALL)
+# - pvptitles.mp.rewards.<custom_name> (RMoney, RPoints, RTime)
+# - pvptitles.mp.defaults.<custom_name> (Points and Time)
+#
+# For example, the permission for this example
+# Multipliers:
+#     Money:
+#         vip: 1.25
+# is -> pvptitles.mp.rmoney.vip
+Multipliers:
+    RMoney:
+        vip: 1.25
+    RPoints:
+        vip: 1.25
+    RTime:
+        vip: 1.25
+    Points:           
+        vip: 1.5
+    Time:
+        vip: 2
+
+############################################################
+# +------------------------------------------------------+ #
+# |                         POINTS                       | #
+# +------------------------------------------------------+ #
+############################################################
+
+## KILLSTREAK ##
+# Reset killstreak/deathstreak value when a player be killed by:
+# AVAILABLE OPTIONS:
+# - PLAYER -> Another player
+# - ENVIRONMENT -> Everything else
+# If empty it won't be reset.
+ResetOptions:
+- PLAYER
+# Should be reset the killstreak/deathstreak value when a player leaves the server?
+ResetOnPlayerLeaving: true
+# Remember that killstreak is a temporary value, it'll be zero when server restarts.
+
 ## AWARDED POINTS ##
-# Modificator Percentage to increase or decrease the amount of points you receive when you have a run of low
-Mod: 0.25
-# Formula: (Killstreak * mod) + 1 | (Result is truncated upward)
+# RP -> Receive Points
+# LP -> Lose Points
+RPWhenKilling: 
+    # Enable to Receive Points when killing.
+    enable: true
+LPWhenDying: 
+    # Enable to Lose Points when dying.
+    enable: false
+    # Just by other players?
+    onlyPlayers: false
+
+## MODIFICATOR ##
+# Modificator to increase or decrease the amount of points you receive/lose.
+# The result will be rounded.
+#
+# Available variables: 
+# - STREAK -> KillStreak or "DeathStreak"
+# - MOD -> Modificator value.
+#
+# Allowed functions (Parameters between parentheses):
+# - https://docs.oracle.com/javase/7/docs/api/java/lang/Math.html
+#     -> Just use the name of the functions described into "Method Summary" 
+#     -> By default, the parameters type is "double"
+Modificator:
+    # When you are the killer
+    Received:
+        # Formula to calculate the points
+        formula: "ceil((STREAK - 1) * MOD + 1) + 1"
+        # Modificator value
+        value: 0.25
+    # When you are the victim
+    Lost:
+        formula: "STREAK * MOD"
+        value: 0.1
+# Default formula: (Killstreak * mod) + 1 | (Result is truncated upward)
 #   - Example: [Second low # (1 * 0.25 + 1) = 1.25 ~ 2 #
 #   - Recommended value between 0 - 1
 
@@ -181,45 +279,66 @@ HoloHeightModifier: 1
 # This requires that HolographicDisplays be loaded
 ## -- ##
 
-# Pss, you can use color codes in the title names to get custom colors per rank (Remember to use double quotes!)
-RankNames:
-- None
-- "&aHero&r"
-- Fierce Hero
-- Mighty Hero
-- Deadly Hero
-- Terrifying Hero
-- Conquering Hero
-- Subjugating Hero
-- Vanquishing Hero
-- Renowned Hero
-- Illustrious Hero
-- Eminent Hero
-- Kings Hero
-- Emperors Hero
-- Balthazar Hero
-- Legendary Hero
-ReqFame:
-- 0
-- 25
-- 75
-- 180
-- 360
-- 600
-- 1000
-- 1680
-- 2800
-- 4665
-- 7750
-- 12960
-- 21600
-- 36000
-- 60000
-- 100000
-
-# (Optional) Customize the required time (In seconds) to get each title
-#     -> if empty then no time necessary
-#     -> Not cumulative
-#     -> Same structure than before (1 field per title)
-ReqTime:
-- 0
+## RANKS/TITLES ##
+#
+# Default rank "None" won't be shown.
+# If display is not defined, the rank name will be used.
+#
+# Structure explanation:
+# <title_name>: (Has to be unique)
+#     display: "&bTitle &ename" (Name to display)
+#     points: <points_number> (Points required to get the title)
+#     # OPTIONAL PARAMETERS
+#     # time: <seconds> (Required played time (In seconds) to get the title, 0 by default)
+#     # restricted: true|false (Requires a permission to get the title, false by default)     
+#
+# If you use "restricted: true", the permission that you have to use is:
+#     pvptitles.rank.<title_name>
+Ranks:
+    None:
+        points: 0
+    Hero: 
+        display: "&aHero&r"
+        points: 25
+    Fierce_Hero: 
+        display: Fierce Hero
+        points: 75
+    Mighty_Hero: 
+        display: Mighty Hero
+        points: 180
+    Deadly_Hero: 
+        display: Deadly Hero
+        points: 360
+    Terrifying_Hero: 
+        display: Terrifying Hero
+        points: 600
+    Conquering_Hero: 
+        display: Conquering Hero
+        points: 1000
+    Subjugating_Hero: 
+        display: Subjugating Hero
+        points: 1680
+    Vanquishing_Hero: 
+        display: Vanquishing Hero
+        points: 2800
+    Renowned_Hero: 
+        display: Renowned Hero
+        points: 4665
+    Illustrious_Hero: 
+        display: Illustrious Hero
+        points: 7750
+    Eminent_Hero: 
+        display: Eminent Hero
+        points: 12960
+    Kings_Hero: 
+        display: Kings Hero
+        points: 21600
+    Emperors_Hero: 
+        display: Emperors Hero
+        points: 36000
+    Balthazar_Hero: 
+        display: Balthazar Hero
+        points: 60000
+    Legendary_Hero: 
+        display: Legendary Hero
+        points: 100000        

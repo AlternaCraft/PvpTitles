@@ -26,8 +26,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -53,6 +55,11 @@ public class FileConfig {
     private FileConfiguration configFile = null;
     private File backupFile = null;
 
+    // Parents
+    private String parent;
+    // Configurable nodes
+    private final String[] NODES = {"Multipliers", "Ranks"};
+
     public FileConfig(PvpTitles pl) {
         plugin = pl;
 
@@ -71,21 +78,22 @@ public class FileConfig {
     }
 
     private boolean mismatchVersion(File cFile) {
-        File bFile = new File(PvpTitles.PLUGIN_DIR, "config.backup.yml");
+        File backup = new File(PvpTitles.PLUGIN_DIR, "config.backup.yml");
 
-        YamlConfiguration configV = YamlConfiguration.loadConfiguration(cFile);
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(cFile);
+        Configuration defaults = plugin.getConfig().getDefaults();
 
-        if (!configV.contains("Version")
-                || !configV.getString("Version").equals(plugin.getConfig().getDefaults().getString("Version"))) {
+        // Seeking for "version"
+        if (!yaml.contains("Version")
+                || !yaml.getString("Version").equals(defaults.getString("Version"))) {
 
-            if (bFile.exists()) {
-                bFile.delete();
+            if (backup.exists()) {
+                backup.delete();
             }
 
-            cFile.renameTo(bFile);
+            cFile.renameTo(backup);
             showMessage(ChatColor.RED + "Mismatch config version, a new one has been created.");
-
-            backupFile = bFile;
+            backupFile = backup;
 
             return true;
         }
@@ -97,14 +105,48 @@ public class FileConfig {
         YamlConfiguration newFile = YamlConfiguration.loadConfiguration(outFile);
         YamlConfiguration oldFile = YamlConfiguration.loadConfiguration(backupFile);
 
+        // RetroCP
+        if (oldFile.contains("RankNames")) {
+            List<String> ranks = oldFile.getStringList("RankNames");
+            List<String> points = oldFile.getStringList("ReqFame");
+            List<String> times = oldFile.getStringList("ReqTime");
+
+            for (int i = 0; i < ranks.size(); i++) {
+                String rank = ranks.get(i);
+                String key = getParsedKey(rank);
+                oldFile.set("Ranks." + key + ".display", rank);
+                if (points != null && points.size() > i) {
+                    oldFile.set("Ranks." + key + ".points", points.get(i));
+                }
+                if (times != null && times.size() > i) {
+                    oldFile.set("Ranks." + key + ".time", times.get(i));
+                }
+            }
+        }
+
         File temp = new File(PvpTitles.PLUGIN_DIR, "config_temp.yml");
 
         try (BufferedReader br = new BufferedReader(new FileReader(outFile));
                 FileWriter fw = new FileWriter(temp)) {
 
+            boolean avoid = false;
+
             String linea;
             while ((linea = br.readLine()) != null) {
-                if (linea.matches("\\s*-\\s?.+")) {
+                if (avoid) {
+                    if (!linea.matches("[^#]?\\s+\\w+:.*") && !linea.matches("\\s*#.*")) {
+                        avoid = false;
+                    }
+                } else {
+                    for (String node : NODES) {
+                        if (getKey(linea).equals(node) && oldFile.contains(node)) {
+                            fw.write(addCustom(node, oldFile));
+                            avoid = true;
+                        }
+                    }
+                }
+                // List or subnode
+                if (linea.matches("\\s*-\\s?.+") || avoid) {
                     continue;
                 }
                 String nline = replace(linea, newFile, oldFile);
@@ -124,7 +166,25 @@ public class FileConfig {
         showMessage(ChatColor.GREEN + "Just in case, check the result.");
     }
 
-    private String parent;
+    private String addCustom(String key, YamlConfiguration oldFile) {
+        String result = key + ":" + System.lineSeparator();
+
+        Set<String> values = oldFile.getConfigurationSection(key).getKeys(true);
+        for (String value : values) {
+            String spaces = fillSpaces(value.split("\\.").length);
+            String kkey = value.split("\\.")[value.split("\\.").length - 1];
+
+            Object content = oldFile.get(key + "." + value);
+            String val = "";
+
+            if (!(content instanceof MemorySection)) {
+                val = getFilteredString(String.valueOf(content));
+            }
+
+            result += spaces + kkey + ": " + val + System.lineSeparator();
+        }
+        return result;
+    }
 
     private String replace(String line, YamlConfiguration newFile, YamlConfiguration oldFile) {
         // Ignore values
@@ -135,19 +195,19 @@ public class FileConfig {
 
         // Output
         String res;
-        
+
         // ** BEGIN FIND NODE ** //
         String key = getKey(line);
         String cKey = key;
-        
+
         Object v = newFile.get(cKey); // Default value
-        
-        // Testing with parent (Maybe it is a children)
+
+        // Testing with parent
         if (v == null) {
             cKey = parent + "." + key;
             v = newFile.get(cKey);
         }
-        
+
         // Going back
         while (v == null && parent.contains(".")) {
             parent = parent.substring(0, parent.lastIndexOf("."));
@@ -156,40 +216,44 @@ public class FileConfig {
         }
         // ** END FIND NODE ** //
 
-        // Unhandled error
+        // Not found??
         if (v == null) {
             return line + System.lineSeparator();
         }
 
-        // Style
+        // Spaces
         String spaces = fillSpaces(cKey.split("\\.").length - 1);
 
         // Old value <- This is the point
         if (oldFile.contains(cKey)) {
-            v = oldFile.get(cKey);
+            v = oldFile.get(cKey); // Restore old value
         }
 
-        // Default output
+        // Default output [For nodes]
         res = spaces + key + ":";
-        
+
         // Object type
         if (v instanceof List) {
-            List<Object> list = (List<Object>) v;
+            List<Object> list = (List<Object>) v; // Saving list
             for (Object l : list) {
                 String val = getFilteredString(l.toString());
                 res += System.lineSeparator() + spaces + "- " + val;
             }
         } else if (v instanceof MemorySection) {
-            parent = cKey;            
+            parent = cKey; // Saving parent
         } else {
-            res += " " + getFilteredString(v.toString());
+            res += " " + getFilteredString(v.toString()); // saving value
         }
 
-        return res += System.lineSeparator();
+        return res += System.lineSeparator(); // Multiple lines
     }
 
     private String getKey(String str) {
         return str.split(":")[0].replaceAll("\\s+", "");
+    }
+    
+    private String getParsedKey(String str) {
+        return StrUtils.removeColorsWithoutTranslate(str).replaceAll(" ", "_");
     }
 
     private String fillSpaces(int c) {
