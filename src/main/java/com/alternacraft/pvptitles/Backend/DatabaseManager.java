@@ -20,7 +20,6 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
-import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -69,10 +68,11 @@ public interface DatabaseManager {
     /**
      * Método para crear o añadir el tiempo de juego de un jugador
      *
-     * @param tPlayer TimedPlayer
+     * @param playerUUID Player UUID
+     * @param playedTime Played time
      * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
-    public void savePlayedTime(TimedPlayer tPlayer) throws DBException;
+    public void savePlayedTime(UUID playerUUID, long playedTime) throws DBException;
 
     /**
      * Método para recibir los dias que lleva el jugador en el servidor con el

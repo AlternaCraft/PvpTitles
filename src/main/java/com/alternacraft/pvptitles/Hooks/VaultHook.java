@@ -22,6 +22,8 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultHook {
@@ -33,7 +35,7 @@ public class VaultHook {
     public static boolean PERMISSIONS_ENABLED = false;
     public static boolean ECONOMY_ENABLED = false;
     public static boolean CHAT_ENABLED = false;
-    
+
     private PvpTitles plugin = null;
 
     public VaultHook(PvpTitles plugin) {
@@ -43,16 +45,19 @@ public class VaultHook {
     public void setupVault() {
         PERMISSIONS_ENABLED = this.setupPermissions();
         CHAT_ENABLED = this.setupChat();
-        ECONOMY_ENABLED = this.setupEconomy();        
+        ECONOMY_ENABLED = this.setupEconomy();
 
-        if (PERMISSIONS_ENABLED)
-            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");        
-        if (CHAT_ENABLED)
-            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");        
-        if (ECONOMY_ENABLED)
+        if (PERMISSIONS_ENABLED) {
+            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");
+        }
+        if (CHAT_ENABLED) {
+            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");
+        }
+        if (ECONOMY_ENABLED) {
             CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
+        }
     }
-    
+
     private boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
@@ -75,5 +80,23 @@ public class VaultHook {
             economy = economyProvider.getProvider();
         }
         return (economy != null);
+    }
+
+    public static boolean hasPermission(String perm, Player pl) {
+        if (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) {
+            if (permission.hasGroupSupport() && permission.getPlayerGroups(pl).length != 0) {
+                String group = permission.getPrimaryGroup(pl);
+
+                World w = null;
+                World wp = pl.getWorld();
+
+                return (permission.groupHas(w, group, perm)
+                        || permission.groupHas(wp, group, perm));
+            } else {
+                return permission.has(pl, perm);
+            }
+        } else {
+            return pl.hasPermission(perm);
+        }
     }
 }

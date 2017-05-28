@@ -64,7 +64,7 @@ public class PurgeCommand implements CommandExecutor {
                 purgetime = purgados;
             }
         } else {
-            purgetime = pvpTitles.getManager().params.getTimeP();
+            purgetime = pvpTitles.getManager().params.getPurgeTime();
         }
 
         try {

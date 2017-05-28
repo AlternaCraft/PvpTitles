@@ -20,11 +20,13 @@ import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import static com.alternacraft.pvptitles.Main.Manager.messages;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.FileConfig;
+import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigLoader {
@@ -39,19 +41,15 @@ public class ConfigLoader {
 
     public void loadConfig(ConfigDataStore params) {
         customConfig = new FileConfig(pvpTitles);
-        loadData(Manager.rankList(), Manager.reqFame(), Manager.reqTime(), params);
+        loadData(params);
     }
 
     /**
      * Método para cargar la informacion del config principal
      *
-     * @param rankList Map
-     * @param reqFame Map
-     * @param reqTime Map
      * @param params ConfigDataStore
      */
-    protected void loadData(LinkedList rankList, LinkedList reqFame,
-            LinkedList reqTime, ConfigDataStore params) {
+    protected void loadData(ConfigDataStore params) {
         // Set debug mode
         FileConfiguration config = getConfig();
 
@@ -67,7 +65,8 @@ public class ConfigLoader {
         try {
             params.setDefaultDB(DBTYPE.valueOf(defdb.toUpperCase()));
         } catch (Exception ex) {
-            CustomLogger.logError("Bad name for default database; Using Ebean per default...");
+            CustomLogger.logError("Bad name for default database; Using "
+                    + params.getDefaultDB().name() + " per default...");
         }
 
         // MYSQL-PVPTITLES BRIDGE
@@ -105,19 +104,59 @@ public class ConfigLoader {
         params.setRankChecker((short) config.getInt("RankChecker"));
 
         // PURGE
-        params.setTimeP((short) config.getInt("TimeP"));
+        params.setPurgeTime((short) config.getInt("TimeP"));
         params.getNoPurge().clear();
         params.getNoPurge().addAll(config.getStringList("NoPurge"));
 
         // ANTIFARM
-        params.setKills((short) config.getInt("Kills"));
-        params.setTimeV((short) config.getInt("TimeV"));
-        params.setTimeL((short) config.getInt("TimeL"));
+        params.setMaxKills((short) config.getInt("Kills"));
+        params.setCleanerTime((short) config.getInt("CleanerTime"));
+        params.setVetoTime((short) config.getInt("VetoTime"));
 
         params.setCheckAFK(config.getBoolean("CheckAFK"));
         params.setAFKTime((short) config.getInt("AFKTime"));
 
-        params.setMod((float) config.getDouble("Mod"));
+        // MULTIPLIERS
+        String[] types = {"RMoney", "RPoints", "RTime", "Points", "Time"};
+
+        for (String type : types) {
+            Set<String> mults = config.getConfigurationSection("Multipliers." + type).getKeys(false);
+            for (String mult : mults) {
+                double value = config.getDouble("Multipliers." + type + "." + mult);
+                if (!params.setMultiplier(type, mult, value)) {
+                    CustomLogger.logError("The value for the multiplier "
+                            + type + "." + mult + " has to be greater than zero!");
+                }
+            }
+        }
+        
+        // POINTS
+        List<String> options = config.getStringList("ResetOptions");
+        for (String option : options) {
+            params.addResetOption(option);
+        }
+        params.setResetOnPlayerLeaving(config.getBoolean("ResetOnPlayerLeaving"));
+        
+        params.setEnableRPWhenKilling(config.getBoolean("RPWhenKilling.enable"));
+        
+        params.setEnableLPWhenDying(config.getBoolean("LPWhenDying.enable"));
+        params.setLPWhenDyingJustByPlayers(config.getBoolean("LPWhenDying.onlyPlayers"));
+
+        try {
+            params.setReceivedFormula(config.getString("Modificator.Received.formula"));
+        } catch (RuntimeException ex) {
+            CustomLogger.logError("Error on parsing formula of Modificator.Received - "
+                    + ex.getMessage());
+        }
+        params.setReceivedMod(config.getDouble("Modificator.Received.value"));
+
+        try {
+            params.setLostFormula(config.getString("Modificator.Lost.formula"));
+        } catch (RuntimeException ex) {
+            CustomLogger.logError("Error on parsing formula of Modificator.Lost - "
+                    + ex.getMessage());
+        }
+        params.setLostMod(config.getDouble("Modificator.Lost.value"));
 
         // CHAT & TITLES
         String lang = config.getString("DefaultLang");
@@ -147,33 +186,14 @@ public class ConfigLoader {
         params.setHolotagformat(StrUtils.translateColors(config.getString("HoloTitleFormat")));
         params.setHoloHeightMod((short) config.getInt("HoloHeightModifier"));
 
-        List<String> configList = config.getStringList("RankNames");
-        List<Integer> requFame = config.getIntegerList("ReqFame");
-        List<Long> requTime = config.getLongList("ReqTime");
+        Set<String> ranks = config.getConfigurationSection("Ranks").getKeys(false);
+        for (String rank : ranks) {
+            String display = config.getString("Ranks." + rank + ".display");
+            int points = config.getInt("Ranks." + rank + ".points");
+            long time = config.getLong("Ranks." + rank + ".time");
+            boolean restricted = config.getBoolean("Ranks." + rank + ".restricted");
 
-        rankList.clear();
-        for (String rank : configList) {
-            rankList.add(StrUtils.translateColors(rank));
-        }
-
-        reqFame.clear();
-        for (Integer fame : requFame) {
-            reqFame.add(fame);
-        }
-
-        reqTime.clear();
-        for (int i = 0; i < configList.size(); i++) {
-            long seconds = 0;
-            if (requTime.size() >= (i + 1) && requTime.get(i) != null) {
-                seconds = requTime.get(i);
-            }
-            reqTime.add(seconds);
-        }
-
-        if (configList.size() != requFame.size()) {
-            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
-            CustomLogger.logMessage("WARNING - RankNames and ReqFame are not equal in their numbers.");
+            RankManager.addRank(new Rank(rank, points, display, time, restricted));
         }
     }
 

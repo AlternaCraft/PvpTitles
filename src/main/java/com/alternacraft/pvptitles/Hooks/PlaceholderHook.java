@@ -22,7 +22,8 @@ import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Managers.RankManager;
+import com.alternacraft.pvptitles.Misc.Rank;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -60,12 +61,15 @@ public class PlaceholderHook extends EZPlaceholderHook {
 
         int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
 
-        String rank = "";
+        
+        Rank vRank = null;
         try {
-            rank = Ranks.getRank(fame, seconds);
+            vRank = RankManager.getRank(fame, seconds, player);
         } catch (RanksException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
+        
+        String rank = (vRank != null) ? vRank.getDisplay():"";
 
         if (id.equals("rank")) {
             return rank;

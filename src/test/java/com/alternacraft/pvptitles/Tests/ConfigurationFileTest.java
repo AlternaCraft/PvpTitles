@@ -84,7 +84,6 @@ public class ConfigurationFileTest extends TestBase {
         assertEquals(true, !yaml.getString("Version").equals("0"));
         assertEquals(true, yaml.getBoolean("Debug"));
         assertEquals("machine", yaml.getString("Mysql.host"));
-        assertEquals("Test 2", yaml.getList("RankNames").get(1));
     }
 
     @Test

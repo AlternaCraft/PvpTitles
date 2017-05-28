@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Files;
 
+import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import java.io.File;
 import java.io.IOException;
@@ -47,36 +48,50 @@ public class RewardsFile {
         YamlConfiguration newConfig = new YamlConfiguration();
         
         newConfig.options().header (
-            "########################\n" + 
-            "##  [COMMAND SYSTEM]  ##\n" +
-            "########################\n" +
-            "# money requires vault #"
+            "####################################\n" + 
+            "##         [REWARDS SYSTEM]       ##\n" +
+            "####################################\n" +
+            "# Available parameters:            #\n" +
+            "# - money (Requires vault)         #\n" +
+            "# - time (In seconds)              #\n" +
+            "# - points (Number of points)      #\n" +
+            "# - permission (True | False)      #\n" +
+            "# Permission format:               #\n" +
+            "# - pvptitles.rw.<reward_name>     #\n" +
+            "####################################"
         );
         newConfig.options().copyHeader(true);
         
-        String[] activos = {"Rank", "Fame", "Killstreak"};
-        
         // Comandos de ejemplo
         String[] commands1 = {"say Congratulations <Player>, now you are God"};
+        String[] commands1b = {"say Congratulations <Player>, now you are a richer God"};
         String[] commands2 = {"give <player> diamond 1000"};
         String[] commands3 = {"exp give <player> 10"};
         String[] commands4 = {"pvpfame add <player> 100"};
         String[] commands5 = {"economy give <player> 5000", "broadcast Wow, <Player> is on roll"};
         
-        newConfig.set("activeRewards", Arrays.asList(activos));
+        newConfig.set("activeRewards", Arrays.asList());
         
         // filtro por rango
         newConfig.set("Rewards.Rank.onRank", "God");
         newConfig.set("Rewards.Rank.money", 500);
         newConfig.set("Rewards.Rank.command", Arrays.asList(commands1));
         
+        // filtro por rango y permiso
+        newConfig.set("Rewards.RankByPerm.onRank", "God");
+        newConfig.set("Rewards.RankByPerm.money", 1500);
+        newConfig.set("Rewards.RankByPerm.permission", true);
+        newConfig.set("Rewards.RankByPerm.command", Arrays.asList(commands1b));
+        
         // filtro por fama
         newConfig.set("Rewards.Fame.onFame", 1000000);
         newConfig.set("Rewards.Fame.money", 100);
+        newConfig.set("Rewards.Fame.time", 3600);
         newConfig.set("Rewards.Fame.command", Arrays.asList(commands2));
 
         // filtro por racha
         newConfig.set("Rewards.Killstreak.onKillstreak", 1500);
+        newConfig.set("Rewards.Killstreak.points", 1500);
         newConfig.set("Rewards.Killstreak.command", Arrays.asList(commands5));
         
         // filtro por varias condiciones
@@ -91,6 +106,7 @@ public class RewardsFile {
             newConfig.save(rewardsFile);
         } 
         catch (IOException e) {
+            CustomLogger.logError("Error saving rewards file: " + e.getMessage());
         }
     }
 }

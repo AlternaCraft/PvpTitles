@@ -26,6 +26,7 @@ import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
 import org.bukkit.command.Command;
@@ -54,6 +55,7 @@ public class ReloadCommand implements CommandExecutor {
             this.pvpTitles.getManager().dbh.sql.closeConnection();
         }
 
+        RankManager.clear(); // Clear registered ranks
         pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);
 
         pvpTitles.getManager().getMovementManager().updateTimeAFK();

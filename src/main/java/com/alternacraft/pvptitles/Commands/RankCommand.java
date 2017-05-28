@@ -35,8 +35,10 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Misc.Rank;
+import com.alternacraft.pvptitles.Misc.Rank.NextRank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
 import java.util.List;
@@ -92,28 +94,22 @@ public class RankCommand implements CommandExecutor {
         long seconds = 0;
         try {
             seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
-                    + pt.getManager().getTimerManager()
-                    .getPlayer(pt.getServer().getOfflinePlayer(player.getUniqueId()))
-                    .getTotalOnline();
+                    + pt.getManager().getTimerManager().getPlayer(player).getTotalOnline();
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
-        String rank = "";
+        Rank actual = null;
         try {
-            rank = Ranks.getRank(fame, seconds);
+            actual = RankManager.getRank(fame, seconds, player);
         } catch (RanksException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
+            return;
         }
+        NextRank next = RankManager.getNextRank(actual, player);
 
-        int rankup = Ranks.fameToRankUp();
-        long timeup = Ranks.nextRankTime();
-
-        String nextRank = Ranks.nextRankTitle();
         String tag = pt.getManager().params.getTag();
-
         LangType lang = Localizer.getLocale(player);
-
         List<String> lines = this.pt.getManager().templates.getFileContent(FILES.RANK_COMMAND);
 
         for (String line : lines) {
@@ -123,20 +119,24 @@ public class RankCommand implements CommandExecutor {
                 msg = msg
                         .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
                         .replace(RANK_TITLE_TAG, LangsFile.RANK_INFO_TITLE.getText(lang))
-                        .replace(RANK_VALUE_TAG, rank)
+                        .replace(RANK_VALUE_TAG, actual.getDisplay())
                         .replace(FAME_TITLE_TAG, LangsFile.RANK_INFO_TAG.getText(lang)
                                 .replace("%tag%", tag))
                         .replace(FAME_VALUE_TAG, String.valueOf(fame))
                         .replace(KS_TITLE_TAG, LangsFile.RANK_INFO_KS.getText(lang))
                         .replace(KS_VALUE_TAG, String.valueOf(racha));
 
-                if (rankup > 0 || timeup > 0) {
+                if (next != null) {
+                    long time = next.timeToRankUp() - seconds;
+                    if (time < 0) {
+                        time = 0;
+                    }
                     msg = msg
                             .replace(NEXT_RANK_TAG, LangsFile.RANK_INFO_NEXTRANK.getText(lang)
-                                    .replace("%rankup%", String.valueOf(rankup))
-                                    .replace("%timeup%", StrUtils.splitToComponentTimes(timeup))
+                                    .replace("%rankup%", String.valueOf(next.fameToRankUp()))
+                                    .replace("%timeup%", StrUtils.splitToComponentTimes(time))
                                     .replace("%tag%", tag)
-                                    .replace("%nextRank%", nextRank));
+                                    .replace("%nextRank%", next.nextRankTitle()));
                 } else if (msg.contains(NEXT_RANK_TAG)) {
                     continue;
                 }

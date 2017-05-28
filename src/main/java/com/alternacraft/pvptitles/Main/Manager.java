@@ -37,10 +37,10 @@ import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import static com.alternacraft.pvptitles.Managers.CleanTaskManager.TICKS;
 import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
 import com.alternacraft.pvptitles.Managers.MovementManager;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Managers.TimerManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.Ranks;
-import com.alternacraft.pvptitles.Misc.StrUtils;
+import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
 import java.io.File;
@@ -48,11 +48,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -75,15 +75,10 @@ public final class Manager {
     // Gestor de leaderboards
     private LeaderBoardManager lbm = null;
 
-    // Objetos para guardar los Titulos con sus respectivos puntos    
-    private static final LinkedList RANKLIST = new LinkedList();
-    private static final LinkedList REQFAME = new LinkedList();
-    private static final LinkedList REQTIME = new LinkedList();
-
     // Modelos
     public ArrayList<BoardModel> modelos = null;
-    // Recompensas
-    public Map<String, Map<String, Map<String, List<String>>>> rewards = null;
+    // Recompensas - (Condicion => [(valor_condicion => (n_accion => accion))])
+    public Map<String, List<Map<String, Map<String, Object>>>> rewards = null;
     // Templates
     public TemplatesFile templates = null;
     // Servers
@@ -175,7 +170,7 @@ public final class Manager {
 
         String fichero = new StringBuilder().append(
                 this.pvpTitles.getDataFolder()).append( // Ruta
-                        File.separator).append( // Separador
+                File.separator).append( // Separador
                         "models.txt").toString();
 
         try {
@@ -293,19 +288,33 @@ public final class Manager {
                 if (value != null || (type.equals("onKill") && nulos)) {
                     nulos = false;
 
-                    if (rewards.get(type) == null) {
-                        rewards.put(type, new HashMap());
+                    if (!rewards.containsKey(type)) {
+                        rewards.put(type, new ArrayList());
                     }
+
+                    HashMap<String, Map<String, Object>> actions = new HashMap();
 
                     // Valores de la recompensa
                     if (lp.contains("Rewards." + reward + ".money")) {
-                        data.put("money", Arrays.asList(lp.getString("Rewards." + reward + ".money")));
+                        data.put("money", lp.getDouble("Rewards." + reward + ".money"));
+                    }
+                    if (lp.contains("Rewards." + reward + ".points")) {
+                        data.put("points", lp.getInt("Rewards." + reward + ".points"));
+                    }
+                    if (lp.contains("Rewards." + reward + ".time")) {
+                        data.put("points", lp.getLong("Rewards." + reward + ".time"));
+                    }
+                    // Permiso para utilizarla
+                    if (lp.contains("Rewards." + reward + ".permission")
+                            && lp.getBoolean("Rewards." + reward + ".permission")) {
+                        data.put("permission", "pvptitles.rw." + reward);
                     }
 
                     data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
 
-                    // Guardo en el mapa principal los valores para ese valor
-                    rewards.get(type).put(StrUtils.removeColorsWithoutTranslate(value), data);
+                    // Guardo en el mapa principal los valores para ese valor                    
+                    actions.put(value, data);
+                    rewards.get(type).add(actions);
                 }
             }
         }
@@ -399,10 +408,14 @@ public final class Manager {
                 Set<TimedPlayer> tp = getTimerManager().getTimedPlayers();
 
                 for (TimedPlayer timedPlayer : tp) {
+                    OfflinePlayer opl = timedPlayer.getOfflinePlayer();
+
                     // Fix para evitar nullpointerexception
-                    if (!timedPlayer.hasSession() || !timedPlayer.getOfflinePlayer().isOnline()) {
+                    if (!timedPlayer.hasSession() || !opl.isOnline()) {
                         continue;
                     }
+
+                    Player pl = opl.getPlayer();
 
                     int actualFame;
                     try {
@@ -423,12 +436,13 @@ public final class Manager {
                     try {
                         long savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
 
-                        String rankB = Ranks.getRank(actualFame, savedTimeB);
-                        String rankA = Ranks.getRank(actualFame, savedTimeA);
+                        Rank rankB = RankManager.getRank(actualFame, savedTimeB, opl);
+                        Rank rankA = RankManager.getRank(actualFame, savedTimeA, opl);
                         // Actualizo el tiempo del jugador en el server
-                        if (!rankB.equals(rankA)) {
+                        if (!rankB.similar(rankA)) {
                             try {
-                                dbh.getDm().savePlayedTime(timedPlayer);
+                                dbh.getDm().savePlayedTime(pl.getUniqueId(), 
+                                        timedPlayer.getTotalOnline());
                             } catch (DBException ex) {
                                 CustomLogger.logArrayError(ex.getCustomStackTrace());
                                 continue;
@@ -437,11 +451,9 @@ public final class Manager {
                             timedPlayer.removeSessions(); // Reinicio el tiempo a cero
                             timedPlayer.startSession(); // Nueva sesion
 
-                            if (timedPlayer.getOfflinePlayer().isOnline()) {
-                                Player pl = pvpTitles.getServer().getPlayer(timedPlayer.getUniqueId());
-                                pl.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.
-                                        getText(Localizer.getLocale(pl)).replace("%newRank%", rankA));
-                            }
+                            pl.sendMessage(getPluginName()
+                                    + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(pl))
+                                            .replace("%newRank%", rankA.getDisplay()));
                         }
                     } catch (RanksException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -463,39 +475,12 @@ public final class Manager {
             pvpTitles.getServer().getScheduler().cancelTask(eventoActualizador);
         }
     }
-    
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SOME GETTERS...">
     /**
-     * Método para devolver una lista de titulos
-     *
-     * @return Objeto que almacena la lista de titulos
-     */
-    public static LinkedList<String> rankList() {
-        return RANKLIST;
-    }
-
-    /**
-     * Método para devolver una lista de puntos equivalentes a cada titulo
-     *
-     * @return Objeto que almacena la lista de puntos de fama
-     */
-    public static LinkedList<Integer> reqFame() {
-        return REQFAME;
-    }
-
-    /**
-     * Método para devolver una lista de tiempos requeridos
-     *
-     * @return Objeto que almacena la lista de dias
-     */
-    public static LinkedList<Long> reqTime() {
-        return REQTIME;
-    }
-
-    /**
      * Metódo para devolver el detector de AFK's
-     * 
+     *
      * @return MovementManager
      */
     public MovementManager getMovementManager() {
@@ -504,7 +489,7 @@ public final class Manager {
 
     /**
      * Metódo para devolver el gestor de tiempos de los jugadores
-     * 
+     *
      * @return TimerManager
      */
     public TimerManager getTimerManager() {

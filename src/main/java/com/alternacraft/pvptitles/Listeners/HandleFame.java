@@ -28,8 +28,10 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Misc.Rank;
+import com.alternacraft.pvptitles.Misc.Session;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.List;
@@ -59,7 +61,7 @@ public class HandleFame implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFame(FameEvent e) {
         OfflinePlayer pl = e.getOfflinePlayer();
-        
+
         if (pl == null) {
             e.setCancelled(true);
             return;
@@ -71,48 +73,64 @@ public class HandleFame implements Listener {
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
-        
+
         // Comandos
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
-            Map<String, Map<String, List<String>>> kills = pt.getManager().rewards.get("onKill");
+            List<Map<String, Map<String, Object>>> kills = pt.getManager().rewards.get("onKill");
             if (kills != null) {
-                setValues(kills.get(null), e.getOfflinePlayer());
-            }
-        }
-
-        Map<String, Map<String, List<String>>> fame = pt.getManager().rewards.get("onFame");
-        if (fame != null) {
-            for (String cantidad : fame.keySet()) {
-                if (e.getFame() < Integer.parseInt(cantidad)
-                        && (e.getFameTotal()) >= Integer.valueOf(cantidad)) {
-                    setValues(fame.get(cantidad), e.getOfflinePlayer());
-                    break;
-                }
-            }
-        }
-
-        Map<String, Map<String, List<String>>> rank = pt.getManager().rewards.get("onRank");
-        if (rank != null) {            
-            for (String rango : rank.keySet()) {
-                try {
-                    String oldRank = StrUtils.removeColors(Ranks.getRank(e.getFame(), seconds));
-                    String newRank = StrUtils.removeColors(Ranks.getRank(e.getFameTotal(), seconds));
-                    if (rango.equals(newRank) && !rango.equals(oldRank)) {
-                        setValues(rank.get(rango), e.getOfflinePlayer());
-                        break;
+                for (Map<String, Map<String, Object>> kill : kills) {
+                    if (kill != null && hasPermission(kill.get(null), pl)) {
+                        setValues(kill.get(null), e.getOfflinePlayer());
                     }
-                } catch (RanksException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
             }
         }
 
-        Map<String, Map<String, List<String>>> killstreak = pt.getManager().rewards.get("onKillstreak");
+        List<Map<String, Map<String, Object>>> fame = pt.getManager().rewards.get("onFame");
+        if (fame != null) {
+            for (Map<String, Map<String, Object>> famee : fame) {
+                if (famee != null) {
+                    for (String cantidad : famee.keySet()) {
+                        if (e.getFame() < Integer.parseInt(cantidad)
+                                && (e.getFameTotal()) >= Integer.valueOf(cantidad)
+                                && hasPermission(famee.get(cantidad), pl)) {
+                            setValues(famee.get(cantidad), e.getOfflinePlayer());
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Map<String, Map<String, Object>>> rank = pt.getManager().rewards.get("onRank");
+        if (rank != null) {
+            for (Map<String, Map<String, Object>> rankk : rank) {
+                if (rankk != null) {
+                    for (String rango : rankk.keySet()) {
+                        try {
+                            Rank oldRank = RankManager.getRank(e.getFame(), seconds, pl);
+                            Rank newRank = RankManager.getRank(e.getFameTotal(), seconds, pl);
+                            if (rango.equals(newRank.getId()) && !rango.equals(oldRank.getId())
+                                    && hasPermission(rankk.get(rango), pl)) {
+                                setValues(rankk.get(rango), e.getOfflinePlayer());
+                            }
+                        } catch (RanksException ex) {
+                            CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Map<String, Map<String, Object>>> killstreak = pt.getManager().rewards.get("onKillstreak");
         if (killstreak != null) {
-            for (String ks : killstreak.keySet()) {
-                if (e.getKillstreak() == Integer.valueOf(ks)) {
-                    setValues(killstreak.get(ks), e.getOfflinePlayer());
-                    break;
+            for (Map<String, Map<String, Object>> ks : killstreak) {
+                if (ks != null) {
+                    for (String kss : ks.keySet()) {
+                        if (e.getKillstreak() == Integer.valueOf(kss)
+                                && hasPermission(ks.get(kss), pl)) {
+                            setValues(ks.get(kss), e.getOfflinePlayer());
+                        }
+                    }
                 }
             }
         }
@@ -126,13 +144,13 @@ public class HandleFame implements Listener {
             long totalTime = seconds + ((tp == null) ? 0 : tp.getTotalOnline());
 
             try {
-                String actualRank = Ranks.getRank(fameA, totalTime);
-                String newRank = Ranks.getRank(fameD, totalTime);
+                Rank actualRank = RankManager.getRank(fameA, totalTime, pl);
+                Rank newRank = RankManager.getRank(fameD, totalTime, pl);
 
                 // Ha conseguido otro rango
-                if (!actualRank.equalsIgnoreCase(newRank)) {
+                if (!actualRank.similar(newRank)) {
                     pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
-                            pl, actualRank, newRank));
+                            pl, actualRank.getId(), newRank.getId()));
                 }
             } catch (RanksException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -140,24 +158,62 @@ public class HandleFame implements Listener {
         }
     }
 
-    private void setValues(Map<String, List<String>> data, OfflinePlayer pl) {
+    private void setValues(Map<String, Object> data, OfflinePlayer pl) {
         if (VaultHook.ECONOMY_ENABLED) {
             Economy economy = VaultHook.economy;
             if (economy != null && data.containsKey("money")) {
-                List<String> money = data.get("money");
-                if (money != null && !money.isEmpty()) {
-                    Double cant = Double.valueOf(money.get(0));
-                    economy.depositPlayer(pl, cant);
-                }
+                double money = Math.round((int) data.get("money")
+                        * Manager.getInstance().params.getMultiplier("RMoney", pl));
+                economy.depositPlayer(pl, money);
+            }
+        }
+
+        if (data.containsKey("points")) {
+            int points = (int) Math.round((int) data.get("points")
+                    * Manager.getInstance().params.getMultiplier("RPoints", pl));
+            int fameA = 0;
+            try {
+                fameA = this.dm.dbh.getDm().loadPlayerFame(pl.getUniqueId(), null);
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+                return;
+            }
+
+            FameAddEvent event = new FameAddEvent(pl, fameA, points);
+
+            pt.getServer().getPluginManager().callEvent(event);
+        }
+        if (data.containsKey("time")) {
+            long time = (long) Math.round((long) data.get("time")
+                    * Manager.getInstance().params.getMultiplier("RTime", pl));
+            Manager.getInstance().getTimerManager().getPlayer(pl)
+                    .addSession(new Session(0L, time));
+            if (pl.isOnline()) {
+                pl.getPlayer().sendMessage(getPluginName()
+                        + LangsFile.PLAYEDTIME_CHANGE_PLAYER.getText(Localizer.getLocale(pl.getPlayer()))
+                                .replace("%time%", StrUtils.splitToComponentTimes(time))
+                );
             }
         }
         if (data.containsKey("commands")) {
-            for (String cmd : data.get("commands")) {
+            for (String cmd : (List<String>) data.get("commands")) {
                 cmd = cmd.replaceAll("<[pP]layer>", pl.getName());
                 cmd = StrUtils.translateColors(cmd);
                 pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
             }
         }
+    }
+
+    public boolean hasPermission(Map<String, Object> data, OfflinePlayer pl) {
+        if (!data.containsKey("permission")) {
+            return true;
+        } else if (!pl.isOnline()) {
+            return false;
+        }
+        String perm = (String) data.get("permission");
+        return (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
+                VaultHook.hasPermission(perm, pl.getPlayer()) 
+                : pl.getPlayer().hasPermission(perm);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -184,26 +240,26 @@ public class HandleFame implements Listener {
         }
 
         if (!e.isSilent()) {
-            String rank = "";
+            Rank rank = null;
             try {
-                rank = Ranks.getRank(e.getFameTotal(), seconds);
+                rank = RankManager.getRank(e.getFameTotal(), seconds, pl);
+
+                if (e.getWorldname() != null) {
+                    pl.sendMessage(getPluginName() + LangsFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
+                            .replace("%fame%", String.valueOf(e.getFameTotal()))
+                            .replace("%rank%", rank.getDisplay())
+                            .replace("%world%", e.getWorldname())
+                            .replace("%tag%", this.dm.params.getTag())
+                    );
+                } else {
+                    pl.sendMessage(getPluginName() + LangsFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
+                            .replace("%fame%", String.valueOf(e.getFameTotal()))
+                            .replace("%rank%", rank.getDisplay())
+                            .replace("%tag%", this.dm.params.getTag())
+                    );
+                }
             } catch (RanksException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
-
-            if (e.getWorldname() != null) {
-                pl.sendMessage(getPluginName() + LangsFile.FAME_MW_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
-                        .replace("%fame%", String.valueOf(e.getFameTotal()))
-                        .replace("%rank%", rank)
-                        .replace("%world%", e.getWorldname())
-                        .replace("%tag%", this.dm.params.getTag())
-                );
-            } else {
-                pl.sendMessage(getPluginName() + LangsFile.FAME_CHANGE_PLAYER.getText(Localizer.getLocale(pl))
-                        .replace("%fame%", String.valueOf(e.getFameTotal()))
-                        .replace("%rank%", rank)
-                        .replace("%tag%", this.dm.params.getTag())
-                );
             }
         }
     }

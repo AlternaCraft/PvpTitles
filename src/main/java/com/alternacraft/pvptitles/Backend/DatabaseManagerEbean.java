@@ -29,7 +29,6 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
-import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -201,16 +200,18 @@ public class DatabaseManagerEbean implements DatabaseManager {
     }
 
     @Override
-    public void savePlayedTime(TimedPlayer tPlayer) throws DBException {        
-        if (tPlayer == null) {
+    public void savePlayedTime(UUID playerUUID, long playedTime) throws DBException {
+        if (playerUUID == null) {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_SAVING);
         }        
         
+        OfflinePlayer oplayer = plugin.getServer().getOfflinePlayer(playerUUID);
+        
         try {
             PERFORMANCE.start("Saving playedtime");
-            Object player = checkPlayerExists(tPlayer.getOfflinePlayer(), null, true);
+            Object player = checkPlayerExists(oplayer, null, true);
             PlayerPT plClass = (PlayerPT) player;           
-            plClass.setPlayedTime(tPlayer.getTotalOnline() + plClass.getPlayedTime());
+            plClass.setPlayedTime(playedTime + plClass.getPlayedTime());
             ebeanServer.getDatabase().update(plClass);
             PERFORMANCE.recordValue("Saving playedtime");
         } catch (final OptimisticLockException ex) {

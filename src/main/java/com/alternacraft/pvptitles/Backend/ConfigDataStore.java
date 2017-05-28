@@ -16,17 +16,24 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
+import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
+import com.alternacraft.pvptitles.Misc.Formulas.EvaluableExpression;
+import com.alternacraft.pvptitles.Misc.Formulas.Expression;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.ChatColor;
 import static org.bukkit.ChatColor.valueOf;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public class ConfigDataStore {
 
     /* METRICS && UPDATES */
-
     // Atributo para guardar si se van a usar las metricas
     private boolean metrics = true;
     // Atributo para guardar si se va a actualizar o no automaticamente
@@ -36,8 +43,8 @@ public class ConfigDataStore {
     // Atributo para guardar el tipo de formato para el error
     private short errorFormat = 2;
     // Atributo para almacenar la base de datos por defecto
-    private DBTYPE defaultDB = DBTYPE.EBEAN;
-    
+    private DBTYPE defaultDB = DBTYPE.SQLITE;
+
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
     private boolean use_ssl = false;
@@ -76,23 +83,36 @@ public class ConfigDataStore {
     // Lista de jugadores que NO seran borrados por el comando
     private final List<String> noPurge = new ArrayList();
     // Tiempo necesario para que un registro sea entendido como inactivo
-    private short timeP = 0;
+    private short purgeTime = 0;
 
     /* ANTIFARM */
     // Maximo de bajas para el sistema antifarm
-    private short kills = 0;
+    private short maxKills = 0;
     // Tiempo para volver a matar una vez superado el limite de bajas
-    private short timeV = 0;
+    private short vetoTime = 0;
     // Tiempo para limpiar las bajas realizadas a un jugador
-    private short timeL = 0;
+    private short cleanerTime = 0;
     // Comprueba AFK
     private boolean checkAFK = false;
     // Tiempo AFK
     private short AFKTime = 0;
 
-    /* KILLSTREAKS */
-    // Modificador de los puntos ganados en una racha de bajas
-    private float mod = 0;
+    /* POINTS */
+    // Multipliers
+    private Map<String, Map<String, Double>> multipliers = new HashMap();
+    // Killstreak
+    private List<String> resetOptions = new ArrayList();
+    private boolean resetOnPlayerLeaving = true;
+    // Awarded points
+    private boolean enableRPWhenKilling = true;
+    private boolean enableLPWhenDying = false;
+    private boolean LPWhenDyingJustByPlayers = false;
+    // Modificators
+    private final Map<String, Double> variables = new HashMap<>();
+    private Expression receivedFormula = null;
+    private double receivedMod = 0.25D;
+    private Expression lostFormula = null;
+    private double lostMod = 0.25D;
 
     /* CHAT */
     // Mostrar el titulo del jugador en el chat
@@ -168,35 +188,31 @@ public class ConfigDataStore {
     }
 
     public void setTop(short top) {
-        this.top = compNum(top);
+        if (top > 0) this.top = top;
     }
 
     public void setLBRefresh(short LBRefresh) {
-        this.LBRefresh = LBRefresh;
+        if (LBRefresh > 0) this.LBRefresh = LBRefresh;
     }
 
     public void setRankChecker(short rankChecker) {
-        this.rankChecker = rankChecker;
+        if (rankChecker > 0) this.rankChecker = rankChecker;
     }
 
-    public void setMod(float mod) {
-        this.mod = compNum(mod);
+    public void setPurgeTime(short timeP) {
+        if (timeP > 0) this.purgeTime = timeP;
+    }    
+    
+    public void setMaxKills(short kills) {
+        if (kills > 0) this.maxKills = kills;
     }
 
-    public void setKills(short kills) {
-        this.kills = compNum(kills);
+    public void setVetoTime(short timeV) {
+        if (timeV > 0) this.vetoTime = timeV;
     }
 
-    public void setTimeP(short timeP) {
-        this.timeP = compNum(timeP);
-    }
-
-    public void setTimeV(short timeV) {
-        this.timeV = compNum(timeV);
-    }
-
-    public void setTimeL(short timeL) {
-        this.timeL = compNum(timeL);
+    public void setCleanerTime(short timeL) {
+        if (timeL > 0) this.cleanerTime = timeL;
     }
 
     public void setCheckAFK(boolean checkAFK) {
@@ -205,6 +221,63 @@ public class ConfigDataStore {
 
     public void setAFKTime(short AFKTime) {
         this.AFKTime = AFKTime;
+    }
+
+    public void setEnableRPWhenKilling(boolean enableRPWhenKilling) {
+        this.enableRPWhenKilling = enableRPWhenKilling;
+    }
+
+    public void setEnableLPWhenDying(boolean enableLPWhenDying) {
+        this.enableLPWhenDying = enableLPWhenDying;
+    }
+
+    public void setLPWhenDyingJustByPlayers(boolean LPWhenDyingJustByPlayers) {
+        this.LPWhenDyingJustByPlayers = LPWhenDyingJustByPlayers;
+    }
+
+    public void addVariableToFormula(String var, double val) {
+        this.variables.put(var.toLowerCase(), val);
+    }
+
+    public void setMultipliers(Map<String, Map<String, Double>> multipliers) {
+        this.multipliers = multipliers;
+    }
+
+    public boolean setMultiplier(String type, String name, double value) {
+        if (value <= 0) {
+            return false;
+        }
+        if (!this.multipliers.containsKey(type)) {
+            this.multipliers.put(type, new HashMap());
+        }
+        this.multipliers.get(type).put(name, value);
+        return true;
+    }
+
+    public void addResetOption(String resetOption) {
+        if (!this.resetOptions.contains(resetOption)) {
+            this.resetOptions.add(resetOption);
+        }
+    }
+
+    public void setResetOnPlayerLeaving(boolean resetOnPlayerLeaving) {
+        this.resetOnPlayerLeaving = resetOnPlayerLeaving;
+    }
+
+    public void setReceivedFormula(String formula) throws RuntimeException {
+        this.receivedFormula = new EvaluableExpression(formula.toLowerCase(), variables).parse();
+    }
+
+    public void setReceivedMod(double receivedMod) {
+        this.receivedMod = Math.abs(receivedMod);
+    }
+
+    public void setLostFormula(String formula) throws RuntimeException {
+        this.lostFormula = new EvaluableExpression(formula.toLowerCase(), variables).parse();
+    }
+
+    public void setLostMod(double lostMod) {
+        this.lostMod = Math.abs(lostMod);
     }
 
     public void setUpdate(boolean update) {
@@ -244,7 +317,7 @@ public class ConfigDataStore {
     }
 
     public void setHoloHeightMod(short holoheightmod) {
-        this.holoHeightMod = (holoheightmod >= 0) ? holoheightmod:0;
+        this.holoHeightMod = (holoheightmod >= 0) ? holoheightmod : 0;
     }
 
     public void setMw_enabled(boolean mw_enabled) {
@@ -320,24 +393,20 @@ public class ConfigDataStore {
         return rankChecker;
     }
 
-    public double getMod() {
-        return this.mod;
+    public short getMaxKills() {
+        return maxKills;
     }
 
-    public short getKills() {
-        return kills;
+    public short getPurgeTime() {
+        return purgeTime;
     }
 
-    public short getTimeP() {
-        return timeP;
+    public short getVetoTime() {
+        return vetoTime;
     }
 
-    public short getTimeV() {
-        return timeV;
-    }
-
-    public short getTimeL() {
-        return timeL;
+    public short getCleanerTime() {
+        return cleanerTime;
     }
 
     public boolean isCheckAFK() {
@@ -346,6 +415,94 @@ public class ConfigDataStore {
 
     public short getAFKTime() {
         return AFKTime;
+    }
+
+    public boolean isEnableRPWhenKilling() {
+        return enableRPWhenKilling;
+    }
+
+    public boolean isEnableLPWhenDying() {
+        return enableLPWhenDying;
+    }
+
+    public boolean isLPWhenDyingJustByPlayers() {
+        return LPWhenDyingJustByPlayers;
+    }
+
+    public Map<String, Map<String, Double>> getMultipliers() {
+        return multipliers;
+    }
+
+    public double getMultiplier(String type, OfflinePlayer op) {
+        if (!op.isOnline()) {
+            return 1D;
+        }
+
+        String all_perm = "pvptitles.mp.*.";
+        String rewards_perm = "pvptitles.mp.rewards.";
+        String defaults_perm = "pvptitles.mp.defaults.";
+        
+        Player pl = op.getPlayer();
+
+        Map<String, Map<String, Double>> mults = Manager.getInstance().params.getMultipliers();
+        Map<String, Double> perms = mults.get(type);
+        for (Map.Entry<String, Double> entry : perms.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Double value = entry.getValue();
+            
+            String perm = "pvptitles.mp." + type + "." + key;            
+            boolean global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
+                    VaultHook.hasPermission(all_perm + key, pl) 
+                        : pl.hasPermission(all_perm + key);            
+            
+            if (!global) {
+                boolean rw = perm.matches("pvptitles\\.mp\\.r.*\\..*");
+                if (rw) {
+                    global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
+                        VaultHook.hasPermission(rewards_perm + key, pl) 
+                            : pl.hasPermission(rewards_perm + key);
+                } else {
+                    global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
+                        VaultHook.hasPermission(defaults_perm + key, pl) 
+                            : pl.hasPermission(defaults_perm + key);
+                }
+            }
+            
+            if (!global) {
+                global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
+                    VaultHook.hasPermission(perm, pl) : pl.hasPermission(perm);
+            }     
+            
+            if (global) {
+                return value;
+            }
+        }
+
+        return 1D;
+    }
+
+    public boolean hasResetOption(String option) {
+        return this.resetOptions.contains(option);
+    }
+
+    public boolean isResetOnPlayerLeaving() {
+        return resetOnPlayerLeaving;
+    }
+
+    public double getReceivedResult() {
+        return receivedFormula.eval();
+    }
+
+    public double getReceivedMod() {
+        return receivedMod;
+    }
+
+    public double getLostResult() {
+        return lostFormula.eval();
+    }
+
+    public double getLostMod() {
+        return lostMod;
     }
 
     public String getPrefix() {
@@ -410,25 +567,7 @@ public class ConfigDataStore {
 
     public short getHoloHeightMod() {
         return holoHeightMod;
-    }
-
-    // ** COMPROBACIONES ** \\
-    public short compNum(short valor) {
-        if (valor < 0 || valor > 1000) {
-            return 1;
-        }
-
-        return valor;
-    }
-
-    public float compNum(float valor) {
-        if (valor < 0 || valor > 1000) {
-            return 1;
-        }
-
-        return valor;
-    }
-    // ** ************** ** \\    
+    }  
 
     /**
      * Método para convertir el nombre del color a un valor válido

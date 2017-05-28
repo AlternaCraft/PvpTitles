@@ -89,6 +89,10 @@ public enum LangsFile {
             "&eTe han establecido tu %tag% a %fame% en el mundo %world%, tu rango ahora es %rank%",
             "&eYour %tag% has been established to %fame% in %world%, Your rank is now %rank%"
     ),
+    PLAYEDTIME_CHANGE_PLAYER(
+            "&eTe han añadido %time% a tu tiempo de juego.",
+            "&eYour played time has been established to %time%"
+    ),
     COMMAND_FORBIDDEN(
             "&4No puedes ejecutar ese comando",
             "&4You can not execute that command"
@@ -193,9 +197,13 @@ public enum LangsFile {
             "&aSe han corregido %cant% registro/s",
             "&a%cant% record/s has been fixed"
     ),
-    PLAYER_KILLED(
-            "&aHas matado a %killed% y has recibido %fameRec% de %tag%",
-            "&aYou killed %killed% and have received %fameRec% of %tag%"
+    PLAYER_GETS_KILL(
+            "&aHas matado a %killed% y has recibido %fame% de %tag%",
+            "&aYou killed %killed% and have received %fame% of %tag%"
+    ),
+    PLAYER_GETS_DIE(
+            "&aTe han matado y has perdido %fame% de %tag%",
+            "&aYou have been killed and you have lost %fame% of %tag%"
     ),
     PLAYER_NEW_RANK(
             "&bFelicidades! Ahora eres: %newRank%",

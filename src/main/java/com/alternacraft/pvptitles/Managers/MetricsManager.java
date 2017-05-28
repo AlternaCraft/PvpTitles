@@ -28,44 +28,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bstats.Metrics;
+import org.bstats.Metrics.CustomChart;
+import org.json.simple.JSONObject;
 
 public class MetricsManager {
 
     private final static String PATTERN = "(.*) \\((.*)\\) \\- (.*)";
-
-    private Map<String, Map<String, Object>> importLog(final PvpTitles plugin, String logname) {
-        Map<String, Map<String, Object>> pairs = new HashMap<>();
-
-        PluginLog pl = new PluginLog(plugin, logname);
-        pl.importLog();
-        List<String> lines = pl.getMessages();
-
-        for (String line : lines) {
-            if (!line.contains("---")
-                    && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
-                Pattern pattern = Pattern.compile(PATTERN);
-                Matcher matcher = pattern.matcher(line);
-
-                if (matcher.find()) {
-                    String key = matcher.group(2);
-
-                    String id = matcher.group(1);
-                    Object v = matcher.group(3);
-
-                    if (!pairs.containsKey(key)) {
-                        pairs.put(key, new HashMap());
-                    }
-
-                    pairs.get(key).put(id, v);
-                }
-            }
-        }
-
-        UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
-                + File.separator + "performance.txt");
-
-        return pairs;
-    }
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
     private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
@@ -81,21 +49,12 @@ public class MetricsManager {
         metrics.addCustomChart(new Metrics.SimplePie("time_as_requirement") {
             @Override
             public String getValue() {
-                boolean timeUsed = false;
-
-                for (Long value : Manager.reqTime()) {
-                    if (value > 0) {
-                        timeUsed = true;
-                        break;
-                    }
-                }
-
-                return (timeUsed) ? "Enabled" : "Disabled";
+                return (RankManager.isTimeReqUsed()) ? "Enabled" : "Disabled";
             }
         });
     }
 
-    private void setPDBGraph(final PvpTitles plugin, Metrics metrics) {
+    private void setPDBGraph(Metrics metrics) {
         metrics.addCustomChart(new Metrics.SimplePie("preferred_db") {
             @Override
             public String getValue() {
@@ -124,7 +83,7 @@ public class MetricsManager {
         });
     }
 
-    private void setDLGraph(final PvpTitles plugin, Metrics metrics) {
+    private void setDLGraph(Metrics metrics) {
         metrics.addCustomChart(new Metrics.SimplePie("default_language") {
             @Override
             public String getValue() {
@@ -133,21 +92,47 @@ public class MetricsManager {
         });
     }
 
-    private void setPerformanceGraph(final PvpTitles pvptitles, Metrics metrics, final String db) {
-        metrics.addCustomChart(new Metrics.AdvancedPie("general_statistics") {
+    private void setAPGraph(final PvpTitles plugin, Metrics metrics) {
+        metrics.addCustomChart(new Metrics.AdvancedPie("awarded_points") {
             @Override
             public HashMap<String, Integer> getValues(HashMap<String, Integer> hm) {
-                Map<String, Object> pairs = importLog(pvptitles, "performance.txt").get(db.toUpperCase());
+                boolean rp = plugin.getManager().params.isEnableRPWhenKilling();
+                boolean lp = plugin.getManager().params.isEnableLPWhenDying();
+                hm.put("RP", (rp) ? 1:0);
+                hm.put("LP", (lp) ? 1:0);
+                return hm;
+            }
+        });
+    }
 
-                if (pairs != null) {
-                    for (Map.Entry<String, Object> entry : pairs.entrySet()) {
-                        String key = entry.getKey();
-                        String value = (String) entry.getValue();
-                        hm.put(key, Integer.valueOf(value));
+    private void setDBPerformanceGraph(Metrics metrics, final List<String> lines) {
+        metrics.addCustomChart(new DrilldownPieChart("general_statistics") {
+            @Override
+            public Map<String, Map<String, Integer>> getValues(Map<String, 
+                    Map<String, Integer>> map) {
+
+                for (String line : lines) {
+                    if (!line.contains("---")
+                            && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
+                        Pattern pattern = Pattern.compile(PATTERN);
+                        Matcher matcher = pattern.matcher(line);
+
+                        if (matcher.find()) {
+                            String key = matcher.group(2);
+
+                            String id = matcher.group(1);
+                            String v = matcher.group(3);
+
+                            if (!map.containsKey(key)) {
+                                map.put(key, new HashMap());
+                            }
+
+                            map.get(key).put(id, Integer.valueOf(v));
+                        }
                     }
                 }
 
-                return hm;
+                return map;
             }
 
         });
@@ -160,14 +145,93 @@ public class MetricsManager {
 
             setMWGraph(plugin, metrics); // Multi world
             setTUGraph(metrics); // Time usage as requirement
-            setPDBGraph(plugin, metrics); // Preferred database
+            setPDBGraph(metrics); // Preferred database
             setDMGraph(plugin, metrics); // Display mode
-            setDLGraph(plugin, metrics); // Default language
+            setDLGraph(metrics); // Default language
+            setAPGraph(plugin, metrics); // Awarded points
 
             // DB's performance
-            for (DBLoader.DBTYPE value : DBLoader.DBTYPE.values()) {
-                setPerformanceGraph(plugin, metrics, value.name());
-            }
+            PluginLog pl = new PluginLog(plugin, "performance.txt");
+            pl.importLog();
+            
+            setDBPerformanceGraph(metrics, pl.getMessages());
+            
+            UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
+                        + File.separator + "performance.txt");
         }
+    }
+    
+    public static abstract class DrilldownPieChart extends CustomChart {
+        
+        public DrilldownPieChart(String chartId) {
+            super(chartId);
+        }
+        
+        /**
+         * Gets the value of the pie.
+         *
+         * @param map Just an empty map.
+         * 
+         * @return The values of the pie.
+         */
+        public abstract Map<String, Map<String, Integer>> getValues(Map<String, 
+                Map<String, Integer>> map);       
+        
+        @Override
+        protected JSONObject getChartData() {
+            JSONObject data = new JSONObject();
+            
+            JSONObject firstLevelVals = new JSONObject();
+            JSONObject secondLevelVals = new JSONObject();
+            
+            Map<String, Map<String, Integer>> map = 
+                    getValues(new HashMap<String, Map<String, Integer>>());    
+            
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }  
+            
+            boolean allSkipped = true;
+            for (Map.Entry<String, Map<String, Integer>> firstLevel : map.entrySet()) {
+                String k = firstLevel.getKey();                
+                Map<String, Integer> v = firstLevel.getValue(); 
+                
+                if (v == null) {
+                    continue;
+                }
+                
+                boolean allSkipped2 = true;                
+                for (Map.Entry<String, Integer> secondLevel : v.entrySet()) {
+                    String kk = secondLevel.getKey();
+                    Integer vv = secondLevel.getValue();
+                    
+                    if (vv == 0) {
+                        continue; // Skip this invalid
+                    }          
+                    
+                    allSkipped2 = false;
+                    
+                    secondLevelVals.put(kk, vv);
+                }       
+                
+                if (allSkipped2) {
+                    continue;
+                }
+                
+                allSkipped = false;  
+                
+                firstLevelVals.put(k, secondLevelVals);
+                secondLevelVals.clear();
+            }
+            
+            if (allSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            
+            data.put("values", firstLevelVals);
+            return data;
+        }               
     }
 }

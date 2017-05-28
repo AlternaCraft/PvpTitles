@@ -164,7 +164,8 @@ public class PvpTitles extends JavaPlugin {
 
             for (TimedPlayer next : players) {
                 try {
-                    this.manager.dbh.getDm().savePlayedTime(next);
+                    this.manager.dbh.getDm().savePlayedTime(next.getUniqueId(), 
+                            next.getTotalOnline());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }

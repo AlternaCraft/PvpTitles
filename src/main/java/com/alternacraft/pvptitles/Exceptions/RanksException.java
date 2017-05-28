@@ -17,7 +17,6 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +28,7 @@ public class RanksException extends CustomException {
     private enum POSSIBLE_ERRORS {
         NOT_FOUND("00", "Couldn't find a reason for the error..."),
         CORRUPTED_DATA("01", "It seems you have corrupted values in the database."
-                + " Please, use /pvpdatabase repair."),
-        BAD_EXTREMS("02", "It seems the player points value is not registered."
-                + " Please, check your configuration.");
+                + " Please, use /pvpdatabase repair.");
 
         private String error_num = "-1";
         private String error_str = null;
@@ -87,25 +84,13 @@ public class RanksException extends CustomException {
             Object v = entry.getValue();
 
             if (k.equals("Seconds") || k.equals("Fame")) {
-                if (((int) v) < 0) {
+                boolean lowerThanZero = false;
+                if (k.equals("Seconds")) lowerThanZero = (long)v < 0;
+                if (k.equals("Fame")) lowerThanZero = (int)v < 0;
+                if (lowerThanZero) {
                     if (!possible_errors.contains(POSSIBLE_ERRORS.CORRUPTED_DATA.getText())) {
                         possible_errors.add(new StringBuilder("- ")
                                 .append(POSSIBLE_ERRORS.CORRUPTED_DATA.getText()).toString());
-                    }
-                }
-            }
-
-            if (k.equals("Fame required")) {
-                if (v instanceof LinkedList) {
-                    LinkedList<Integer> ll = (LinkedList) v;
-                    int max = ll.getLast();
-                    int min = ll.getFirst();
-
-                    int has = (Integer) this.data.get("Seconds");
-
-                    if (has < min || has > max) {
-                        possible_errors.add(new StringBuilder("- ")
-                                .append(POSSIBLE_ERRORS.BAD_EXTREMS.getText()).toString());
                     }
                 }
             }

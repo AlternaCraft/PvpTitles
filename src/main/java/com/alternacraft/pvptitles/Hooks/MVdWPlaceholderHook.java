@@ -25,7 +25,8 @@ import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Managers.RankManager;
+import com.alternacraft.pvptitles.Misc.Rank;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -61,18 +62,18 @@ public class MVdWPlaceholderHook {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
-                    String rank = "";
+                    Rank rank = null;
                     try {
-                        rank = Ranks.getRank(fame, seconds);
+                        rank = RankManager.getRank(fame, seconds, player);
                     } catch (RanksException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
-                    if (!canDisplayRank(player, rank)) {
+                    if (rank == null || !canDisplayRank(player, rank.getDisplay())) {
                         return "";
                     }
 
-                    return rank;
+                    return rank.getDisplay();
                 }
             });
 
@@ -96,14 +97,14 @@ public class MVdWPlaceholderHook {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
-                    String rank = "";
+                    Rank rank = null;
                     try {
-                        rank = Ranks.getRank(fame, seconds);
+                        rank = RankManager.getRank(fame, seconds, player);
                     } catch (RanksException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
                     }
 
-                    return rank;
+                    return (rank == null) ? "":rank.getDisplay();                    
                 }
             });
 

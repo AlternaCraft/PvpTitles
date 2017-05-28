@@ -19,9 +19,9 @@ package com.alternacraft.pvptitles.Managers.BoardsAPI;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Params;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
-import com.alternacraft.pvptitles.Misc.Ranks;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.List;
 
@@ -185,12 +185,13 @@ public class ModelController {
                     case RANK:
                         String rank = "";
                         try {
-                            rank = Ranks.getRank(pf.get(value)
-                                .getFame(), pf.get(value).getSeconds());
+                            rank = RankManager.getRank(pf.get(value).getFame(), 
+                                    pf.get(value).getSeconds(), 
+                                    pf.get(value).getPlayer()).getDisplay();
+                            str = str.replace("<rank>", rank);
                         } catch (RanksException ex) {
                             CustomLogger.logArrayError(ex.getCustomStackTrace());
                         }
-                        str = str.replace("<rank>", rank);
                         break;
                     case FAME:
                         str = str.replace("<fame>", String.valueOf(pf.get(value).getFame()));

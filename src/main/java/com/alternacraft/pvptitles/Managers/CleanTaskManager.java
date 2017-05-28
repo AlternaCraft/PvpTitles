@@ -45,7 +45,7 @@ public class CleanTaskManager {
                         afm.cleanKillsOnVictim(killer, victim);
                         cleanKills.remove(victim);
                     }
-                }, afm.getPlugin().getManager().params.getTimeL() * TICKS * 1L)
+                }, afm.getPlugin().getManager().params.getCleanerTime() * TICKS * 1L)
         );
     }
 

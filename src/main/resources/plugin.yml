@@ -27,13 +27,13 @@ commands:
         permission: pvptitles.ladder        
     pvpFame:
         description: Add, view or set player fame in game.
-        usage: /<command> add|see|set <player> [<world_name>] [<famepoints>] [-silent]
+        usage: /<command> add|see|set <player> [<world_name>] [<fame_points>] [-silent]
         aliases: pvpfama
         permission: pvptitles.setRank
     pvpBoard:
         description: Manage server scoreboards.
         usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
-        aliases: pvpSign
+        aliases: pvpsign
         permission: pvptitles.board
     pvpPurge:
         description: It cleans inactive users.
@@ -42,7 +42,8 @@ commands:
         permission: pvptitles.purge
     pvpReload:
         description: It reloads the plugin.
-        usage: /<command>        
+        usage: /<command>     
+        aliases: pvprecarga
         permission: pvptitles.reload
     pvpDatabase:
         description: It allows to manage data from the database.

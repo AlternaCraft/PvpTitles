@@ -21,7 +21,8 @@ import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Misc.Ranks;
+import com.alternacraft.pvptitles.Managers.RankManager;
+import com.alternacraft.pvptitles.Misc.Rank;
 import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
@@ -82,13 +83,13 @@ public class SBSHook {
                         replaceEvent.setScore(fame);
                         break;
                     case "rank":
-                        String rank = "";
+                        Rank rank = null;
                         try {
-                            rank = Ranks.getRank(fame, seconds);
+                            rank = RankManager.getRank(fame, seconds, player);
                         } catch (RanksException ex) {
                             CustomLogger.logArrayError(ex.getCustomStackTrace());
                         }
-                        replaceEvent.setScoreOrText(rank);
+                        replaceEvent.setScoreOrText((rank != null) ? rank.getDisplay():"");
                         break;
                     case "killstreak":
                         replaceEvent.setScore(killstreak);

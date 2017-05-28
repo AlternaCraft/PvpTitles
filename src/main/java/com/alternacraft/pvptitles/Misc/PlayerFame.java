@@ -22,6 +22,7 @@ import com.alternacraft.pvptitles.Main.Manager;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 
 public class PlayerFame implements Comparable {
     private String uuid = null;
@@ -40,6 +41,11 @@ public class PlayerFame implements Comparable {
         UUID playerUUID = UUID.fromString(this.uuid);
         String nombre = Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
         return (nombre == null) ? "<?>":nombre;
+    }
+    
+    public OfflinePlayer getPlayer() {
+        UUID playerUUID = UUID.fromString(this.uuid);
+        return Bukkit.getServer().getOfflinePlayer(playerUUID);
     }
     
     public int getFame() {

@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
+import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.MovementManager;
 import java.util.HashSet;
@@ -92,7 +93,8 @@ public class TimedPlayer {
         }
 
         // Evitemos valores negativos
-        return (timeOnline < 0) ? 0 : timeOnline;
+        return (timeOnline < 0) ? 0 : (long) Math.round(timeOnline * Manager.getInstance()
+                .params.getMultiplier("Time", this.getOfflinePlayer()));
     }
 
     public OfflinePlayer getOfflinePlayer() {

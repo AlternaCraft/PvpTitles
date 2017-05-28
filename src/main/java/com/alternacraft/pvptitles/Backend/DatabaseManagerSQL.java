@@ -32,7 +32,6 @@ import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TagsClass;
-import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -377,27 +376,27 @@ public class DatabaseManagerSQL implements DatabaseManager {
     }
 
     @Override
-    public void savePlayedTime(TimedPlayer tPlayer) throws DBException {
-        if (tPlayer == null) {
+    public void savePlayedTime(UUID playerUUID, long playedTime) throws DBException {
+        if (playerUUID == null) {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_SAVING);
         }
 
-        int psid = playerID(tPlayer.getOfflinePlayer().getUniqueId().toString(), null);
+        OfflinePlayer oplayer = plugin.getServer().getOfflinePlayer(playerUUID);
+        
+        int psid = playerID(playerUUID.toString(), null);
         if (psid == -1) {
-            psid = checkPlayerExists(tPlayer.getOfflinePlayer(), null);
+            psid = checkPlayerExists(oplayer, null);
         }
 
         try {
-            long time = tPlayer.getTotalOnline();
-
-            try (PreparedStatement playedTime = sql.getConnection()
+            try (PreparedStatement pTime = sql.getConnection()
                     .prepareStatement(UPDATE_PLAYERMETA_PLAYEDTIME)) {
-                playedTime.setLong(1, time);
-                playedTime.setInt(2, psid);
+                pTime.setLong(1, playedTime);
+                pTime.setInt(2, psid);
                 PERFORMANCE.start("Saving playedtime");
-                playedTime.executeUpdate();
+                pTime.executeUpdate();
                 PERFORMANCE.recordValue("Saving playedtime");
-                CustomLogger.logDebugInfo("Save played time: " + playedTime.toString());
+                CustomLogger.logDebugInfo("Save played time: " + pTime.toString());
             }
         } catch (final SQLException ex) {
             throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage()) {

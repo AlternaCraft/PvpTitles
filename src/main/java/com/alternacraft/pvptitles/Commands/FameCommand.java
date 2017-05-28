@@ -26,7 +26,9 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
+import com.alternacraft.pvptitles.Misc.Rank;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -119,6 +121,7 @@ public class FameCommand implements CommandExecutor {
                         fameA = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        return true;
                     }
 
                     FameAddEvent event = new FameAddEvent(opl, fameA, fameIncr);
@@ -202,12 +205,13 @@ public class FameCommand implements CommandExecutor {
                 // <editor-fold defaultstate="collapsed" desc="SET">
                 if (args.length >= 3) {
                     // Evitar nullpointerexception
+                    String fameValue;
                     int fameTotal = 0;
                     String world = null;
 
                     if (dm.params.isMw_enabled()) {
                         if (args.length < 4) {
-                            sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> <world_name> <famepoints>'");
+                            sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> <world_name> <fame_points|title_name>'");
                             return true;
                         }
 
@@ -216,11 +220,18 @@ public class FameCommand implements CommandExecutor {
                             sender.sendMessage(getPluginName() + ChatColor.RED + "World \"" + world + "\" does not exist");
                             return true;
                         }
-                        fameTotal = Integer.valueOf(args[3]);
+                        fameValue = args[3];
                     } else {
-                        fameTotal = Integer.valueOf(args[2]);
+                        fameValue = args[2];
                     }
-                    //
+                    
+                    // Get points required to get a Rank.
+                    Rank r = RankManager.getRank(fameValue);
+                    if (r == null) {
+                        fameTotal = Integer.valueOf(fameValue);
+                    } else {
+                        fameTotal = r.getPoints();
+                    }
 
                     int fame = 0;
 
@@ -228,6 +239,7 @@ public class FameCommand implements CommandExecutor {
                         fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        return true;
                     }
 
                     fameTotal = (fameTotal < 0) ? 0 : fameTotal;
@@ -260,7 +272,7 @@ public class FameCommand implements CommandExecutor {
                         );
                     }
                 } else {
-                    sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <famepoints>'");
+                    sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <fame_points|title_name>'");
                 }
                 return true;
             // </editor-fold>
