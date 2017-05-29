@@ -179,10 +179,7 @@ public class MetricsManager {
         
         @Override
         protected JSONObject getChartData() {
-            JSONObject data = new JSONObject();
-            
-            JSONObject firstLevelVals = new JSONObject();
-            JSONObject secondLevelVals = new JSONObject();
+            JSONObject data = new JSONObject();            
             
             Map<String, Map<String, Integer>> map = 
                     getValues(new HashMap<String, Map<String, Integer>>());    
@@ -192,7 +189,12 @@ public class MetricsManager {
                 return null;
             }  
             
+            JSONObject firstLevelVals = new JSONObject();
             boolean allSkipped = true;
+            
+            JSONObject secondLevelVals;
+            boolean allSkipped2;
+            
             for (Map.Entry<String, Map<String, Integer>> firstLevel : map.entrySet()) {
                 String k = firstLevel.getKey();                
                 Map<String, Integer> v = firstLevel.getValue(); 
@@ -201,17 +203,18 @@ public class MetricsManager {
                     continue;
                 }
                 
-                boolean allSkipped2 = true;                
+                allSkipped2 = true;  
+                secondLevelVals = new JSONObject();
+                
                 for (Map.Entry<String, Integer> secondLevel : v.entrySet()) {
                     String kk = secondLevel.getKey();
                     Integer vv = secondLevel.getValue();
                     
                     if (vv == 0) {
                         continue; // Skip this invalid
-                    }          
+                    }         
                     
-                    allSkipped2 = false;
-                    
+                    allSkipped2 = false;                    
                     secondLevelVals.put(kk, vv);
                 }       
                 
@@ -219,10 +222,8 @@ public class MetricsManager {
                     continue;
                 }
                 
-                allSkipped = false;  
-                
+                allSkipped = false;                
                 firstLevelVals.put(k, secondLevelVals);
-                secondLevelVals.clear();
             }
             
             if (allSkipped) {
