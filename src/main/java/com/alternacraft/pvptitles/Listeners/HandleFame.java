@@ -74,7 +74,7 @@ public class HandleFame implements Listener {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
-        // Comandos
+        //<editor-fold defaultstate="collapsed" desc="REWARDS FILTERS">
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             List<Map<String, Map<String, Object>>> kills = pt.getManager().rewards.get("onKill");
             if (kills != null) {
@@ -134,6 +134,7 @@ public class HandleFame implements Listener {
                 }
             }
         }
+        //</editor-fold>
 
         // Nuevo rango
         if (e.getOfflinePlayer().isOnline()) {
@@ -157,7 +158,8 @@ public class HandleFame implements Listener {
             }
         }
     }
-
+    
+    //<editor-fold defaultstate="collapsed" desc="INNER CODE">   
     private void setValues(Map<String, Object> data, OfflinePlayer pl, int fame) {
         if (VaultHook.ECONOMY_ENABLED) {
             Economy economy = VaultHook.economy;
@@ -213,7 +215,9 @@ public class HandleFame implements Listener {
         String perm = (String) data.get("permission");
         return VaultHook.hasPermission(perm, pl.getPlayer());
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="MANAGING MESSAGES">
     @EventHandler(priority = EventPriority.NORMAL)
     public void onSetFame(FameSetEvent e) {
         fameLogic(e);
@@ -261,4 +265,5 @@ public class HandleFame implements Listener {
             }
         }
     }
+    //</editor-fold>
 }

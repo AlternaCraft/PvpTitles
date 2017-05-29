@@ -55,7 +55,7 @@ public class RewardsFile {
             "# - money (Requires vault)         #\n" +
             "# - time (In seconds)              #\n" +
             "# - points (Number of points)      #\n" +
-            "# - permission (True | False)      #\n" +
+            "# - permission (true | false)      #\n" +
             "# Permission format:               #\n" +
             "# - pvptitles.rw.<reward_name>     #\n" +
             "####################################"
