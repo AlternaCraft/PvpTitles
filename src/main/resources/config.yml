@@ -209,7 +209,7 @@ LPWhenDying:
 
 ## MODIFICATOR ##
 # Modificator to increase or decrease the amount of points you receive/lose.
-# The result will be rounded.
+# The result will be parsed to integer.
 #
 # Available variables: 
 # - STREAK -> KillStreak or "DeathStreak"
@@ -223,9 +223,9 @@ Modificator:
     # When you are the killer
     Received:
         # Formula to calculate the points
-        formula: "ceil((STREAK - 1) * MOD + 1) + 1"
+        formula: "round(ceil((STREAK - 1) * MOD + 1))"
         # Modificator value
-        value: 0.25
+        value: 0.5
     # When you are the victim
     Lost:
         formula: "STREAK * MOD"
