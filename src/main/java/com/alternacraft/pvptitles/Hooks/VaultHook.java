@@ -96,7 +96,7 @@ public class VaultHook {
                 return permission.has(pl, perm);
             }
         } else {
-            return pl.hasPermission(perm);
+            return !pl.isOp() && pl.hasPermission(perm);
         }
     }
 }

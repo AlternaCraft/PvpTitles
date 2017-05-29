@@ -80,7 +80,7 @@ public class HandleFame implements Listener {
             if (kills != null) {
                 for (Map<String, Map<String, Object>> kill : kills) {
                     if (kill != null && hasPermission(kill.get(null), pl)) {
-                        setValues(kill.get(null), e.getOfflinePlayer());
+                        setValues(kill.get(null), e.getOfflinePlayer(), e.getFameTotal());
                     }
                 }
             }
@@ -94,7 +94,7 @@ public class HandleFame implements Listener {
                         if (e.getFame() < Integer.parseInt(cantidad)
                                 && (e.getFameTotal()) >= Integer.valueOf(cantidad)
                                 && hasPermission(famee.get(cantidad), pl)) {
-                            setValues(famee.get(cantidad), e.getOfflinePlayer());
+                            setValues(famee.get(cantidad), e.getOfflinePlayer(), e.getFameTotal());
                         }
                     }
                 }
@@ -111,7 +111,7 @@ public class HandleFame implements Listener {
                             Rank newRank = RankManager.getRank(e.getFameTotal(), seconds, pl);
                             if (rango.equals(newRank.getId()) && !rango.equals(oldRank.getId())
                                     && hasPermission(rankk.get(rango), pl)) {
-                                setValues(rankk.get(rango), e.getOfflinePlayer());
+                                setValues(rankk.get(rango), e.getOfflinePlayer(), e.getFameTotal());
                             }
                         } catch (RanksException ex) {
                             CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -128,7 +128,7 @@ public class HandleFame implements Listener {
                     for (String kss : ks.keySet()) {
                         if (e.getKillstreak() == Integer.valueOf(kss)
                                 && hasPermission(ks.get(kss), pl)) {
-                            setValues(ks.get(kss), e.getOfflinePlayer());
+                            setValues(ks.get(kss), e.getOfflinePlayer(), e.getFameTotal());
                         }
                     }
                 }
@@ -158,7 +158,7 @@ public class HandleFame implements Listener {
         }
     }
 
-    private void setValues(Map<String, Object> data, OfflinePlayer pl) {
+    private void setValues(Map<String, Object> data, OfflinePlayer pl, int fame) {
         if (VaultHook.ECONOMY_ENABLED) {
             Economy economy = VaultHook.economy;
             if (economy != null && data.containsKey("money")) {
@@ -171,17 +171,17 @@ public class HandleFame implements Listener {
         if (data.containsKey("points")) {
             int points = (int) Math.round((int) data.get("points")
                     * Manager.getInstance().params.getMultiplier("RPoints", pl));
-            int fameA = 0;
+
+            FameAddEvent event = new FameAddEvent(pl, fame, points);
+            event.setSilent(true);
             try {
-                fameA = this.dm.dbh.getDm().loadPlayerFame(pl.getUniqueId(), null);
+                this.dm.dbh.getDm().savePlayerFame(pl.getUniqueId(), 
+                        event.getFameTotal(), null);
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
-                return;
-            }
-
-            FameAddEvent event = new FameAddEvent(pl, fameA, points);
-
-            pt.getServer().getPluginManager().callEvent(event);
+                event.setCancelled(true);
+            }            
+            fameLogic(event);
         }
         if (data.containsKey("time")) {
             long time = (long) Math.round((long) data.get("time")
@@ -211,9 +211,7 @@ public class HandleFame implements Listener {
             return false;
         }
         String perm = (String) data.get("permission");
-        return (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
-                VaultHook.hasPermission(perm, pl.getPlayer()) 
-                : pl.getPlayer().hasPermission(perm);
+        return VaultHook.hasPermission(perm, pl.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

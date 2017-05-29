@@ -134,24 +134,21 @@ public class FameCommand implements CommandExecutor {
                         event.setSilent(true);
                     }
 
-                    pt.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled()) {
-                        try {
-                            this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(getPluginName() + LangsFile.FAME_ADD.getText(messages).
-                                    replace("%tag%", this.dm.params.getTag())
-                            );
-                        } catch (DBException ex) {
-                            CustomLogger.logArrayError(ex.getCustomStackTrace());
-                            event.setCancelled(true);
-                        }
-                    } else {
+                    try {
+                        this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
+                        sender.sendMessage(getPluginName() + LangsFile.FAME_ADD.getText(messages).
+                                replace("%tag%", this.dm.params.getTag())
+                        );
+                    } catch (DBException ex) {
                         sender.sendMessage(getPluginName() + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        event.setCancelled(true);
                     }
+                    
+                    pt.getServer().getPluginManager().callEvent(event);
                 } else {
                     sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame add <player> [<world_name>] <famepoints>'");
                 }
@@ -253,24 +250,21 @@ public class FameCommand implements CommandExecutor {
                     } else if (args.length >= 4 && args[3].contains("-s")) {
                         event.setSilent(true);
                     }
-
-                    pt.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled()) {
-                        try {
-                            this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
-                            sender.sendMessage(getPluginName() + LangsFile.FAME_SET.getText(messages).
-                                    replace("%tag%", this.dm.params.getTag()));
-                        } catch (DBException ex) {
-                            CustomLogger.logArrayError(ex.getCustomStackTrace());
-                            event.setCancelled(true);
-                        }
-                    } else {
+                    
+                    try {
+                        this.dm.dbh.getDm().savePlayerFame(opl.getUniqueId(), event.getFameTotal(), world);
+                        sender.sendMessage(getPluginName() + LangsFile.FAME_SET.getText(messages).
+                                replace("%tag%", this.dm.params.getTag()));
+                    } catch (DBException ex) {
                         sender.sendMessage(getPluginName() + LangsFile.FAME_MODIFY_ERROR.getText(messages).
                                 replace("%player%", args[1]).
                                 replace("%tag%", this.dm.params.getTag())
                         );
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        event.setCancelled(true);
                     }
+                    
+                    pt.getServer().getPluginManager().callEvent(event);
                 } else {
                     sender.sendMessage(getPluginName() + ChatColor.RED + "Syntax: 'pvpfame set <player> [<world_name>] <fame_points|title_name>'");
                 }

@@ -131,9 +131,7 @@ public class RankManager {
     }
 
     private static boolean hasRankPermission(Player pl, String perm) {
-        return (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) 
-                ? VaultHook.hasPermission(perm, pl.getPlayer())
-                : pl.getPlayer().hasPermission(perm);
+        return VaultHook.hasPermission(perm, pl.getPlayer());
     }
 
     public static boolean isTimeReqUsed() {

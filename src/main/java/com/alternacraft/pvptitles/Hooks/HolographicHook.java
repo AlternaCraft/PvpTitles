@@ -55,8 +55,7 @@ public class HolographicHook {
 
     public HolographicHook(PvpTitles pt) {
         HolographicHook.plugin = pt;
-        RANK_LINE = pt.getManager().params.getHolotagformat();
-        TITLE_HEIGHT = (pt.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
+        setBasics();
     }
 
     public void setup() {
@@ -75,6 +74,11 @@ public class HolographicHook {
         }
     }
 
+    public static void setBasics() {
+        RANK_LINE = plugin.getManager().params.getHolotagformat();
+        TITLE_HEIGHT = (plugin.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
+    }
+    
     public static void loadPlayersInServer() {
         deleteHoloPlayers();
         for (Player player : plugin.getServer().getOnlinePlayers()) {

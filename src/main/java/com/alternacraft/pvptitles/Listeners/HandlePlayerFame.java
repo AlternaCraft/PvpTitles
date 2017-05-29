@@ -64,10 +64,6 @@ public class HandlePlayerFame implements Listener {
      * constant K_BY_PLAYER para definir la opcion: Asesinado por el medio
      */
     private static final String K_BY_ENVIRONMENT = "ENVIRONMENT";
-    /**
-     * constant K_BY_PLAYER para definir la opcion: Cualquiera de las anteriores
-     */
-    private static final int WHAT_EVER = 2;
 
     // To get a better performance
     public static final Map<UUID, Long> ALREADY_LOGGED = new HashMap();
@@ -199,93 +195,96 @@ public class HandlePlayerFame implements Listener {
                 return;
             }
         }
-        
+
         ConfigDataStore params = Manager.getInstance().params;
 
         Player victim = death.getEntity();
         String victimuuid = victim.getUniqueId().toString();
 
         String tag = this.cm.params.getTag();
-        
+        int deaths = 0;
+
+        boolean killedByPlayer = death.getEntity().getKiller() instanceof Player;
+
+        boolean shouldAddDeath = (params.isAddDeathOnlyByPlayer()) ? killedByPlayer : true;
+        if (shouldAddDeath) {
+            // Añado una muerte más a la victima
+            if (HandlePlayerFame.DEATHSTREAK.containsKey(victimuuid)) {
+                deaths = DEATHSTREAK.get(victimuuid);
+            }
+            HandlePlayerFame.DEATHSTREAK.put(victimuuid, ++deaths);
+        }
+
+        //<editor-fold defaultstate="collapsed" desc="VICTIM CALCULATOR">
         boolean resetByPlayer = params.hasResetOption(K_BY_PLAYER);
         boolean resetByEnv = params.hasResetOption(K_BY_ENVIRONMENT);
         
-        boolean killedByPlayer = death.getEntity().getKiller() instanceof Player;
-
-        //<editor-fold defaultstate="collapsed" desc="VICTIM CALCULATOR">
         // Reset values for victim
         if ((resetByEnv && !killedByPlayer) || (resetByPlayer && killedByPlayer)) {
             // Final de la racha de bajas
             if (HandlePlayerFame.KILLSTREAK.containsKey(victimuuid)) {
                 HandlePlayerFame.KILLSTREAK.put(victimuuid, 0);
             }
-            // Añado una muerte más a la victima
-            int deaths = 0;
-            if (HandlePlayerFame.DEATHSTREAK.containsKey(victimuuid)) {
-                deaths = DEATHSTREAK.get(victimuuid) + 1;
+        }
+
+        boolean meetsRequirements = (params.isLPWhenDyingJustByPlayers())
+                ? killedByPlayer : true;
+
+        if (params.isEnableLPWhenDying() && meetsRequirements) {
+            int previousFame = 0;
+            try {
+                previousFame = this.cm.dbh.getDm().loadPlayerFame(victim.getUniqueId(), null);
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+                return; // Le bajaria los puntos posteriormente
             }
-            HandlePlayerFame.DEATHSTREAK.put(victimuuid, deaths);
 
-            boolean meetsRequirements = (params.isLPWhenDyingJustByPlayers()) ? 
-                    killedByPlayer : true;
-            
-            if (params.isEnableLPWhenDying() && meetsRequirements) {
-                int previousFame = 0;
-                try {
-                    previousFame = this.cm.dbh.getDm().loadPlayerFame(victim.getUniqueId(), null);
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                    return; // Le bajaria los puntos posteriormente
-                }
+            params.addVariableToFormula("MOD",
+                    params.getLostMod());
+            params.addVariableToFormula("STREAK",
+                    deaths);
 
-                params.addVariableToFormula("MOD",
-                        params.getLostMod());
-                params.addVariableToFormula("STREAK",
-                        deaths);
-
-                int gain = (int) params.getLostResult();
-                int actualFame = previousFame - gain;
-                if (actualFame < 0) {
-                    actualFame = 0;
-                }
-
-                try {
-                    this.cm.dbh.getDm().savePlayerFame(victim.getUniqueId(),
-                            actualFame, null);
-
-                    victim.sendMessage(getPluginName() + LangsFile.PLAYER_GETS_DIE
-                            .getText(Localizer.getLocale(victim))
-                            .replace("%fame%", Integer.toString(gain))
-                            .replace("%tag%", tag));
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                    return;
-                }
-
-                long seconds = 0;
-                try {
-                    seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(victim.getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                    return;
-                }
-
-                try {
-                    Rank currentRank = RankManager.getRank(previousFame, seconds, victim);
-                    Rank newRank = RankManager.getRank(actualFame, seconds, victim);
-
-                    if (!currentRank.similar(newRank)) {
-                        victim.sendMessage(getPluginName() + LangsFile
-                                .PLAYER_NEW_RANK.getText(Localizer.getLocale(victim))
-                                .replace("%newRank%", newRank.getDisplay()));
-                    }
-                } catch (RanksException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-
-                FameEvent event = new FameEvent(victim, previousFame, gain);
-                pvpTitles.getServer().getPluginManager().callEvent(event);
+            int gain = (int) params.getLostResult();
+            int actualFame = previousFame - gain;
+            if (actualFame < 0) {
+                actualFame = 0;
             }
+
+            try {
+                this.cm.dbh.getDm().savePlayerFame(victim.getUniqueId(),
+                        actualFame, null);
+
+                victim.sendMessage(getPluginName() + LangsFile.PLAYER_GETS_DIE
+                        .getText(Localizer.getLocale(victim))
+                        .replace("%fame%", Integer.toString(gain))
+                        .replace("%tag%", tag));
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+                return;
+            }
+
+            long seconds = 0;
+            try {
+                seconds = pvpTitles.getManager().dbh.getDm().loadPlayedTime(victim.getUniqueId());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+                return;
+            }
+
+            try {
+                Rank currentRank = RankManager.getRank(previousFame, seconds, victim);
+                Rank newRank = RankManager.getRank(actualFame, seconds, victim);
+
+                if (!currentRank.similar(newRank)) {
+                    victim.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(victim))
+                            .replace("%newRank%", newRank.getDisplay()));
+                }
+            } catch (RanksException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+
+            FameEvent event = new FameEvent(victim, previousFame, gain);
+            pvpTitles.getServer().getPluginManager().callEvent(event);
         }
         //</editor-fold>
 

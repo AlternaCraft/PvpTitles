@@ -17,7 +17,7 @@ commands:
         permission: pvptitles.help
     pvpRank:
         description: It shows info about your rank and about your penalties.
-        usage: /<command>
+        usage: /<command> [<world_name>]
         aliases: pvprango
         permission: pvptitles.rank
     pvpLadder:

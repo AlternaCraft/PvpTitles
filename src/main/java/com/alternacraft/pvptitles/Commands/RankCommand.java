@@ -42,6 +42,7 @@ import com.alternacraft.pvptitles.Misc.Rank.NextRank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -66,8 +67,10 @@ public class RankCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (args.length == 0) {
-            this.HandleRankCmd(player);
+        if (args.length <= 1) {
+            String world = (args.length == 1 && Bukkit.getWorld(args[0]) != null) 
+                    ? args[0] : null;
+            this.HandleRankCmd(player, world);
             return true;
         }
 
@@ -78,13 +81,14 @@ public class RankCommand implements CommandExecutor {
      * Método para enviar los datos del rango de un jugador
      *
      * @param player Jugador que consulta los datos
+     * @param world Specific world
      */
-    private void HandleRankCmd(Player player) {
+    private void HandleRankCmd(Player player, String world) {
         String uuid = player.getUniqueId().toString();
 
         int fame = 0;
         try {
-            fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+            fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), world);
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }

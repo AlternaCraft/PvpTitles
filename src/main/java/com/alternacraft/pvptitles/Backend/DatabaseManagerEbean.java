@@ -60,10 +60,27 @@ public class DatabaseManagerEbean implements DatabaseManager {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PLAYERS...">
     private Object checkPlayerExists(OfflinePlayer player, String w) throws DBException {
-        return this.checkPlayerExists(player, w, false);
+        return this.checkPlayerExists(player, w, false, false);
     }
     
-    private Object checkPlayerExists(OfflinePlayer player, String w, boolean simple) throws DBException {
+    private Object checkPlayerExists(OfflinePlayer player, String w, boolean time) throws DBException {
+        return this.checkPlayerExists(player, w, time, false);
+    }
+    
+    /**
+     * Comprobar si un jugador existe, en caso contrario crearlo.
+     * 
+     * @param player Jugador
+     * @param w Mundo
+     * @param time ¿Estoy obteniendo el tiempo jugado?
+     * @param connection ¿Es la primera conexión?
+     * 
+     * @return PlayerPT o WorldPlayerPT
+     * 
+     * @throws DBException Si falla a la hora de hacer una consulta a la base de datos.
+     */
+    private Object checkPlayerExists(OfflinePlayer player, String w, boolean time, 
+            boolean connection) throws DBException {
         if (player == null) {
             throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_CONNECTION);
         }
@@ -86,9 +103,9 @@ public class DatabaseManagerEbean implements DatabaseManager {
                 ebeanServer.getDatabase().save(plClass);
             }
 
-            // MultiWorld   
-            if (plugin.getManager().params.isMw_enabled()) {
-                if (w == null && !player.isOnline() && !simple) {
+            // MultiWorld and not time
+            if (plugin.getManager().params.isMw_enabled() && !time) {
+                if (w == null && !player.isOnline()) {
                     HashMap<String, Object> data = new HashMap();
                     data.put("Player", player.getName());
                     data.put("Player Online", player.isOnline());
@@ -125,13 +142,13 @@ public class DatabaseManagerEbean implements DatabaseManager {
             };
         }
         
-        return (!plugin.getManager().params.isMw_enabled() || simple) ? plClass:plwClass;
+        return (!plugin.getManager().params.isMw_enabled() || time || connection) ? plClass:plwClass;
     }
     
     @Override
     public void playerConnection(Player player) throws DBException {
         PERFORMANCE.start("Player connection");
-        Object pl = checkPlayerExists(player, player.getWorld().getName(), true);
+        Object pl = checkPlayerExists(player, player.getWorld().getName(), false, true);
         PlayerPT plClass = (PlayerPT) pl;        
         plClass.setLastLogin(new Date());
         ebeanServer.getDatabase().update(plClass);

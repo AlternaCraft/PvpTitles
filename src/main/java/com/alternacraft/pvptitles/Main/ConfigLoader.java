@@ -135,6 +135,7 @@ public class ConfigLoader {
         for (String option : options) {
             params.addResetOption(option);
         }
+        params.setAddDeathOnlyByPlayer(config.getBoolean("AddDeathOnlyByPlayer"));
         params.setResetOnPlayerLeaving(config.getBoolean("ResetOnPlayerLeaving"));
         
         params.setEnableRPWhenKilling(config.getBoolean("RPWhenKilling.enable"));

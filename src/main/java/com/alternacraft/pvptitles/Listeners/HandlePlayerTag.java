@@ -79,9 +79,7 @@ public class HandlePlayerTag implements Listener {
     }
 
     private static boolean hasIgnoredChatPermission(Player pl) {
-        return (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) 
-                ? VaultHook.hasPermission(IGNORED_CHAT_PERM, pl)
-                :pl.hasPermission(IGNORED_CHAT_PERM);
+        return VaultHook.hasPermission(IGNORED_CHAT_PERM, pl);
     }
 
     private static boolean hasIgnoredRank(String rank) {

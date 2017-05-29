@@ -101,7 +101,8 @@ public class ConfigDataStore {
     // Multipliers
     private Map<String, Map<String, Double>> multipliers = new HashMap();
     // Killstreak
-    private List<String> resetOptions = new ArrayList();
+    private final List<String> resetOptions = new ArrayList();
+    private boolean addDeathOnlyByPlayer = true;
     private boolean resetOnPlayerLeaving = true;
     // Awarded points
     private boolean enableRPWhenKilling = true;
@@ -258,6 +259,10 @@ public class ConfigDataStore {
         if (!this.resetOptions.contains(resetOption)) {
             this.resetOptions.add(resetOption);
         }
+    }
+
+    public void setAddDeathOnlyByPlayer(boolean addDeathOnlyByPlayer) {
+        this.addDeathOnlyByPlayer = addDeathOnlyByPlayer;
     }
 
     public void setResetOnPlayerLeaving(boolean resetOnPlayerLeaving) {
@@ -450,27 +455,20 @@ public class ConfigDataStore {
             String key = entry.getKey().toLowerCase();
             Double value = entry.getValue();
             
-            String perm = "pvptitles.mp." + type + "." + key;            
-            boolean global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
-                    VaultHook.hasPermission(all_perm + key, pl) 
-                        : pl.hasPermission(all_perm + key);            
+            String perm = "pvptitles.mp." + type.toLowerCase() + "." + key;            
+            boolean global = VaultHook.hasPermission(all_perm + key, pl);
             
             if (!global) {
                 boolean rw = perm.matches("pvptitles\\.mp\\.r.*\\..*");
                 if (rw) {
-                    global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
-                        VaultHook.hasPermission(rewards_perm + key, pl) 
-                            : pl.hasPermission(rewards_perm + key);
+                    global = VaultHook.hasPermission(rewards_perm + key, pl);
                 } else {
-                    global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
-                        VaultHook.hasPermission(defaults_perm + key, pl) 
-                            : pl.hasPermission(defaults_perm + key);
+                    global = VaultHook.hasPermission(defaults_perm + key, pl);
                 }
             }
             
             if (!global) {
-                global = (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) ? 
-                    VaultHook.hasPermission(perm, pl) : pl.hasPermission(perm);
+                global = VaultHook.hasPermission(perm + key, pl);
             }     
             
             if (global) {
@@ -483,6 +481,10 @@ public class ConfigDataStore {
 
     public boolean hasResetOption(String option) {
         return this.resetOptions.contains(option);
+    }
+
+    public boolean isAddDeathOnlyByPlayer() {
+        return addDeathOnlyByPlayer;
     }
 
     public boolean isResetOnPlayerLeaving() {

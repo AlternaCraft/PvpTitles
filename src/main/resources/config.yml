@@ -180,17 +180,20 @@ Multipliers:
 # +------------------------------------------------------+ #
 ############################################################
 
-## KILLSTREAK ##
-# Reset killstreak/deathstreak value when a player be killed by:
+## KILLSTREAK/DEATHSTREAK ##
+# Reset killstreak when a player be killed by:
 # AVAILABLE OPTIONS:
 # - PLAYER -> Another player
 # - ENVIRONMENT -> Everything else
 # If empty it won't be reset.
 ResetOptions:
 - PLAYER
+# Add a death to deathstreak only when it is caused by a player
+AddDeathOnlyByPlayer: true
 # Should be reset the killstreak/deathstreak value when a player leaves the server?
 ResetOnPlayerLeaving: true
-# Remember that killstreak is a temporary value, it'll be zero when server restarts.
+# Remember that killstreak/deathstreak are temporary values, these will be zero 
+# when server restarts.
 
 ## AWARDED POINTS ##
 # RP -> Receive Points

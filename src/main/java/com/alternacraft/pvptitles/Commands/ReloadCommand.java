@@ -18,8 +18,6 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hooks.HolographicHook;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.DEFAULT_TITLE_HEIGHT;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.HEIGHT_PER_ROW;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
@@ -56,6 +54,7 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         RankManager.clear(); // Clear registered ranks
+        
         pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);
 
         pvpTitles.getManager().getMovementManager().updateTimeAFK();
@@ -77,8 +76,7 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.getManager().loadRankTimeChecker();
 
         if (HolographicHook.ISHDENABLED && pvpTitles.getManager().params.displayLikeHolo()) {
-            HolographicHook.RANK_LINE = pvpTitles.getManager().params.getHolotagformat();
-            HolographicHook.TITLE_HEIGHT = ((pvpTitles.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW) + DEFAULT_TITLE_HEIGHT;
+            HolographicHook.setBasics();
             HolographicHook.loadPlayersInServer();
         } else if (HolographicHook.ISHDENABLED && HolographicHook.HOLOPLAYERS.size() > 0) {
             /*
