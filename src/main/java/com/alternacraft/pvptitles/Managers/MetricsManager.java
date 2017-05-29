@@ -143,24 +143,23 @@ public class MetricsManager {
         if (plugin.getManager().params.isMetrics()) {
             Metrics metrics = new Metrics(plugin);
 
-            setMWGraph(plugin, metrics); // Multi world
-            setTUGraph(metrics); // Time usage as requirement
-            setPDBGraph(metrics); // Preferred database
-            setDMGraph(plugin, metrics); // Display mode
             setDLGraph(metrics); // Default language
+            setPDBGraph(metrics); // Preferred database
+            setMWGraph(plugin, metrics); // Multi world
+            setDMGraph(plugin, metrics); // Display mode
+            setTUGraph(metrics); // Time usage as requirement
             setAPGraph(plugin, metrics); // Awarded points
 
             // DB's performance
             PluginLog pl = new PluginLog(plugin, "performance.txt");
-            pl.importLog();
-            
-            setDBPerformanceGraph(metrics, pl.getMessages());
-            
+            pl.importLog();            
+            setDBPerformanceGraph(metrics, pl.getMessages());            
             UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
                         + File.separator + "performance.txt");
         }
     }
     
+    //<editor-fold defaultstate="collapsed" desc="CUSTOM DRILLDOWNPIE">
     public static abstract class DrilldownPieChart extends CustomChart {
         
         public DrilldownPieChart(String chartId) {
@@ -235,4 +234,5 @@ public class MetricsManager {
             return data;
         }               
     }
+    //</editor-fold>    
 }
