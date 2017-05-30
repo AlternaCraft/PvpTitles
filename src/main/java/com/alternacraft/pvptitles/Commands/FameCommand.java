@@ -203,7 +203,7 @@ public class FameCommand implements CommandExecutor {
                 if (args.length >= 3) {
                     // Evitar nullpointerexception
                     String fameValue;
-                    int fameTotal = 0;
+                    int fameTotal;
                     String world = null;
 
                     if (dm.params.isMw_enabled()) {
@@ -230,8 +230,7 @@ public class FameCommand implements CommandExecutor {
                         fameTotal = r.getPoints();
                     }
 
-                    int fame = 0;
-
+                    int fame;
                     try {
                         fame = this.dm.dbh.getDm().loadPlayerFame(opl.getUniqueId(), world);
                     } catch (DBException ex) {

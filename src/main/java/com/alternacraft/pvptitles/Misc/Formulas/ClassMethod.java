@@ -72,7 +72,7 @@ public class ClassMethod<T> {
 
     private Class<T>[] getArguments() {
         Class[] result = new Class[this.values.length];
-        Arrays.fill(result, double.class);
+        Arrays.fill(result, this.type);
         return result;
     }
 

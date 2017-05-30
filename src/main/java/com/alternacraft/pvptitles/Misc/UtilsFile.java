@@ -45,18 +45,20 @@ public class UtilsFile {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(fout);
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-            String[] lines = cont.split("\n");
-            for (String line : lines) {
-                bw.write(line);
-                bw.newLine();
+            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {
+                String[] lines = cont.split("\n");
+                for (String line : lines) {
+                    bw.write(line);
+                    bw.newLine();
+                }
             }
-            bw.close();
         } catch (IOException ex) {
             CustomLogger.logError(ex.getMessage());
         } finally {
             try {
-                fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException ex) {
             }
         }
@@ -89,7 +91,7 @@ public class UtilsFile {
     public static void delete(String path) {
         delete(path, false);
     }
-    
+
     public static void delete(String path, boolean delete_on_exit) {
         File todelete = new File(path);
         if (!todelete.delete() && delete_on_exit) {

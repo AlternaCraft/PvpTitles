@@ -8,28 +8,28 @@ Version: 2.7
 # +------------------------------------------------------+ #
 ############################################################
 
-# Customizable plugin prefix
+# Customizable plugin prefix.
 PluginPrefix: "&f[&6PvPTitles&f] "
 
-# Enable/Disable metrics
+# Enable/Disable metrics.
 Metrics: true
 
-# Notice Update Available
+# Notice Update Available.
 Alert: true
-# Automatic updates
+# Automatic updates.
 Update: false
 
 # Debug mode (Shows database queries in console)
 Debug: false
 
 # Error structure:
-# 0 - Simplified
-# 1 - Essential data
-# 2 - All data
+# 0 - Simplified.
+# 1 - Essential data.
+# 2 - All data.
 ErrorFormat: 2
 
 # Options (No case sensitive):
-# - Ebean - Use with care, a bad performance was reported
+# - Ebean - Use with care, a bad performance was reported.
 # - SQLite - Like Ebean but faster (Should use this)
 DefaultDatabase: SQLite
 
@@ -39,7 +39,7 @@ DefaultDatabase: SQLite
 # +------------------------------------------------------+ #
 ############################################################
 
-# False to work with ebean
+# False to work with ebean.
 # True to hook {connect} into the existing server MySQL.
 Mysql:
     enable: false       
@@ -67,7 +67,7 @@ MW:
     # Enable points per world
     enable: false
         
-# Manage some plugin features between worlds
+# Manage some plugin features between worlds.
 MW-filter:
     # It shows the titles on the worlds listed below.
     title: false
@@ -115,13 +115,13 @@ NoPurge:
 # Maximum number of deaths on the same player during "TimeL"
 Kills: 3
 # Necessary time to clean the deaths on a player (In seconds)
-# It is restarted for each death
+# It is restarted for each death.
 CleanerTime: 300
 # Veto time [Stops getting points by law] (in seconds)
 VetoTime: 300
 
 ## PLAYED TIME ##
-# Enable/Disable checking afk
+# Enable/Disable checking afk.
 CheckAFK: true
 # AFK Time (Time to considerer a player as afk player in minutes)
 AFKTime: 5
@@ -135,7 +135,7 @@ AFKTime: 5
 ## MULTIPLIERS ##
 #
 # Configure custom multipliers to increase or decrease the amount of <reward>
-# that a player receives. By default, the multiplier is 1 (Nothing changes).
+# that a player receives. By default, the multiplier is 1. (Nothing changes)
 #
 # You can use a decimal value, greater than zero, to define the multiplier.
 # The result of the operation will be rounded. 
@@ -183,12 +183,12 @@ Multipliers:
 ## KILLSTREAK/DEATHSTREAK ##
 # Reset killstreak when a player be killed by:
 # AVAILABLE OPTIONS:
-# - PLAYER -> Another player
-# - ENVIRONMENT -> Everything else
+# - PLAYER -> Another player.
+# - ENVIRONMENT -> Everything else.
 # If empty it won't be reset.
 ResetOptions:
 - PLAYER
-# Add a death to deathstreak only when it is caused by a player
+# Add a death to deathstreak only when it is caused by a player.
 AddDeathOnlyByPlayer: true
 # Should be reset the killstreak/deathstreak value when a player leaves the server?
 ResetOnPlayerLeaving: true
@@ -196,8 +196,8 @@ ResetOnPlayerLeaving: true
 # when server restarts.
 
 ## AWARDED POINTS ##
-# RP -> Receive Points
-# LP -> Lose Points
+# RP -> Receive Points.
+# LP -> Lose Points.
 RPWhenKilling: 
     # Enable to Receive Points when killing.
     enable: true
@@ -220,13 +220,13 @@ LPWhenDying:
 #     -> Just use the name of the functions described into "Method Summary" 
 #     -> By default, the parameters type is "double"
 Modificator:
-    # When you are the killer
+    # When you are the killer.
     Received:
-        # Formula to calculate the points
+        # Formula to calculate the points.
         formula: "ceil(((STREAK - 1) * MOD) + 1)"
-        # Modificator value
+        # Modificator value.
         value: 0.5
-    # When you are the victim
+    # When you are the victim.
     Lost:
         formula: "STREAK"
         value: 0
@@ -250,24 +250,24 @@ Modificator:
 DefaultLang: EN
 ## For system messages and for players whose launcher has another language ##
 ## [Custom translations] Also, you can add your own translations...
-## Example: You can create "messages_DE" and the messages into the file will be shown to the players whose launcher language is German
+## Example: You can create "messages_DE" and the messages into the file will be shown to the players whose launcher language is German.
 
-# Customizable Name for the points earned by players
+# Customizable Name for the points earned by players.
 Tag: Fame
-# Color of the title in chat
+# Color of the title in chat.
 PrefixColor: green
-# Number of the top players that will be shown in chat with the pvpladder command
+# Number of the top players that will be shown in chat with the pvpladder command.
 Top: 5
 
 # Prefix in the chat to replace (Use double quotes to work)
 Prefix: "{PVPTITLE}"
-# If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat
+# If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat.
 
 # Display the player title in the chat.
 DisplayTitleInChat: true
 
 ## HOLOGRAMS ##
-# Display the player title over his head (EXPERIMENTAL)
+# Display the player title over his head.
 DisplayTitleOverPlayer: false
 # Holographic title's format (For all ranks) [Supports colors]
 HoloTitleFormat: "[%rank%]"
@@ -279,7 +279,7 @@ HoloTitleFormat: "[%rank%]"
 # --- playername --- (0) [This coincides with the height of player name]
 # --- ( player ) ---
 HoloHeightModifier: 1
-# This requires that HolographicDisplays be loaded
+# This requires that HolographicDisplays be loaded.
 ## -- ##
 
 ## RANKS/TITLES ##

@@ -25,29 +25,29 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 public class PlayerFame implements Comparable {
+
     private String uuid = null;
     private int fame = 0;
     private long seconds = 0;
     private short server = 0;
     private String world = "";
-    
+
     public PlayerFame(String name, int fame, long seconds) {
         this.uuid = name;
         this.fame = fame;
         this.seconds = seconds;
     }
-    
+
     public String getName() {
-        UUID playerUUID = UUID.fromString(this.uuid);
-        String nombre = Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
-        return (nombre == null) ? "<?>":nombre;
+        String nombre = getPlayer().getName();
+        return (nombre == null) ? "<?>" : nombre;
     }
-    
+
     public OfflinePlayer getPlayer() {
         UUID playerUUID = UUID.fromString(this.uuid);
         return Bukkit.getServer().getOfflinePlayer(playerUUID);
     }
-    
+
     public int getFame() {
         return fame;
     }
@@ -55,7 +55,7 @@ public class PlayerFame implements Comparable {
     public void setFame(int fame) {
         this.fame = fame;
     }
-    
+
     public String getUUID() {
         return uuid;
     }
@@ -68,10 +68,10 @@ public class PlayerFame implements Comparable {
         this.server = server;
     }
 
-    public long getSeconds() {        
+    public long getSeconds() {
         return this.seconds;
     }
-    
+
     public long getRealSeconds() {
         long actual = 0;
         try {
@@ -79,11 +79,11 @@ public class PlayerFame implements Comparable {
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
-        
+
         long session = Manager.getInstance().getTimerManager().getPlayer(Bukkit.getServer()
                 .getOfflinePlayer(UUID.fromString(uuid))).getTotalOnline();
-        
-        return actual+session;
+
+        return actual + session;
     }
 
     public String getWorld() {
@@ -93,24 +93,24 @@ public class PlayerFame implements Comparable {
     public void setWorld(String world) {
         this.world = world;
     }
-    
+
     public String getServerName() throws DBException {
         return Manager.getInstance().dbh.getDm().getServerName(this.server);
     }
-    
+
     public String getMWName() {
         String worldName = "";
         if (!"".equals(this.world)) {
-            worldName = "["+this.world+"] ";
+            worldName = "[" + this.world + "] ";
         }
         return worldName + this.getName();
     }
-    
+
     @Override
     public String toString() {
         String worldName = "";
         if (!"".equals(this.world)) {
-            worldName = "["+this.world+"] ";
+            worldName = "[" + this.world + "] ";
         }
         return worldName + this.getName() + " (" + ChatColor.AQUA + this.getFame() + ChatColor.RESET + ")";
     }
@@ -118,14 +118,12 @@ public class PlayerFame implements Comparable {
     @Override
     public int compareTo(Object o) {
         PlayerFame pf = (PlayerFame) o;
-        
+
         if (pf.getFame() > this.getFame()) {
             return 1;
-        }
-        else if (pf.getFame() < this.getFame()) {
+        } else if (pf.getFame() < this.getFame()) {
             return -1;
-        }
-        else {
+        } else {
             return 0;
         }
     }

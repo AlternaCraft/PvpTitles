@@ -56,8 +56,8 @@ public class Params {
     }
 
     public int getNext(Vars var, int c) {
-        int v = this.argsValues.get(var);        
-        
+        int v = this.argsValues.get(var);
+
         if (progresivo && divisor > 1) {
             if (v >= divisor) {
                 int filas = ((int) v / divisor);
@@ -82,5 +82,4 @@ public class Params {
     public void setNcols(int ncols) {
         this.ncols = ncols;
     }
-
 }
