@@ -40,6 +40,8 @@ public class ConfigDataStore {
     private boolean update = false;
     // Atributo para guardar si se va a avisar de las actualizaciones o no
     private boolean alert = true;
+    // Atributo para mostar las integraciones con plugins de terceros
+    private boolean displayIntegrations = true;
     // Atributo para guardar el tipo de formato para el error
     private short errorFormat = 2;
     // Atributo para almacenar la base de datos por defecto
@@ -293,6 +295,10 @@ public class ConfigDataStore {
         this.alert = alert;
     }
 
+    public void setDisplayIntegrations(boolean displayIntegrations) {
+        this.displayIntegrations = displayIntegrations;
+    }
+
     public void setMetrics(boolean metrics) {
         this.metrics = metrics;
     }
@@ -360,6 +366,10 @@ public class ConfigDataStore {
 
     public short getPort() {
         return port;
+    }
+
+    public boolean isDisplayIntegrations() {
+        return displayIntegrations;
     }
 
     public String getDb() {

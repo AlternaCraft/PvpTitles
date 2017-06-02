@@ -27,7 +27,6 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class MVdWPlaceholderHook {
@@ -38,10 +37,8 @@ public class MVdWPlaceholderHook {
         this.plugin = plugin;
     }
 
-    public void setup() {
+    public String[] setup() {
         if (plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            CustomLogger.showMessage(ChatColor.YELLOW + "MVdWPlaceholderAPI " + ChatColor.AQUA + "integrated correctly.");
-
             PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_valid_rank",
                     new PlaceholderReplacer() {
                 @Override
@@ -136,6 +133,10 @@ public class MVdWPlaceholderHook {
                     return String.valueOf(killstreak);
                 }
             });
+            
+            return new String[]{"MVdWPlaceholderAPI"};
         }
+        
+        return new String[]{};
     }
 }

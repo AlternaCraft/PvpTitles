@@ -19,6 +19,9 @@ Alert: true
 # Automatic updates.
 Update: false
 
+# Display integrations
+DisplayIntegrations: true
+
 # Debug mode (Shows database queries in console)
 Debug: false
 

@@ -60,6 +60,7 @@ public class ConfigLoader {
         params.setMetrics(config.getBoolean("Metrics"));
         params.setUpdate(config.getBoolean("Update"));
         params.setAlert(config.getBoolean("Alert"));
+        params.setDisplayIntegrations(config.getBoolean("DisplayIntegrations"));
         params.setErrorFormat((short) config.getInt("ErrorFormat"));
         String defdb = config.getString("DefaultDatabase");
         try {

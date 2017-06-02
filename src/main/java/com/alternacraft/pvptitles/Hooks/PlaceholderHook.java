@@ -25,7 +25,6 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class PlaceholderHook extends EZPlaceholderHook {
@@ -35,8 +34,13 @@ public class PlaceholderHook extends EZPlaceholderHook {
     public PlaceholderHook(PvpTitles plugin) {
         super(plugin, "pvptitles");
         this.plugin = plugin;
-
-        CustomLogger.showMessage(ChatColor.YELLOW + "Placeholder API " + ChatColor.AQUA + "integrated correctly.");
+    }
+    
+    public String[] setup() {
+        if (this.hook()) {            
+            return new String[]{"Placeholder API"};
+        }
+        return new String[]{};
     }
 
     @Override

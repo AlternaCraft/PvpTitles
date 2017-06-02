@@ -27,7 +27,6 @@ import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
 import com.github.games647.scoreboardstats.variables.VariableReplacer;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,17 +40,17 @@ public class SBSHook {
         this.plugin = plugin;
     }
 
-    public void setupSBS() {
+    public String[] setupSBS() {
         if (plugin.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
             sbs = JavaPlugin.getPlugin(ScoreboardStats.class);
 
             if (sbs != null) {
                 replaceManager = sbs.getReplaceManager();
-                registerReplacerInterface(replaceManager);
-
-                CustomLogger.showMessage(ChatColor.YELLOW + "ScoreBoardStats " + ChatColor.AQUA + "integrated correctly.");
+                registerReplacerInterface(replaceManager);                
+                return new String[]{"ScoreboardStats"};
             }
         }
+        return new String[]{};
     }
 
     private void registerReplacerInterface(ReplaceManager replaceManager) {

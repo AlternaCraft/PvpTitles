@@ -16,12 +16,11 @@
  */
 package com.alternacraft.pvptitles.Hooks;
 
-import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import java.util.Arrays;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -42,20 +41,27 @@ public class VaultHook {
         this.plugin = plugin;
     }
 
-    public void setupVault() {
+    public String[] setupVault() {
+        String[] data = {};
+        
         PERMISSIONS_ENABLED = this.setupPermissions();
         CHAT_ENABLED = this.setupChat();
         ECONOMY_ENABLED = this.setupEconomy();
 
         if (PERMISSIONS_ENABLED) {
-            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Permissions " + ChatColor.AQUA + "integrated correctly.");
+            data = Arrays.copyOf(data, data.length + 1);
+            data[data.length - 1] = "(Vault)Permissions";
         }
         if (CHAT_ENABLED) {
-            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)ChatManager " + ChatColor.AQUA + "integrated correctly.");
+            data = Arrays.copyOf(data, data.length + 1);
+            data[data.length - 1] = "(Vault)ChatManager";
         }
         if (ECONOMY_ENABLED) {
-            CustomLogger.showMessage(ChatColor.YELLOW + "(Vault)Economy " + ChatColor.AQUA + "integrated correctly.");
+            data = Arrays.copyOf(data, data.length + 1);
+            data[data.length - 1] = "(Vault)Economy";
         }
+        
+        return data;
     }
 
     private boolean setupPermissions() {

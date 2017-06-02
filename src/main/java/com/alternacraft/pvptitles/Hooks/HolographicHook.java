@@ -18,7 +18,6 @@ package com.alternacraft.pvptitles.Hooks;
 
 import com.alternacraft.pvptitles.Files.HologramsFile;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
-import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
@@ -32,7 +31,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -58,20 +56,19 @@ public class HolographicHook {
         setBasics();
     }
 
-    public void setup() {
+    public String[] setup() {
         ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
         
         if (ISHDENABLED) {
-            CustomLogger.showMessage(ChatColor.YELLOW + "HolographicDisplays " + ChatColor.AQUA + "integrated correctly.");
-            CustomLogger.showMessage(ChatColor.YELLOW + "" + loadHoloBoards()
-                    + " scoreboards per holograms " + ChatColor.AQUA + "loaded correctly."
-            );
-            
+            int hb = loadHoloBoards();            
             // Ranks
             if (plugin.getManager().params.displayLikeHolo()) {
                 loadPlayersInServer();
-            }
+            }            
+            return new String[]{"HolographicDisplays &7(" + hb + " loaded)"};
         }
+        
+        return new String[]{};
     }
 
     public static void setBasics() {

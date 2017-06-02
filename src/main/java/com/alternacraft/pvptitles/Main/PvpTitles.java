@@ -43,6 +43,9 @@ import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Timer;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -57,12 +60,12 @@ public class PvpTitles extends JavaPlugin {
     public static final Timer PERFORMANCE = new Timer();
 
     private static PvpTitles plugin = null;
-    
+
     private static final String PLUGINMODELPREFIX = ChatColor.WHITE + "[" + ChatColor.GOLD
             + "PvPTitles" + ChatColor.WHITE + "]";
 
     public static String PLUGIN_DIR;
-    
+
     // Custom prefix
     private static String PLUGINPREFIX = PLUGINMODELPREFIX + " ";
 
@@ -138,15 +141,20 @@ public class PvpTitles extends JavaPlugin {
                 /* 
                  * -> Integraciones <-
                  */
-                getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
-                        + "# STARTING INTEGRATION MODULE #");
-
                 PERFORMANCE.start("Integrations");
-                checkExternalPlugins();
+                Object[] results = checkExternalPlugins();
                 PERFORMANCE.recordValue("Integrations");
 
-                getServer().getConsoleSender().sendMessage(PLUGINPREFIX + ChatColor.GRAY
-                        + "# ENDING INTEGRATION MODULE #");
+                if (Manager.getInstance().params.isDisplayIntegrations()) {
+                    CustomLogger.showMessage(ChatColor.GRAY
+                            + "# STARTING INTEGRATION MODULE #");
+                    for (Object o : results) {
+                        CustomLogger.showMessage(ChatColor.YELLOW + (String) o
+                                + ChatColor.AQUA + " integrated correctly");
+                    }
+                    CustomLogger.showMessage(ChatColor.GRAY
+                            + "# ENDING INTEGRATION MODULE #");
+                }
                 /*
                  * -> Fin integraciones <-
                  */
@@ -164,7 +172,7 @@ public class PvpTitles extends JavaPlugin {
 
             for (TimedPlayer next : players) {
                 try {
-                    this.manager.dbh.getDm().savePlayedTime(next.getUniqueId(), 
+                    this.manager.dbh.getDm().savePlayedTime(next.getUniqueId(),
                             next.getTotalOnline());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -215,22 +223,31 @@ public class PvpTitles extends JavaPlugin {
         }
     }
 
-    private void checkExternalPlugins() {
+    private Object[] checkExternalPlugins() {
+        List<String> messages = new ArrayList();
+
         if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderHook(this).hook();
+            String[] hookDetails = new PlaceholderHook(this).setup();
+            messages.addAll(Arrays.asList(hookDetails));
         }
         if (this.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            new MVdWPlaceholderHook(this).setup();
+            String[] hookDetails = new MVdWPlaceholderHook(this).setup();
+            messages.addAll(Arrays.asList(hookDetails));
         }
         if (this.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
-            new SBSHook(this).setupSBS();
+            String[] hookDetails = new SBSHook(this).setupSBS();
+            messages.addAll(Arrays.asList(hookDetails));
         }
         if (this.getServer().getPluginManager().isPluginEnabled("Vault")) {
-            new VaultHook(this).setupVault();
+            String[] hookDetails = new VaultHook(this).setupVault();
+            messages.addAll(Arrays.asList(hookDetails));
         }
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            new HolographicHook(this).setup();
+            String[] hookDetails = new HolographicHook(this).setup();
+            messages.addAll(Arrays.asList(hookDetails));
         }
+
+        return messages.toArray();
     }
 
     public static String getPluginName() {
