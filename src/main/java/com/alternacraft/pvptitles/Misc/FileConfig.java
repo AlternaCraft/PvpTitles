@@ -253,7 +253,9 @@ public class FileConfig {
     }
     
     private String getParsedKey(String str) {
-        return StrUtils.removeColorsWithoutTranslate(str).replaceAll(" ", "_");
+        return StrUtils.removeColorsWithoutTranslate(str)
+                .replaceAll(" ", "_")
+                .replaceAll("[:'\"]", "");
     }
 
     private String fillSpaces(int c) {
