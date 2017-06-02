@@ -72,7 +72,8 @@ public class LadderCommand implements CommandExecutor {
                     .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
                     .replace(TOP_TAG, String.valueOf(top));
             
-            if (line.contains(TOP_POS_TAG) || line.contains(TOP_PLAYER_TAG)) {
+            if (line.contains(TOP_POS_TAG) || line.contains(TOP_PLAYER_TAG)
+                    || line.contains(TOP_POINTS_TAG)) {
                 for (int i = 0; i < rankedPlayers.size() && i < top; i++) {
                     sender.sendMessage(msg
                             .replace(TOP_POS_TAG, String.valueOf(i + 1))
