@@ -4,7 +4,7 @@
   <groupId>com.alternacraft</groupId>
   <artifactId>PvpTitles</artifactId>
   <name>PvpTitles</name>
-  <version>2.7-SNAPSHOT</version>
+  <version>2.7.1-SNAPSHOT</version>
   <description>Get epic titles in pvp</description>
   <url>http://dev.bukkit.org/bukkit-plugins/pvptitles/</url>
   <inceptionYear>2015</inceptionYear>
@@ -149,8 +149,12 @@
       <url>http://repo.novaguilds.pl/</url>
     </repository>
     <repository>
-      <id>bstats-repo</id>
+      <id>bstats-repo-r</id>
       <url>http://repo.bstats.org/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>bstats-repo-s</id>
+      <url>http://repo.bstats.org/content/repositories/snapshots/</url>
     </repository>
   </repositories>
   <dependencies>

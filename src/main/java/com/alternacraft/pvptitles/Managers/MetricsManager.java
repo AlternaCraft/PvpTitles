@@ -25,11 +25,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bstats.Metrics;
-import org.bstats.Metrics.CustomChart;
-import org.json.simple.JSONObject;
 
 public class MetricsManager {
 
@@ -37,36 +36,40 @@ public class MetricsManager {
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
     private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("multiworld_usage") {
+        metrics.addCustomChart(new Metrics.SimplePie("multiworld_usage", 
+                new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() {
                 return (plugin.getManager().params.isMw_enabled()) ? "Enabled" : "Disabled";
             }
-        });
+        }));
     }
 
     private void setTUGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("time_as_requirement") {
+        metrics.addCustomChart(new Metrics.SimplePie("time_as_requirement", 
+                new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() {
                 return (RankManager.isTimeReqUsed()) ? "Enabled" : "Disabled";
             }
-        });
+        }));
     }
 
     private void setPDBGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("preferred_db") {
+        metrics.addCustomChart(new Metrics.SimplePie("preferred_db", 
+                new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() {
                 return DBLoader.tipo.toString();
             }
-        });
+        }));
     }
 
     private void setDMGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("display_mode") {
+        metrics.addCustomChart(new Metrics.SimplePie("display_mode", 
+                new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() {
                 if (plugin.getManager().params.displayInChat()
                         && plugin.getManager().params.displayLikeHolo()) {
                     return "Both";
@@ -80,37 +83,42 @@ public class MetricsManager {
                 }
                 return null;
             }
-        });
+        }));
     }
 
     private void setDLGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("default_language") {
+        metrics.addCustomChart(new Metrics.SimplePie("default_language", 
+                new Callable<String>() {
             @Override
-            public String getValue() {
+            public String call() {
                 return Manager.messages.name();
             }
-        });
+        }));
     }
 
     private void setAPGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.AdvancedPie("awarded_points") {
+        metrics.addCustomChart(new Metrics.AdvancedPie("awarded_points", 
+                new Callable<Map<String, Integer>>() {
             @Override
-            public HashMap<String, Integer> getValues(HashMap<String, Integer> hm) {
+            public Map<String, Integer> call() throws Exception {
                 boolean rp = plugin.getManager().params.isEnableRPWhenKilling();
                 boolean lp = plugin.getManager().params.isEnableLPWhenDying();
-                hm.put("RP", (rp) ? 1:0);
-                hm.put("LP", (lp) ? 1:0);
-                return hm;
+                Map map = new HashMap();
+                map.put("RP", (rp) ? 1:0);
+                map.put("LP", (lp) ? 1:0);
+                return map;
             }
-        });
+        }));
     }
 
     private void setDBPerformanceGraph(Metrics metrics, final List<String> lines) {
-        metrics.addCustomChart(new DrilldownPieChart("general_statistics") {
+        metrics.addCustomChart(new Metrics.DrilldownPie("general_statistics", 
+                new Callable<Map<String, Map<String, Integer>>>() {
             @Override
-            public Map<String, Map<String, Integer>> getValues(Map<String, 
-                    Map<String, Integer>> map) {
-
+            public Map<String, Map<String, Integer>> call() {
+                
+                Map<String, Map<String, Integer>> map = new HashMap();
+                
                 for (String line : lines) {
                     if (!line.contains("---")
                             && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
@@ -134,8 +142,7 @@ public class MetricsManager {
 
                 return map;
             }
-
-        });
+        }));
     }
     // </editor-fold>
 
@@ -157,82 +164,5 @@ public class MetricsManager {
             UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
                         + File.separator + "performance.txt");
         }
-    }
-    
-    //<editor-fold defaultstate="collapsed" desc="CUSTOM DRILLDOWNPIE">
-    public static abstract class DrilldownPieChart extends CustomChart {
-        
-        public DrilldownPieChart(String chartId) {
-            super(chartId);
-        }
-        
-        /**
-         * Gets the value of the pie.
-         *
-         * @param map Just an empty map.
-         * 
-         * @return The values of the pie.
-         */
-        public abstract Map<String, Map<String, Integer>> getValues(Map<String, 
-                Map<String, Integer>> map);       
-        
-        @Override
-        protected JSONObject getChartData() {
-            JSONObject data = new JSONObject();            
-            
-            Map<String, Map<String, Integer>> map = 
-                    getValues(new HashMap<String, Map<String, Integer>>());    
-            
-            if (map == null || map.isEmpty()) {
-                // Null = skip the chart
-                return null;
-            }  
-            
-            JSONObject firstLevelVals = new JSONObject();
-            boolean allSkipped = true;
-            
-            JSONObject secondLevelVals;
-            boolean allSkipped2;
-            
-            for (Map.Entry<String, Map<String, Integer>> firstLevel : map.entrySet()) {
-                String k = firstLevel.getKey();                
-                Map<String, Integer> v = firstLevel.getValue(); 
-                
-                if (v == null) {
-                    continue;
-                }
-                
-                allSkipped2 = true;  
-                secondLevelVals = new JSONObject();
-                
-                for (Map.Entry<String, Integer> secondLevel : v.entrySet()) {
-                    String kk = secondLevel.getKey();
-                    Integer vv = secondLevel.getValue();
-                    
-                    if (vv == 0) {
-                        continue; // Skip this invalid
-                    }         
-                    
-                    allSkipped2 = false;                    
-                    secondLevelVals.put(kk, vv);
-                }       
-                
-                if (allSkipped2) {
-                    continue;
-                }
-                
-                allSkipped = false;                
-                firstLevelVals.put(k, secondLevelVals);
-            }
-            
-            if (allSkipped) {
-                // Null = skip the chart
-                return null;
-            }
-            
-            data.put("values", firstLevelVals);
-            return data;
-        }               
-    }
-    //</editor-fold>    
+    }   
 }
