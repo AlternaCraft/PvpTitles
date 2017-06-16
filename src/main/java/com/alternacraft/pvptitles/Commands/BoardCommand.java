@@ -31,7 +31,7 @@ import static com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard.DEF
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.List;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
