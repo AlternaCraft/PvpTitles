@@ -5,7 +5,7 @@
     <!-- The Basics -->
     <groupId>com.alternacraft</groupId>
     <artifactId>PvpTitles</artifactId>
-    <version>2.7.1</version>
+    <version>2.7.1-SNAPSHOT</version>
     <packaging>jar</packaging>   
      
     <repositories>        
@@ -24,16 +24,13 @@
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         
+        <!-- MVdWPlaceholderAPI 
         <repository>
             <id>mvdw-software</id>
             <url>http://repo.mvdw-software.be/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
+        </repository> -->
         
+        <!-- holographicdisplays API -->
         <repository>
             <id>novaguilds-repo</id>
             <url>http://repo.novaguilds.pl/</url>
@@ -46,7 +43,13 @@
         <repository>
             <id>bstats-repo-s</id>
             <url>http://repo.bstats.org/content/repositories/snapshots/</url>
-        </repository>        
+        </repository>    
+        
+        <!-- ScoreboardStats & MVdWPlaceholderAPI -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>                
     </repositories> 
     
     <dependencies>
@@ -85,7 +88,7 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- MVdWPlaceholderAPI -->
+        <!-- MVdWPlaceholderAPI
         <dependency>
             <groupId>be.maximvdw</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
@@ -93,8 +96,16 @@
             <optional>true</optional>
             <scope>provided</scope>
         </dependency> 
+        -->
+        <dependency>
+	    <groupId>com.github.Maximvdw</groupId>
+	    <artifactId>MVdWPlaceholderAPI</artifactId>
+	    <version>-SNAPSHOT</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+	</dependency>
          
-        <!-- holographicdisplays API -->
+        <!-- Holographicdisplays API -->
         <dependency>
             <groupId>com.gmail.filoghost</groupId>
             <artifactId>holographicdisplays.api</artifactId>
