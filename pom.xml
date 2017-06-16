@@ -88,22 +88,14 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- MVdWPlaceholderAPI
+        <!-- MVdWPlaceholderAPI -->
         <dependency>
             <groupId>be.maximvdw</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <optional>true</optional>
             <scope>provided</scope>
-        </dependency> 
-        -->
-        <dependency>
-	    <groupId>com.github.Maximvdw</groupId>
-	    <artifactId>MVdWPlaceholderAPI</artifactId>
-	    <version>-SNAPSHOT</version>
-            <optional>true</optional>
-            <scope>provided</scope>
-	</dependency>
+        </dependency>         
          
         <!-- Holographicdisplays API -->
         <dependency>

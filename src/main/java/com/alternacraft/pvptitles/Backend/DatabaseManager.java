@@ -134,7 +134,7 @@ public interface DatabaseManager {
      * @param id int
      *
      * @return String
-     * @throws com.alternacraft.pvptitles.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
     public String getServerName(short id) throws DBException;
 
@@ -144,7 +144,7 @@ public interface DatabaseManager {
      * @param q Entero con la cantidad de dias necesarios para ser inactivo
      * 
      * @return Entero con la cantidad de ficheros borrados
-     * @throws com.alternacraft.pvptitles.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
     public int purgeData(int q) throws DBException;
 
@@ -153,7 +153,7 @@ public interface DatabaseManager {
      *
      * @param filename String
      * 
-     * @throws com.alternacraft.pvptitles.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
     public void DBExport(String filename) throws DBException;
 
@@ -163,7 +163,7 @@ public interface DatabaseManager {
      * @param filename String
      *
      * @return False si no se pudo importar
-     * @throws com.alternacraft.pvptitles.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
     public boolean DBImport(String filename) throws DBException;
 
@@ -171,7 +171,7 @@ public interface DatabaseManager {
      * Método para corregir valores de la base de datos
      * 
      * @return Cantidad de registros reparados
-     * @throws com.alternacraft.pvptitles.Exceptions.DBException
+     * @throws com.alternacraft.pvptitles.Exceptions.DBException Error
      */
     public int repair() throws DBException;
     

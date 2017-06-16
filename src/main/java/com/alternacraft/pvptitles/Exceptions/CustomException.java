@@ -26,7 +26,8 @@ import org.bukkit.ChatColor;
 
 /**
  * Custom exception.
- * <ul>This add some extras:
+ * This add some extras:
+ * <ul>
  *  <li>Structured messages
  *      <ul>There are three type:
  *          <li>Simplified. Just for indicating an error</li>
