@@ -7,7 +7,7 @@
 
 PvpTitles is a [Bukkit](https://github.com/Bukkit/Bukkit) / [Spigot](https://github.com/SpigotMC/Spigot-API) plugin which is based on the [PvP titles plugin](https://github.com/dreanor/PvPTitles) by [asc_dreanor](https://github.com/dreanor). These titles reflect a player's success in defeating other players by earning titles after a specific amount of Kills.
 
-Developed from version [1.7.10](https://mcupdate.tumblr.com/post/89960443749/minecraft-1710) of [Minecraft](http://minecraft.net).
+Developed from version [1.7.10](https://mcupdate.tumblr.com/post/89960443749/minecraft-1710) of [Minecraft](http://minecraft.net) using [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
 Downloads
 ---------
