@@ -3,6 +3,9 @@ language: java
 jdk:
   - oraclejdk8
 
+install:
+- mvn install:install-file -Dfile=lib/MVdWPlaceholderAPI.jar -DgroupId=be.maximvdw -DartifactId=MVdWPlaceholderAPI -Dversion=1.0.1-SNAPSHOT -Dpackaging=jar
+- mvn install:install-file -Dfile=lib/PlaceholderAPI.jar -DgroupId=me.clip -DartifactId=placeholderapi -Dversion=2.8.1 -Dpackaging=jar
 script: mvn clean install
 after_success:
   - bash <(curl -s https://codecov.io/bash)
