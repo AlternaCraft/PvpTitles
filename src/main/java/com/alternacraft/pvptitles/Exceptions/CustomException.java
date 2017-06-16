@@ -28,8 +28,8 @@ import org.bukkit.ChatColor;
  * Custom exception.
  * This add some extras:
  * <ul>
- *  <li>Structured messages
- *      <ul>There are three type:
+ *  <li>Structured messages. There are three types:
+ *      <ul>
  *          <li>Simplified. Just for indicating an error</li>
  *          <li>Essential. Essential information for finding a reason</li>
  *          <li>Full. Complete error</li>
