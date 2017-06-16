@@ -39,7 +39,7 @@ Feel free to contribute there too. Just click the edit button after you login in
 
 
 ### Compatibility
-This plugin is compatible with all Minecraft versions above 1.7.9
+This plugin is compatible with all Minecraft versions above 1.7.10
 
 Also, there are some optional dependencies for having a better experience with the plugin:
 * ScoreboardStats (http://dev.bukkit.org/bukkit-plugins/scoreboardstats)
