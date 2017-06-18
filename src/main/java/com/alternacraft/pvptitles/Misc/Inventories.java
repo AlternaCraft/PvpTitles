@@ -47,16 +47,14 @@ public class Inventories {
     }
 
     public static List<Player> closeInventories() {
-        return Inventories.opened
+        List<Player> players = Inventories.opened
                 .stream()
                 .map(inv -> inv.getViewers())
                 .filter(v -> !v.isEmpty())
-                .map(v -> {
-                    Player pl = ((Player) v.get(0));
-                    pl.closeInventory();
-                    return pl;
-                })
+                .map(v -> ((Player) v.get(0)))
                 .collect(Collectors.toList());
+        players.forEach(pl -> pl.closeInventory());
+        return players;
     }
 
     public static void reloadInventories(List<Player> viewers) {
