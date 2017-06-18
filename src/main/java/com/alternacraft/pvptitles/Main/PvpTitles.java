@@ -127,38 +127,35 @@ public class PvpTitles extends JavaPlugin {
         checkOnlinePlayers();
 
         // Tareas posteriores
-        this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                PERFORMANCE.start("Metrics event");
-                new MetricsManager().sendData(manager.getPvpTitles());
-                PERFORMANCE.recordValue("Metrics event");
-
-                PERFORMANCE.start("Updater event");
-                new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
-                PERFORMANCE.recordValue("Updater event");
-
-                /* 
-                 * -> Integraciones <-
-                 */
-                PERFORMANCE.start("Integrations");
-                Object[] results = checkExternalPlugins();
-                PERFORMANCE.recordValue("Integrations");
-
-                if (Manager.getInstance().params.isDisplayIntegrations()) {
-                    CustomLogger.showMessage(ChatColor.GRAY
-                            + "# STARTING INTEGRATION MODULE #");
-                    for (Object o : results) {
-                        CustomLogger.showMessage(ChatColor.YELLOW + (String) o
-                                + ChatColor.AQUA + " integrated correctly");
-                    }
-                    CustomLogger.showMessage(ChatColor.GRAY
-                            + "# ENDING INTEGRATION MODULE #");
+        this.getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+            PERFORMANCE.start("Metrics event");
+            new MetricsManager().sendData(manager.getPvpTitles());
+            PERFORMANCE.recordValue("Metrics event");
+            
+            PERFORMANCE.start("Updater event");
+            new UpdaterManager().testUpdate(manager.getPvpTitles(), getFile());
+            PERFORMANCE.recordValue("Updater event");
+            
+            /*
+            * -> Integraciones <-
+            */
+            PERFORMANCE.start("Integrations");
+            Object[] results = checkExternalPlugins();
+            PERFORMANCE.recordValue("Integrations");
+            
+            if (Manager.getInstance().params.isDisplayIntegrations()) {
+                CustomLogger.showMessage(ChatColor.GRAY
+                        + "# STARTING INTEGRATION MODULE #");
+                for (Object o : results) {
+                    CustomLogger.showMessage(ChatColor.YELLOW + (String) o
+                            + ChatColor.AQUA + " integrated correctly");
                 }
-                /*
-                 * -> Fin integraciones <-
-                 */
+                CustomLogger.showMessage(ChatColor.GRAY
+                        + "# ENDING INTEGRATION MODULE #");
             }
+            /*
+            * -> Fin integraciones <-
+            */
         }, 5L);
 
         logMessage(LangsFile.PLUGIN_ENABLED.getText(Manager.messages));
@@ -170,14 +167,14 @@ public class PvpTitles extends JavaPlugin {
             this.manager.getTimerManager().stopSessions();
             Set<TimedPlayer> players = this.manager.getTimerManager().getTimedPlayers();
 
-            for (TimedPlayer next : players) {
+            players.forEach(next -> {
                 try {
                     this.manager.dbh.getDm().savePlayedTime(next.getUniqueId(),
                             next.getTotalOnline());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
-            }
+            });
 
             // Holograms
             if (HolographicHook.ISHDENABLED) {

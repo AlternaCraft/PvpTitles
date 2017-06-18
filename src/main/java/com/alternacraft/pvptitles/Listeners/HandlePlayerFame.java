@@ -401,16 +401,13 @@ public class HandlePlayerFame implements Listener {
                             .replace("%tag%", this.cm.params.getTag())
                             .replace("%time%", splitToComponentTimes(this.cm.params.getVetoTime())));
 
-                    pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, new Runnable() {
-                        @Override
-                        public void run() {
-                            afm.cleanVeto(killeruuid);
-
-                            // Limpio su historial
-                            afm.cleanAllVictims(killeruuid);
-
-                            killer.sendMessage(getPluginName() + LangsFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
-                        }
+                    pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, () -> {
+                        afm.cleanVeto(killeruuid);
+                        
+                        // Limpio su historial
+                        afm.cleanAllVictims(killeruuid);
+                        
+                        killer.sendMessage(getPluginName() + LangsFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
                     }, this.cm.params.getVetoTime() * TICKS);
 
                     return;

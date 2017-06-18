@@ -170,19 +170,19 @@ public class FileConfig {
         String result = key + ":" + System.lineSeparator();
 
         Set<String> values = oldFile.getConfigurationSection(key).getKeys(true);
-        for (String value : values) {
-            String spaces = fillSpaces(value.split("\\.").length);
-            String kkey = value.split("\\.")[value.split("\\.").length - 1];
-
-            Object content = oldFile.get(key + "." + value);
-            String val = "";
-
-            if (!(content instanceof MemorySection)) {
-                val = getFilteredString(String.valueOf(content));
-            }
-
-            result += spaces + kkey + ": " + val + System.lineSeparator();
-        }
+        result = values
+                .stream()
+                .map(value -> {
+                    String spaces = fillSpaces(value.split("\\.").length);
+                    String kkey = value.split("\\.")[value.split("\\.").length - 1];
+                    Object content = oldFile.get(key + "." + value);
+                    String val = "";
+                    if (!(content instanceof MemorySection)) {
+                        val = getFilteredString(String.valueOf(content));
+                    }
+                    return spaces + kkey + ": " + val + System.lineSeparator();
+                })
+                .reduce(result, String::concat);
         return result;
     }
 
@@ -235,10 +235,11 @@ public class FileConfig {
         // Object type
         if (v instanceof List) {
             List<Object> list = (List<Object>) v; // Saving list
-            for (Object l : list) {
-                String val = getFilteredString(l.toString());
-                res += System.lineSeparator() + spaces + "- " + val;
-            }
+            res = list
+                    .stream()
+                    .map(l -> getFilteredString(l.toString()))
+                    .map(val -> System.lineSeparator() + spaces + "- " + val)
+                    .reduce(res, String::concat);
         } else if (v instanceof MemorySection) {
             parent = cKey; // Saving parent
         } else {
@@ -251,7 +252,7 @@ public class FileConfig {
     private String getKey(String str) {
         return str.split(":")[0].replaceAll("\\s+", "");
     }
-    
+
     private String getParsedKey(String str) {
         return StrUtils.removeColorsWithoutTranslate(str)
                 .replaceAll(" ", "_")

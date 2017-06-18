@@ -58,8 +58,8 @@ public class TimerManager {
     }
 
     public void stopSessions() {
-        for (TimedPlayer player : this.players) {
+        this.players.forEach(player -> {
             player.stopSession();
-        }
+        });
     }
 }

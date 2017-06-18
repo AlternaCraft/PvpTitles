@@ -28,8 +28,8 @@ public class CleanTaskManager {
     public static final long TICKS = 20L;
 
     private String killer = null;
-    private AntiFarmManager afm = null;  
-    
+    private AntiFarmManager afm = null;
+
     private final Map<String, Integer> cleanKills = new HashMap();
 
     public CleanTaskManager(AntiFarmManager afm, String killer) {
@@ -39,12 +39,9 @@ public class CleanTaskManager {
 
     public void addVictim(final String victim) {
         cleanKills.put(victim, PvpTitles.getInstance().getServer().getScheduler().
-                scheduleSyncDelayedTask(afm.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        afm.cleanKillsOnVictim(killer, victim);
-                        cleanKills.remove(victim);
-                    }
+                scheduleSyncDelayedTask(afm.getPlugin(), () -> {
+                    afm.cleanKillsOnVictim(killer, victim);
+                    cleanKills.remove(victim);
                 }, afm.getPlugin().getManager().params.getCleanerTime() * TICKS * 1L)
         );
     }
@@ -54,11 +51,11 @@ public class CleanTaskManager {
         PvpTitles.getInstance().getServer().getScheduler().cancelTask(task);
         cleanKills.remove(victim);
     }
-    
+
     public void cleanAll() {
-        for (Map.Entry<String, Integer> entrySet : cleanKills.entrySet()) {
-            String victim = entrySet.getKey();
-            cleanVictim(victim);
-        }
+        cleanKills.entrySet()
+                .stream()
+                .map(entrySet -> entrySet.getKey())
+                .forEachOrdered(victim -> cleanVictim(victim));
     }
 }

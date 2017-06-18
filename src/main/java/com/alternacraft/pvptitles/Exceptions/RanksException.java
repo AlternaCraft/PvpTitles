@@ -79,10 +79,10 @@ public class RanksException extends CustomException {
     private List getPossibleErrors() {
         List<String> possible_errors = new ArrayList();
 
-        for (Map.Entry<String, Object> entry : this.data.entrySet()) {
+        data.entrySet().forEach(entry -> {
             String k = entry.getKey();
             Object v = entry.getValue();
-
+            
             if (k.equals("Seconds") || k.equals("Fame")) {
                 boolean lowerThanZero = false;
                 if (k.equals("Seconds")) lowerThanZero = (long)v < 0;
@@ -94,11 +94,10 @@ public class RanksException extends CustomException {
                     }
                 }
             }
-        }
+        });
 
         return (possible_errors.isEmpty()) ? 
                 new ArrayList() {{ this.add(POSSIBLE_ERRORS.NOT_FOUND.getText()); }}
                 : possible_errors;
     }
-
 }

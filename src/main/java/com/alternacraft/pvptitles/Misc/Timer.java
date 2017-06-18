@@ -52,7 +52,7 @@ public class Timer {
     public void saveToLog(String filename) {
         PluginLog pl = new PluginLog(PvpTitles.getInstance(), filename);
         
-        for (Map.Entry<String, List<Long>> entry : register.entrySet()) {
+        register.entrySet().forEach(entry -> {
             String key = entry.getKey();
             List<Long> value = entry.getValue();
             
@@ -64,7 +64,7 @@ public class Timer {
             total /= size;
             
             pl.addMessage(key + " - " + total);
-        }
+        });
         
         pl.export(true);
     }

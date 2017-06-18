@@ -126,7 +126,7 @@ public class LeaderBoardManager {
     }
 
     public void updateBoards() {
-        for (Board board : boards) {
+        boards.forEach(board -> {
             ArrayList<PlayerFame> pf = new ArrayList<>();
             try {
                 pf = pt.getManager().dbh.getDm().getTopPlayers(
@@ -137,7 +137,7 @@ public class LeaderBoardManager {
             
             board.dematerialize((short) pf.size());
             board.materialize(pf);
-        }
+        });
     }
 
     public void deleteBoard(Location l, Object o) {

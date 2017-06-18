@@ -90,24 +90,25 @@ public class HologramsFile {
         
         Set<String> sfk = cs.getKeys(false);
 
-        for (String holo : sfk) {
-            String world = cs.getString(holo + ".location.world");
-            double x = cs.getDouble(holo + ".location.x");
-            double y = cs.getDouble(holo + ".location.y");
-            double z = cs.getDouble(holo + ".location.z");
-
-            Location l = new Location(Bukkit.getWorld(world), x, y, z);
-            String nombre = holo;
-            String modelo = cs.getString(holo + ".model");
-            String server = cs.getString(holo + ".filter");
-
-            BoardData holos = new BoardData(l);
-            holos.setNombre(nombre);
-            holos.setModelo(modelo);
-            holos.setServer(server);
-
-            bds.add(holos);
-        }
+        sfk
+                .stream()
+                .map(holo -> {
+                    String world = cs.getString(holo + ".location.world");
+                    double x = cs.getDouble(holo + ".location.x");
+                    double y = cs.getDouble(holo + ".location.y");
+                    double z = cs.getDouble(holo + ".location.z");
+                    Location l = new Location(Bukkit.getWorld(world), x, y, z);
+                    String nombre = holo;
+                    String modelo = cs.getString(holo + ".model");
+                    String server = cs.getString(holo + ".filter");
+                    BoardData holos = new BoardData(l);
+                    holos.setNombre(nombre);
+                    holos.setModelo(modelo);
+                    holos.setServer(server);
+                    return holos;
+                }).forEachOrdered(holos -> {
+                    bds.add(holos);
+                });
 
         return bds;
     }

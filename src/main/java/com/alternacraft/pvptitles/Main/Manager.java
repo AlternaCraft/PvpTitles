@@ -277,7 +277,7 @@ public final class Manager {
                 Arrays.asList("onRank", "onFame", "onKillstreak", "onKill")
         );
 
-        for (String reward : activos) {
+        activos.forEach(reward -> {
             boolean nulos = true; // No entro en ninguno ergo es en onkill
 
             for (String type : types) {
@@ -311,13 +311,13 @@ public final class Manager {
                     }
 
                     data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
-
+                    
                     // Guardo en el mapa principal los valores para ese valor                    
                     actions.put(value, data);
                     rewards.get(type).add(actions);
                 }
             }
-        }
+        });
 
         showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
@@ -345,7 +345,7 @@ public final class Manager {
 
             HashMap<Short, List<String>> server = new HashMap();
 
-            for (Short serverID : serverIDs) {
+            serverIDs.forEach(serverID -> {
                 if (sf.get("Worlds." + srv + "." + serverID) != null) {
                     server.put(serverID, sf.getStringList("Worlds." + srv + "." + serverID));
                 } else if (sf.get("Worlds." + serverID) != null) {
@@ -353,7 +353,7 @@ public final class Manager {
                 } else {
                     server.put(serverID, new ArrayList());
                 }
-            }
+            });
 
             servers.put(srv, server);
         }
@@ -376,12 +376,8 @@ public final class Manager {
             return;
         }
 
-        this.eventoActualizador = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
-            @Override
-            public void run() {
-                getLbm().updateBoards();
-            }
-        }, TICKS * 5L, TICKS * (this.params.getLBRefresh() * 60L));
+        this.eventoActualizador = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, 
+                getLbm()::updateBoards, TICKS * 5L, TICKS * (this.params.getLBRefresh() * 60L));
 
         showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh()
                 + " min]" + ChatColor.AQUA + " loaded correctly."
@@ -402,62 +398,60 @@ public final class Manager {
             return;
         }
 
-        this.eventoChecker = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, new Runnable() {
-            @Override
-            public void run() {
-                Set<TimedPlayer> tp = getTimerManager().getTimedPlayers();
-
-                for (TimedPlayer timedPlayer : tp) {
-                    OfflinePlayer opl = timedPlayer.getOfflinePlayer();
-
-                    // Fix para evitar nullpointerexception
-                    if (!timedPlayer.hasSession() || !opl.isOnline()) {
-                        continue;
-                    }
-
-                    Player pl = opl.getPlayer();
-
-                    int actualFame;
-                    try {
-                        actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
-                    } catch (DBException ex) {
-                        CustomLogger.logArrayError(ex.getCustomStackTrace());
-                        return;
-                    }
-
-                    long savedTimeB;
-                    try {
-                        savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
-                    } catch (DBException ex) {
-                        CustomLogger.logArrayError(ex.getCustomStackTrace());
-                        return;
-                    }
-
-                    try {
-                        long savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
-
-                        Rank rankB = RankManager.getRank(actualFame, savedTimeB, opl);
-                        Rank rankA = RankManager.getRank(actualFame, savedTimeA, opl);
-                        // Actualizo el tiempo del jugador en el server
-                        if (!rankB.similar(rankA)) {
-                            try {
-                                dbh.getDm().savePlayedTime(pl.getUniqueId(), 
-                                        timedPlayer.getTotalOnline());
-                            } catch (DBException ex) {
-                                CustomLogger.logArrayError(ex.getCustomStackTrace());
-                                continue;
-                            }
-
-                            timedPlayer.removeSessions(); // Reinicio el tiempo a cero
-                            timedPlayer.startSession(); // Nueva sesion
-
-                            pl.sendMessage(getPluginName()
-                                    + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(pl))
-                                            .replace("%newRank%", rankA.getDisplay()));
+        this.eventoChecker = pvpTitles.getServer().getScheduler()
+                .scheduleSyncRepeatingTask(pvpTitles, () -> {
+            Set<TimedPlayer> tp = getTimerManager().getTimedPlayers();
+            
+            for (TimedPlayer timedPlayer : tp) {
+                OfflinePlayer opl = timedPlayer.getOfflinePlayer();
+                
+                // Fix para evitar nullpointerexception
+                if (!timedPlayer.hasSession() || !opl.isOnline()) {
+                    continue;
+                }
+                
+                Player pl = opl.getPlayer();
+                
+                int actualFame;
+                try {
+                    actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
+                }
+                
+                long savedTimeB;
+                try {
+                    savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
+                }
+                
+                try {
+                    long savedTimeA = savedTimeB + timedPlayer.getTotalOnline();
+                    
+                    Rank rankB = RankManager.getRank(actualFame, savedTimeB, opl);
+                    Rank rankA = RankManager.getRank(actualFame, savedTimeA, opl);
+                    // Actualizo el tiempo del jugador en el server
+                    if (!rankB.similar(rankA)) {
+                        try {
+                            dbh.getDm().savePlayedTime(pl.getUniqueId(),
+                                    timedPlayer.getTotalOnline());
+                        } catch (DBException ex) {
+                            CustomLogger.logArrayError(ex.getCustomStackTrace());
+                            continue;
                         }
-                    } catch (RanksException ex) {
-                        CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        
+                        timedPlayer.removeSessions(); // Reinicio el tiempo a cero
+                        timedPlayer.startSession(); // Nueva sesion
+                        
+                        pl.sendMessage(getPluginName()
+                                + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(pl))
+                                        .replace("%newRank%", rankA.getDisplay()));
                     }
+                } catch (RanksException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
             }
         }, TICKS * 5L /* Tiempo para prevenir fallos */, TICKS * this.params.getRankChecker());

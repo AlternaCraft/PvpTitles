@@ -122,20 +122,20 @@ public class ConfigLoader {
 
         for (String type : types) {
             Set<String> mults = config.getConfigurationSection("Multipliers." + type).getKeys(false);
-            for (String mult : mults) {
+            mults.forEach(mult -> {
                 double value = config.getDouble("Multipliers." + type + "." + mult);
                 if (!params.setMultiplier(type, mult, value)) {
                     CustomLogger.logError("The value for the multiplier "
                             + type + "." + mult + " has to be greater than zero!");
                 }
-            }
+            });
         }
         
         // POINTS
         List<String> options = config.getStringList("ResetOptions");
-        for (String option : options) {
+        options.forEach(option -> {
             params.addResetOption(option);
-        }
+        });
         params.setAddDeathOnlyByPlayer(config.getBoolean("AddDeathOnlyByPlayer"));
         params.setResetOnPlayerLeaving(config.getBoolean("ResetOnPlayerLeaving"));
         
@@ -189,14 +189,14 @@ public class ConfigLoader {
         params.setHoloHeightMod((short) config.getInt("HoloHeightModifier"));
 
         Set<String> ranks = config.getConfigurationSection("Ranks").getKeys(false);
-        for (String rank : ranks) {
+        ranks.forEach(rank -> {
             String display = config.getString("Ranks." + rank + ".display");
             int points = config.getInt("Ranks." + rank + ".points");
             long time = config.getLong("Ranks." + rank + ".time");
             boolean restricted = config.getBoolean("Ranks." + rank + ".restricted");
 
             RankManager.addRank(new Rank(rank, points, display, time, restricted));
-        }
+        });
     }
 
     public FileConfiguration getConfig() {

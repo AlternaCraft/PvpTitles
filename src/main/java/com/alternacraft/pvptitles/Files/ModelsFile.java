@@ -244,7 +244,7 @@ public class ModelsFile {
             for (String modelo : exampleModels) {
                 pw.println(modelo);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
         } finally {
             try {
                 // Nuevamente aprovechamos el finally para 
@@ -252,7 +252,7 @@ public class ModelsFile {
                 if (null != fichero) {
                     fichero.close();
                 }
-            } catch (Exception ex) {
+            } catch (IOException ex) {
             }
         }
 

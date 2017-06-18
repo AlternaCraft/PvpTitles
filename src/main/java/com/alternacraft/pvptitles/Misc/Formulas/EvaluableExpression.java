@@ -53,20 +53,10 @@ public class EvaluableExpression {
         for (;;) {
             if (eat('+')) { // addition
                 final Expression a = x, b = parseTerm();
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        return a.eval() + b.eval();
-                    }
-                };
+                x = () -> a.eval() + b.eval();
             } else if (eat('-')) { // subtraction
                 final Expression a = x, b = parseTerm();
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        return a.eval() - b.eval();
-                    }
-                };
+                x = () -> a.eval() - b.eval();
             } else {
                 return x;
             }
@@ -77,21 +67,11 @@ public class EvaluableExpression {
         Expression x = parseFactor();
         for (;;) {
             if (eat('*')) {
-                final Expression a = x, b = parseFactor(); // multiplication
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        return a.eval() * b.eval();
-                    }
-                };
+                final Expression a = x, b = parseFactor();
+                x = () -> a.eval() * b.eval();
             } else if (eat('/')) {
-                final Expression a = x, b = parseFactor(); // division
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        return a.eval() / b.eval();
-                    }
-                };
+                final Expression a = x, b = parseFactor();
+                x = () -> a.eval() / b.eval();
             } else {
                 return x;
             }
@@ -104,12 +84,7 @@ public class EvaluableExpression {
         }
         if (eat('-')) {
             final Expression b = parseFactor(); // unary minus
-            return new Expression() {
-                @Override
-                public double eval() {
-                    return -1 * b.eval();
-                }
-            };
+            return () -> -1 * b.eval();
         }
 
         Expression x = null;
@@ -123,12 +98,7 @@ public class EvaluableExpression {
                 nextChar();
             }
             final double xx = Double.parseDouble(str.substring(startPos, this.pos));
-            x = new Expression() {
-                @Override
-                public double eval() {
-                    return xx;
-                }
-            };
+            x = () -> xx;
         } else if (ch >= 'a' && ch <= 'z') { // functions and variables
             while (ch >= 'a' && ch <= 'z') {
                 nextChar();
@@ -145,29 +115,21 @@ public class EvaluableExpression {
                     cm.add(parseFactor());
                 }
 
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        try {
-                            Object result = cm.applyAsObject();
-                            if (result instanceof Long) {
-                                return ((Long) result).doubleValue();
-                            } else if (result instanceof Float) {
-                                return ((Float) result).doubleValue();
-                            }
-                            return (double) result;
-                        } catch (RuntimeException ex) {
-                            throw new RuntimeException("Error parsing Math function: " + ex.getMessage());
+                x = () -> {
+                    try {
+                        Object result = cm.applyAsObject();
+                        if (result instanceof Long) {
+                            return ((Long) result).doubleValue();
+                        } else if (result instanceof Float) {
+                            return ((Float) result).doubleValue();
                         }
+                        return (double) result;
+                    } catch (RuntimeException ex) {
+                        throw new RuntimeException("Error parsing Math function: " + ex.getMessage());
                     }
                 };
             } else {
-                x = new Expression() {
-                    @Override
-                    public double eval() {
-                        return variables.get(name);
-                    }
-                };
+                x = () -> variables.get(name);
             }
         } else if (ch != ')') {
             throw new RuntimeException("Unexpected: " + (char) ch);
@@ -176,12 +138,7 @@ public class EvaluableExpression {
         if (eat('^')) {
             final Expression e = x;
             final double d = parseFactor().eval();
-            x = new Expression() {
-                @Override
-                public double eval() {
-                    return Math.pow(e.eval(), d); // exponentiation
-                }
-            };
+            x = () -> Math.pow(e.eval(), d);
         }
 
         return x;

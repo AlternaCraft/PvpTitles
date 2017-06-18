@@ -49,14 +49,9 @@ public class RankManager {
     private static final List<Rank> RANKS = new LinkedList() {
         @Override
         public boolean contains(Object o2) {
-            for (Object o1 : this) {
-                Rank r = (Rank) o1;
-                Rank r2 = (Rank) o2;
-                if (r.similar(r2)) {
-                    return true;
-                }
-            }
-            return false;
+            return this
+                    .stream()
+                    .anyMatch(o1 -> ((Rank) o1).similar(((Rank) o2)));
         }
     };
 
@@ -70,13 +65,11 @@ public class RankManager {
     }
 
     public static Rank getRank(String id) {
-        for (Iterator<Rank> iterator = RANKS.iterator(); iterator.hasNext();) {
-            Rank next = iterator.next();
-            if (next.getId().equals(id)) {
-                return next;
-            }
-        }
-        return null;
+        return RANKS
+                .stream()
+                .filter(r -> r.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public static Rank getRank(int points, long seconds, OfflinePlayer pl) throws RanksException {
@@ -135,12 +128,8 @@ public class RankManager {
     }
 
     public static boolean isTimeReqUsed() {
-        for (Iterator<Rank> iterator = RANKS.iterator(); iterator.hasNext();) {
-            Rank next = iterator.next();
-            if (next.hasTimeRequirement()) {
-                return true;
-            }
-        }
-        return false;
+        return RANKS
+                .stream()
+                .anyMatch(next -> (next.hasTimeRequirement()));
     }
 }

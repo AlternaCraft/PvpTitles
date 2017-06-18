@@ -33,7 +33,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -80,23 +79,17 @@ abstract class TestBase {
         when(PvpTitles.getInstance()).thenReturn(mockPlugin);
 
         // Player receive a message
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                System.out.println("SenderSendMessage: " + Arrays.toString(args));
-                return null;
-            }
+        doAnswer((InvocationOnMock invocation) -> {
+            Object[] args = invocation.getArguments();
+            System.out.println("SenderSendMessage: " + Arrays.toString(args));
+            return null;
         }).when(mockPlayer).sendMessage(anyString());
 
         // Log message
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                System.out.println("Logger: " + Arrays.toString(args));
-                return null;
-            }
+        doAnswer((InvocationOnMock invocation) -> {
+            Object[] args = invocation.getArguments();
+            System.out.println("Logger: " + Arrays.toString(args));
+            return null;
         }).when(mockLogger).log(any(Level.class), anyString(), any(Exception.class));
 
         // Message manager

@@ -346,7 +346,7 @@ public enum LangsFile {
 
         for (LangsFile idioma : LangsFile.values()) {
             String name = idioma.name();
-            String value = idioma.getDefaultText(lang);;
+            String value = idioma.getDefaultText(lang);
             
             // Set previous value
             if (restore) {

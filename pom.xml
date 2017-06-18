@@ -19,11 +19,11 @@
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
         
-        <!-- PlaceholderAPI
+        <!-- PlaceholderAPI -->
         <repository>
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository> -->
+        </repository>
         
         <!-- MVdWPlaceholderAPI 
         <repository>
@@ -76,8 +76,7 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.6</version>
             <optional>true</optional>
-            <scope>provided</scope>
-            <type>jar</type>
+            <scope>provided</scope>            
         </dependency>
         
         <!-- Placeholder API -->
@@ -135,14 +134,12 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>1.7.0</version>
-            <type>jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
             <version>1.7.0</version>
-            <type>jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>   

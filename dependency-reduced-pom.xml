@@ -133,6 +133,10 @@
       <url>http://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
     <repository>
+      <id>placeholderapi</id>
+      <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+    </repository>
+    <repository>
       <id>novaguilds-repo</id>
       <url>http://repo.novaguilds.pl/</url>
     </repository>

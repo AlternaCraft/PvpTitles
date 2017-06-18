@@ -53,7 +53,7 @@ Mysql:
     database: dbname
     user: user
     pass: pass
-    
+  
 # Unique ID per server (Default -1 indicates that the server has not ID)
 MultiS: -1
 # Custom name for this server (If empty server name will be used)
@@ -347,4 +347,4 @@ Ranks:
         points: 60000
     Legendary_Hero: 
         display: Legendary Hero
-        points: 100000        
+        points: 100000

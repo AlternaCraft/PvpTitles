@@ -220,5 +220,4 @@ public class ModelController {
     public String[][][] getTable() {
         return table;
     }
-
 }

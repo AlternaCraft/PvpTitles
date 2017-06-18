@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -46,25 +47,23 @@ public class Inventories {
     }
 
     public static List<Player> closeInventories() {
-        List<Player> viewers = new ArrayList();
-        List<Inventory> openedtemp = new ArrayList<>(opened);
-
-        for (Inventory inv : openedtemp) {
-            while (!inv.getViewers().isEmpty()) {
-                Player pl = (Player) inv.getViewers().get(0);
-                pl.closeInventory();
-                viewers.add(pl);
-            }
-        }
-
-        return viewers;
+        return Inventories.opened
+                .stream()
+                .map(inv -> inv.getViewers())
+                .filter(v -> !v.isEmpty())
+                .map(v -> {
+                    Player pl = ((Player) v.get(0));
+                    pl.closeInventory();
+                    return pl;
+                })
+                .collect(Collectors.toList());
     }
 
     public static void reloadInventories(List<Player> viewers) {
         List<Board> boards = PvpTitles.getInstance().getManager().getLbm().getBoards();
-        for (Player viewer : viewers) {
+        viewers.forEach((viewer) -> {
             viewer.openInventory(createInventory(boards, Localizer.getLocale(viewer)).get(0));
-        }
+        });
     }
 
     public static Map<Integer, Inventory> createInventory(List<Board> cs, LangType lt) {

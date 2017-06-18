@@ -68,9 +68,9 @@ public class UtilsFile {
         List<String> lines = UtilsFile.getFileLines(path);
         StringBuilder res = new StringBuilder();
 
-        for (String line : lines) {
+        lines.forEach(line -> {
             res.append(line.replace(" ", "")); // Optimization
-        }
+        });
 
         return res.toString();
     }

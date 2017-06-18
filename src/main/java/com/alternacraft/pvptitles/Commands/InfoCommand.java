@@ -26,7 +26,6 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.bukkit.ChatColor;
@@ -55,36 +54,30 @@ public class InfoCommand implements CommandExecutor {
         Set<String> commands = pvpTitles.getDescription().getCommands().keySet();
 
         List<String> commandTemplate = this.pvpTitles.getManager().templates.getFileContent(FILES.INFO_COMMAND);
-
-        for (String line : commandTemplate) {
-            String msg = line;
-            
-            msg = msg
+        commandTemplate
+                .stream()
+                .map(msg -> msg
                     .replace(PLUGIN_TAG, PvpTitles.getDefaultPluginName())
-                    .replace(VERSION_TAG, pvpTitles.getDescription().getVersion());
-            
-            if (msg.contains(COMMAND_TAG) || msg.contains(INFO_COMMAND_TAG)) {
-                for (Iterator<String> iterator = commands.iterator(); iterator.hasNext();) {
-                    String next = iterator.next();
-                    String perm = pvpTitles.getDescription().getCommands().get(next).get("permission").toString();
+                    .replace(VERSION_TAG, pvpTitles.getDescription().getVersion()))
+                .forEachOrdered((msg) -> {
+                    if (msg.contains(COMMAND_TAG) || msg.contains(INFO_COMMAND_TAG)) {
+                        commands.forEach(next -> {
+                            String perm = pvpTitles.getDescription().getCommands().get(next).get("permission").toString();
+                            if (!(!sender.hasPermission(perm) || next.compareToIgnoreCase("pvptitles") == 0)) {
+                                String usage = pvpTitles.getDescription().getCommands().get(next)
+                                        .get("usage").toString().replace("<command>", next.toLowerCase());
+                                String info = LangsFile.valueOf("COMMAND_" + next.replace("pvp", "").toUpperCase() + "_INFO").getText(messages);
 
-                    if (!sender.hasPermission(perm) || next.compareToIgnoreCase("pvptitles") == 0) {
-                        continue;
+                                sender.sendMessage(msg
+                                        .replace(COMMAND_TAG, usage)
+                                        .replace(INFO_COMMAND_TAG, info)
+                                );
+                            }
+                        });
+                    } else {
+                        sender.sendMessage(msg);
                     }
-
-                    String usage = pvpTitles.getDescription().getCommands().get(next)
-                            .get("usage").toString().replace("<command>", next.toLowerCase());
-                    String info = LangsFile.valueOf("COMMAND_" + next.replace("pvp", "").toUpperCase() + "_INFO").getText(messages);
-
-                    sender.sendMessage(msg
-                            .replace(COMMAND_TAG, usage)
-                            .replace(INFO_COMMAND_TAG, info)
-                    );
-                }
-            } else {
-                sender.sendMessage(msg);
-            }
-        }
+                });
 
         sender.sendMessage("■ " + ChatColor.GOLD + "Created By "
                 + pvpTitles.getDescription().getAuthors().get(0)

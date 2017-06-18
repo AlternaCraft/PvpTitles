@@ -36,15 +36,14 @@ import org.bukkit.entity.Player;
 
 public class HolographicHook {
 
-    public static String RANK_LINE = null;    
-    
+    public static String RANK_LINE = null;
+
     public static final double HEIGHT_PER_ROW = 0.26D;
     public static final double DEFAULT_TITLE_HEIGHT = 2.58D; // 2.6D
-    
+
     public static double TITLE_HEIGHT = DEFAULT_TITLE_HEIGHT;
-    
+
     /*public static final double CROUCH_HEIGHT = 2.2D;*/
-    
     public static boolean ISHDENABLED = false;
 
     public static final Map<String, Hologram> HOLOPLAYERS = new HashMap();
@@ -58,16 +57,16 @@ public class HolographicHook {
 
     public String[] setup() {
         ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
-        
+
         if (ISHDENABLED) {
-            int hb = loadHoloBoards();            
+            int hb = loadHoloBoards();
             // Ranks
             if (plugin.getManager().params.displayLikeHolo()) {
                 loadPlayersInServer();
-            }            
+            }
             return new String[]{"HolographicDisplays &7(" + hb + " loaded)"};
         }
-        
+
         return new String[]{};
     }
 
@@ -75,12 +74,12 @@ public class HolographicHook {
         RANK_LINE = plugin.getManager().params.getHolotagformat();
         TITLE_HEIGHT = (plugin.getManager().params.getHoloHeightMod() - 1) * HEIGHT_PER_ROW + DEFAULT_TITLE_HEIGHT;
     }
-    
+
     public static void loadPlayersInServer() {
         deleteHoloPlayers();
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        plugin.getServer().getOnlinePlayers().forEach((player) -> {
             HandlePlayerTag.holoPlayerLogin(player);
-        }
+        });
     }
 
     // Player prefix
@@ -99,19 +98,18 @@ public class HolographicHook {
     }
 
     public static void removeHoloPlayer(Hologram h) {
-        if (!h.isDeleted())
+        if (!h.isDeleted()) {
             h.delete();
+        }
     }
 
     public static void deleteHoloPlayers() {
         // Optimizacion para borrar hologramas si se desactivo la opcion
-        for (Map.Entry<String, Hologram> entry : HOLOPLAYERS.entrySet()) {
-            Hologram holo = entry.getValue();
-            if (holo.isDeleted()) {
-                continue;
-            }
-            holo.delete();
-        }
+        HOLOPLAYERS.entrySet()
+                .stream()
+                .map(entry -> entry.getValue())
+                .filter(holo -> !(holo.isDeleted()))
+                .forEachOrdered(holo -> holo.delete());
         HOLOPLAYERS.clear();
     }
     // End Player Prefix    
@@ -120,26 +118,21 @@ public class HolographicHook {
     public static int loadHoloBoards() {
         HologramsFile.load();
         deleteHolograms(); // Fix duplicados, borra todos
-        int t = 0;
-
-        for (BoardData holo : HologramsFile.loadHolograms()) {
+        
+        List<BoardData> holos = HologramsFile.loadHolograms();        
+        holos.forEach(holo -> {
             BoardModel sm = plugin.getManager().searchModel(holo.getModelo());
-
             ModelController mc = new ModelController();
             mc.preprocessUnit(sm.getParams());
-
-            HologramBoard hb = new HologramBoard(holo, sm, mc);
-
-            plugin.getManager().getLbm().loadBoard(hb);
-            t++;
-        }
-
-        return t;
+            plugin.getManager().getLbm().loadBoard(
+                    new HologramBoard(holo, sm, mc)
+            );
+        });
+        return holos.size();
     }
 
     public static void createHoloBoardHead(Location l, short top) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
-
         h.appendTextLine(StrUtils.translateColors("&6&lPvpTitles"));
         h.appendTextLine(StrUtils.translateColors("&6&l+&r------&6&l+"));
         h.appendTextLine(StrUtils.translateColors("| &e&lTop " + top + "&r |"));
@@ -148,10 +141,9 @@ public class HolographicHook {
 
     public static void createHoloBoard(List<String> contenido, Location l) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
-
-        for (String string : contenido) {
+        contenido.forEach(string -> {
             h.appendTextLine(string); // ChatColor.RESET
-        }
+        });
     }
 
     public static void deleteHoloBoard(Location l) {
@@ -170,13 +162,12 @@ public class HolographicHook {
 
     // Todos
     public static void deleteHolograms() {
-        Collection<Hologram> holograms = HologramsAPI.getHolograms(plugin);
-        for (Hologram holo : holograms) {
-            if (holo.isDeleted()) {
-                continue;
-            }
-            holo.delete();
-        }
+        HologramsAPI.getHolograms(plugin)
+                .stream()
+                .filter(holo -> !(holo.isDeleted()))
+                .forEachOrdered(holo -> {
+                    holo.delete();
+                });
     }
     // Fin todos
 }

@@ -57,32 +57,34 @@ public class BoardModel {
 
         for (List<List<String>> param : params) {
             ArrayList<String> filas = new ArrayList();
-            for (List<String> param1 : param) {
-                String concatena = "";
-                for (String param11 : param1) {
-                    StringBuilder buf = new StringBuilder();
-
-                    int var1 = param11.indexOf('<');
-                    int var2 = param11.indexOf('>');
-                    
-                    while (var1 != -1 && var2 != -1) {
-                        buf.append(param11.substring(var1 + 1, var2));
-                        param11 = param11.substring(var2 + 1);
-
-                        var1 = param11.indexOf('<');
-                        var2 = param11.indexOf('>');
-                    }
-
-                    concatena += buf.toString();
-                }
-                filas.add(concatena);
-            }
+            param
+                    .stream()
+                    .map(param1 -> {
+                        return param1
+                                .stream()
+                                .map(param11 -> {
+                                    StringBuilder buf = new StringBuilder();
+                                    int var1 = param11.indexOf('<');
+                                    int var2 = param11.indexOf('>');
+                                    while (var1 != -1 && var2 != -1) {
+                                        buf.append(param11.substring(var1 + 1, var2));
+                                        param11 = param11.substring(var2 + 1);
+                                        var1 = param11.indexOf('<');
+                                        var2 = param11.indexOf('>');
+                                    }
+                                    return buf.toString();
+                                })
+                                .reduce("", String::concat);
+                    })
+                    .forEachOrdered(concatena -> filas.add(String.valueOf(concatena)));
 
             if (filas.size() > 1) {
                 for (int i = 0; i < filas.size() - 1; i++) {
                     String pick = removeColors(filas.get(i));
-                    if (pick.equals("")) continue;
-                    
+                    if (pick.equals("")) {
+                        continue;
+                    }
+
                     for (int j = 0; j < filas.size(); j++) {
                         if (j == i) {
                             continue;
@@ -118,7 +120,7 @@ public class BoardModel {
 
     /**
      * Método para recibir las filas por el bloque
-     * 
+     *
      * @return Integer[]
      */
     private Integer[] getFilasPerBloque() {
@@ -147,9 +149,9 @@ public class BoardModel {
 
     /**
      * Método para recibir las filas de títulos
-     * 
+     *
      * @param divisor Entero con el divisor
-     * 
+     *
      * @return Entero con el número de filas
      */
     public int getFilasSinJugadores(int divisor) {
@@ -171,5 +173,4 @@ public class BoardModel {
     public boolean isProgresivo() {
         return progresivo;
     }
-
 }

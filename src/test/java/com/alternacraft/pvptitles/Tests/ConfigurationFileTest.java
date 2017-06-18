@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.verify;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -78,7 +77,7 @@ public class ConfigurationFileTest extends TestBase {
             Logger.getLogger(ConfigurationFileTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        FileConfig fc = new FileConfig(mockPlugin);        
+        FileConfig fc = new FileConfig(mockPlugin);
         yaml = YamlConfiguration.loadConfiguration(customConfig);
         
         assertEquals(true, !yaml.getString("Version").equals("0"));
@@ -118,16 +117,13 @@ public class ConfigurationFileTest extends TestBase {
         
         this.customConfig = new File(PLUGINDATAFOLDER + "/config.yml");
         
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) {
-                try {
-                    YamlConfiguration.loadConfiguration(config).save(customConfig);
-                } catch (IOException ex) {
-                    Logger.getLogger(ConfigurationFileTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return null;
+        doAnswer((InvocationOnMock invocation) -> {
+            try {
+                YamlConfiguration.loadConfiguration(config).save(customConfig);
+            } catch (IOException ex) {
+                Logger.getLogger(ConfigurationFileTest.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return null;
         }).when(mockPlugin).saveDefaultConfig();
     }
 

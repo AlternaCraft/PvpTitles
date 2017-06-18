@@ -47,20 +47,14 @@ public class HologramBoard extends Board {
     @Override
     public boolean isMaterializable(short jugadores) {
         Location l = this.getData().getLocation();
-
         List<BoardData> holos = HologramsFile.loadHolograms();
-        for (BoardData holo : holos) {
-            if (l.equals(holo.getLocation())) {
-                return false;
-            }
-        }
-
-        return true;
+        return holos
+                .stream()
+                .noneMatch((holo) -> (l.equals(holo.getLocation())));
     }
 
     @Override
     public void materialize(List<PlayerFame> pf) {
-
         int maxcol = this.model.getColumnas();
 
         // Localizacion
@@ -143,10 +137,10 @@ public class HologramBoard extends Board {
     public void dematerialize(short jugadores) {
         Location l = this.getData().getCustomL();
         HolographicHook.deleteHoloBoard(l); // Elimino el header
-        for (Double xpo : xpos) {
+        xpos.forEach(xpo -> {
             // Elimino los hologramas con los datos
             HolographicHook.deleteHoloBoard(new Location(l.getWorld(), xpo, l.getY() - HEADER, l.getZ()));
-        }
+        });
         xpos.clear();
     }
 

@@ -93,22 +93,24 @@ public class HandleSign implements Listener {
                     server = lineas[3];
                 }
 
-                BlockFace bf = yawToFace(pl.getLocation().getYaw());
-
-                if (bf.equals(BlockFace.NORTH) || bf.equals(BlockFace.SOUTH)) {
-                    if (bf.equals(BlockFace.SOUTH)) {
+                BlockFace bf = yawToFace(pl.getLocation().getYaw());                
+                switch (bf) {
+                    case SOUTH:
                         orientacion = "X+";
                         blockface = SOUTH;
-                    } else {
+                        break;
+                    case NORTH:
                         orientacion = "X-";
                         blockface = NORTH;
-                    }
-                } else if (bf.equals(BlockFace.WEST)) {
-                    orientacion = "Z+";
-                    blockface = WEST;
-                } else {
-                    orientacion = "Z-";
-                    blockface = EAST;
+                        break;
+                    case WEST:
+                        orientacion = "Z+";
+                        blockface = WEST;
+                        break;
+                    case EAST:
+                        orientacion = "Z-";
+                        blockface = EAST;
+                        break;
                 }
 
                 matSign.setFacingDirection(bf);

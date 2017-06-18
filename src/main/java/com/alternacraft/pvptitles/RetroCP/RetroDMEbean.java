@@ -171,19 +171,19 @@ public class RetroDMEbean {
         List<WorldPlayerPT> pwClass = (List<WorldPlayerPT>) ebeanServer.getDatabase().
                 find(WorldPlayerPT.class).findList();
 
-        for (PlayerPT player : plClass) {
+        plClass.forEach((player) -> {
             jsPlayers.add(TagsClass.createPlayer(player));
-        }
+        });
         json.put("Players", jsPlayers);
 
-        for (SignPT sign : stClass) {
+        stClass.forEach((sign) -> {
             jsSigns.add(TagsClass.createSign(sign));
-        }
+        });
         json.put("Signs", jsSigns);
 
-        for (WorldPlayerPT pWorld : pwClass) {
+        pwClass.forEach((pWorld) -> {
             jsWorldPlayers.add(TagsClass.createPlayerW(pWorld));
-        }
+        });
         json.put("PlayersPerWorld", jsWorldPlayers);
     }
 
@@ -238,7 +238,7 @@ public class RetroDMEbean {
             json.put("PlayersPerWorld", jsWorldPlayers);
         }
 
-        for (SignTable sign : stClass) {
+        stClass.stream().map(sign -> {
             SignPT spt = new SignPT();
             spt.setName(sign.getNombre());
             spt.setModel(sign.getModelo());
@@ -248,8 +248,10 @@ public class RetroDMEbean {
             spt.setX(sign.getX());
             spt.setY(sign.getY());
             spt.setZ(sign.getZ());
+            return spt;
+        }).forEachOrdered(spt -> {
             jsSigns.add(TagsClass.createSign(spt));
-        }
+        });
         json.put("Signs", jsSigns);
     }
     //</editor-fold>

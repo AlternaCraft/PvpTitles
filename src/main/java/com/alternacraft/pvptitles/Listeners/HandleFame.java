@@ -78,27 +78,31 @@ public class HandleFame implements Listener {
         if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
             List<Map<String, Map<String, Object>>> kills = pt.getManager().rewards.get("onKill");
             if (kills != null) {
-                for (Map<String, Map<String, Object>> kill : kills) {
-                    if (kill != null && hasPermission(kill.get(null), pl)) {
-                        setValues(kill.get(null), e.getOfflinePlayer(), e.getFameTotal());
-                    }
-                }
+                kills
+                        .stream()
+                        .filter(kill -> (kill != null && hasPermission(kill.get(null), pl)))
+                        .forEachOrdered(kill -> {
+                            setValues(kill.get(null), e.getOfflinePlayer(), e.getFameTotal());
+                        });
             }
         }
 
         List<Map<String, Map<String, Object>>> fame = pt.getManager().rewards.get("onFame");
         if (fame != null) {
-            for (Map<String, Map<String, Object>> famee : fame) {
-                if (famee != null) {
-                    for (String cantidad : famee.keySet()) {
-                        if (e.getFame() < Integer.parseInt(cantidad)
-                                && (e.getFameTotal()) >= Integer.valueOf(cantidad)
-                                && hasPermission(famee.get(cantidad), pl)) {
-                            setValues(famee.get(cantidad), e.getOfflinePlayer(), e.getFameTotal());
-                        }
-                    }
-                }
-            }
+            fame
+                    .stream()
+                    .filter(famee -> (famee != null))
+                    .forEachOrdered(famee -> {
+                        famee.keySet()
+                                .stream()
+                                .filter(cantidad -> (e.getFame() < Integer.parseInt(cantidad)
+                                            && (e.getFameTotal()) >= Integer.valueOf(cantidad)
+                                            && hasPermission(famee.get(cantidad), pl)))
+                                .forEachOrdered(cantidad -> {
+                                    setValues(famee.get(cantidad), e.getOfflinePlayer(), 
+                                            e.getFameTotal());
+                                });
+                    });
         }
 
         List<Map<String, Map<String, Object>>> rank = pt.getManager().rewards.get("onRank");
@@ -123,16 +127,18 @@ public class HandleFame implements Listener {
 
         List<Map<String, Map<String, Object>>> killstreak = pt.getManager().rewards.get("onKillstreak");
         if (killstreak != null) {
-            for (Map<String, Map<String, Object>> ks : killstreak) {
-                if (ks != null) {
-                    for (String kss : ks.keySet()) {
-                        if (e.getKillstreak() == Integer.valueOf(kss)
-                                && hasPermission(ks.get(kss), pl)) {
-                            setValues(ks.get(kss), e.getOfflinePlayer(), e.getFameTotal());
-                        }
-                    }
-                }
-            }
+            killstreak
+                    .stream()
+                    .filter(ks -> (ks != null))
+                    .forEachOrdered(ks -> {
+                        ks.keySet()
+                                .stream()
+                                .filter(kss -> (e.getKillstreak() == Integer.valueOf(kss)
+                                            && hasPermission(ks.get(kss), pl)))
+                                .forEachOrdered(kss -> {
+                                    setValues(ks.get(kss), e.getOfflinePlayer(), e.getFameTotal());
+                                });
+                    });
         }
         //</editor-fold>
 
@@ -158,7 +164,7 @@ public class HandleFame implements Listener {
             }
         }
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="INNER CODE">   
     private void setValues(Map<String, Object> data, OfflinePlayer pl, int fame) {
         if (VaultHook.ECONOMY_ENABLED) {
@@ -177,12 +183,12 @@ public class HandleFame implements Listener {
             FameAddEvent event = new FameAddEvent(pl, fame, points);
             event.setSilent(true);
             try {
-                this.dm.dbh.getDm().savePlayerFame(pl.getUniqueId(), 
+                this.dm.dbh.getDm().savePlayerFame(pl.getUniqueId(),
                         event.getFameTotal(), null);
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
                 event.setCancelled(true);
-            }            
+            }
             fameLogic(event);
         }
         if (data.containsKey("time")) {
@@ -198,11 +204,13 @@ public class HandleFame implements Listener {
             }
         }
         if (data.containsKey("commands")) {
-            for (String cmd : (List<String>) data.get("commands")) {
-                cmd = cmd.replaceAll("<[pP]layer>", pl.getName());
-                cmd = StrUtils.translateColors(cmd);
-                pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
-            }
+            ((List<String>) data.get("commands"))
+                    .stream()
+                    .map(cmd -> cmd.replaceAll("<[pP]layer>", pl.getName()))
+                    .map(cmd -> StrUtils.translateColors(cmd))
+                    .forEachOrdered(cmd -> {
+                        pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
+                    });
         }
     }
 

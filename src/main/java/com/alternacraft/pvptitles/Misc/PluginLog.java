@@ -105,9 +105,10 @@ public class PluginLog {
 
         // Writing new values
         all += "---\n" + getCurrentTimeStamp("yyyy-MM-dd HH:mm:ss") + "\n---\n";
-        for (String message : messages) {
-            all += message + "\n";
-        }
+        all = messages
+                .stream()
+                .map((message) -> message + "\n")
+                .reduce(all, String::concat);
         UtilsFile.writeFile(fullpath, all);
     }
 

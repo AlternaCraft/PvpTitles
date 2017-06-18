@@ -64,14 +64,14 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
                 String body = JSONArray.toJSONString(names.subList(i * 100, Math.min((i + 1) * 100, names.size())));
                 writeBody(connection, body);
                 JSONArray array = (JSONArray) jsonParser.parse(new InputStreamReader(connection.getInputStream()));
-                for (Object profile : array) {
+                array.forEach(profile -> {
                     JSONObject jsonProfile = (JSONObject) profile;
                     String id = (String) jsonProfile.get("id");
                     String name = (String) jsonProfile.get("name");
                     UUID uuid = UUIDFetcher.getUUID(id);
                     uuidMap.put(name, uuid);
                     CACHE.put(name, uuid);
-                }
+                });
                 if (rateLimiting && i != requests - 1) {
                     Thread.sleep(100L);
                 }

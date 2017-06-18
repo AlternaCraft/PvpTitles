@@ -26,7 +26,6 @@ import com.alternacraft.pvptitles.Misc.Rank;
 import com.github.games647.scoreboardstats.ScoreboardStats;
 import com.github.games647.scoreboardstats.variables.ReplaceEvent;
 import com.github.games647.scoreboardstats.variables.ReplaceManager;
-import com.github.games647.scoreboardstats.variables.VariableReplacer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -54,45 +53,42 @@ public class SBSHook {
     }
 
     private void registerReplacerInterface(ReplaceManager replaceManager) {
-        replaceManager.register(new VariableReplacer() {
-            @Override
-            public void onReplace(Player player, String var, ReplaceEvent replaceEvent) {
-                int fame = 0;
-                try {
-                    fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                } catch (DBException ex) {
-                    //CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-
-                long seconds = 0;
-                try {
-                    seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-
-                int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
-
-                /*
-                 * La variable rank no funcionara hasta la proxima version del
-                 * plugin scoreboardstats que lo implemente
-                 */
-                switch (var) {
-                    case "fame":
-                        replaceEvent.setScore(fame);
-                        break;
-                    case "rank":
-                        Rank rank = null;
-                        try {
-                            rank = RankManager.getRank(fame, seconds, player);
-                        } catch (RanksException ex) {
-                            CustomLogger.logArrayError(ex.getCustomStackTrace());
-                        }
-                        replaceEvent.setScoreOrText((rank != null) ? rank.getDisplay():"");
-                        break;
-                    case "killstreak":
-                        replaceEvent.setScore(killstreak);
-                }
+        replaceManager.register((Player player, String var, ReplaceEvent replaceEvent) -> {
+            int fame = 0;
+            try {
+                fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+            } catch (DBException ex) {
+                //CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+            
+            long seconds = 0;
+            try {
+                seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+            
+            int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
+            
+            /*
+            * La variable rank no funcionara hasta la proxima version del
+            * plugin scoreboardstats que lo implemente
+            */
+            switch (var) {
+                case "fame":
+                    replaceEvent.setScore(fame);
+                    break;
+                case "rank":
+                    Rank rank = null;
+                    try {
+                        rank = RankManager.getRank(fame, seconds, player);
+                    } catch (RanksException ex) {
+                        CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    }
+                    replaceEvent.setScoreOrText((rank != null) ? rank.getDisplay():"");
+                    break;
+                case "killstreak":
+                    replaceEvent.setScore(killstreak);
             }
         }, plugin, "fame", "rank", "killstreak");
     }
