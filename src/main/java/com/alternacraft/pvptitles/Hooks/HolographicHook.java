@@ -109,7 +109,7 @@ public class HolographicHook {
                 .stream()
                 .map(entry -> entry.getValue())
                 .filter(holo -> !(holo.isDeleted()))
-                .forEachOrdered(holo -> holo.delete());
+                .forEach(holo -> holo.delete());
         HOLOPLAYERS.clear();
     }
     // End Player Prefix    
@@ -165,7 +165,7 @@ public class HolographicHook {
         HologramsAPI.getHolograms(plugin)
                 .stream()
                 .filter(holo -> !(holo.isDeleted()))
-                .forEachOrdered(holo -> {
+                .forEach(holo -> {
                     holo.delete();
                 });
     }

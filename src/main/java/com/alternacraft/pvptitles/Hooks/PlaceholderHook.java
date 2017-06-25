@@ -74,20 +74,24 @@ public class PlaceholderHook extends EZPlaceholderHook {
         }
         
         String rank = (vRank != null) ? vRank.getDisplay():"";
-
+        
+        String result = null;        
         switch (id) {
             case "rank":
-                return rank;
+                result = rank;
+                break;
             case "valid_rank":
-                return (canDisplayRank(player, rank)) ? rank : "";
+                result = (canDisplayRank(player, rank)) ? rank : "";
+                break;
             case "fame":
-                return String.valueOf(fame);
+                result = String.valueOf(fame);
+                break;
             case "killstreak":
-                return String.valueOf(killstreak);
+                result = String.valueOf(killstreak);
+                break;
             default:
                 break;
         }
-
-        return null;
+        return result;
     }
 }

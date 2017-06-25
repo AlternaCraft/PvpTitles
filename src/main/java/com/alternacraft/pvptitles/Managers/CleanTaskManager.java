@@ -56,6 +56,6 @@ public class CleanTaskManager {
         cleanKills.entrySet()
                 .stream()
                 .map(entrySet -> entrySet.getKey())
-                .forEachOrdered(victim -> cleanVictim(victim));
+                .forEach(victim -> cleanVictim(victim));
     }
 }
