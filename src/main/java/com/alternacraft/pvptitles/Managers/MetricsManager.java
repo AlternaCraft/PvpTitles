@@ -35,114 +35,109 @@ public class MetricsManager {
     private final static String PATTERN = "(.*) \\((.*)\\) \\- (.*)";
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
-    private void setMWGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("multiworld_usage", 
-                new Callable<String>() {
-            @Override
-            public String call() {
-                return (plugin.getManager().params.isMw_enabled()) ? "Enabled" : "Disabled";
-            }
-        }));
+    private void setMWGraph(Metrics metrics) {
+        metrics.addCustomChart(
+                new Metrics.SimplePie("multiworld_usage",
+                        () -> (Manager.getInstance().params.isMw_enabled()) ? "Enabled" : "Disabled"));
     }
 
     private void setTUGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("time_as_requirement", 
-                new Callable<String>() {
-            @Override
-            public String call() {
-                return (RankManager.isTimeReqUsed()) ? "Enabled" : "Disabled";
-            }
-        }));
+        metrics.addCustomChart(
+                new Metrics.SimplePie("time_as_requirement",
+                        () -> (RankManager.isTimeReqUsed()) ? "Enabled" : "Disabled")
+        );
     }
 
     private void setPDBGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("preferred_db", 
-                new Callable<String>() {
-            @Override
-            public String call() {
-                return DBLoader.tipo.toString();
-            }
-        }));
+        metrics.addCustomChart(
+                new Metrics.SimplePie("preferred_db",
+                        () -> DBLoader.tipo.toString())
+        );
     }
 
-    private void setDMGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("display_mode", 
-                new Callable<String>() {
-            @Override
-            public String call() {
-                if (plugin.getManager().params.displayInChat()
-                        && plugin.getManager().params.displayLikeHolo()) {
-                    return "Both";
-                } else {
-                    if (plugin.getManager().params.displayInChat()) {
-                        return "Chat";
+    private void setDMGraph(Metrics metrics) {
+        metrics.addCustomChart(
+                new Metrics.SimplePie("display_mode", () -> {
+                    if (Manager.getInstance().params.displayInChat()
+                            && Manager.getInstance().params.displayLikeHolo()) {
+                        return "Both";
+                    } else {
+                        if (Manager.getInstance().params.displayInChat()) {
+                            return "Chat";
+                        }
+                        if (Manager.getInstance().params.displayLikeHolo()) {
+                            return "Holograms";
+                        }
                     }
-                    if (plugin.getManager().params.displayLikeHolo()) {
-                        return "Holograms";
-                    }
-                }
-                return null;
-            }
-        }));
+                    return null;
+                })
+        );
     }
 
     private void setDLGraph(Metrics metrics) {
-        metrics.addCustomChart(new Metrics.SimplePie("default_language", 
-                new Callable<String>() {
-            @Override
-            public String call() {
-                return Manager.messages.name();
-            }
-        }));
+        metrics.addCustomChart(
+                new Metrics.SimplePie("default_language",
+                        () -> Manager.messages.name())
+        );
     }
 
-    private void setAPGraph(final PvpTitles plugin, Metrics metrics) {
-        metrics.addCustomChart(new Metrics.AdvancedPie("awarded_points", 
-                new Callable<Map<String, Integer>>() {
-            @Override
-            public Map<String, Integer> call() throws Exception {
-                boolean rp = plugin.getManager().params.isEnableRPWhenKilling();
-                boolean lp = plugin.getManager().params.isEnableLPWhenDying();
-                Map map = new HashMap();
-                map.put("RP", (rp) ? 1:0);
-                map.put("LP", (lp) ? 1:0);
-                return map;
-            }
-        }));
+    private void setFGraph(Metrics metrics) {
+        metrics.addCustomChart(
+                new Metrics.DrilldownPie("formulas", () -> {
+                    Map<String, Map<String, Integer>> map = new HashMap();
+                    
+                    boolean rp = Manager.getInstance().params.isEnableRPWhenKilling();
+                    boolean lp = Manager.getInstance().params.isEnableLPWhenDying();
+                    
+                    if (rp) {
+                        String rp_formula = Manager.getInstance().getCh().getConfig()
+                            .getString("Modificator.Received.formula");
+                        Map<String, Integer> data = new HashMap<>();
+                        data.put(rp_formula, 1);
+                        map.put("Received", data);
+                    }
+                    if (lp) {
+                        String lp_formula = Manager.getInstance().getCh().getConfig()
+                            .getString("Modificator.Lost.formula");
+                        Map<String, Integer> data = new HashMap<>();
+                        data.put(lp_formula, 1);
+                        map.put("Lost", data);
+                    }
+                    
+                    return map;
+                })
+        );
     }
 
     private void setDBPerformanceGraph(Metrics metrics, final List<String> lines) {
-        metrics.addCustomChart(new Metrics.DrilldownPie("general_statistics", 
-                new Callable<Map<String, Map<String, Integer>>>() {
-            @Override
-            public Map<String, Map<String, Integer>> call() {
-                
-                Map<String, Map<String, Integer>> map = new HashMap();
-                
-                for (String line : lines) {
-                    if (!line.contains("---")
-                            && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
-                        Pattern pattern = Pattern.compile(PATTERN);
-                        Matcher matcher = pattern.matcher(line);
+        metrics.addCustomChart(
+                new Metrics.DrilldownPie("general_statistics", () -> {
+                    Map<String, Map<String, Integer>> map = new HashMap();
 
-                        if (matcher.find()) {
-                            String key = matcher.group(2);
+                    for (String line : lines) {
+                        if (!line.contains("---")
+                                && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
+                            Pattern pattern = Pattern.compile(PATTERN);
+                            Matcher matcher = pattern.matcher(line);
 
-                            String id = matcher.group(1);
-                            String v = matcher.group(3);
+                            if (matcher.find()) {
+                                String key = matcher.group(2);
 
-                            if (!map.containsKey(key)) {
-                                map.put(key, new HashMap());
+                                String id = matcher.group(1);
+                                String v = matcher.group(3);
+
+                                if (!map.containsKey(key)) {
+                                    map.put(key, new HashMap());
+                                }
+
+                                map.get(key).put(id, Integer.valueOf(v));
                             }
-
-                            map.get(key).put(id, Integer.valueOf(v));
                         }
                     }
-                }
 
-                return map;
-            }
-        }));
+                    return map;
+                })
+        );
     }
     // </editor-fold>
 
@@ -152,17 +147,17 @@ public class MetricsManager {
 
             setDLGraph(metrics); // Default language
             setPDBGraph(metrics); // Preferred database
-            setMWGraph(plugin, metrics); // Multi world
-            setDMGraph(plugin, metrics); // Display mode
+            setMWGraph(metrics); // Multi world
+            setDMGraph(metrics); // Display mode
             setTUGraph(metrics); // Time usage as requirement
-            setAPGraph(plugin, metrics); // Awarded points
-
+            setFGraph(metrics); // Formulas
+            
             // DB's performance
             PluginLog pl = new PluginLog(plugin, "performance.txt");
-            pl.importLog();            
-            setDBPerformanceGraph(metrics, pl.getMessages());            
+            pl.importLog();
+            setDBPerformanceGraph(metrics, pl.getMessages());
             UtilsFile.delete(PvpTitles.PLUGIN_DIR + PluginLog.getLogsFolder()
-                        + File.separator + "performance.txt");
+                    + File.separator + "performance.txt");
         }
-    }   
+    }
 }

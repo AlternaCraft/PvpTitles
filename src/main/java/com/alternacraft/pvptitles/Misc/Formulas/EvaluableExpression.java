@@ -22,7 +22,11 @@ public class EvaluableExpression {
         this.str = str;
         this.variables = variables;
     }
-
+    
+    public String getFormula() {
+        return this.str;
+    }
+    
     public Expression parse() throws RuntimeException {
         nextChar();
         Expression x = parseExpression();
