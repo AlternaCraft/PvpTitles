@@ -92,10 +92,8 @@ public class VaultHook {
         if (pl.isOp() && VaultHook.PERMISSIONS_ENABLED) {
             if (permission.hasGroupSupport() && permission.getPlayerGroups(pl).length != 0) {
                 String group = permission.getPrimaryGroup(pl);
-
                 World w = null;
                 World wp = pl.getWorld();
-
                 return (permission.groupHas(w, group, perm)
                         || permission.groupHas(wp, group, perm));
             } else {

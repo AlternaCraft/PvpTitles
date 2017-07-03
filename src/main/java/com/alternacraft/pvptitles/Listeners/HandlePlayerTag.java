@@ -33,6 +33,7 @@ import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -55,11 +56,11 @@ public class HandlePlayerTag implements Listener {
     private static final String IGNORED_CHAT_PERM = "pvptitles.hideprefix";
 
     private static PvpTitles plugin;
-    private static Manager cm;
+    private static Manager manager;
 
     public HandlePlayerTag(PvpTitles pt) {
         plugin = pt;
-        cm = pt.getManager();
+        manager = pt.getManager();
     }
 
     public static boolean canDisplayRank(Player pl, String rank) {
@@ -69,8 +70,8 @@ public class HandlePlayerTag implements Listener {
 
     private static boolean isValidWorld(String w) {
         // Compruebo si el mundo esta en la lista de los vetados        
-        if (HandlePlayerTag.cm.params.getAffectedWorlds().contains(w.toLowerCase())) {
-            if (!HandlePlayerTag.cm.params.isTitleShown()) {
+        if (HandlePlayerTag.manager.params.getAffectedWorlds().contains(w.toLowerCase())) {
+            if (!HandlePlayerTag.manager.params.isTitleShown()) {
                 return false;
             }
         }
@@ -87,9 +88,11 @@ public class HandlePlayerTag implements Listener {
     }
 
     private String clearFormat(String format) {
-        if (format.contains(HandlePlayerTag.cm.params.getPrefix())) {
-            format = format.replace(HandlePlayerTag.cm.params.getPrefix(), "");
-        }
+        if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
+            format = format.replaceAll(
+                    Pattern.quote(HandlePlayerTag.manager.params.getPrefix()) + "\\s?", ""
+            );
+        } 
         return format;
     }
 
@@ -99,8 +102,8 @@ public class HandlePlayerTag implements Listener {
         Rank rank = null;
 
         try {
-            int fame = HandlePlayerTag.cm.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-            long seconds = HandlePlayerTag.cm.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
+            int fame = HandlePlayerTag.manager.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
+            long seconds = HandlePlayerTag.manager.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
             rank = RankManager.getRank(fame, seconds, pl);
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -111,23 +114,21 @@ public class HandlePlayerTag implements Listener {
 
         String format = event.getFormat();
 
-        if (rank != null) {
-            // Si ya se ha definido un prefix, en caso de que se de alguna de las condiciones lo elimino
-            if (!HandlePlayerTag.cm.params.displayInChat() || !canDisplayRank(pl, rank.getId())) {
-                clearFormat(format);
-            } else {
-                String rankName = String.format(HandlePlayerTag.cm.params.getPrefixColor()
-                        + rank.getDisplay() + ChatColor.RESET);
+        // Si ya se ha definido un prefix, en caso de que se de alguna de las condiciones lo elimino
+        if (rank != null && HandlePlayerTag.manager.params.displayInChat() 
+                && canDisplayRank(pl, rank.getId())) {
+            
+            String rankName = String.format(HandlePlayerTag.manager.params.getPrefixColor()
+                    + rank.getDisplay() + ChatColor.RESET);
 
-                // Modulo de integracion con plugin de chat
-                if (format.contains(HandlePlayerTag.cm.params.getPrefix())) {
-                    format = format.replace(HandlePlayerTag.cm.params.getPrefix(), rankName);
-                } else {
-                    format = rankName + format;
-                }
+            // Modulo de integracion con plugin de chat
+            if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
+                format = format.replace(HandlePlayerTag.manager.params.getPrefix(), rankName);
+            } else {
+                format = rankName + format;
             }
         } else {
-            clearFormat(format);
+            format = clearFormat(format);
         }
 
         event.setFormat(format);
@@ -141,7 +142,7 @@ public class HandlePlayerTag implements Listener {
      * @param player Player
      */
     public static void holoPlayerLogin(Player player) {
-        if (ISHDENABLED && HandlePlayerTag.cm.params.displayLikeHolo()) {
+        if (ISHDENABLED && HandlePlayerTag.manager.params.displayLikeHolo()) {
             String uuid = player.getUniqueId().toString();
 
             int fame = 0;
@@ -149,13 +150,13 @@ public class HandlePlayerTag implements Listener {
             Rank rank = null;
 
             try {
-                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             try {
-                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -209,14 +210,14 @@ public class HandlePlayerTag implements Listener {
 
             int fame = 0;
             try {
-                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
-                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -253,14 +254,14 @@ public class HandlePlayerTag implements Listener {
 
             int fame = 0;
             try {
-                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
-                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -295,14 +296,14 @@ public class HandlePlayerTag implements Listener {
                     && !player.isSneaking() && !player.isDead()) {
                 int fame = 0;
                 try {
-                    fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                    fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
-                    oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                    oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
@@ -362,14 +363,14 @@ public class HandlePlayerTag implements Listener {
 
             int fame = 0;
             try {
-                fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             long oldTime = 0;
             try {
-                oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -411,14 +412,14 @@ public class HandlePlayerTag implements Listener {
             if (!event.isSneaking() && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 int fame = 0;
                 try {
-                    fame = cm.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                    fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
-                    oldTime = cm.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                    oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
