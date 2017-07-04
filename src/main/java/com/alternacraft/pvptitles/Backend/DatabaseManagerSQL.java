@@ -720,26 +720,22 @@ public class DatabaseManagerSQL implements DatabaseManager {
                         try {
                             lastLogin = new Date(Integer.parseInt(date));
                         } catch (NumberFormatException | NullPointerException e) {
-                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             try {
-                                lastLogin = format.parse(rs.getString("lastLogin"));
+                                lastLogin = format.parse(date);
                             } catch (ParseException ex) {
-                                lastLogin = new Date();
+                                lastLogin = new GregorianCalendar(1978, Calendar.JANUARY, 1).getTime();
                             }
                         }
                     }
-
-                    Calendar date = new GregorianCalendar(1978, Calendar.JANUARY, 1);
-                    lastLogin = (lastLogin == null) ? date.getTime() : lastLogin;
 
                     if (!plugin.getManager().params.getNoPurge().contains(strUUID)) {
                         Calendar lastLoginDate = new GregorianCalendar();
                         lastLoginDate.setTime(lastLogin);
                         lastLoginDate.add(6, q);
 
-                        Date today = new Date();
                         Calendar actualDate = new GregorianCalendar();
-                        actualDate.setTime(today);
+                        actualDate.setTime(new Date());
 
                         if (lastLoginDate.before(actualDate)) {
                             lastLoginDate.setTime(lastLogin); // Remove q time
@@ -804,7 +800,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                         sql_to_export += "insert or ignore into Servers(id, name) values (" + sv.getInt("id")
                                 + ", '" + sv.getString("name") + "');\n";
                         sql_to_export += "update Servers set name='" + sv.getString("name") 
-                                + "' where id=" + sv.getInt("id");
+                                + "' where id=" + sv.getInt("id") + ";\n";
                     }
                 }
             }
@@ -834,9 +830,20 @@ public class DatabaseManagerSQL implements DatabaseManager {
                                         + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
                                         + "lastLogin=VALUES(lastLogin);\n";
                             } else {
+                                DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                String str_date = pm.getString("lastLogin");
+                                try {
+                                    str_date = format.format(new Date(Integer.parseInt(str_date)));
+                                } catch (NumberFormatException | NullPointerException e) {
+                                    try {
+                                        format.parse(str_date);
+                                    } catch (ParseException ex) {
+                                        str_date = format.format(new Date());
+                                    }
+                                }
                                 sql_to_export += "insert or replace into PlayerMeta(psid, points, playedTime, lastLogin) select "
                                         + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
-                                        + ", '" + pm.getDate("lastLogin") + "' from PlayerServer;\n";
+                                        + ", '" + str_date + "' from PlayerServer;\n";
                             }
                         }
                     }

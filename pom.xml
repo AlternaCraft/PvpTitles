@@ -25,11 +25,11 @@
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         
-        <!-- MVdWPlaceholderAPI 
+        <!-- MVdWPlaceholderAPI -->
         <repository>
             <id>mvdw-software</id>
             <url>http://repo.mvdw-software.be/content/groups/public/</url>
-        </repository> -->
+        </repository>
         
         <!-- holographicdisplays API -->
         <repository>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>be.maximvdw</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>         

@@ -93,10 +93,8 @@ public class DBCommand implements CommandExecutor {
 
                 break;
             case "repair":
-                int changes = 0;
-
                 try {
-                    changes = dm.repair();
+                    int changes = dm.repair();
 
                     if (changes > 0) {
                         sender.sendMessage(getPluginName() + ChatColor.YELLOW
