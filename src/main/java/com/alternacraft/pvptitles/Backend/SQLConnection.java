@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.Manager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +45,7 @@ public abstract class SQLConnection {
         return this.connection;
     }
 
-    public boolean isConnected(boolean reconnect) {
+    public boolean isConnected(boolean reconnect) throws DBException {
         boolean valida = false;
 
         if (connection != null) {
@@ -79,7 +80,7 @@ public abstract class SQLConnection {
         } catch (SQLException | AbstractMethodError ex) {}
     }
     
-    protected void update(String sql) {
+    protected void update(String sql) throws DBException {
         if (isConnected(true)) {
             try {
                 this.connection.createStatement().execute(sql);
@@ -170,6 +171,6 @@ public abstract class SQLConnection {
         }
     }    
     
-    public abstract void connectDB(boolean reconnect, String... args);
-    public abstract void load();
+    public abstract void connectDB(boolean reconnect, String... args) throws DBException;
+    public abstract void load() throws DBException;
 }

@@ -1,5 +1,6 @@
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
@@ -35,7 +36,7 @@ public class SQLiteConnection extends SQLConnection {
     }
     
     @Override
-    public void connectDB(boolean reconnect, String... args) {        
+    public void connectDB(boolean reconnect, String... args) throws DBException {        
         try {
             Class.forName(DRIVER_SQLITE);
             connection = DriverManager.getConnection("jdbc:sqlite:" + this.filedir + this.filename);
@@ -46,14 +47,15 @@ public class SQLiteConnection extends SQLConnection {
             if (!reconnect) CustomLogger.logError("SQLite library not found");
                 status = STATUS_AVAILABLE.NOT_CONNECTED;
         } catch (SQLException ex) {
-            if (!reconnect) CustomLogger.logError("SQLite error: " 
-                    + ex.getErrorCode() + "; Using Ebean per default...");
             status = STATUS_AVAILABLE.NOT_CONNECTED;
+            if (!reconnect) 
+                throw new DBException("SQLite error: " + ex.getErrorCode(), 
+                        DBException.DB_METHOD.DB_CONNECT); 
         }   
     }
 
     @Override
-    public void load() {
+    public void load() throws DBException {
         update(getTableServers());
         update(getTablePlayerServer());
         update(getTablePlayerMeta());
@@ -63,8 +65,11 @@ public class SQLiteConnection extends SQLConnection {
     }
     
     public static String getTriggerMeta() {
-        return "CREATE TRIGGER IF NOT EXISTS 'create_player_meta' AFTER INSERT ON 'PlayerServer' "
-                + "BEGIN INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver;"
-                + "UPDATE PlayerMeta SET lastlogin = (SELECT DATE()) WHERE psid = (SELECT max(id) FROM playerserver); END;";
+        return "CREATE TRIGGER IF NOT EXISTS 'create_player_meta' "
+                + "AFTER INSERT ON 'PlayerServer' BEGIN "
+                    + "INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver;"
+                    + "UPDATE PlayerMeta SET lastlogin = (SELECT DATE()) WHERE "
+                        + "psid = (SELECT max(id) FROM playerserver;"
+                + "END;";
     }
 }

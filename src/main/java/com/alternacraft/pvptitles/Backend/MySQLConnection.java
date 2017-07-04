@@ -16,6 +16,7 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
+import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import java.sql.DriverManager;
@@ -47,14 +48,14 @@ public class MySQLConnection extends SQLConnection {
             this.status = STATUS_AVAILABLE.NOT_CONNECTED;
         } catch (SQLException ex) {
             if (!reconnect) CustomLogger.logError(((ex.getErrorCode() == 0)
-                    ? "Could not connect to MySQL DB" : "MySQL error: " + ex.getErrorCode())
+                    ? "Could not connect to MySQL" : "MySQL error: " + ex.getErrorCode())
                     + "; Using " + Manager.getInstance().params.getDefaultDB() + " per default...");
             this.status = STATUS_AVAILABLE.NOT_CONNECTED;
         }
     }
     
     @Override
-    public void load() {
+    public void load() throws DBException {
         update(getTableServers() + INNO_DB);
         update(getTablePlayerServer() + INNO_DB);
         update(getTablePlayerMeta() + INNO_DB);

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -226,7 +227,14 @@ public class FileConfig {
 
         // Old value <- This is the point
         if (oldFile.contains(cKey)) {
-            v = oldFile.get(cKey); // Restore old value
+            boolean ignore = false;
+            if (cKey.equals("DefaultDatabase")) {
+                if (oldFile.get(cKey).toString().compareToIgnoreCase("ebean") == 0) {
+                    ignore = true;
+                }
+            }
+            if (!ignore)
+                v = oldFile.get(cKey); // Restore old value
         }
 
         // Default output [For nodes]

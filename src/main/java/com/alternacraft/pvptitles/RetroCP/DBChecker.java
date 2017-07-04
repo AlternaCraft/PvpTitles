@@ -16,28 +16,17 @@
  */
 package com.alternacraft.pvptitles.RetroCP;
 
-import com.alternacraft.pvptitles.Backend.EbeanConnection;
-import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
 import com.alternacraft.pvptitles.Backend.SQLConnection;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
-import com.alternacraft.pvptitles.RetroCP.oldTables.PlayerWTable;
-import com.alternacraft.pvptitles.RetroCP.oldTables.TimeTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.bukkit.ChatColor;
 
 public class DBChecker {
 
-    /* Ebean */
-    public static final short EBEAN_NEW_STRUCTURE_CREATED = 4;
-    public static final short EBEAN_TIME_CREATED = 3;
-    public static final short EBEAN_MW_CREATED = 2;
-    public static final short EBEAN_OLD_VERSION = 1;
     /* MySQL */
     public static final short MYSQL_NEW_STRUCTURE_CREATED = 3;
     public static final short MYSQL_TIME_CREATED = 2;
@@ -51,53 +40,9 @@ public class DBChecker {
 
     public boolean setup() {
         switch (tipo) {
-            case EBEAN:
-                return this.checkEbeanDB();
             case MYSQL:
                 this.checkMySQLDB();
         }
-
-        return true;
-    }
-
-    @SuppressWarnings("UnusedAssignment")
-    public boolean checkEbeanDB() {
-        EbeanConnection ebeanserver = plugin.getManager().dbh.ebeanServer;
-        RetroDMEbean rdm = new RetroDMEbean(plugin, ebeanserver);
-
-        int status = EBEAN_OLD_VERSION;
-
-        try {
-            ebeanserver.getDatabase().find(PlayerPT.class).findList(); // Cualquiera de las nuevas vale
-            status = EBEAN_NEW_STRUCTURE_CREATED;
-        } catch (Exception e1) {
-            try {
-                ebeanserver.getDatabase().find(PlayerWTable.class).findList();
-                status = EBEAN_MW_CREATED;
-                ebeanserver.getDatabase().find(TimeTable.class).findList();
-                status = EBEAN_TIME_CREATED;
-            } catch (Exception e2) {
-            }
-            
-            rdm.exportarData(status);
-
-            showMessage(ChatColor.RED + "Ebean database structure has changed...");
-            showMessage(ChatColor.RED + "Please remove 'PvpTitles.db' to load the plugin.");
-            showMessage(ChatColor.RED + "Don't worry, you won't lose data.");
-
-            return false;
-        }
-
-        rdm.conversor();
-        rdm.conversorUUID();
-
-        try {
-            plugin.getManager().getDbh().getDm().DBImport(RetroDMEbean.FILENAME);
-        } catch (DBException ex) {
-            CustomLogger.logArrayError(ex.getCustomStackTrace());
-        }
-        UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append(RetroDMEbean.FILENAME).toString());
 
         return true;
     }

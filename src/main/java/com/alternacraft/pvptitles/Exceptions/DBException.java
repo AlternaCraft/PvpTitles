@@ -59,7 +59,8 @@ public class DBException extends CustomException {
         PURGE_DATA,
         DB_EXPORT,
         DB_IMPORT,
-        REPAIR
+        REPAIR,
+        DB_CONNECT
     }
 
     private enum POSSIBLE_ERRORS {

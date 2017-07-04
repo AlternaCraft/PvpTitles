@@ -16,9 +16,6 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Backend.EbeanTables.PlayerPT;
-import com.alternacraft.pvptitles.Backend.EbeanTables.SignPT;
-import com.alternacraft.pvptitles.Backend.EbeanTables.WorldPlayerPT;
 import com.alternacraft.pvptitles.Backend.SQLConnection.STATUS_AVAILABLE;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
@@ -31,30 +28,30 @@ import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import com.alternacraft.pvptitles.Misc.TagsClass;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 public class DatabaseManagerSQL implements DatabaseManager {
 
@@ -701,12 +698,12 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
         return nombre;
     }
-
+    
     @Override
     public int purgeData(int q) throws DBException {
         int contador = 0;
 
-        String data = "select id, playerUUID, lastLogin from PlayerServer "
+        String data = "select id, playerUUID, points, lastLogin from PlayerServer "
                 + "inner join PlayerMeta on id=psid";
         String purge = "delete from PlayerServer where id=?";
 
@@ -722,7 +719,17 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     if (sql instanceof MySQLConnection) {
                         lastLogin = rs.getDate("lastLogin");
                     } else {
-                        lastLogin = new Date(rs.getInt("lastLogin"));
+                        String date = rs.getString("lastLogin");
+                        try {
+                            lastLogin = new Date(Integer.parseInt(date));
+                        } catch (NumberFormatException | NullPointerException e) {
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                            try {
+                                lastLogin = format.parse(rs.getString("lastLogin"));
+                            } catch (ParseException ex) {
+                                lastLogin = new Date();
+                            }
+                        }
                     }
 
                     Calendar date = new GregorianCalendar(1978, Calendar.JANUARY, 1);
@@ -750,10 +757,11 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
                             // Log settings
                             UUID uuid = UUID.fromString(strUUID);
+                            int points = rs.getInt("points");
                             int time = (int) ((actualDate.getTimeInMillis() - lastLoginDate.getTimeInMillis()) / 1000);
                             l.addMessage("Player " + Bukkit.getOfflinePlayer(uuid).getName()
-                                    + " has been removed. AFK time: "
-                                    + StrUtils.splitToComponentTimes(time));
+                                    + " has been removed. Points: " + points 
+                                    + "; AFK time: " + StrUtils.splitToComponentTimes(time));
                         }
                     }
                 }
@@ -775,111 +783,10 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
     @Override
     public void DBExport(String filename) throws DBException {
-        toJSON(filename + ".json");
-        toSQL(filename + ".sql");
-    }
-    
-    private void toJSON(String filename) throws DBException {
         String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
                 .append(filename).toString();
 
-        short serverID = plugin.getManager().params.getMultiS();
-
-        List<PlayerPT> plClass = new ArrayList();
-        List<WorldPlayerPT> plwClass = new ArrayList();
-        List<SignPT> signClass = new ArrayList();
-
-        String players = "select * from PlayerServer inner join PlayerMeta "
-                + "on id=psid where serverID=" + serverID;
-        String playersPerWorld = "select * from PlayerServer inner join PlayerWorld "
-                + "on id=psid where serverID=" + serverID;
-        String signs = "select * from Signs where serverID=" + serverID;
-
-        try {
-            try (ResultSet prs = sql.getConnection().createStatement().executeQuery(players)) {
-                while (prs.next()) {
-                    PlayerPT pl = new PlayerPT();
-                    pl.setPlayerUUID(prs.getString("playerUUID"));
-                    pl.setPoints(prs.getInt("points"));
-                    pl.setPlayedTime(prs.getLong("playedTime"));
-                    // Int to date
-                    if (sql instanceof MySQLConnection) {
-                        pl.setLastLogin(prs.getDate("lastLogin"));
-                    } else {
-                        pl.setLastLogin(new Date(prs.getInt("lastLogin")));
-                    }                                        
-                    plClass.add(pl);
-                }
-            }
-
-            try (ResultSet pwrs = sql.getConnection().createStatement().executeQuery(playersPerWorld)) {
-                while (pwrs.next()) {
-                    WorldPlayerPT plWorld = new WorldPlayerPT();
-                    plWorld.setPlayerUUID(pwrs.getString("playerUUID"));
-                    plWorld.setPoints(pwrs.getInt("points"));
-                    plWorld.setWorld(pwrs.getString("worldName"));
-                    plwClass.add(plWorld);
-                }
-            }
-
-            try (ResultSet srs = sql.getConnection().createStatement().executeQuery(signs)) {
-                while (srs.next()) {
-                    World w = plugin.getServer().getWorld(srs.getString("world"));
-                    int x = srs.getInt("x");
-                    int y = srs.getInt("y");
-                    int z = srs.getInt("z");
-
-                    SignPT sg = new SignPT();
-                    sg.setName(srs.getString("name"));
-                    sg.setModel(srs.getString("signModel"));
-                    sg.setOrientation(srs.getString("orientation"));
-                    sg.setBlockface(srs.getShort("blockface"));
-                    sg.setLocation(new Location(w, x, y, z));
-                    signClass.add(sg);
-                }
-            }
-        } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage()) {
-                {
-                    this.setStackTrace(ex.getStackTrace());
-                }
-            };
-        }
-
-        // Estilo
-        JsonParser parser = new JsonParser();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        JSONObject jo = new JSONObject();
-
-        JSONArray jsPlayers = new JSONArray();
-        JSONArray jsSigns = new JSONArray();
-        JSONArray jsWorldPlayers = new JSONArray();
-
-        for (PlayerPT next : plClass) {
-            jsPlayers.add(TagsClass.createPlayer(next));
-        }
-        jo.put("Players", jsPlayers);
-
-        for (SignPT next : signClass) {
-            jsSigns.add(TagsClass.createSign(next));
-        }
-        jo.put("Signs", jsSigns);
-
-        for (WorldPlayerPT next : plwClass) {
-            jsWorldPlayers.add(TagsClass.createPlayerW(next));
-        }
-        jo.put("PlayersPerWorld", jsWorldPlayers);
-
-        // Escribo el fichero
-        JsonElement el = parser.parse(jo.toJSONString());
-        UtilsFile.writeFile(ruta, gson.toJson(el));
-    }
-    
-    private void toSQL(String filename) throws DBException {
-        String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
-                .append(filename).toString();
-
+        boolean mysql = this.sql instanceof MySQLConnection;
         String sql_to_export = "";
 
         String servers = "select * from Servers";
@@ -893,28 +800,47 @@ public class DatabaseManagerSQL implements DatabaseManager {
         try {
             try (ResultSet sv = this.sql.getConnection().createStatement().executeQuery(servers)) {
                 while (sv.next()) {
-                    sql_to_export += "insert into Servers(id, name) values (" + sv.getInt("id")
-                            + ", '" + sv.getString("name") + "') ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
+                    if (mysql) {
+                        sql_to_export += "insert into Servers(id, name) values (" + sv.getInt("id")
+                                + ", '" + sv.getString("name") + "') ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
+                    } else {
+                        sql_to_export += "insert or ignore into Servers(id, name) values (" + sv.getInt("id")
+                                + ", '" + sv.getString("name") + "');\n";
+                        sql_to_export += "update Servers set name='" + sv.getString("name") 
+                                + "' where id=" + sv.getInt("id");
+                    }
                 }
             }
 
             try (ResultSet ps = this.sql.getConnection().createStatement().executeQuery(playerserver)) {
                 while (ps.next()) {
-                    sql_to_export += "insert into PlayerServer(id, playerUUID, serverID) select "
-                            + "max(id)+1, '" + ps.getString("playerUUID") + "', "
-                            + ps.getShort("serverID") + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
-
+                    if (mysql) {
+                        sql_to_export += "insert into PlayerServer(id, playerUUID, serverID) select "
+                                + "max(id)+1, '" + ps.getString("playerUUID") + "', "
+                                + ps.getShort("serverID") + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
+                    } else {
+                        sql_to_export += "insert or replace into PlayerServer(id, playerUUID, serverID) select "
+                                + "max(id)+1, '" + ps.getString("playerUUID") + "', "
+                                + ps.getShort("serverID") + " from PlayerServer;\n";
+                    }
+                    
                     int id = ps.getInt("id");
                     
                     PreparedStatement statement = this.sql.getConnection().prepareStatement(playermeta);
                     statement.setInt(1, id);                    
                     try (ResultSet pm = statement.executeQuery()) {
                         if (pm.next()) {
-                            sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
-                                    + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
-                                    + ", '" + pm.getDate("lastLogin") + "' from PlayerServer "
-                                    + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
-                                    + "lastLogin=VALUES(lastLogin);\n";
+                            if (mysql) {
+                                sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                                        + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
+                                        + ", '" + pm.getDate("lastLogin") + "' from PlayerServer "
+                                        + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
+                                        + "lastLogin=VALUES(lastLogin);\n";
+                            } else {
+                                sql_to_export += "insert or replace into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                                        + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
+                                        + ", '" + pm.getDate("lastLogin") + "' from PlayerServer;\n";
+                            }
                         }
                     }
 
@@ -922,11 +848,17 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     statement.setInt(1, id);
                     try (ResultSet pw = statement.executeQuery()) {
                         while (pw.next()) {
-                            sql_to_export += "insert into PlayerWorld(psid, worldName, points) select "
-                                    + "max(id), '" + pw.getString("worldName") + "', "
-                                    + pw.getInt("points") + " from PlayerServer "
-                                    + "ON DUPLICATE KEY UPDATE worldName=VALUES"
-                                    + "(worldName),points=VALUES(points);\n";
+                            if (mysql) {
+                                sql_to_export += "insert into PlayerWorld(psid, worldName, points) select "
+                                        + "max(id), '" + pw.getString("worldName") + "', "
+                                        + pw.getInt("points") + " from PlayerServer "
+                                        + "ON DUPLICATE KEY UPDATE worldName=VALUES"
+                                        + "(worldName),points=VALUES(points);\n";
+                            } else {
+                                sql_to_export += "insert or replace into PlayerWorld(psid, worldName, points) select "
+                                        + "max(id), '" + pw.getString("worldName") + "', "
+                                        + pw.getInt("points") + " from PlayerServer;\n";
+                            }
                         }
                     }
                 }
@@ -934,7 +866,11 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
             try (ResultSet s = this.sql.getConnection().createStatement().executeQuery(signs)) {
                 if (s.next()) {
-                    sql_to_export += "insert into Signs values";
+                    if (mysql) {
+                        sql_to_export += "insert into Signs values";
+                    } else {
+                        sql_to_export += "insert or replace into Signs values";
+                    }
                     s.previous();
                     while (s.next()) {
                         sql_to_export += "('" + s.getString("name") + "', '" + s.getString("signModel")
@@ -943,10 +879,12 @@ public class DatabaseManagerSQL implements DatabaseManager {
                                 + ", '" + s.getString("world") + "', " + s.getInt("x")
                                 + ", " + s.getInt("y") + ", " + s.getInt("z") + "),";
                     }
-                    sql_to_export = sql_to_export.substring(0, sql_to_export.length() - 1); // Quito la coma sobrante
-                    sql_to_export += " ON DUPLICATE KEY UPDATE name=VALUES(name),signModel=VALUES(signModel),"
-                            + "dataModel=VALUES(dataModel),orientation=VALUES(orientation),"
-                            + "blockface=VALUES(blockface);";
+                    if (mysql) {
+                        sql_to_export = sql_to_export.substring(0, sql_to_export.length() - 1); // Quito la coma sobrante
+                        sql_to_export += " ON DUPLICATE KEY UPDATE name=VALUES(name),signModel=VALUES(signModel),"
+                                + "dataModel=VALUES(dataModel),orientation=VALUES(orientation),"
+                                + "blockface=VALUES(blockface);";
+                    }
                 }
             }
         } catch (final SQLException ex) {
@@ -957,7 +895,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
             };
         }
 
-        UtilsFile.writeFile(ruta, sql_to_export);        
+        UtilsFile.writeFile(ruta, sql_to_export);
     }
 
     @Override
@@ -970,12 +908,30 @@ public class DatabaseManagerSQL implements DatabaseManager {
         }
 
         List<String> sql = UtilsFile.getFileLines(ruta);
-
+        boolean sqlite = this.sql instanceof SQLiteConnection;
+        Pattern r = Pattern.compile("values \\((-?\\d+),\\s'(.*)'\\)");
+        
         for (String consulta : sql) {
-            try {
-                try (PreparedStatement ps = this.sql.getConnection().prepareStatement(consulta)) {
-                    ps.executeUpdate();
+            // Minor fix for old queries
+            if (sqlite && consulta.contains("create table"))
+                continue;
+            if (sqlite && consulta.contains("ON DUPLICATE")) {
+                if (consulta.contains("Servers")) {
+                    Matcher m = r.matcher(Pattern.quote(consulta));
+                    consulta = "insert or ignore " + consulta.substring(consulta.indexOf("into"), 
+                            consulta.indexOf(" ON DUPLICATE KEY")) + ";";
+                    if (m.find()) {
+                        String id = m.group(1), name = m.group(2);
+                        consulta += "update Servers set name='" + name + "' where id=" + id;
+                    }
+                } else {
+                    consulta = "insert or replace " + consulta.substring(consulta.indexOf("into"), 
+                            consulta.indexOf(" ON DUPLICATE KEY")) + ";";
                 }
+            }
+            
+            try {
+                this.sql.getConnection().createStatement().executeUpdate(consulta);
             } catch (final SQLException ex) {
                 throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage()) {
                     {

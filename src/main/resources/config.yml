@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.7
+Version: 2.7.2
 ################
 
 ############################################################
@@ -32,8 +32,7 @@ Debug: false
 ErrorFormat: 2
 
 # Options (No case sensitive):
-# - Ebean - Use with care, a bad performance was reported.
-# - SQLite - Like Ebean but faster (Should use this)
+# - SQLite
 DefaultDatabase: SQLite
 
 ############################################################
@@ -42,7 +41,7 @@ DefaultDatabase: SQLite
 # +------------------------------------------------------+ #
 ############################################################
 
-# False to work with ebean.
+# False to work with SQLite.
 # True to hook {connect} into the existing server MySQL.
 Mysql:
     enable: false       
@@ -262,7 +261,7 @@ PrefixColor: green
 # Number of the top players that will be shown in chat with the pvpladder command.
 Top: 5
 
-# Prefix in the chat to replace (Use double quotes to work)
+# Prefix in the chat to replace
 Prefix: "{PVPTITLE}"
 # If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat.
 

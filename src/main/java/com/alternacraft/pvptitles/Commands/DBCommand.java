@@ -20,7 +20,6 @@ import com.alternacraft.pvptitles.Backend.DatabaseManager;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
@@ -62,7 +61,7 @@ public class DBCommand implements CommandExecutor {
                 } else {
                     filename = FILENAME_EXPORT_IMPORT;
                 }
-                filename += (DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".sql" : "";
+                filename += ".sql";
 
                 try {
                     dm.DBExport(filename);
@@ -78,7 +77,7 @@ public class DBCommand implements CommandExecutor {
                 } else {
                     filename = FILENAME_EXPORT_IMPORT;
                 }
-                filename += (DBLoader.tipo == DBLoader.DBTYPE.EBEAN) ? ".json" : ".sql";
+                filename += ".sql";
 
                 try {
                     if (dm.DBImport(filename)) {
