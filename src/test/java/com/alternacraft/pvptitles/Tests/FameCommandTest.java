@@ -115,7 +115,7 @@ public class FameCommandTest extends TestBase {
 
         OfflinePlayer mockOPlayer = mock(OfflinePlayer.class);
 
-        when(UUIDFetcher.getIDPlayer(anyString())).thenReturn(UUID.randomUUID());
+        when(UUIDFetcher.getUUIDPlayer(anyString())).thenReturn(UUID.randomUUID());
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(mockOPlayer);
 
         // Database

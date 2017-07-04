@@ -24,8 +24,6 @@ import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.FileConfig;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -39,17 +37,19 @@ public class ConfigLoader {
         this.pvpTitles = pvpTitles;
     }
 
-    public void loadConfig(ConfigDataStore params) {
+    public ConfigDataStore loadConfig() {
         customConfig = new FileConfig(pvpTitles);
-        loadData(params);
+        return loadData();
     }
 
     /**
      * Método para cargar la informacion del config principal
-     *
-     * @param params ConfigDataStore
+     * 
+     * @return Configuration loaded.
      */
-    protected void loadData(ConfigDataStore params) {
+    protected ConfigDataStore loadData() {
+        ConfigDataStore params = new ConfigDataStore(); // Reset all on reload
+        
         // Set debug mode
         FileConfiguration config = getConfig();
 
@@ -92,13 +92,7 @@ public class ConfigLoader {
         params.setTitle(config.getBoolean("MW-filter.title"));
         params.setPoints(config.getBoolean("MW-filter.points"));
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
-        params.getAffectedWorlds().clear();
-        params.getAffectedWorlds().addAll(config.getStringList("MW-filter.affected-worlds"));
-        // Todos los mundos a minusculas
-        ListIterator<String> iterator = params.getAffectedWorlds().listIterator();
-        while (iterator.hasNext()) {
-            iterator.set(iterator.next().toLowerCase());
-        }
+        params.setAffectedWorlds(config.getStringList("MW-filter.affected-worlds"));
 
         // Events
         params.setLBRefresh((short) config.getInt("LBRefresh"));
@@ -106,8 +100,7 @@ public class ConfigLoader {
 
         // PURGE
         params.setPurgeTime((short) config.getInt("TimeP"));
-        params.getNoPurge().clear();
-        params.getNoPurge().addAll(config.getStringList("NoPurge"));
+        params.setNoPurgePlayers(config.getStringList("NoPurge"));
 
         // ANTIFARM
         params.setMaxKills((short) config.getInt("Kills"));
@@ -117,10 +110,8 @@ public class ConfigLoader {
         params.setCheckAFK(config.getBoolean("CheckAFK"));
         params.setAFKTime((short) config.getInt("AFKTime"));
 
-        // MULTIPLIERS
-        String[] types = {"RMoney", "RPoints", "RTime", "Points", "Time"};
-
-        for (String type : types) {
+        // MULTIPLIERS        
+        for (String type : ConfigDataStore.MP_TYPES) {
             Set<String> mults = config.getConfigurationSection("Multipliers." + type).getKeys(false);
             mults.forEach(mult -> {
                 double value = config.getDouble("Multipliers." + type + "." + mult);
@@ -132,10 +123,7 @@ public class ConfigLoader {
         }
         
         // POINTS
-        List<String> options = config.getStringList("ResetOptions");
-        options.forEach(option -> {
-            params.addResetOption(option);
-        });
+        params.setResetOptions(config.getStringList("ResetOptions"));
         params.setAddDeathOnlyByPlayer(config.getBoolean("AddDeathOnlyByPlayer"));
         params.setResetOnPlayerLeaving(config.getBoolean("ResetOnPlayerLeaving"));
         
@@ -197,6 +185,8 @@ public class ConfigLoader {
 
             RankManager.addRank(new Rank(rank, points, display, time, restricted));
         });
+        
+        return params;
     }
 
     public FileConfiguration getConfig() {

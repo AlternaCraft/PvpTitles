@@ -728,7 +728,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                             }
                         }
                     }
-
+                    
                     if (!plugin.getManager().params.getNoPurge().contains(strUUID)) {
                         Calendar lastLoginDate = new GregorianCalendar();
                         lastLoginDate.setTime(lastLogin);

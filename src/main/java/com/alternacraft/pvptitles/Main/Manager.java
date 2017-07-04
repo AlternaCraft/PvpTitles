@@ -101,7 +101,6 @@ public final class Manager {
         modelos = new ArrayList();
         rewards = new HashMap();
         servers = new HashMap();
-        params = new ConfigDataStore();
     }
 
     /**
@@ -127,8 +126,8 @@ public final class Manager {
         this.pvpTitles = plugin;
 
         this.ch = new ConfigLoader(plugin);
-        this.ch.loadConfig(params);
-
+        this.reloadConfig();
+        
         this.lbm = new LeaderBoardManager(plugin);
 
         // Registro los managers del timing
@@ -165,6 +164,10 @@ public final class Manager {
     /**
      * Método para cargar los modelos del bloc de notas
      */
+    public void reloadConfig() {
+        this.params = this.ch.loadConfig();
+    }
+    
     public void loadModels() {
         ModelsFile contenido = new ModelsFile();
 

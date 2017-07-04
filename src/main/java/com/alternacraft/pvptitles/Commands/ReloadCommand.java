@@ -55,7 +55,7 @@ public class ReloadCommand implements CommandExecutor {
 
         RankManager.clear(); // Clear registered ranks
         
-        pvpTitles.getManager().getCh().loadConfig(pvpTitles.getManager().params);
+        pvpTitles.getManager().reloadConfig();
 
         pvpTitles.getManager().getMovementManager().updateTimeAFK();
         

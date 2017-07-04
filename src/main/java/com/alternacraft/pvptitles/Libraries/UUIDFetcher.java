@@ -54,6 +54,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         this(names, true);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="INNER CODE">
     @Override
     public Map<String, UUID> call() {
         Map<String, UUID> uuidMap = new HashMap<>();
@@ -120,28 +121,29 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
             return null;
         }
     }
+    //</editor-fold>
 
     /**
-     * Método custom para obtener un uuid según el tipo de servidor
+     * Método para obtener un UUID según el tipo de servidor
      * 
      * <ul>
-     * <li>Si el server está en modo online utiliza lo obtenido por la API</li>
-     * <li>Si el server está en modo offline utiliza el método getOfflinePlayer
-     *  <ul>
-     *      <li>
-     *          Si el jugador Juan está online y el jugador juan no, este método
-     *          no funciona correctamente al intentar asignarle el valor a juan.
-     *          (En caso de que ambos no hayan entrado antes al server)
-     *      </li>
-     *  </ul>
-     * </li>
+     *  <li>Si el server está en modo online utiliza lo obtenido por la API</li>
+     *  <li>Si el server está en modo offline utiliza el método getOfflinePlayer
+     *      <ul>
+     *          <li>
+     *              Si el jugador Juan está online y el jugador juan no, este método
+     *              no funciona correctamente al intentar asignarle el valor a juan.
+     *              (En caso de que ambos no hayan entrado antes al server)
+     *          </li>
+     *      </ul>
+     *  </li>
      * </ul>
      *
      * @param name Nombre del jugador
      * @return UUID
      */
-    public static UUID getIDPlayer(String name) {
-        UUID uuid = null;
+    public static UUID getUUIDPlayer(String name) {
+        UUID uuid;
 
         // Comprobacion case sensitive, si ha entrado alguna vez
         OfflinePlayer[] offplayers = Bukkit.getServer().getOfflinePlayers();
@@ -150,11 +152,12 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
                 return offplayer.getUniqueId();                
             }
         }
-
+        
         if (Bukkit.getServer().getOnlineMode()) {
             // Puede no haber entrado
             uuid = UUIDFetcher.getUUIDOf(name);
         } else {
+            // Metodo guarro
             uuid = Bukkit.getServer().getOfflinePlayer(name).getUniqueId();
         }
 

@@ -17,6 +17,7 @@
 package com.alternacraft.pvptitles.Backend;
 
 import com.alternacraft.pvptitles.Hooks.VaultHook;
+import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
 import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import static org.bukkit.ChatColor.valueOf;
 import org.bukkit.OfflinePlayer;
@@ -65,7 +67,7 @@ public class ConfigDataStore {
     private boolean mw_enabled = false;
 
     // Atributo con los mundos
-    private final List<String> mundos = new ArrayList();
+    private final List<String> affected_worlds = new ArrayList();
     // Atributo para mostrar o no los titulos en el chat de los mundos escritos
     private boolean title = false;
     // Atributo para permitir ganar puntos de fama a los jugadores en los mundos escritos
@@ -83,7 +85,7 @@ public class ConfigDataStore {
 
     /* PURGE */
     // Lista de jugadores que NO seran borrados por el comando
-    private final List<String> noPurge = new ArrayList();
+    private final List<String> noPurgePlayers = new ArrayList();
     // Tiempo necesario para que un registro sea entendido como inactivo
     private short purgeTime = 0;
 
@@ -101,6 +103,7 @@ public class ConfigDataStore {
 
     /* POINTS */
     // Multipliers
+    public static final String[] MP_TYPES = {"RMoney", "RPoints", "RTime", "Points", "Time"};
     private Map<String, Map<String, Double>> multipliers = new HashMap();
     // Killstreak
     private final List<String> resetOptions = new ArrayList();
@@ -201,6 +204,14 @@ public class ConfigDataStore {
     public void setRankChecker(short rankChecker) {
         if (rankChecker > 0) this.rankChecker = rankChecker;
     }
+    
+    public void setNoPurgePlayers(List<String> no_pp) {        
+        no_pp.forEach(name -> {
+            UUID uuid = UUIDFetcher.getUUIDPlayer(name);
+            if (!this.noPurgePlayers.contains(uuid.toString()))
+                this.noPurgePlayers.add(uuid.toString());
+        });
+    }
 
     public void setPurgeTime(short timeP) {
         if (timeP > 0) this.purgeTime = timeP;
@@ -257,10 +268,11 @@ public class ConfigDataStore {
         return true;
     }
 
-    public void addResetOption(String resetOption) {
-        if (!this.resetOptions.contains(resetOption)) {
-            this.resetOptions.add(resetOption);
-        }
+    public void setResetOptions(List<String> resetOptions) {
+        resetOptions.forEach(option -> {
+            if (!this.resetOptions.contains(option))
+                this.resetOptions.add(option);
+        });
     }
 
     public void setAddDeathOnlyByPlayer(boolean addDeathOnlyByPlayer) {
@@ -311,6 +323,13 @@ public class ConfigDataStore {
         this.defaultDB = defaultDB;
     }
 
+    public void setAffectedWorlds(List<String> worlds) {
+        worlds.forEach(w -> {
+            if (!this.affected_worlds.contains(w.toLowerCase()))
+                this.affected_worlds.add(w.toLowerCase());
+        });
+    }
+    
     public void setTitle(boolean title) {
         this.title = title;
     }
@@ -538,11 +557,11 @@ public class ConfigDataStore {
     }
 
     public List<String> getAffectedWorlds() {
-        return mundos;
+        return affected_worlds;
     }
 
     public List<String> getNoPurge() {
-        return noPurge;
+        return noPurgePlayers;
     }
 
     public boolean isUpdate() {

@@ -78,7 +78,7 @@ public class FameCommand implements CommandExecutor {
         if (args.length < 1) {
             return false;
         } else if (args.length > 1) {            
-            UUID uuid = UUIDFetcher.getIDPlayer(args[1]);
+            UUID uuid = UUIDFetcher.getUUIDPlayer(args[1]);
 
             // Evitar NullPointerException
             if (uuid == null) {
