@@ -23,7 +23,6 @@ import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Backend.SQLConnection;
 import com.alternacraft.pvptitles.Backend.SQLiteConnection;
 import com.alternacraft.pvptitles.Exceptions.DBException;
-import com.alternacraft.pvptitles.Exceptions.DBException.DB_METHOD;
 import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
