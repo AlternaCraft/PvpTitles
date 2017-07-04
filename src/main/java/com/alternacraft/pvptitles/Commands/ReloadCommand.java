@@ -72,7 +72,7 @@ public class ReloadCommand implements CommandExecutor {
             pvpTitles.getManager().loadServers();
         }
 
-        pvpTitles.getManager().loadActualizador();
+        pvpTitles.getManager().loadBoardUpdater();
         pvpTitles.getManager().loadRankTimeChecker();
 
         if (HolographicHook.ISHDENABLED && pvpTitles.getManager().params.displayLikeHolo()) {

@@ -153,7 +153,7 @@ public final class Manager {
             this.loadServers();
         }
 
-        this.loadActualizador();
+        this.loadBoardUpdater();
         this.loadRankTimeChecker();
 
         return true;
@@ -368,7 +368,7 @@ public final class Manager {
     /**
      * Método para ejecutar el evento que actualiza los carteles
      */
-    public void loadActualizador() {
+    public void loadBoardUpdater() {
         // Elimino el evento en caso de que estuviera ya creado
         if (this.eventoActualizador != -1) {
             pvpTitles.getServer().getScheduler().cancelTask(eventoActualizador);
@@ -462,15 +462,6 @@ public final class Manager {
         showMessage(ChatColor.YELLOW + "Rank Checker event [" + this.params.getRankChecker()
                 + " sec]" + ChatColor.AQUA + " loaded correctly."
         );
-    }
-
-    public void stopTasks() {
-        if (this.eventoChecker != -1) {
-            pvpTitles.getServer().getScheduler().cancelTask(eventoChecker);
-        }
-        if (this.eventoActualizador != -1) {
-            pvpTitles.getServer().getScheduler().cancelTask(eventoActualizador);
-        }
     }
 
     // </editor-fold>
