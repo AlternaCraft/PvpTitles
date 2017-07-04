@@ -24,9 +24,6 @@ import java.sql.SQLException;
 
 public class MySQLConnection extends SQLConnection {
 
-    /**
-     * constante DRIVER para definir el conector jdbc
-     */
     private static final String SUPRESS_WARNING = "?verifyServerCertificate=false&useSSL=";
     private static final String INNO_DB = " ENGINE=InnoDB;";
 
@@ -56,13 +53,13 @@ public class MySQLConnection extends SQLConnection {
     
     @Override
     public void load() throws DBException {
-        update(getTableServers() + INNO_DB);
-        update(getTablePlayerServer() + INNO_DB);
-        update(getTablePlayerMeta() + INNO_DB);
-        update(getTablePlayerWorld() + INNO_DB);
-        update(getTableSigns() + INNO_DB);
-        update(getTriggerMeta());
-        update(getTriggerMeta2());
+        slowUpdate(getTableServers() + INNO_DB);
+        slowUpdate(getTablePlayerServer() + INNO_DB);
+        slowUpdate(getTablePlayerMeta() + INNO_DB);
+        slowUpdate(getTablePlayerWorld() + INNO_DB);
+        slowUpdate(getTableSigns() + INNO_DB);
+        slowUpdate(getTriggerMeta());
+        slowUpdate(getTriggerMeta2());
     }   
     
     public static String getTriggerMeta() {

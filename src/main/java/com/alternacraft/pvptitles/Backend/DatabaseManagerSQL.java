@@ -140,8 +140,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
                 try (ResultSet rs = playerExists.executeQuery()) {
                     if (!rs.next()) {
-                        try (ResultSet rss = sql.getConnection().createStatement()
-                                .executeQuery("select max(id) from PlayerServer")) {
+                        try (ResultSet rss = sql.query("select max(id) from PlayerServer")) {
                             psid = (rss.next()) ? rss.getInt("max(id)") + 1 : 0;
                         }                        
                         try (PreparedStatement registraPlayer = sql.getConnection()
@@ -443,12 +442,12 @@ public class DatabaseManagerSQL implements DatabaseManager {
         ArrayList rankedPlayers = new ArrayList();
 
         HashMap<Short, List<String>> servidores = plugin.getManager().servers.get(server);
-        String sql;
+        String query;
 
         if (plugin.getManager().params.isMw_enabled()) {
-            sql = TOPMWPLAYERS;
+            query = TOPMWPLAYERS;
         } else {
-            sql = TOPPLAYERS;
+            query = TOPPLAYERS;
         }
 
         // <editor-fold defaultstate="collapsed" desc="QUERY MAKER">
@@ -469,51 +468,51 @@ public class DatabaseManagerSQL implements DatabaseManager {
         if (!server.equals("") && servidores != null && plugin.getManager().servers.containsKey(server)) {
             // Si hay un '-1' recojo los jugadores de todos los servers
             if (servidores.size() > 0 && !servidores.containsKey(-1)) {
-                sql += " where";
+                query += " where";
                 for (Short serverID : servidores.keySet()) {
-                    sql += " (serverID = " + serverID;
+                    query += " (serverID = " + serverID;
 
                     if (plugin.getManager().params.isMw_enabled() && !servidores.get(serverID).isEmpty()) {
-                        sql += " AND (";
+                        query += " AND (";
                         for (String mundoElegido : servidores.get(serverID)) {
-                            sql += "worldName like '" + mundoElegido + "' OR ";
+                            query += "worldName like '" + mundoElegido + "' OR ";
                         }
-                        sql = sql.substring(0, sql.length() - 4) + ')';
+                        query = query.substring(0, query.length() - 4) + ')';
                     }
 
-                    sql += ") OR";
+                    query += ") OR";
                 }
-                sql = sql.substring(0, sql.length() - 3);
+                query = query.substring(0, query.length() - 3);
             }
         } else {
-            sql += " where serverID=" + plugin.getManager().params.getMultiS();
+            query += " where serverID=" + plugin.getManager().params.getMultiS();
 
             if (plugin.getManager().params.isMw_enabled() && servidores != null && servidores.get(plugin.getManager().params.getMultiS()) != null) {
-                sql += " AND (";
+                query += " AND (";
                 for (String mundoElegido : servidores.get(plugin.getManager().params.getMultiS())) {
-                    sql += "worldName like '" + mundoElegido + "' OR ";
+                    query += "worldName like '" + mundoElegido + "' OR ";
                 }
-                sql = sql.substring(0, sql.length() - 4) + ')';
+                query = query.substring(0, query.length() - 4) + ')';
             }
         }
 
-        sql += mundos;
+        query += mundos;
         
         if (plugin.getManager().params.isMw_enabled()) {
-            sql += " order by PlayerWorld.points";
+            query += " order by PlayerWorld.points";
         } else {
-            sql += " order by points";
+            query += " order by points";
         }
         
-        sql += " DESC limit " + cant;
+        query += " DESC limit " + cant;
         // </editor-fold>
-        CustomLogger.logDebugInfo("Top players: " + sql);
+        CustomLogger.logDebugInfo("Top players: " + query);
 
         try {
             PlayerFame pf;
 
             PERFORMANCE.start("TOP");
-            try (ResultSet rs = this.sql.getConnection().createStatement().executeQuery(sql)) {
+            try (ResultSet rs = this.sql.query(query)) {
                 PERFORMANCE.recordValue("TOP");
 
                 while (rs.next()) {
@@ -708,7 +707,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         PluginLog l = new PluginLog(plugin, "user_changes.txt");
 
         try {
-            try (ResultSet rs = sql.getConnection().createStatement().executeQuery(data)) {
+            try (ResultSet rs = sql.query(data)) {
                 while (rs.next()) {
                     int id = rs.getInt("id");
                     String strUUID = rs.getString("playerUUID");
@@ -796,7 +795,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         String signs = "select * from Signs";
 
         try {
-            try (ResultSet sv = this.sql.getConnection().createStatement().executeQuery(servers)) {
+            try (ResultSet sv = this.sql.query(servers)) {
                 while (sv.next()) {
                     if (mysql) {
                         sql_to_export += "insert into Servers(id, name) values (" + sv.getInt("id")
@@ -810,7 +809,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
 
-            try (ResultSet ps = this.sql.getConnection().createStatement().executeQuery(playerserver)) {
+            try (ResultSet ps = this.sql.query(playerserver)) {
                 while (ps.next()) {
                     if (mysql) {
                         sql_to_export += "insert into PlayerServer(id, playerUUID, serverID) select "
@@ -862,7 +861,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
 
-            try (ResultSet s = this.sql.getConnection().createStatement().executeQuery(signs)) {
+            try (ResultSet s = this.sql.query(signs)) {
                 if (s.next()) {
                     if (mysql) {
                         sql_to_export += "insert into Signs values";
@@ -905,11 +904,11 @@ public class DatabaseManagerSQL implements DatabaseManager {
             return false;
         }
 
-        List<String> sql = UtilsFile.getFileLines(ruta);
+        List<String> sqlfile = UtilsFile.getFileLines(ruta);
         boolean sqlite = this.sql instanceof SQLiteConnection;
         Pattern r = Pattern.compile("values \\((-?\\d+),\\s'(.*)'\\)");
         
-        for (String consulta : sql) {
+        for (String consulta : sqlfile) {
             // Minor fix for old queries
             if (sqlite && consulta.contains("create table"))
                 continue;
@@ -929,8 +928,8 @@ public class DatabaseManagerSQL implements DatabaseManager {
             }
             
             try {
-                this.sql.getConnection().createStatement().executeUpdate(consulta);
-            } catch (final SQLException ex) {
+                this.sql.update(consulta);
+            } catch (SQLException ex) {
                 throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage()) {
                     {
                         this.setStackTrace(ex.getStackTrace());
@@ -954,7 +953,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         PluginLog l = new PluginLog(plugin, "db_changes.txt");
 
         try {
-            try (ResultSet rs = sql.getConnection().createStatement().executeQuery(data)) {
+            try (ResultSet rs = sql.query(data)) {
                 while(rs.next()) {
                     int id = rs.getInt("id");
 

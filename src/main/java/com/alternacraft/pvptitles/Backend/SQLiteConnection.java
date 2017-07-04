@@ -56,12 +56,12 @@ public class SQLiteConnection extends SQLConnection {
 
     @Override
     public void load() throws DBException {
-        update(getTableServers());
-        update(getTablePlayerServer());
-        update(getTablePlayerMeta());
-        update(getTablePlayerWorld());
-        update(getTableSigns());
-        update(getTriggerMeta());
+        slowUpdate(getTableServers());
+        slowUpdate(getTablePlayerServer());
+        slowUpdate(getTablePlayerMeta());
+        slowUpdate(getTablePlayerWorld());
+        slowUpdate(getTableSigns());
+        slowUpdate(getTriggerMeta());
     }
     
     public static String getTriggerMeta() {

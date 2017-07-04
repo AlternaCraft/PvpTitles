@@ -20,6 +20,7 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.Manager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -29,7 +30,14 @@ import java.sql.SQLException;
 
 public abstract class SQLConnection {
 
+    /**
+     * constante DRIVER_MYSQL para definir el driver de MySQL
+     */
     protected static final String DRIVER_MYSQL = "com.mysql.jdbc.Driver";
+    
+    /**
+     * constante DRIVER_SQLITE para definir el driver de SQLite
+     */    
     protected static final String DRIVER_SQLITE = "org.sqlite.JDBC";
 
     protected Connection connection;
@@ -80,12 +88,19 @@ public abstract class SQLConnection {
         } catch (SQLException | AbstractMethodError ex) {}
     }
     
-    protected void update(String sql) throws DBException {
+    protected void slowUpdate(String sql) throws DBException {
         if (isConnected(true)) {
             try {
-                this.connection.createStatement().execute(sql);
+                this.connection.createStatement().executeUpdate(sql);
             } catch (SQLException ex) {}
         }
+    }
+    
+    protected ResultSet query(String sql) throws SQLException {
+        return this.connection.createStatement().executeQuery(sql);
+    }
+    protected void update(String sql) throws SQLException {
+        this.connection.createStatement().executeUpdate(sql);
     }
     
     //<editor-fold defaultstate="collapsed" desc="DEFAULT TABLES">
