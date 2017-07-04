@@ -779,8 +779,9 @@ public class DatabaseManagerSQL implements DatabaseManager {
         String ruta = new StringBuilder(PvpTitles.PLUGIN_DIR)
                 .append(filename).toString();
 
-        boolean mysql = this.sql instanceof MySQLConnection;
-        String sql_to_export = "";
+        boolean sqlite = this.sql instanceof SQLiteConnection;
+        String sql_to_export = "-- " + ((this.sql instanceof SQLiteConnection) 
+                ? "MySQL":"SQLite") + "\n";
 
         String servers = "select * from Servers";
 
@@ -793,7 +794,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         try {
             try (ResultSet sv = this.sql.query(servers)) {
                 while (sv.next()) {
-                    if (mysql) {
+                    if (sqlite) {
                         sql_to_export += "insert into Servers(id, name) values (" + sv.getInt("id")
                                 + ", '" + sv.getString("name") + "') ON DUPLICATE KEY UPDATE name=VALUES(name);\n";
                     } else {
@@ -807,7 +808,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
             try (ResultSet ps = this.sql.query(playerserver)) {
                 while (ps.next()) {
-                    if (mysql) {
+                    if (sqlite) {
                         sql_to_export += "insert into PlayerServer(id, playerUUID, serverID) select "
                                 + "max(id)+1, '" + ps.getString("playerUUID") + "', "
                                 + ps.getShort("serverID") + " from PlayerServer ON DUPLICATE KEY UPDATE id = VALUES(id);\n";
@@ -823,13 +824,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     statement.setInt(1, id);                    
                     try (ResultSet pm = statement.executeQuery()) {
                         if (pm.next()) {
-                            if (mysql) {
-                                sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
-                                        + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
-                                        + ", '" + pm.getDate("lastLogin") + "' from PlayerServer "
-                                        + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
-                                        + "lastLogin=VALUES(lastLogin);\n";
-                            } else {
+                            if (sqlite) {
                                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                                 String str_date = pm.getString("lastLogin");
                                 try {
@@ -841,9 +836,15 @@ public class DatabaseManagerSQL implements DatabaseManager {
                                         str_date = format.format(new Date());
                                     }
                                 }
+                                sql_to_export += "insert into PlayerMeta(psid, points, playedTime, lastLogin) select "
+                                        + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
+                                        + ", '" + str_date + "' from PlayerServer "
+                                        + "ON DUPLICATE KEY UPDATE points=VALUES(points),playedTime=VALUES(playedTime),"
+                                        + "lastLogin=VALUES(lastLogin);\n";
+                            } else {                                
                                 sql_to_export += "insert or replace into PlayerMeta(psid, points, playedTime, lastLogin) select "
                                         + "max(id), " + pm.getInt("points") + ", " + pm.getInt("playedTime")
-                                        + ", '" + str_date + "' from PlayerServer;\n";
+                                        + ", '" + pm.getDate("lastLogin") + "' from PlayerServer;\n";
                             }
                         }
                     }
@@ -852,7 +853,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     statement.setInt(1, id);
                     try (ResultSet pw = statement.executeQuery()) {
                         while (pw.next()) {
-                            if (mysql) {
+                            if (sqlite) {
                                 sql_to_export += "insert into PlayerWorld(psid, worldName, points) select "
                                         + "max(id), '" + pw.getString("worldName") + "', "
                                         + pw.getInt("points") + " from PlayerServer "
@@ -870,24 +871,26 @@ public class DatabaseManagerSQL implements DatabaseManager {
 
             try (ResultSet s = this.sql.query(signs)) {
                 if (s.next()) {
-                    if (mysql) {
+                    if (sqlite) {
                         sql_to_export += "insert into Signs values";
                     } else {
                         sql_to_export += "insert or replace into Signs values";
                     }
-                    s.previous();
-                    while (s.next()) {
+                    do {
                         sql_to_export += "('" + s.getString("name") + "', '" + s.getString("signModel")
                                 + "', '" + s.getString("dataModel") + "', '" + s.getString("orientation")
                                 + "', " + s.getShort("blockface") + ", " + s.getShort("serverID")
                                 + ", '" + s.getString("world") + "', " + s.getInt("x")
                                 + ", " + s.getInt("y") + ", " + s.getInt("z") + "),";
-                    }
-                    if (mysql) {
-                        sql_to_export = sql_to_export.substring(0, sql_to_export.length() - 1); // Quito la coma sobrante
+                    } 
+                    while (s.next());
+                    sql_to_export = sql_to_export.substring(0, sql_to_export.length() - 1); // Quito la coma sobrante                    
+                    if (sqlite) {
                         sql_to_export += " ON DUPLICATE KEY UPDATE name=VALUES(name),signModel=VALUES(signModel),"
                                 + "dataModel=VALUES(dataModel),orientation=VALUES(orientation),"
                                 + "blockface=VALUES(blockface);";
+                    } else {
+                        sql_to_export += ";";
                     }
                 }
             }
@@ -914,6 +917,23 @@ public class DatabaseManagerSQL implements DatabaseManager {
         List<String> sqlfile = UtilsFile.getFileLines(ruta);
         boolean sqlite = this.sql instanceof SQLiteConnection;
         Pattern r = Pattern.compile("values \\((-?\\d+),\\s'(.*)'\\)");
+        
+        if (sqlfile.get(0).contains("--")) {
+            if (sqlfile.get(0).matches("-- (MySQL|SQLite)")) {
+                boolean compile_by_mysql = false;
+                if (sqlfile.get(0).contains("MySQL")) {
+                    compile_by_mysql = true;
+                }
+                if (sqlite && compile_by_mysql || !sqlite && !compile_by_mysql) {
+                    HashMap data = new HashMap();
+                    data.put("Actual database", DBLoader.tipo.name());
+                    data.put("SQL syntax", (compile_by_mysql) ? "MYSQL":"SQLITE"); 
+                    throw new DBException(DBException.BAD_SQL_SYNTAX, 
+                            DBException.DB_METHOD.DB_IMPORT, data);
+                }
+                sqlfile.remove(0);
+            }
+        }
         
         for (String consulta : sqlfile) {
             // Minor fix for old queries

@@ -31,6 +31,7 @@ public class DBException extends CustomException {
     
     // <editor-fold defaultstate="collapsed" desc="ERRORS">
     public static final String UNKNOWN_ERROR = "Unknown error";
+    public static final String BAD_SQL_SYNTAX = "Bad SQL syntax";
     public static final String PLAYER_CONNECTION_ERROR = "Error checking if player is registered";
     public static final String PLAYER_TIME_ERROR = "Error loading player time";
     public static final String MULTIWORLD_ERROR = "Error checking with multiworld";
@@ -65,7 +66,8 @@ public class DBException extends CustomException {
 
     private enum POSSIBLE_ERRORS {
         NOT_FOUND("00", "Couldn't find a reason for the error..."),
-        DB_CONNECTION("01", "The server has lost the " + DBLoader.tipo.name() + " connection");
+        DB_CONNECTION("01", "The server has lost the " + DBLoader.tipo.name() + " connection"),
+        DB_SQL("02", "The SQL should be executed in a %db% database");
 
         private String error_num = "-1";
         private String error_str = null;
@@ -140,6 +142,11 @@ public class DBException extends CustomException {
                     possible_errors.add(new StringBuilder("- ")
                                 .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
                 }
+            }
+            if (k.contains("SQL syntax")) {
+                possible_errors.add(new StringBuilder("- ")
+                                .append(POSSIBLE_ERRORS.DB_SQL.getText()
+                                        .replace("%db%", (String) v)).toString());
             }
         }
         
