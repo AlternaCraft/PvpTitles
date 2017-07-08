@@ -92,14 +92,14 @@ public class MetricsManager {
                         String rp_formula = Manager.getInstance().getCh().getConfig()
                             .getString("Modificator.Received.formula");
                         Map<String, Integer> data = new HashMap<>();
-                        data.put(rp_formula, 1);
+                        data.put(rp_formula.toLowerCase(), 1);
                         map.put("Received", data);
                     }
                     if (lp) {
                         String lp_formula = Manager.getInstance().getCh().getConfig()
                             .getString("Modificator.Lost.formula");
                         Map<String, Integer> data = new HashMap<>();
-                        data.put(lp_formula, 1);
+                        data.put(lp_formula.toLowerCase(), 1);
                         map.put("Lost", data);
                     }
                     
@@ -112,14 +112,17 @@ public class MetricsManager {
         metrics.addCustomChart(
                 new Metrics.DrilldownPie("general_statistics", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap();
-
-                    for (String line : lines) {
-                        if (!line.contains("---")
-                                && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")) {
-                            Pattern pattern = Pattern.compile(PATTERN);
-                            Matcher matcher = pattern.matcher(line);
-
-                            if (matcher.find()) {
+                    lines.stream()
+                            .filter((line) -> 
+                                    (!line.contains("---") 
+                                            && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")))
+                            .map((line) -> {
+                                Pattern pattern = Pattern.compile(PATTERN);
+                                Matcher matcher = pattern.matcher(line);
+                                return matcher;
+                            })
+                            .filter((matcher) -> (matcher.find()))
+                            .forEachOrdered((matcher) -> {
                                 String key = matcher.group(2);
 
                                 String id = matcher.group(1);
@@ -130,9 +133,7 @@ public class MetricsManager {
                                 }
 
                                 map.get(key).put(id, Integer.valueOf(v));
-                            }
-                        }
-                    }
+                            });
 
                     return map;
                 })

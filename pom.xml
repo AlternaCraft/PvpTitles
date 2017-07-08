@@ -185,13 +185,25 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>org.bstats</artifact>
+                                    <excludes>
+                                        <exclude>org/bstats/Metrics$AdvancedBarChart.class</exclude>
+                                        <exclude>org/bstats/Metrics$AdvancedPie.class</exclude>
+                                        <exclude>org/bstats/Metrics$MultiLineChart.class</exclude>
+                                        <exclude>org/bstats/Metrics$SimpleBarChart.class</exclude>
+                                        <exclude>org/bstats/Metrics$SingleLineChart.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>com.alternacraft.pvptitles.Libraries</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
