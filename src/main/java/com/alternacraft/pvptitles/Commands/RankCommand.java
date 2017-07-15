@@ -88,7 +88,7 @@ public class RankCommand implements CommandExecutor {
 
         int fame = 0;
         try {
-            fame = pt.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), world);
+            fame = pt.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), world);
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
@@ -97,7 +97,7 @@ public class RankCommand implements CommandExecutor {
 
         long seconds = 0;
         try {
-            seconds = pt.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId())
+            seconds = pt.getManager().getDBH().getDM().loadPlayedTime(player.getUniqueId())
                     + pt.getManager().getTimerManager().getPlayer(player).getTotalOnline();
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());

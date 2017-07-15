@@ -65,8 +65,8 @@ public final class Manager {
     private static final Manager INSTANCE = new Manager();
 
     // Handlers
-    public ConfigLoader ch = null;
-    public DBLoader dbh = null;
+    private ConfigLoader ch = null;
+    private DBLoader dbh = null;
 
     // Timers
     private MovementManager movementManager = null;
@@ -136,7 +136,7 @@ public final class Manager {
         this.movementManager.updateTimeAFK();
 
         this.dbh = new DBLoader(plugin, this.ch.getConfig());
-        this.dbh.selectDB();
+        this.getDBH().selectDB();
 
         // RCP
         if (!new DBChecker(plugin).setup()) {
@@ -191,7 +191,7 @@ public final class Manager {
     public void loadSavedBoards() {
         List<SignBoardData> carteles = new ArrayList<>();
         try {
-            carteles = pvpTitles.getManager().dbh.getDm().findBoards();
+            carteles = pvpTitles.getManager().getDBH().getDM().findBoards();
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
@@ -204,7 +204,7 @@ public final class Manager {
 
             if (bm == null) {
                 try {
-                    pvpTitles.getManager().dbh.getDm().deleteBoard(cartel.getLocation());
+                    pvpTitles.getManager().getDBH().getDM().deleteBoard(cartel.getLocation());
                     showMessage(ChatColor.RED + "Sign '" + cartel.getNombre()
                             + "' removed because the model has not been found...");
                 } catch (DBException ex) {
@@ -380,7 +380,7 @@ public final class Manager {
         }
 
         this.eventoActualizador = pvpTitles.getServer().getScheduler().scheduleSyncRepeatingTask(pvpTitles, 
-                getLbm()::updateBoards, TICKS * 5L, TICKS * (this.params.getLBRefresh() * 60L));
+                getLBM()::updateBoards, TICKS * 5L, TICKS * (this.params.getLBRefresh() * 60L));
 
         showMessage(ChatColor.YELLOW + "Refresh event [" + this.params.getLBRefresh()
                 + " min]" + ChatColor.AQUA + " loaded correctly."
@@ -417,7 +417,7 @@ public final class Manager {
                 
                 int actualFame;
                 try {
-                    actualFame = dbh.getDm().loadPlayerFame(timedPlayer.getUniqueId(), null);
+                    actualFame = dbh.getDM().loadPlayerFame(timedPlayer.getUniqueId(), null);
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                     return;
@@ -425,7 +425,7 @@ public final class Manager {
                 
                 long savedTimeB;
                 try {
-                    savedTimeB = dbh.getDm().loadPlayedTime(timedPlayer.getUniqueId());
+                    savedTimeB = dbh.getDM().loadPlayedTime(timedPlayer.getUniqueId());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                     return;
@@ -439,7 +439,7 @@ public final class Manager {
                     // Actualizo el tiempo del jugador en el server
                     if (!rankB.similar(rankA)) {
                         try {
-                            dbh.getDm().savePlayedTime(pl.getUniqueId(),
+                            dbh.getDM().savePlayedTime(pl.getUniqueId(),
                                     timedPlayer.getTotalOnline());
                         } catch (DBException ex) {
                             CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -498,7 +498,7 @@ public final class Manager {
      *
      * @return LeaderBoardManager
      */
-    public LeaderBoardManager getLbm() {
+    public LeaderBoardManager getLBM() {
         return lbm;
     }
 
@@ -507,7 +507,7 @@ public final class Manager {
      *
      * @return ConfigHandler
      */
-    public ConfigLoader getCh() {
+    public ConfigLoader getCL() {
         return ch;
     }
 
@@ -516,7 +516,7 @@ public final class Manager {
      *
      * @return DBHandler
      */
-    public DBLoader getDbh() {
+    public DBLoader getDBH() {
         return dbh;
     }
     // </editor-fold>

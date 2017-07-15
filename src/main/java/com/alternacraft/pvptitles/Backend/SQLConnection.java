@@ -64,7 +64,7 @@ public abstract class SQLConnection {
                     status = STATUS_AVAILABLE.CONNECTED;
                 } else if (reconnect) {
                     closeConnection();
-                    Manager.getInstance().getDbh().sqlConnect(true);
+                    Manager.getInstance().getDBH().sqlConnect(true);
                     valida = isConnected(false);
                 } else {
                     status = STATUS_AVAILABLE.NOT_CONNECTED;

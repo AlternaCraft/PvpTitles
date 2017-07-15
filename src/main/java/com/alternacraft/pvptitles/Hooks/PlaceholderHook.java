@@ -51,14 +51,14 @@ public class PlaceholderHook extends EZPlaceholderHook {
 
         int fame = 0;
         try {
-            fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+            fame = plugin.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), null);
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
         long seconds = 0;
         try {
-            seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
+            seconds = plugin.getManager().getDBH().getDM().loadPlayedTime(player.getUniqueId());
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }

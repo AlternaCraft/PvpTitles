@@ -75,7 +75,7 @@ public class LeaderBoardManager {
             // Compruebo si ya hay algo ocupando el sitio            
             ArrayList<PlayerFame> pf = new ArrayList<>();
             try {
-                pf = this.pt.getManager().dbh.getDm().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
+                pf = this.pt.getManager().getDBH().getDM().getTopPlayers(b.getModel().getCantidad(), b.getData().getServer());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -89,7 +89,7 @@ public class LeaderBoardManager {
             // Tipos predefinidos
             if (b instanceof SignBoard) {
                 try {
-                    pt.getManager().dbh.getDm().saveBoard((SignBoard) b);
+                    pt.getManager().getDBH().getDM().saveBoard((SignBoard) b);
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                     return false;
@@ -115,7 +115,7 @@ public class LeaderBoardManager {
     public void loadBoard(Board cs) {
         if (!boards.contains(cs)) {
             try {
-                cs.materialize(pt.getManager().dbh.getDm().getTopPlayers(
+                cs.materialize(pt.getManager().getDBH().getDM().getTopPlayers(
                         cs.getModel().getCantidad(), cs.getData().getServer()
                 ));
             } catch (DBException ex) {
@@ -129,7 +129,7 @@ public class LeaderBoardManager {
         boards.forEach(board -> {
             ArrayList<PlayerFame> pf = new ArrayList<>();
             try {
-                pf = pt.getManager().dbh.getDm().getTopPlayers(
+                pf = pt.getManager().getDBH().getDM().getTopPlayers(
                         board.getModel().getCantidad(), board.getData().getServer());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -145,7 +145,7 @@ public class LeaderBoardManager {
             if (bo.getData().getLocation().equals(CustomLocation.toCustomLocation(l))) {
                 short jugadores = 0;
                 try {
-                    jugadores = (short) pt.getManager().dbh.getDm().getTopPlayers(
+                    jugadores = (short) pt.getManager().getDBH().getDM().getTopPlayers(
                             bo.getModel().getCantidad(), bo.getData().getServer()).size();
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -177,7 +177,7 @@ public class LeaderBoardManager {
                 // Tipos predefinidos
                 if (bo instanceof SignBoard) {
                     try {
-                        pt.getManager().dbh.getDm().deleteBoard(bo.getData().getLocation());
+                        pt.getManager().getDBH().getDM().deleteBoard(bo.getData().getLocation());
                     } catch (DBException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
                         return;

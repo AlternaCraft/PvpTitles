@@ -75,7 +75,7 @@ public class PlayerFame implements Comparable {
     public long getRealSeconds() {
         long actual = 0;
         try {
-            actual = Manager.getInstance().dbh.getDm().loadPlayedTime(UUID.fromString(uuid));
+            actual = Manager.getInstance().getDBH().getDM().loadPlayedTime(UUID.fromString(uuid));
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
@@ -95,7 +95,7 @@ public class PlayerFame implements Comparable {
     }
 
     public String getServerName() throws DBException {
-        return Manager.getInstance().dbh.getDm().getServerName(this.server);
+        return Manager.getInstance().getDBH().getDM().getServerName(this.server);
     }
 
     public String getMWName() {

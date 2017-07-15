@@ -56,18 +56,13 @@ public class HolographicHook {
     }
 
     public String[] setup() {
-        ISHDENABLED = plugin.getServer().getPluginManager().isPluginEnabled("HolographicDisplays");
-
-        if (ISHDENABLED) {
-            int hb = loadHoloBoards();
-            // Ranks
-            if (plugin.getManager().params.displayLikeHolo()) {
-                loadPlayersInServer();
-            }
-            return new String[]{"HolographicDisplays &7(" + hb + " loaded)"};
+        ISHDENABLED = true;
+        int hb = loadHoloBoards();
+        // Ranks
+        if (plugin.getManager().params.displayLikeHolo()) {
+            loadPlayersInServer();
         }
-
-        return new String[]{};
+        return new String[]{"HolographicDisplays &7(" + hb + " loaded)"};
     }
 
     public static void setBasics() {
@@ -102,6 +97,22 @@ public class HolographicHook {
             h.delete();
         }
     }
+    
+    public static void cleanHoloPlayer(Player pl) {
+        HOLOPLAYERS.get(pl.getUniqueId().toString()).clearLines();
+    }
+    
+    public static void moveHoloPlayer(Player pl, Location l) {
+        HOLOPLAYERS.get(pl.getUniqueId().toString()).teleport(l);
+    }
+    
+    public static boolean isEmptyHoloPlayer(Player pl) {
+        return StrUtils.isHologramEmpty(HOLOPLAYERS.get(pl.getUniqueId().toString()));
+    }
+    
+    public static void insertHoloPlayer(Player pl, String str) {
+        HOLOPLAYERS.get(pl.getUniqueId().toString()).insertTextLine(0, str);
+    }
 
     public static void deleteHoloPlayers() {
         // Optimizacion para borrar hologramas si se desactivo la opcion
@@ -124,7 +135,7 @@ public class HolographicHook {
             BoardModel sm = plugin.getManager().searchModel(holo.getModelo());
             ModelController mc = new ModelController();
             mc.preprocessUnit(sm.getParams());
-            plugin.getManager().getLbm().loadBoard(
+            plugin.getManager().getLBM().loadBoard(
                     new HologramBoard(holo, sm, mc)
             );
         });

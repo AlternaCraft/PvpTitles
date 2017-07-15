@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bstats.Metrics;
+import org.bstats.bukkit.Metrics;
 
 public class MetricsManager {
 
@@ -89,14 +89,14 @@ public class MetricsManager {
                     boolean lp = Manager.getInstance().params.isEnableLPWhenDying();
                     
                     if (rp) {
-                        String rp_formula = Manager.getInstance().getCh().getConfig()
+                        String rp_formula = Manager.getInstance().getCL().getConfig()
                             .getString("Modificator.Received.formula");
                         Map<String, Integer> data = new HashMap<>();
                         data.put(rp_formula.toLowerCase(), 1);
                         map.put("Received", data);
                     }
                     if (lp) {
-                        String lp_formula = Manager.getInstance().getCh().getConfig()
+                        String lp_formula = Manager.getInstance().getCL().getConfig()
                             .getString("Modificator.Lost.formula");
                         Map<String, Integer> data = new HashMap<>();
                         data.put(lp_formula.toLowerCase(), 1);

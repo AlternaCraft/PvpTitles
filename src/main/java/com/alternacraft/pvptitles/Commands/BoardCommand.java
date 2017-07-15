@@ -100,7 +100,7 @@ public class BoardCommand implements CommandExecutor {
                         if (bd == null) {
                             pl.sendMessage(getPluginName() + LangsFile.BOARD_NAME_NOT_EXISTS.getText(Localizer.getLocale(pl)));
                         } else {
-                            cm.getLbm().deleteBoard(bd.getLocation(), pl);
+                            cm.getLBM().deleteBoard(bd.getLocation(), pl);
                         }
                     } else {
                         pl.sendMessage(getPluginName() + ChatColor.RED
@@ -111,7 +111,7 @@ public class BoardCommand implements CommandExecutor {
                     return false;
             }
         } else {
-            List<Board> boards = pt.getManager().getLbm().getBoards();
+            List<Board> boards = pt.getManager().getLBM().getBoards();
             pl.openInventory(Inventories.createInventory(boards, Localizer.getLocale(pl)).get(0));
         }
 
@@ -145,6 +145,6 @@ public class BoardCommand implements CommandExecutor {
 
         Board b = new HologramBoard(bd, bm, mc);
 
-        cm.getLbm().addBoard(b, pl);
+        cm.getLBM().addBoard(b, pl);
     }
 }

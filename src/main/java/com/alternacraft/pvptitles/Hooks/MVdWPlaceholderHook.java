@@ -37,93 +37,89 @@ public class MVdWPlaceholderHook {
     }
 
     public String[] setup() {
-        if (plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_valid_rank", 
-                    (PlaceholderReplaceEvent pre) -> {
-                Player player = pre.getPlayer();
-                
-                int fame = 0;
-                try {
-                    fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                long seconds = 0;
-                try {
-                    seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                Rank rank = null;
-                try {
-                    rank = RankManager.getRank(fame, seconds, player);
-                } catch (RanksException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                if (rank == null || !canDisplayRank(player, rank.getDisplay())) {
-                    return "";
-                }
-                
-                return rank.getDisplay();
-            });
+        PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_valid_rank", 
+                (PlaceholderReplaceEvent pre) -> {
+            Player player = pre.getPlayer();
 
-            PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_rank", 
-                    (PlaceholderReplaceEvent pre) -> {
-                Player player = pre.getPlayer();
-                
-                int fame = 0;
-                try {
-                    fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());                    
-                }
-                
-                long seconds = 0;
-                try {
-                    seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                Rank rank = null;
-                try {
-                    rank = RankManager.getRank(fame, seconds, player);
-                } catch (RanksException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                return (rank == null) ? "":rank.getDisplay();
-            });
+            int fame = 0;
+            try {
+                fame = plugin.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), null);
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
 
-            PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_fame", 
-                    (PlaceholderReplaceEvent pre) -> {
-                Player player = pre.getPlayer();
-                
-                int fame = 0;
-                try {
-                    fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-                
-                return String.valueOf(fame);
-            });
+            long seconds = 0;
+            try {
+                seconds = plugin.getManager().getDBH().getDM().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
 
-            PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_killstreak", 
-                    (PlaceholderReplaceEvent pre) -> {
-                Player player = pre.getPlayer();
-                
-                int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
-                
-                return String.valueOf(killstreak);
-            });
-            
-            return new String[]{"MVdWPlaceholderAPI"};
-        }
-        
-        return new String[]{};
+            Rank rank = null;
+            try {
+                rank = RankManager.getRank(fame, seconds, player);
+            } catch (RanksException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+
+            if (rank == null || !canDisplayRank(player, rank.getDisplay())) {
+                return "";
+            }
+
+            return rank.getDisplay();
+        });
+
+        PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_rank", 
+                (PlaceholderReplaceEvent pre) -> {
+            Player player = pre.getPlayer();
+
+            int fame = 0;
+            try {
+                fame = plugin.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), null);
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());                    
+            }
+
+            long seconds = 0;
+            try {
+                seconds = plugin.getManager().getDBH().getDM().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+
+            Rank rank = null;
+            try {
+                rank = RankManager.getRank(fame, seconds, player);
+            } catch (RanksException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+
+            return (rank == null) ? "":rank.getDisplay();
+        });
+
+        PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_fame", 
+                (PlaceholderReplaceEvent pre) -> {
+            Player player = pre.getPlayer();
+
+            int fame = 0;
+            try {
+                fame = plugin.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), null);
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
+
+            return String.valueOf(fame);
+        });
+
+        PlaceholderAPI.registerPlaceholder(plugin, "pvptitles_killstreak", 
+                (PlaceholderReplaceEvent pre) -> {
+            Player player = pre.getPlayer();
+
+            int killstreak = HandlePlayerFame.getKillStreakFrom(player.getUniqueId().toString());
+
+            return String.valueOf(killstreak);
+        });
+
+        return new String[]{"MVdWPlaceholderAPI"};
     }
 }

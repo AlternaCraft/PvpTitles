@@ -68,7 +68,7 @@ public class PurgeCommand implements CommandExecutor {
         }
 
         try {
-            cantidad = dh.dbh.getDm().purgeData(purgetime);
+            cantidad = dh.getDBH().getDM().purgeData(purgetime);
 
             if (cantidad > 0) {
                 sender.sendMessage(getPluginName() + ChatColor.YELLOW

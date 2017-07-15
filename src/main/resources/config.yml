@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.8
+Version: 2.8.1
 ################
 
 ############################################################
@@ -213,9 +213,11 @@ LPWhenDying:
 # Modificator to increase or decrease the amount of points you receive/lose.
 # The result will be parsed to integer.
 #
-# Available variables: 
+# Available variables (No case sensitive): 
 # - STREAK -> KillStreak or "DeathStreak"
 # - MOD -> Modificator value.
+# - KPOINTS -> Killer points.
+# - VPOINTS -> Victim points.
 #
 # Allowed functions (Parameters between parentheses):
 # - https://docs.oracle.com/javase/7/docs/api/java/lang/Math.html

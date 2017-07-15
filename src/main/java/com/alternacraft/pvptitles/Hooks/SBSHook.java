@@ -40,14 +40,11 @@ public class SBSHook {
     }
 
     public String[] setupSBS() {
-        if (plugin.getServer().getPluginManager().isPluginEnabled("ScoreboardStats")) {
-            sbs = JavaPlugin.getPlugin(ScoreboardStats.class);
-
-            if (sbs != null) {
-                replaceManager = sbs.getReplaceManager();
-                registerReplacerInterface(replaceManager);                
-                return new String[]{"ScoreboardStats"};
-            }
+        sbs = JavaPlugin.getPlugin(ScoreboardStats.class);
+        if (sbs != null) {
+            replaceManager = sbs.getReplaceManager();
+            registerReplacerInterface(replaceManager);                
+            return new String[]{"ScoreboardStats"};
         }
         return new String[]{};
     }
@@ -56,14 +53,14 @@ public class SBSHook {
         replaceManager.register((Player player, String var, ReplaceEvent replaceEvent) -> {
             int fame = 0;
             try {
-                fame = plugin.getManager().dbh.getDm().loadPlayerFame(player.getUniqueId(), null);
+                fame = plugin.getManager().getDBH().getDM().loadPlayerFame(player.getUniqueId(), null);
             } catch (DBException ex) {
                 //CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
             
             long seconds = 0;
             try {
-                seconds = plugin.getManager().dbh.getDm().loadPlayedTime(player.getUniqueId());
+                seconds = plugin.getManager().getDBH().getDM().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }

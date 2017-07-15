@@ -85,7 +85,7 @@ public class IntegrationsTest extends TestBase {
                 List<List<List<String>>> table = new ArrayList();
                 when(mockBM.getParams()).thenReturn(table);
                 LeaderBoardManager mockLBM = mock(LeaderBoardManager.class);
-                when(mockManager.getLbm()).thenReturn(mockLBM);
+                when(mockManager.getLBM()).thenReturn(mockLBM);
                 doNothing().when(mockLBM).loadBoard(any(Board.class));
 
                 // deleteHolograms

@@ -48,7 +48,7 @@ public class DBChecker {
     }
 
     public void checkMySQLDB() {
-        SQLConnection mysql = plugin.getManager().dbh.sql;
+        SQLConnection mysql = plugin.getManager().getDBH().sql;
         RetroDMMysql rdm = new RetroDMMysql(plugin, mysql.getConnection());
 
         int status = MYSQL_OLD_VERSION;
@@ -66,7 +66,7 @@ public class DBChecker {
         }
 
         try {
-            plugin.getManager().getDbh().getDm().DBImport(RetroDMMysql.FILENAME);
+            plugin.getManager().getDBH().getDM().DBImport(RetroDMMysql.FILENAME);
             UtilsFile.delete(new StringBuilder(PvpTitles.PLUGIN_DIR)
                     .append(RetroDMMysql.FILENAME).toString());            
         } catch (DBException ex) {

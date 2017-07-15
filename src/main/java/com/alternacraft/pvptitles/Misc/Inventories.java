@@ -58,7 +58,7 @@ public class Inventories {
     }
 
     public static void reloadInventories(List<Player> viewers) {
-        List<Board> boards = PvpTitles.getInstance().getManager().getLbm().getBoards();
+        List<Board> boards = PvpTitles.getInstance().getManager().getLBM().getBoards();
         viewers.forEach((viewer) -> {
             viewer.openInventory(createInventory(boards, Localizer.getLocale(viewer)).get(0));
         });

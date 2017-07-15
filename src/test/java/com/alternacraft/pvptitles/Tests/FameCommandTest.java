@@ -120,10 +120,10 @@ public class FameCommandTest extends TestBase {
 
         // Database
         DBLoader mockDBHandler = mock(DBLoader.class);
-        mockManager.dbh = mockDBHandler;
+        when(mockManager.getDBH()).thenReturn(mockDBHandler);
 
         mockDM = mock(DatabaseManager.class);
-        when(mockDBHandler.getDm()).thenReturn(mockDM);
+        when(mockDBHandler.getDM()).thenReturn(mockDM);
 
         try {
             when(mockDM.loadPlayerFame(any(UUID.class), anyString())).thenReturn(0);

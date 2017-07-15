@@ -19,12 +19,14 @@ package com.alternacraft.pvptitles.Listeners;
 import com.alternacraft.pvptitles.Events.RankChangedEvent;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
+import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.HOLOPLAYERS;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.ISHDENABLED;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.RANK_LINE;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.TITLE_HEIGHT;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.createHoloPlayer;
 import static com.alternacraft.pvptitles.Hooks.HolographicHook.removeHoloPlayer;
+import com.alternacraft.pvptitles.Hooks.VNPHook;
 import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
@@ -32,7 +34,6 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,9 +64,16 @@ public class HandlePlayerTag implements Listener {
         manager = pt.getManager();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="CONDITIONS">
     public static boolean canDisplayRank(Player pl, String rank) {
         return isValidWorld(pl.getWorld().getName()) && !hasIgnoredChatPermission(pl)
                 && !hasIgnoredRank(rank);
+    }
+    
+    private static boolean canDisplayHologram(Player pl) {
+        return !pl.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                && (!VNPHook.ISVNPENABLED || VNPHook.ISVNPENABLED && !VNPHook.isVanished(pl))
+                && !pl.isSneaking();
     }
 
     private static boolean isValidWorld(String w) {
@@ -85,25 +93,18 @@ public class HandlePlayerTag implements Listener {
 
     private static boolean hasIgnoredRank(String rank) {
         return rank.equalsIgnoreCase(IGNORED_RANK);
-    }
+    }    
+    //</editor-fold>
 
-    private String clearFormat(String format) {
-        if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
-            format = format.replaceAll(
-                    Pattern.quote(HandlePlayerTag.manager.params.getPrefix()) + "\\s?", ""
-            );
-        } 
-        return format;
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="LISTENERS">
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
         Rank rank = null;
 
         try {
-            int fame = HandlePlayerTag.manager.dbh.getDm().loadPlayerFame(event.getPlayer().getUniqueId(), null);
-            long seconds = HandlePlayerTag.manager.dbh.getDm().loadPlayedTime(event.getPlayer().getUniqueId());
+            int fame = HandlePlayerTag.manager.getDBH().getDM().loadPlayerFame(event.getPlayer().getUniqueId(), null);
+            long seconds = HandlePlayerTag.manager.getDBH().getDM().loadPlayedTime(event.getPlayer().getUniqueId());
             rank = RankManager.getRank(fame, seconds, pl);
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -150,13 +151,13 @@ public class HandlePlayerTag implements Listener {
             Rank rank = null;
 
             try {
-                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
             try {
-                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
@@ -175,8 +176,7 @@ public class HandlePlayerTag implements Listener {
             HOLOPLAYERS.put(uuid, createHoloPlayer(player, display));
 
             // Fix reload
-            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                    || player.isSneaking() || !canDisplayRank(player, display)) {
+            if (!canDisplayHologram(player) || !canDisplayRank(player, display)) {
                 HOLOPLAYERS.get(uuid).clearLines();
             }
         }
@@ -199,41 +199,43 @@ public class HandlePlayerTag implements Listener {
         Player player = event.getPlayer();
 
         if (HOLOPLAYERS.containsKey(player.getUniqueId().toString())) {
-            Hologram h = HOLOPLAYERS.get(player.getUniqueId().toString());
-            h.clearLines();
+            HolographicHook.cleanHoloPlayer(player);
 
             Location l = new Location(event.getTo().getWorld(),
                     event.getTo().getX(),
                     event.getTo().getY() + TITLE_HEIGHT,
                     event.getTo().getZ());
-            h.teleport(l);
+            
+            HolographicHook.moveHoloPlayer(player, l); // Track to avoid weird behavior
 
-            int fame = 0;
-            try {
-                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
+            if (canDisplayHologram(player)) {
+                int fame = 0;
+                try {
+                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            long oldTime = 0;
-            try {
-                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
+                long oldTime = 0;
+                try {
+                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-            String rank = "";
-            try {                
-                rank = RankManager.getRank(fame, totalTime, player).getDisplay();
-            } catch (RanksException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
+                String rank = "";
+                try {                
+                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                } catch (RanksException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            if (canDisplayRank(player, rank)) {
-                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
-            }
+                if (canDisplayRank(player, rank)) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                }                
+            }            
         }
     }
 
@@ -243,40 +245,42 @@ public class HandlePlayerTag implements Listener {
         String uuid = player.getUniqueId().toString();
 
         if (HOLOPLAYERS.containsKey(uuid)) {
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
+            HolographicHook.cleanHoloPlayer(player);
 
             Location l = new Location(player.getLocation().getWorld(),
                     player.getLocation().getX(),
                     player.getLocation().getY() + TITLE_HEIGHT,
                     player.getLocation().getZ());
-            h.teleport(l);
+            
+            HolographicHook.moveHoloPlayer(player, l); // Same that teleport
+            
+            if (canDisplayHologram(player)) {
+                int fame = 0;
+                try {
+                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            int fame = 0;
-            try {
-                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
+                long oldTime = 0;
+                try {
+                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            long oldTime = 0;
-            try {
-                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
+                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+                String rank = "";
+                try {
+                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                } catch (RanksException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
 
-            String rank = "";
-            try {
-                rank = RankManager.getRank(fame, totalTime, player).getDisplay();
-            } catch (RanksException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
-
-            if (canDisplayRank(player, rank)) {
-                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
+                if (canDisplayRank(player, rank)) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                }                
             }
         }
     }
@@ -289,21 +293,20 @@ public class HandlePlayerTag implements Listener {
         if (HOLOPLAYERS.containsKey(uuid)) {
             Location to = event.getTo();
 
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.teleport(new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ()));
+            HolographicHook.moveHoloPlayer(player, 
+                    new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ()));
 
-            if (StrUtils.isHologramEmpty(h) && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                    && !player.isSneaking() && !player.isDead()) {
+            if (HolographicHook.isEmptyHoloPlayer(player) && canDisplayHologram(player)) {
                 int fame = 0;
                 try {
-                    fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
-                    oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
@@ -318,11 +321,10 @@ public class HandlePlayerTag implements Listener {
                 }
 
                 if (canDisplayRank(player, rank)) {
-                    h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
                 }
-            } else if (!StrUtils.isHologramEmpty(h)
-                    && player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                h.removeLine(0);
+            } else if (!HolographicHook.isEmptyHoloPlayer(player) && !canDisplayHologram(player)) {
+                HolographicHook.cleanHoloPlayer(player);
             }
         }
     }
@@ -333,13 +335,13 @@ public class HandlePlayerTag implements Listener {
         String uuid = player.getUniqueId().toString();
 
         if (HOLOPLAYERS.containsKey(uuid)) {
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
+            HolographicHook.cleanHoloPlayer(player);
 
-            if (canDisplayRank(player, event.getNewRank())) {
+            if (canDisplayRank(player, event.getNewRank()) && canDisplayHologram(player)
+                    && !player.isDead()) {
                 Rank r = RankManager.getRank(event.getNewRank());
                 if (r == null) return;
-                h.insertTextLine(0, RANK_LINE.replace("%rank%", r.getDisplay()));
+                HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", r.getDisplay()));
             }
         }
     }
@@ -351,75 +353,26 @@ public class HandlePlayerTag implements Listener {
 
         // Holograms
         if (HOLOPLAYERS.containsKey(uuid)) {
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
+            HolographicHook.cleanHoloPlayer(player);
 
             Location l = new Location(event.getRespawnLocation().getWorld(),
                     event.getRespawnLocation().getX(),
                     event.getRespawnLocation().getY() + TITLE_HEIGHT,
                     event.getRespawnLocation().getZ());
-
-            h.teleport(l);
-
-            int fame = 0;
-            try {
-                fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
-
-            long oldTime = 0;
-            try {
-                oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
-            } catch (DBException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
-
-            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
-
-            String rank = "";
-            try {
-                rank = RankManager.getRank(fame, totalTime, player).getDisplay();
-            } catch (RanksException ex) {
-                CustomLogger.logArrayError(ex.getCustomStackTrace());
-            }
-
-            if (canDisplayRank(player, rank)) {
-                h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        String uuid = event.getEntity().getUniqueId().toString();
-
-        if (HOLOPLAYERS.containsKey(uuid)) {
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerSneaking(PlayerToggleSneakEvent event) {
-        Player player = event.getPlayer();
-        String uuid = player.getUniqueId().toString();
-
-        if (HOLOPLAYERS.containsKey(uuid)) {
-            Hologram h = HOLOPLAYERS.get(uuid);
-            h.clearLines();
-
-            if (!event.isSneaking() && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            
+            HolographicHook.moveHoloPlayer(player, l);
+            
+            if (canDisplayHologram(player)) {
                 int fame = 0;
                 try {
-                    fame = manager.getDbh().getDm().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
                 long oldTime = 0;
                 try {
-                    oldTime = manager.getDbh().getDm().loadPlayedTime(player.getUniqueId());
+                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
@@ -434,9 +387,69 @@ public class HandlePlayerTag implements Listener {
                 }
 
                 if (canDisplayRank(player, rank)) {
-                    h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                }                
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity().getPlayer();
+        String uuid = event.getEntity().getUniqueId().toString();
+
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            HolographicHook.cleanHoloPlayer(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerSneaking(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        String uuid = player.getUniqueId().toString();
+        
+        if (HOLOPLAYERS.containsKey(uuid)) {
+            HolographicHook.cleanHoloPlayer(player);
+
+            if (!event.isSneaking() && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                && (!VNPHook.ISVNPENABLED || VNPHook.ISVNPENABLED && !VNPHook.isVanished(player))) {
+                int fame = 0;
+                try {
+                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
+
+                long oldTime = 0;
+                try {
+                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
+                } catch (DBException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
+
+                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+
+                String rank = "";
+                try {
+                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                } catch (RanksException ex) {
+                    CustomLogger.logArrayError(ex.getCustomStackTrace());
+                }
+
+                if (canDisplayRank(player, rank)) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
                 }
             }
         }
+    }
+    //</editor-fold>
+    
+    private String clearFormat(String format) {
+        if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
+            format = format.replaceAll(
+                    Pattern.quote(HandlePlayerTag.manager.params.getPrefix()) + "\\s?", ""
+            );
+        } 
+        return format;
     }
 }

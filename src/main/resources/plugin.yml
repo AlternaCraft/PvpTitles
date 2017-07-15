@@ -7,7 +7,7 @@ website: alternacraft.github.io/PvpTitles/
 author: AlternaCraft
 
 main: com.alternacraft.pvptitles.Main.PvpTitles
-softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI, MVdWPlaceholderAPI]
+softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI, MVdWPlaceholderAPI, VanishNoPacket]
 
 commands:
     pvpTitles:

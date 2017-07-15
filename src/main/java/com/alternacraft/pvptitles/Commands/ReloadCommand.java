@@ -50,7 +50,7 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         if (tipo.equals(DBTYPE.MYSQL) || tipo.equals(DBTYPE.SQLITE)) {
-            this.pvpTitles.getManager().dbh.sql.closeConnection();
+            this.pvpTitles.getManager().getDBH().sql.closeConnection();
         }
 
         RankManager.clear(); // Clear registered ranks
@@ -59,7 +59,7 @@ public class ReloadCommand implements CommandExecutor {
 
         pvpTitles.getManager().getMovementManager().updateTimeAFK();
         
-        pvpTitles.getManager().getDbh().selectDB();
+        pvpTitles.getManager().getDBH().selectDB();
         new DBChecker(pvpTitles).setup();
 
         pvpTitles.getManager().loadLang();

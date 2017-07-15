@@ -73,7 +73,7 @@ public class HandleInventory implements Listener, EventExecutor {
 
         if (inventory.getName().equals(LangsFile.BOARD_INVENTORY_TITLE.getText(Localizer.getLocale(pl)))) {
             Map<Integer, Inventory> inventories = Inventories
-                    .createInventory(plugin.getManager().getLbm().getBoards(), Localizer.getLocale(pl));
+                    .createInventory(plugin.getManager().getLBM().getBoards(), Localizer.getLocale(pl));
 
             event.setCancelled(true);
 
@@ -117,13 +117,13 @@ public class HandleInventory implements Listener, EventExecutor {
 
             } else if (event.getClick() == ClickType.RIGHT) {
                 // Caso para cambiar de pagina               
-                plugin.getManager().getLbm().deleteBoard(loc, pl);
+                plugin.getManager().getLBM().deleteBoard(loc, pl);
 
                 // 'Actualizacion' del inventario
                 pl.closeInventory();
 
                 inventories = Inventories.createInventory(
-                        plugin.getManager().getLbm().getBoards(), Localizer.getLocale(pl)
+                        plugin.getManager().getLBM().getBoards(), Localizer.getLocale(pl)
                 );
 
                 page = getPageNumber(inventory, inventories);
@@ -135,7 +135,7 @@ public class HandleInventory implements Listener, EventExecutor {
     }
 
     public BoardData getBoard(int pos) {
-        return this.plugin.getManager().getLbm().getBoards().get(pos).getData();
+        return this.plugin.getManager().getLBM().getBoards().get(pos).getData();
     }
 
     public Location getLocation(int pos) {

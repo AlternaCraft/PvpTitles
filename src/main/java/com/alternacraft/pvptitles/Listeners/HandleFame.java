@@ -69,7 +69,7 @@ public class HandleFame implements Listener {
 
         long seconds = 0;
         try {
-            seconds = dm.dbh.getDm().loadPlayedTime(pl.getUniqueId());
+            seconds = dm.getDBH().getDM().loadPlayedTime(pl.getUniqueId());
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
@@ -183,7 +183,7 @@ public class HandleFame implements Listener {
             FameAddEvent event = new FameAddEvent(pl, fame, points);
             event.setSilent(true);
             try {
-                this.dm.dbh.getDm().savePlayerFame(pl.getUniqueId(),
+                this.dm.getDBH().getDM().savePlayerFame(pl.getUniqueId(),
                         event.getFameTotal(), null);
             } catch (DBException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -244,7 +244,7 @@ public class HandleFame implements Listener {
         Player pl = (Player) e.getOfflinePlayer();
         long seconds = 0;
         try {
-            seconds = dm.dbh.getDm().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
+            seconds = dm.getDBH().getDM().loadPlayedTime(e.getOfflinePlayer().getUniqueId());
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }

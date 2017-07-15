@@ -56,7 +56,7 @@ public class BoardCommandTest extends TestBase {
                 when(HologramsFile.loadHologram(anyString())).thenReturn(null);
                 
                 LeaderBoardManager mockLBM = mock(LeaderBoardManager.class);
-                when(mockManager.getLbm()).thenReturn(mockLBM);
+                when(mockManager.getLBM()).thenReturn(mockLBM);
                 when(mockLBM.addBoard(any(Board.class), any(Player.class))).thenReturn(Boolean.FALSE);
                 saveMock("LBM", mockLBM);
 
@@ -100,7 +100,7 @@ public class BoardCommandTest extends TestBase {
                 when(HologramsFile.loadHologram(anyString())).thenReturn(mockBoardData);
 
                 LeaderBoardManager mockLBM = mock(LeaderBoardManager.class);
-                when(mockManager.getLbm()).thenReturn(mockLBM);
+                when(mockManager.getLBM()).thenReturn(mockLBM);
                 when(mockLBM.addBoard(any(Board.class), any(Player.class))).thenReturn(Boolean.FALSE);
                 saveMock("LBM", mockLBM);
 

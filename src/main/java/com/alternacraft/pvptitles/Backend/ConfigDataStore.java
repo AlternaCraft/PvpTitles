@@ -113,8 +113,13 @@ public class ConfigDataStore {
     private boolean enableRPWhenKilling = true;
     private boolean enableLPWhenDying = false;
     private boolean LPWhenDyingJustByPlayers = false;
-    // Modificators
-    private final Map<String, Double> variables = new HashMap<>();
+    // Formulas
+    private final Map<String, Double> variables = new HashMap() {{
+        this.put("STREAK", 0);
+        this.put("MOD", 0);
+        this.put("KPOINTS", 0);
+        this.put("VPOINTS", 0);
+    }};
     private Expression receivedFormula = null;
     private double receivedMod = 0.25D;
     private Expression lostFormula = null;

@@ -50,7 +50,7 @@ public class DBCommand implements CommandExecutor {
             return false;
         }
 
-        DatabaseManager dm = pvpTitles.getManager().getDbh().getDm();
+        DatabaseManager dm = pvpTitles.getManager().getDBH().getDM();
 
         String filename;
 

@@ -58,7 +58,7 @@ public class LadderCommand implements CommandExecutor {
 
         ArrayList<PlayerFame> rankedPlayers = new ArrayList<>();
         try {
-            rankedPlayers = pvpTitles.getManager().dbh.getDm().getTopPlayers(top, "");
+            rankedPlayers = pvpTitles.getManager().getDBH().getDM().getTopPlayers(top, "");
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }

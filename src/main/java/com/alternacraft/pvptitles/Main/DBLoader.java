@@ -113,7 +113,7 @@ public class DBLoader {
      *
      * @return DatabaseManager
      */    
-    public DatabaseManager getDm() {
+    public DatabaseManager getDM() {
         return dm;
     }
 }

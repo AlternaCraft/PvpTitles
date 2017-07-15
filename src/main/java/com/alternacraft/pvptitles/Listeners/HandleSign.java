@@ -126,7 +126,7 @@ public class HandleSign implements Listener {
                 cs.setLineas(lineas);
                 cs.setMatSign(matSign);
 
-                if (!pt.getManager().getLbm().addBoard(cs, pl)) {                
+                if (!pt.getManager().getLBM().addBoard(cs, pl)) {                
                     event.setCancelled(true);
                 }
             } else {
@@ -149,18 +149,18 @@ public class HandleSign implements Listener {
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX() + coord, b.getY(), b.getZ()).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.getManager().getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.getManager().getLBM().deleteBoard(b2.getLocation(), event);
                 }
             }
             
             for (Integer coord : coords) {
                 Block b2 = new Location(b.getWorld(), b.getX(), b.getY(), b.getZ() + coord).getBlock();
                 if (b2.getType() == Material.WALL_SIGN) {
-                    pt.getManager().getLbm().deleteBoard(b2.getLocation(), event);
+                    pt.getManager().getLBM().deleteBoard(b2.getLocation(), event);
                 }
             }
         } else {
-            pt.getManager().getLbm().deleteBoard(locblock, event);
+            pt.getManager().getLBM().deleteBoard(locblock, event);
         }
     }
 

@@ -30,6 +30,7 @@ import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import com.alternacraft.pvptitles.Hooks.MVdWPlaceholderHook;
 import com.alternacraft.pvptitles.Hooks.PlaceholderHook;
 import com.alternacraft.pvptitles.Hooks.SBSHook;
+import com.alternacraft.pvptitles.Hooks.VNPHook;
 import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Listeners.HandleFame;
 import com.alternacraft.pvptitles.Listeners.HandleInventory;
@@ -169,7 +170,7 @@ public class PvpTitles extends JavaPlugin {
 
             players.forEach(next -> {
                 try {
-                    this.manager.dbh.getDm().savePlayedTime(next.getUniqueId(),
+                    this.manager.getDBH().getDM().savePlayedTime(next.getUniqueId(),
                             next.getTotalOnline());
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -186,7 +187,7 @@ public class PvpTitles extends JavaPlugin {
 
             if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)
                     || DBLoader.tipo.equals(DBLoader.DBTYPE.SQLITE)) {
-                this.manager.dbh.sql.closeConnection();
+                this.manager.getDBH().sql.closeConnection();
             }
 
             PERFORMANCE.saveToLog("performance.txt");
@@ -200,7 +201,7 @@ public class PvpTitles extends JavaPlugin {
         for (Player pl : this.getServer().getOnlinePlayers()) {
             if (HandlePlayerFame.shouldDoPlayerConnection(pl, false)) {
                 try {
-                    this.manager.dbh.getDm().playerConnection(pl);
+                    this.manager.getDBH().getDM().playerConnection(pl);
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                     continue;
@@ -241,6 +242,10 @@ public class PvpTitles extends JavaPlugin {
         }
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
             String[] hookDetails = new HolographicHook(this).setup();
+            messages.addAll(Arrays.asList(hookDetails));
+        }
+        if (this.getServer().getPluginManager().isPluginEnabled("VanishNoPacket")) {
+            String[] hookDetails = new VNPHook(this).setup();
             messages.addAll(Arrays.asList(hookDetails));
         }
 
