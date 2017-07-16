@@ -4,7 +4,7 @@ jdk:
 - oraclejdk8
 
 install:
-+- mvn install:install-file -Dfile=lib/VanishNoPacket.jar -DgroupId=org.kitteh -DartifactId=VanishNoPacket -Dversion=3.20 -Dpackaging=jar
+- mvn install:install-file -Dfile=lib/VanishNoPacket.jar -DgroupId=org.kitteh -DartifactId=VanishNoPacket -Dversion=3.20 -Dpackaging=jar
 script: mvn clean install
 after_success:
 - bash <(curl -s https://codecov.io/bash)
