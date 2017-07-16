@@ -135,7 +135,7 @@ public class ConfigLoader {
         try {
             params.setReceivedFormula(config.getString("Modificator.Received.formula"));
         } catch (RuntimeException ex) {
-            CustomLogger.logError("Error on parsing formula of Modificator.Received - "
+            CustomLogger.logError("Error on parsing the formula of Modificator.Received - "
                     + ex.getMessage());
         }
         params.setReceivedMod(config.getDouble("Modificator.Received.value"));
@@ -143,7 +143,7 @@ public class ConfigLoader {
         try {
             params.setLostFormula(config.getString("Modificator.Lost.formula"));
         } catch (RuntimeException ex) {
-            CustomLogger.logError("Error on parsing formula of Modificator.Lost - "
+            CustomLogger.logError("Error on parsing the formula of Modificator.Lost - "
                     + ex.getMessage());
         }
         params.setLostMod(config.getDouble("Modificator.Lost.value"));

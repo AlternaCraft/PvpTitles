@@ -114,12 +114,8 @@ public class ConfigDataStore {
     private boolean enableLPWhenDying = false;
     private boolean LPWhenDyingJustByPlayers = false;
     // Formulas
-    private final Map<String, Double> variables = new HashMap() {{
-        this.put("STREAK", 0);
-        this.put("MOD", 0);
-        this.put("KPOINTS", 0);
-        this.put("VPOINTS", 0);
-    }};
+    // Default variables to formulas
+    private final Map<String, Double> variables = new HashMap();
     private Expression receivedFormula = null;
     private double receivedMod = 0.25D;
     private Expression lostFormula = null;

@@ -8,6 +8,7 @@ package com.alternacraft.pvptitles.Misc.Formulas;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 /**
  * Class for using methods from another class by name.
  * <i>It works by using java reflection</i>
@@ -39,7 +40,7 @@ public class ClassMethod<T> {
     
     public boolean validMethod(int... q) {        
         for (int qq : q) {
-            if (validMethod(Arrays.copyOf(new Class[]{this.type}, qq))) {
+            if (validMethod(Collections.nCopies(qq, this.type).toArray(new Class[qq]))) {
                 return true;
             }
         }
@@ -55,9 +56,8 @@ public class ClassMethod<T> {
         }
     }    
 
-    public void add(Expression e) {
-        values = Arrays.copyOf(values, values.length + 1);
-        values[values.length - 1] = e;
+    public void addArgs(Expression[] vals) {
+        values = vals;
     }
 
     public Object applyAsObject() {

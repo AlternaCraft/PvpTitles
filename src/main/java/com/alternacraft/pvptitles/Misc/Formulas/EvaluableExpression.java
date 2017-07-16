@@ -5,6 +5,8 @@
  */
 package com.alternacraft.pvptitles.Misc.Formulas;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class EvaluableExpression {
         nextChar();
         Expression x = parseExpression();
         if (pos < str.length()) {
-            throw new RuntimeException("Unexpected: " + (char) ch);
+            throw new RuntimeException("Unexpected '" + (char) ch + "' at position " + (pos + 1));
         }
         return x;
     }
@@ -108,17 +110,9 @@ public class EvaluableExpression {
                 nextChar();
             }
             final String name = str.substring(startPos, this.pos);
-
             final ClassMethod cm = new ClassMethod(Math.class, double.class, name);
             if (cm.validMethod(0, 1, 2)) { // Valid for 0, 1 or 2 argument/s
-                Expression arg = parseFactor();
-                if (arg != null) {
-                    cm.add(arg);
-                }
-                while (eat(',')) { // Multiple parameters
-                    cm.add(parseFactor());
-                }
-
+                cm.addArgs(parseArgs());
                 x = () -> {
                     try {
                         Object result = cm.applyAsObject();
@@ -133,7 +127,8 @@ public class EvaluableExpression {
                     }
                 };
             } else {
-                x = () -> variables.get(name);
+                // Avoid null return
+                x = () -> (variables.get(name) == null) ? 0 : variables.get(name);
             }
         } else if (ch != ')') {
             throw new RuntimeException("Unexpected: " + (char) ch);
@@ -147,5 +142,17 @@ public class EvaluableExpression {
 
         return x;
     }
+    
+    private Expression[] parseArgs() {
+        List<Expression> args = new ArrayList();
+        if (eat('(')) {
+            do {
+                args.add(parseExpression());
+            }
+            while(eat(','));
+            eat(')');
+        }
+        return args.toArray(new Expression[args.size()]);
+    }    
     //</editor-fold>
 }

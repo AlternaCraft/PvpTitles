@@ -201,15 +201,15 @@ public class HandlePlayerFame implements Listener {
 
         Player victim = death.getEntity();
         UUID victimuuid = victim.getUniqueId();
-        Entity killer = death.getEntity();        
+        Player killer = death.getEntity().getKiller();
 
         String tag = this.cm.params.getTag();
         int deaths = 0;
         
-        boolean killedByPlayer = killer instanceof Player;
-
-        boolean shouldAddDeath = (params.isAddDeathOnlyByPlayer()) ? killedByPlayer : true;
-        if (shouldAddDeath) {
+        boolean killedByPlayer = killer != null; 
+        
+        if (!params.isAddDeathOnlyByPlayer() 
+                || params.isAddDeathOnlyByPlayer() && killedByPlayer) {
             // Añado una muerte más a la victima
             if (HandlePlayerFame.DEATHSTREAK.containsKey(victimuuid.toString())) {
                 deaths = DEATHSTREAK.get(victimuuid.toString());
@@ -250,7 +250,7 @@ public class HandlePlayerFame implements Listener {
             if (killedByPlayer) {
                 try {
                     params.addVariableToFormula("KPOINTS", this.cm.getDBH().getDM()
-                            .loadPlayerFame(victimuuid, null));
+                            .loadPlayerFame(killer.getUniqueId(), null));
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }                
@@ -302,15 +302,14 @@ public class HandlePlayerFame implements Listener {
 
         //<editor-fold defaultstate="collapsed" desc="KILLER CALCULATOR">
         if (killedByPlayer) {
-            Player pKiller = death.getEntity().getKiller();
-            UUID killeruuid = pKiller.getUniqueId();
+            UUID killeruuid = killer.getUniqueId();
 
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
             if (afm.isVetado(killeruuid.toString()) || killeruuid.toString()
                     .equalsIgnoreCase(victimuuid.toString())) {
                 if (afm.isVetado(killeruuid.toString())) {
-                    pKiller.sendMessage(getPluginName() + LangsFile.VETO_STARTED
-                            .getText(Localizer.getLocale(pKiller))
+                    killer.sendMessage(getPluginName() + LangsFile.VETO_STARTED
+                            .getText(Localizer.getLocale(killer))
                             .replace("%tag%", this.cm.params.getTag())
                             .replace("%time%", splitToComponentTimes(afm
                                     .getVetoTime(killeruuid.toString()))));
@@ -319,7 +318,7 @@ public class HandlePlayerFame implements Listener {
             }
 
             // Módulo anti farming
-            antiFarm(pKiller, victimuuid.toString());
+            antiFarm(killer, victimuuid.toString());
 
             // Lo compruebo de nuevo por si le acaban de vetar
             if (afm.isVetado(killeruuid.toString())) {
@@ -358,13 +357,13 @@ public class HandlePlayerFame implements Listener {
             		previousFame); 
 
                 int gain = (int) Math.round((int) params.getReceivedResult()
-                        * params.getMultiplier("Points", pKiller));
+                        * params.getMultiplier("Points", killer));
                 int actualFame = previousFame + gain;
 
                 try {
                     this.cm.getDBH().getDM().savePlayerFame(killeruuid, actualFame, null);
-                    pKiller.sendMessage(getPluginName() + LangsFile.PLAYER_GETS_KILL
-                            .getText(Localizer.getLocale(pKiller))
+                    killer.sendMessage(getPluginName() + LangsFile.PLAYER_GETS_KILL
+                            .getText(Localizer.getLocale(killer))
                             .replace("%killed%", victim.getName())
                             .replace("%fame%", Integer.toString(gain))
                             .replace("%tag%", tag));
@@ -382,19 +381,19 @@ public class HandlePlayerFame implements Listener {
                 }
 
                 try {
-                    Rank currentRank = RankManager.getRank(previousFame, seconds, pKiller);
-                    Rank newRank = RankManager.getRank(actualFame, seconds, pKiller);
+                    Rank currentRank = RankManager.getRank(previousFame, seconds, killer);
+                    Rank newRank = RankManager.getRank(actualFame, seconds, killer);
 
                     if (!currentRank.similar(newRank)) {
-                        pKiller.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK
-                                .getText(Localizer.getLocale(pKiller))
+                        killer.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK
+                                .getText(Localizer.getLocale(killer))
                                 .replace("%newRank%", newRank.getDisplay()));
                     }
                 } catch (RanksException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
 
-                FameEvent event = new FameEvent(pKiller, previousFame, gain);
+                FameEvent event = new FameEvent(killer, previousFame, gain);
                 pvpTitles.getServer().getPluginManager().callEvent(event);
             }
         }
