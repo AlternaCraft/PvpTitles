@@ -103,7 +103,7 @@ public class RankManager {
         return r;
     }
 
-    public static NextRank getNextRank(Rank r, Player pl) {
+    public static NextRank getNextRank(Rank r, int actual_points, long actual_time, Player pl) {
         int rank_pos = Collections.binarySearch(RANKS, r, new RankComparator());
         if (rank_pos < 1 || rank_pos >= RANKS.size() - 1) {
             return null;
@@ -116,7 +116,7 @@ public class RankManager {
                 && !hasRankPermission(pl, nextRank.getDefaultPermission())
                 && rank_pos > 0);
 
-        return new NextRank(r, nextRank);
+        return new NextRank(actual_points, actual_time, nextRank);
     }
 
     public static void clear() {

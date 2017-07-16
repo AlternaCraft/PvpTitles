@@ -110,7 +110,7 @@ public class RankCommand implements CommandExecutor {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
             return;
         }
-        NextRank next = RankManager.getNextRank(actual, player);
+        NextRank next = RankManager.getNextRank(actual, fame, seconds, player);
 
         String tag = pt.getManager().params.getTag();
         LangType lang = Localizer.getLocale(player);

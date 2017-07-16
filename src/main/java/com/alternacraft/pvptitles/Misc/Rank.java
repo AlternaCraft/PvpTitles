@@ -95,9 +95,9 @@ public final class Rank {
         private final long actual_time;
         private final Rank next;
 
-        public NextRank(Rank actual, Rank next) {
-            this.actual_points = actual.getPoints();
-            this.actual_time = actual.getTime();
+        public NextRank(int actual_points, long actual_time, Rank next) {
+            this.actual_points = actual_points;
+            this.actual_time = actual_time;
             this.next = next;
         }
 
