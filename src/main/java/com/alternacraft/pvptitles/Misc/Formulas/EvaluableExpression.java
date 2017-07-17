@@ -83,6 +83,18 @@ public class EvaluableExpression {
             }
         }
     }
+    
+    private Expression[] parseArgs() {
+        List<Expression> args = new ArrayList();
+        if (eat('(')) {
+            do {
+                args.add(parseExpression());
+            }
+            while(eat(','));
+            eat(')');
+        }
+        return args.toArray(new Expression[args.size()]);
+    }    
 
     private Expression parseFactor() {
         if (eat('+')) {
@@ -142,17 +154,5 @@ public class EvaluableExpression {
 
         return x;
     }
-    
-    private Expression[] parseArgs() {
-        List<Expression> args = new ArrayList();
-        if (eat('(')) {
-            do {
-                args.add(parseExpression());
-            }
-            while(eat(','));
-            eat(')');
-        }
-        return args.toArray(new Expression[args.size()]);
-    }    
     //</editor-fold>
 }
