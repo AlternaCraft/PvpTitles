@@ -90,10 +90,11 @@ MW-filter:
 # Update Time for leaderboards (IN MINUTES)
 LBRefresh: 1
 
-# Time to check new Rank (Time requirement) (IN SECONDS)
+# Task to check if a player got a new Rank (Useful if that rank requires a 
+# minimum played time) (IN SECONDS)
 RankChecker: 30
 
-# ** You can disable the events (if you don't need them) putting in the fields '-1' **
+# ** You CAN DISABLE the events (if you don't need them) putting in the fields '-1' **
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -105,7 +106,7 @@ RankChecker: 30
 TimeP: 20
 # List of players who will not be deleted with the command (Case sensitive)
 NoPurge:
-- Player1
+- PlayerName1234
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -125,7 +126,7 @@ VetoTime: 300
 ## PLAYED TIME ##
 # Enable/Disable checking afk.
 CheckAFK: true
-# AFK Time (Time to considerer a player as afk player in minutes)
+# AFK Time (Time to considerer a player as afk, in minutes)
 AFKTime: 5
 
 ############################################################
