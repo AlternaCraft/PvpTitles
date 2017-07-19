@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
  */
 public class RankManager {
 
-    // Ordenado de mas a menos
+    // Descending sort
     static class RankComparator implements Comparator<Rank> {
 
         @Override
@@ -105,7 +105,7 @@ public class RankManager {
 
     public static NextRank getNextRank(Rank r, int actual_points, long actual_time, Player pl) {
         int rank_pos = Collections.binarySearch(RANKS, r, new RankComparator());
-        if (rank_pos < 1 || rank_pos >= RANKS.size() - 1) {
+        if (rank_pos < 1 || rank_pos >= RANKS.size()) {
             return null;
         }
 

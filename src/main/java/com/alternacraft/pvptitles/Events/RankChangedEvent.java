@@ -25,27 +25,27 @@ public class RankChangedEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     
     private OfflinePlayer player = null;
-    private String lastRank = null;
-    private String newRank = null;
+    private String lastRankID = null;
+    private String newRankID = null;
 
     private boolean cancelled;
     
     public RankChangedEvent(OfflinePlayer pl, String lastRank, String newRank) {
         this.player = pl;
-        this.lastRank = lastRank;
-        this.newRank = newRank;
+        this.lastRankID = lastRank;
+        this.newRankID = newRank;
     }
 
     public OfflinePlayer getPlayer() {
         return player;
     }
 
-    public String getLastRank() {
-        return lastRank;
+    public String getLastRankID() {
+        return lastRankID;
     }
 
-    public String getNewRank() {
-        return newRank;
+    public String getNewRankID() {
+        return newRankID;
     }    
 
     @Override

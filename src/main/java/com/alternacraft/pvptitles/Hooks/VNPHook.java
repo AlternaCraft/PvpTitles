@@ -24,7 +24,7 @@ import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.alternacraft.pvptitles.Misc.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -70,8 +70,8 @@ public class VNPHook {
             Player player = event.getPlayer();
             String uuid = player.getUniqueId().toString();
             if (HOLOPLAYERS.containsKey(uuid)) {
-                Hologram h = HOLOPLAYERS.get(uuid);
-                h.clearLines();
+                HolographicHook.cleanHoloPlayer(player);
+                
                 if (!event.isVanishing() && !player.isSneaking() 
                         && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                     int fame = 0;
@@ -92,15 +92,17 @@ public class VNPHook {
 
                     long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                    String rank = "";
+                    Rank rank;
                     try {
-                        rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                        rank = RankManager.getRank(fame, totalTime, player);
                     } catch (RanksException ex) {
                         CustomLogger.logArrayError(ex.getCustomStackTrace());
+                        return;
                     }
 
-                    if (HandlePlayerTag.canDisplayRank(player, rank)) {
-                        h.insertTextLine(0, RANK_LINE.replace("%rank%", rank));
+                    if (HandlePlayerTag.canDisplayRank(player, rank.getId())) {
+                        HolographicHook.insertHoloPlayer(player, RANK_LINE
+                            .replace("%rank%", rank.getDisplay()));
                     }
                 }       
             }

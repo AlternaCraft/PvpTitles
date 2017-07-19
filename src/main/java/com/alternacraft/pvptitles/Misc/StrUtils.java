@@ -16,7 +16,6 @@
  */
 package com.alternacraft.pvptitles.Misc;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import org.bukkit.ChatColor;
 
 public class StrUtils {
@@ -67,16 +66,5 @@ public class StrUtils {
 
     public static int dividirEntero(int v, int div) {
         return (v % div == 0 && v != 0) ? v / div : ((int) v / div) + 1;
-    }
-    
-    public static boolean isHologramEmpty(Hologram h) {
-        try {
-            h.getLine(0);
-        }
-        catch(Exception ex) {
-            return true;
-        }
-        
-        return false;
     }
 }

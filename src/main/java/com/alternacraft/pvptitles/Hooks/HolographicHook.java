@@ -107,7 +107,13 @@ public class HolographicHook {
     }
     
     public static boolean isEmptyHoloPlayer(Player pl) {
-        return StrUtils.isHologramEmpty(HOLOPLAYERS.get(pl.getUniqueId().toString()));
+        try {
+            HOLOPLAYERS.get(pl.getUniqueId().toString()).getLine(0);
+        }
+        catch(Exception ex) {
+            return true;
+        }        
+        return false;
     }
     
     public static void insertHoloPlayer(Player pl, String str) {

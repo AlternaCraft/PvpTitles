@@ -33,7 +33,6 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
-import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -170,8 +169,12 @@ public class HandlePlayerTag implements Listener {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
-            String display = (rank != null) ? rank.getDisplay():"";
+            String display = (rank != null) ? rank.getDisplay() : "";
             
+            // Avoid errors.
+            if (HOLOPLAYERS.containsKey(uuid)) {
+                removeHoloPlayer(HOLOPLAYERS.get(uuid));           
+            }
             // If rank fails but later it works...
             HOLOPLAYERS.put(uuid, createHoloPlayer(player, display));
 
@@ -182,7 +185,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -225,15 +228,17 @@ public class HandlePlayerTag implements Listener {
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = "";
+                Rank rank;
                 try {                
-                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                    rank = RankManager.getRank(fame, totalTime, player);
                 } catch (RanksException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
                 }
 
-                if (canDisplayRank(player, rank)) {
-                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                if (canDisplayRank(player, rank.getId())) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE
+                            .replace("%rank%", rank.getDisplay()));
                 }                
             }            
         }
@@ -271,15 +276,17 @@ public class HandlePlayerTag implements Listener {
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = "";
+                Rank rank;
                 try {
-                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                    rank = RankManager.getRank(fame, totalTime, player);
                 } catch (RanksException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
                 }
 
-                if (canDisplayRank(player, rank)) {
-                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                if (canDisplayRank(player, rank.getId())) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE
+                            .replace("%rank%", rank.getDisplay()));
                 }                
             }
         }
@@ -296,34 +303,36 @@ public class HandlePlayerTag implements Listener {
             HolographicHook.moveHoloPlayer(player, 
                     new Location(to.getWorld(), to.getX(), to.getY() + TITLE_HEIGHT, to.getZ()));
 
-            if (HolographicHook.isEmptyHoloPlayer(player) && canDisplayHologram(player)) {
-                int fame = 0;
-                try {
-                    fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
+            int fame = 0;
+            try {
+                fame = manager.getDBH().getDM().loadPlayerFame(player.getUniqueId(), player.getWorld().getName());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
 
-                long oldTime = 0;
-                try {
-                    oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
-                } catch (DBException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
+            long oldTime = 0;
+            try {
+                oldTime = manager.getDBH().getDM().loadPlayedTime(player.getUniqueId());
+            } catch (DBException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+            }
 
-                long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
+            long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = "";
-                try {
-                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
-                } catch (RanksException ex) {
-                    CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }
-
-                if (canDisplayRank(player, rank)) {
-                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
-                }
-            } else if (!HolographicHook.isEmptyHoloPlayer(player) && !canDisplayHologram(player)) {
+            Rank rank;
+            try {
+                rank = RankManager.getRank(fame, totalTime, player);
+            } catch (RanksException ex) {
+                CustomLogger.logArrayError(ex.getCustomStackTrace());
+                return;
+            }
+            
+            if (HolographicHook.isEmptyHoloPlayer(player) && canDisplayHologram(player)
+                    && canDisplayRank(player, rank.getId())) {
+                HolographicHook.insertHoloPlayer(player, RANK_LINE
+                        .replace("%rank%", rank.getDisplay()));
+            } else if (!HolographicHook.isEmptyHoloPlayer(player) 
+                    && (!canDisplayHologram(player) || !canDisplayRank(player, rank.getId()))) {
                 HolographicHook.cleanHoloPlayer(player);
             }
         }
@@ -337,11 +346,12 @@ public class HandlePlayerTag implements Listener {
         if (HOLOPLAYERS.containsKey(uuid)) {
             HolographicHook.cleanHoloPlayer(player);
 
-            if (canDisplayRank(player, event.getNewRank()) && canDisplayHologram(player)
+            if (canDisplayRank(player, event.getNewRankID()) && canDisplayHologram(player)
                     && !player.isDead()) {
-                Rank r = RankManager.getRank(event.getNewRank());
+                Rank r = RankManager.getRank(event.getNewRankID());
                 if (r == null) return;
-                HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", r.getDisplay()));
+                HolographicHook.insertHoloPlayer(player, RANK_LINE
+                        .replace("%rank%", r.getDisplay()));
             }
         }
     }
@@ -379,15 +389,17 @@ public class HandlePlayerTag implements Listener {
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = "";
+                Rank rank;
                 try {
-                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                    rank = RankManager.getRank(fame, totalTime, player);
                 } catch (RanksException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
                 }
 
-                if (canDisplayRank(player, rank)) {
-                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                if (canDisplayRank(player, rank.getId())) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE
+                            .replace("%rank%", rank.getDisplay()));
                 }                
             }
         }
@@ -429,15 +441,17 @@ public class HandlePlayerTag implements Listener {
 
                 long totalTime = oldTime + plugin.getManager().getTimerManager().getPlayer(player).getTotalOnline();
 
-                String rank = "";
+                Rank rank;
                 try {
-                    rank = RankManager.getRank(fame, totalTime, player).getDisplay();
+                    rank = RankManager.getRank(fame, totalTime, player);
                 } catch (RanksException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
+                    return;
                 }
 
-                if (canDisplayRank(player, rank)) {
-                    HolographicHook.insertHoloPlayer(player, RANK_LINE.replace("%rank%", rank));
+                if (canDisplayRank(player, rank.getId())) {
+                    HolographicHook.insertHoloPlayer(player, RANK_LINE
+                            .replace("%rank%", rank.getDisplay()));
                 }
             }
         }
