@@ -47,6 +47,7 @@ Also, there are some optional dependencies for having a better experience with t
 * HolographicDisplays & ProtocolLib (http://dev.bukkit.org/bukkit-plugins/holographic-displays/)
 * Placeholder API (https://www.spigotmc.org/resources/placeholderapi.6245/)
 * MVdWPlaceholderAPI (https://www.spigotmc.org/resources/mvdwplaceholderapi.11182/)
+* VanishNoPacket (https://dev.bukkit.org/projects/vanish/)
 
 You don't need to do anything for getting it works together. It is automatically hooked.
 
