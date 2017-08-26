@@ -208,8 +208,8 @@ public class ConfigDataStore {
     
     public void setNoPurgePlayers(List<String> no_pp) {        
         no_pp.forEach(name -> {
-            UUID uuid = UUIDFetcher.getUUIDPlayer(name);
-            if (!this.noPurgePlayers.contains(uuid.toString()))
+            UUID uuid = UUIDFetcher.getUUIDPlayer(name);            
+            if (uuid != null && !this.noPurgePlayers.contains(uuid.toString()))
                 this.noPurgePlayers.add(uuid.toString());
         });
     }
