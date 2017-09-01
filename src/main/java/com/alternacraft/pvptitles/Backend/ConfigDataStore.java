@@ -195,39 +195,54 @@ public class ConfigDataStore {
     }
 
     public void setTop(short top) {
-        if (top > 0) this.top = top;
+        if (top > 0) {
+            this.top = top;
+        }
     }
 
     public void setLBRefresh(short LBRefresh) {
-        if (LBRefresh > 0) this.LBRefresh = LBRefresh;
+        if (LBRefresh > 0) {
+            this.LBRefresh = LBRefresh;
+        }
     }
 
     public void setRankChecker(short rankChecker) {
-        if (rankChecker > 0) this.rankChecker = rankChecker;
+        if (rankChecker > 0) {
+            this.rankChecker = rankChecker;
+        }
     }
-    
-    public void setNoPurgePlayers(List<String> no_pp) {        
+
+    public void setNoPurgePlayers(List<String> no_pp) {
         no_pp.forEach(name -> {
-            UUID uuid = UUIDFetcher.getUUIDPlayer(name);            
-            if (uuid != null && !this.noPurgePlayers.contains(uuid.toString()))
+            UUID uuid = UUIDFetcher.getUUIDPlayer(name);
+            if (uuid != null && !this.noPurgePlayers.contains(uuid.toString())) {
                 this.noPurgePlayers.add(uuid.toString());
+            }
         });
     }
 
     public void setPurgeTime(short timeP) {
-        if (timeP > 0) this.purgeTime = timeP;
-    }    
-    
+        if (timeP > 0) {
+            this.purgeTime = timeP;
+        }
+    }
+
     public void setMaxKills(short kills) {
-        if (kills > 0) this.maxKills = kills;
+        if (kills > 0) {
+            this.maxKills = kills;
+        }
     }
 
     public void setVetoTime(short timeV) {
-        if (timeV > 0) this.vetoTime = timeV;
+        if (timeV > 0) {
+            this.vetoTime = timeV;
+        }
     }
 
     public void setCleanerTime(short timeL) {
-        if (timeL > 0) this.cleanerTime = timeL;
+        if (timeL > 0) {
+            this.cleanerTime = timeL;
+        }
     }
 
     public void setCheckAFK(boolean checkAFK) {
@@ -271,8 +286,9 @@ public class ConfigDataStore {
 
     public void setResetOptions(List<String> resetOptions) {
         resetOptions.forEach(option -> {
-            if (!this.resetOptions.contains(option))
+            if (!this.resetOptions.contains(option)) {
                 this.resetOptions.add(option);
+            }
         });
     }
 
@@ -326,11 +342,12 @@ public class ConfigDataStore {
 
     public void setAffectedWorlds(List<String> worlds) {
         worlds.forEach(w -> {
-            if (!this.affected_worlds.contains(w.toLowerCase()))
+            if (!this.affected_worlds.contains(w.toLowerCase())) {
                 this.affected_worlds.add(w.toLowerCase());
+            }
         });
     }
-    
+
     public void setTitle(boolean title) {
         this.title = title;
     }
@@ -476,7 +493,7 @@ public class ConfigDataStore {
         String all_perm = "pvptitles.mp.*.";
         String rewards_perm = "pvptitles.mp.rewards.";
         String defaults_perm = "pvptitles.mp.defaults.";
-        
+
         Player pl = op.getPlayer();
 
         Map<String, Map<String, Double>> mults = Manager.getInstance().params.getMultipliers();
@@ -484,10 +501,10 @@ public class ConfigDataStore {
         for (Map.Entry<String, Double> entry : perms.entrySet()) {
             String key = entry.getKey().toLowerCase();
             Double value = entry.getValue();
-            
-            String perm = "pvptitles.mp." + type.toLowerCase() + "." + key;            
+
+            String perm = "pvptitles.mp." + type.toLowerCase() + "." + key;
             boolean global = VaultHook.hasPermission(all_perm + key, pl);
-            
+
             if (!global) {
                 boolean rw = perm.matches("pvptitles\\.mp\\.r.*\\..*");
                 if (rw) {
@@ -496,11 +513,11 @@ public class ConfigDataStore {
                     global = VaultHook.hasPermission(defaults_perm + key, pl);
                 }
             }
-            
+
             if (!global) {
                 global = VaultHook.hasPermission(perm + key, pl);
-            }     
-            
+            }
+
             if (global) {
                 return value;
             }
@@ -599,7 +616,7 @@ public class ConfigDataStore {
 
     public short getHoloHeightMod() {
         return holoHeightMod;
-    }  
+    }
 
     /**
      * Método para convertir el nombre del color a un valor válido
