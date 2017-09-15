@@ -1,0 +1,15 @@
+com.alternacraft.pvptitles.Backend
+com.alternacraft.pvptitles.Commands
+com.alternacraft.pvptitles.Events
+com.alternacraft.pvptitles.Exceptions
+com.alternacraft.pvptitles.Files
+com.alternacraft.pvptitles.Hooks
+com.alternacraft.pvptitles.Libraries
+com.alternacraft.pvptitles.Listeners
+com.alternacraft.pvptitles.Main
+com.alternacraft.pvptitles.Managers
+com.alternacraft.pvptitles.Managers.BoardsAPI
+com.alternacraft.pvptitles.Managers.BoardsCustom
+com.alternacraft.pvptitles.Misc
+com.alternacraft.pvptitles.Misc.Formulas
+com.alternacraft.pvptitles.RetroCP
