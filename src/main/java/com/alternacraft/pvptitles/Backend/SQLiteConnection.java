@@ -56,20 +56,25 @@ public class SQLiteConnection extends SQLConnection {
 
     @Override
     public void load() throws DBException {
-        slowUpdate(getTableServers());
-        slowUpdate(getTablePlayerServer());
-        slowUpdate(getTablePlayerMeta());
-        slowUpdate(getTablePlayerWorld());
-        slowUpdate(getTableSigns());
-        slowUpdate(getTriggerMeta());
+        try {
+            slowUpdate(getTableServers());
+            slowUpdate(getTablePlayerServer());
+            slowUpdate(getTablePlayerMeta());
+            slowUpdate(getTablePlayerWorld());
+            slowUpdate(getTableSigns());
+            slowUpdate(getTriggerMeta());
+        } catch (SQLException ex) {
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.
+                    DB_METHOD.STRUCTURE, ex.getMessage());
+        }
     }
     
     public static String getTriggerMeta() {
         return "CREATE TRIGGER IF NOT EXISTS 'create_player_meta' "
                 + "AFTER INSERT ON 'PlayerServer' BEGIN "
-                    + "INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver;"
+                    + "INSERT INTO PlayerMeta(psid) SELECT max(id) FROM PlayerServer;"
                     + "UPDATE PlayerMeta SET lastlogin = (SELECT DATE()) WHERE "
-                        + "psid = (SELECT max(id) FROM playerserver;"
+                        + "psid = (SELECT max(id) FROM PlayerServer;"
                 + "END;";
     }
 }

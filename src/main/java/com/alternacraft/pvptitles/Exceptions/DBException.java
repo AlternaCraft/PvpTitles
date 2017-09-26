@@ -46,6 +46,7 @@ public class DBException extends CustomException {
     private DB_METHOD type = null;
 
     public enum DB_METHOD {
+        STRUCTURE,
         PLAYER_CONNECTION,
         PLAYER_FAME_SAVING,
         PLAYER_FAME_LOADING,

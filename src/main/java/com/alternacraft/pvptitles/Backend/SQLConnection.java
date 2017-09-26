@@ -88,19 +88,18 @@ public abstract class SQLConnection {
         } catch (SQLException | AbstractMethodError ex) {}
     }
     
-    protected void slowUpdate(String sql) throws DBException {
+    protected void slowUpdate(String sql) throws DBException, SQLException {
         if (isConnected(true)) {
-            try {
-                this.connection.createStatement().executeUpdate(sql);
-            } catch (SQLException ex) {}
+            this.update(sql);
         }
+    }
+    
+    protected void update(String sql) throws SQLException {
+        this.connection.createStatement().executeUpdate(sql);
     }
     
     protected ResultSet query(String sql) throws SQLException {
         return this.connection.createStatement().executeQuery(sql);
-    }
-    protected void update(String sql) throws SQLException {
-        this.connection.createStatement().executeUpdate(sql);
     }
     
     //<editor-fold defaultstate="collapsed" desc="DEFAULT TABLES">

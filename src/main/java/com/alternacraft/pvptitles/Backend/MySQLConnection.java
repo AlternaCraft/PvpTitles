@@ -53,22 +53,26 @@ public class MySQLConnection extends SQLConnection {
     
     @Override
     public void load() throws DBException {
-        slowUpdate(getTableServers() + INNO_DB);
-        slowUpdate(getTablePlayerServer() + INNO_DB);
-        slowUpdate(getTablePlayerMeta() + INNO_DB);
-        slowUpdate(getTablePlayerWorld() + INNO_DB);
-        slowUpdate(getTableSigns() + INNO_DB);
-        slowUpdate(getTriggerMeta());
-        slowUpdate(getTriggerMeta2());
+        try {
+            slowUpdate(getTableServers() + INNO_DB);
+            slowUpdate(getTablePlayerServer() + INNO_DB);
+            slowUpdate(getTablePlayerMeta() + INNO_DB);
+            slowUpdate(getTablePlayerWorld() + INNO_DB);
+            slowUpdate(getTableSigns() + INNO_DB);
+            slowUpdate(getTriggerMeta());
+            slowUpdate(getTriggerMeta2());
+        } catch (SQLException ex) {
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage());
+        }
     }   
     
     public static String getTriggerMeta() {
         return "CREATE TRIGGER `create_player_meta` AFTER INSERT ON `PlayerServer`"
-                + " FOR EACH ROW INSERT INTO PlayerMeta(psid) SELECT max(id) FROM playerserver";
+                + " FOR EACH ROW INSERT INTO PlayerMeta(psid) SELECT max(id) FROM PlayerServer";
     }
 
     public static String getTriggerMeta2() {
         return "CREATE TRIGGER `update_lastlogin` AFTER INSERT ON `PlayerServer`"
-                + " FOR EACH ROW UPDATE playermeta SET lastlogin = (SELECT CURDATE()) WHERE psid = (SELECT max(id) FROM playerserver)";
+                + " FOR EACH ROW UPDATE PlayerMeta SET lastlogin = (SELECT CURDATE()) WHERE psid = (SELECT max(id) FROM PlayerServer)";
     }
 }
