@@ -17,13 +17,13 @@ public class SQLiteConnection extends SQLConnection {
 
     private final String filedir;
     private final String filename;
-    
+
     public SQLiteConnection(String filedir, String filename) {
         this.filedir = filedir;
         this.filename = filename;
         this.createDatabase();
     }
-    
+
     private void createDatabase() {
         File f = new File(PvpTitles.PLUGIN_DIR, this.filename);
         if (!UtilsFile.exists(f)) {
@@ -34,9 +34,9 @@ public class SQLiteConnection extends SQLConnection {
             }
         }
     }
-    
+
     @Override
-    public void connectDB(boolean reconnect, String... args) throws DBException {        
+    public void connectDB(boolean reconnect, String... args) throws DBException {
         try {
             Class.forName(DRIVER_SQLITE);
             connection = DriverManager.getConnection("jdbc:sqlite:" + this.filedir + this.filename);
@@ -44,14 +44,17 @@ public class SQLiteConnection extends SQLConnection {
             connection.createStatement().execute("PRAGMA foreign_keys = ON");
             status = STATUS_AVAILABLE.CONNECTED;
         } catch (ClassNotFoundException ex) {
-            if (!reconnect) CustomLogger.logError("SQLite library not found");
-                status = STATUS_AVAILABLE.NOT_CONNECTED;
+            if (!reconnect) {
+                CustomLogger.logError("SQLite library not found");
+            }
+            status = STATUS_AVAILABLE.NOT_CONNECTED;
         } catch (SQLException ex) {
             status = STATUS_AVAILABLE.NOT_CONNECTED;
-            if (!reconnect) 
-                throw new DBException("SQLite error: " + ex.getErrorCode(), 
-                        DBException.DB_METHOD.DB_CONNECT); 
-        }   
+            if (!reconnect) {
+                throw new DBException("SQLite error: " + ex.getErrorCode(),
+                        DBException.DB_METHOD.DB_CONNECT);
+            }
+        }
     }
 
     @Override
@@ -64,17 +67,20 @@ public class SQLiteConnection extends SQLConnection {
             slowUpdate(getTableSigns());
             slowUpdate(getTriggerMeta());
         } catch (SQLException ex) {
-            throw new DBException(DBException.UNKNOWN_ERROR, DBException.
-                    DB_METHOD.STRUCTURE, ex.getMessage());
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }
-    
+
     public static String getTriggerMeta() {
         return "CREATE TRIGGER IF NOT EXISTS 'create_player_meta' "
                 + "AFTER INSERT ON 'PlayerServer' BEGIN "
                     + "INSERT INTO PlayerMeta(psid) SELECT max(id) FROM PlayerServer;"
                     + "UPDATE PlayerMeta SET lastlogin = (SELECT DATE()) WHERE "
-                        + "psid = (SELECT max(id) FROM PlayerServer;"
+                    + "psid = (SELECT max(id) FROM PlayerServer);"
                 + "END;";
     }
 }

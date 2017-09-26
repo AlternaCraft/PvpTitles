@@ -59,10 +59,16 @@ public class MySQLConnection extends SQLConnection {
             slowUpdate(getTablePlayerMeta() + INNO_DB);
             slowUpdate(getTablePlayerWorld() + INNO_DB);
             slowUpdate(getTableSigns() + INNO_DB);
+            slowUpdate("DROP TRIGGER IF EXISTS `create_player_meta`");
             slowUpdate(getTriggerMeta());
+            slowUpdate("DROP TRIGGER IF EXISTS `update_lastlogin`");
             slowUpdate(getTriggerMeta2());
         } catch (SQLException ex) {
-            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage());
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage()) {
+                {
+                    this.setStackTrace(ex.getStackTrace());
+                }
+            };
         }
     }   
     
