@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.8.1
+Version: 2.8.5
 ################
 
 ############################################################
@@ -105,8 +105,7 @@ RankChecker: 30
 # Command Purge. Erase the data older than (In days)
 TimeP: 20
 # List of players who will not be deleted with the command (Case sensitive)
-NoPurge:
-- PlayerName1234
+NoPurge: []
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -122,6 +121,8 @@ Kills: 3
 CleanerTime: 300
 # Veto time [Stops getting points by law] (in seconds)
 VetoTime: 300
+# Prevent getting fame from every player or just from abused player?
+PreventFromEvery: true
 
 ## PLAYED TIME ##
 # Enable/Disable checking afk.

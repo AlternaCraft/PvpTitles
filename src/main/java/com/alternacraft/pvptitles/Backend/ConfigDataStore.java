@@ -96,6 +96,8 @@ public class ConfigDataStore {
     private short vetoTime = 0;
     // Tiempo para limpiar las bajas realizadas a un jugador
     private short cleanerTime = 0;
+    // Prevenir la obtención de fama de un jugador o de todos
+    private boolean preventFromEvery = true;
     // Comprueba AFK
     private boolean checkAFK = false;
     // Tiempo AFK
@@ -237,6 +239,10 @@ public class ConfigDataStore {
         if (timeV > 0) {
             this.vetoTime = timeV;
         }
+    }
+
+    public void setPreventFromEvery(boolean preventFromEvery) {
+        this.preventFromEvery = preventFromEvery;
     }
 
     public void setCleanerTime(short timeL) {
@@ -455,6 +461,10 @@ public class ConfigDataStore {
 
     public short getVetoTime() {
         return vetoTime;
+    }
+
+    public boolean isPreventFromEvery() {
+        return preventFromEvery;
     }
 
     public short getCleanerTime() {

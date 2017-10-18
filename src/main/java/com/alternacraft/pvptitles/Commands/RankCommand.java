@@ -41,8 +41,12 @@ import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.Rank.NextRank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
 import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -145,13 +149,44 @@ public class RankCommand implements CommandExecutor {
                     continue;
                 }
 
-                if (HandlePlayerFame.getAfm().isVetado(player.getUniqueId().toString())) {
-                    msg = msg
-                            .replace(VETO_TAG, LangsFile.VETO_STARTED.getText(Localizer.getLocale(player))
-                                    .replace("%tag%", pt.getManager().params.getTag())
-                                    .replace("%time%", splitToComponentTimes(HandlePlayerFame.getAfm().getVetoTime(uuid))));
-                } else if (msg.contains(VETO_TAG)) {
-                    continue;
+                if (msg.contains(VETO_TAG)) {
+                    Set<String> keys = HandlePlayerFame.getAfm().getVetoes(player.getUniqueId().toString()).keySet();
+                    String aux = "";
+                    
+                    if (keys.isEmpty())
+                        continue;
+                    
+                    for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
+                        String key = iterator.next();
+                        
+                        String time = splitToComponentTimes(HandlePlayerFame
+                                .getAfm().getVetoTimeOn(uuid, key));
+                        
+                        if (Manager.getInstance().params.isPreventFromEvery()) {
+                            aux = new StringBuilder(aux).append(
+                                    msg
+                                        .replace(VETO_TAG, LangsFile.VETOED_STARTED.getText(Localizer.getLocale(player))
+                                        .replace("%tag%", pt.getManager().params.getTag())
+                                        .replace("%time%", time))
+                            ).toString();
+                        } else {
+                            aux = new StringBuilder(aux).append(
+                                    msg
+                                        .replace(VETO_TAG, LangsFile.VETOED_BY_STARTED.getText(Localizer.getLocale(player))
+                                        .replace("%tag%", pt.getManager().params.getTag())
+                                        .replace("%time%", time))
+                                        .replace("%player%", Bukkit.getOfflinePlayer(UUID.fromString(key)).getName())
+                            ).toString();
+                        }   
+                        
+                        if (iterator.hasNext())
+                            aux = new StringBuilder(aux)
+                                    .append("\n")
+                                    .append(ChatColor.RESET)
+                                    .toString();
+                    }
+                    
+                    msg = aux;
                 }
             }
 

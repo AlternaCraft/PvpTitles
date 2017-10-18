@@ -94,7 +94,7 @@ public class ConfigLoader {
         params.setLeaderboard(config.getBoolean("MW-filter.show-on-leaderboard"));
         params.setAffectedWorlds(config.getStringList("MW-filter.affected-worlds"));
 
-        // Events
+        // EVENTS
         params.setLBRefresh((short) config.getInt("LBRefresh"));
         params.setRankChecker((short) config.getInt("RankChecker"));
 
@@ -106,7 +106,8 @@ public class ConfigLoader {
         params.setMaxKills((short) config.getInt("Kills"));
         params.setCleanerTime((short) config.getInt("CleanerTime"));
         params.setVetoTime((short) config.getInt("VetoTime"));
-
+        params.setPreventFromEvery(config.getBoolean("PreventFromEvery"));
+        
         params.setCheckAFK(config.getBoolean("CheckAFK"));
         params.setAFKTime((short) config.getInt("AFKTime"));
 

@@ -34,7 +34,6 @@ import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import static com.alternacraft.pvptitles.Managers.CleanTaskManager.TICKS;
 import com.alternacraft.pvptitles.Managers.LeaderBoardManager;
 import com.alternacraft.pvptitles.Managers.MovementManager;
 import com.alternacraft.pvptitles.Managers.RankManager;
@@ -59,6 +58,11 @@ import org.bukkit.entity.Player;
 public final class Manager {
 
     // <editor-fold defaultstate="collapsed" desc="VARIABLES AND CONSTRUCTOR + INSTANCE...">    
+    /**
+     * contante TICKS para saber el tiempo en segundos
+     */
+    public static final long TICKS = 20L;
+    
     // Variable que almacena el plugin
     private PvpTitles pvpTitles = null;
     // Instancia de la clase

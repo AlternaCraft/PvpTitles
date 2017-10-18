@@ -16,70 +16,197 @@
  */
 package com.alternacraft.pvptitles.Managers;
 
+import com.alternacraft.pvptitles.Files.LangsFile;
+import com.alternacraft.pvptitles.Main.Manager;
+import static com.alternacraft.pvptitles.Main.Manager.TICKS;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import com.alternacraft.pvptitles.Misc.PlayerKills;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import com.alternacraft.pvptitles.Misc.Localizer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 public class AntiFarmManager {
-
-    private PvpTitles plugin = null;
 
     // Jugador mas un arraylist con los nombres de sus victimas y sus respectivas bajas
     private final Map<String, PlayerKills> killers = new HashMap();
 
     // Jugadores que no conseguiran fama por abuso de kills
-    private final Map<String, Long> vetados = new HashMap();
+    private final Map<String, Map<String, Long>> vetoed = new HashMap();
 
-    public AntiFarmManager(PvpTitles plugin) {
-        this.plugin = plugin;
+    // Cleaning tasks
+    private final Map<String, KillsTask> cleaner = new HashMap();
+
+    //<editor-fold defaultstate="collapsed" desc="KILLS">
+    public void addKiller(String uuid) {
+        this.killers.put(uuid, new PlayerKills());
+        this.cleaner.put(uuid, new KillsTask(uuid, this));
     }
 
-    public void addKiller(String name) {
-        killers.put(name, new PlayerKills());
+    public void addKillOnVictim(String killeruuid, String victimuuid) {
+        killers.get(killeruuid).addVictim(victimuuid);
+        if (cleaner.get(killeruuid).hasVictim(victimuuid)) {
+            cleaner.get(killeruuid).cleanVictim(victimuuid);
+        }
+        cleaner.get(killeruuid).addVictim(victimuuid); // Create task
     }
 
-    public boolean hasKiller(String name) {
-        return killers.containsKey(name);
+    public void cleanKillsOnVictim(String killeruuid, String victimuuid) {
+        killers.get(killeruuid).cleanVictim(victimuuid);
+        if (cleaner.get(killeruuid).hasVictim(victimuuid)) {
+            cleaner.get(killeruuid).cleanVictim(victimuuid);
+        }
     }
 
-    public boolean hasVictim(String killer, String victim) {
-        return killers.get(killer).hasVictim(victim);
+    public void cleanAllVictims(String killeruuid) {
+        killers.get(killeruuid).cleanAll();
+        cleaner.get(killeruuid).cleanAll(); // Remove tasks
+    }
+    
+    public boolean hasKiller(String uuid) {
+        return killers.containsKey(uuid);
     }
 
-    public void addKillOnVictim(String killer, String victim) {
-        killers.get(killer).addVictim(victim);
+    public boolean hasVictim(String killeruuid, String victimuuid) {
+        return killers.get(killeruuid).hasVictim(victimuuid);
+    }
+    
+    public int getKillsOnVictim(String killeruuid, String victimuuid) {
+        return killers.get(killeruuid).getKillsOnVictim(victimuuid);
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="VETO">
+    public void veto(String killeruuid, String victimuuid, long time) {
+        if (!this.vetoed.containsKey(killeruuid)) {
+            this.vetoed.put(killeruuid, new HashMap<>());
+        }
+        vetoed.get(killeruuid).put(victimuuid, time);
+
+        Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(Manager.getInstance().getPvpTitles(), () -> {
+            this.cleanKillsOnVictim(killeruuid, victimuuid); // Reset kills and timer
+
+            OfflinePlayer op = Bukkit.getOfflinePlayer(UUID.fromString(killeruuid));
+            if (Manager.getInstance().params.isPreventFromEvery()) {
+                this.cleanVeto(killeruuid);
+                if (op.isOnline()) {
+                    op.getPlayer().sendMessage(getPluginName() + LangsFile.VETOED_FINISHED
+                            .getText(Localizer.getLocale(op.getPlayer())));
+                }
+            } else {
+                this.cleanVetoOn(killeruuid, victimuuid);
+                if (op.isOnline()) {
+                    op.getPlayer().sendMessage(getPluginName() + LangsFile.VETOED_BY_FINISHED
+                        .getText(Localizer.getLocale(op.getPlayer()))
+                        .replace("%player%", Bukkit.getOfflinePlayer(UUID
+                                .fromString(victimuuid)).getName())
+                    );
+                }                
+            }
+        }, Manager.getInstance().params.getVetoTime() * TICKS);
+    }
+    
+    public void cleanVeto(String killeruuid) {
+        vetoed.remove(killeruuid);
     }
 
-    public int getKillsOnVictim(String killer, String victim) {
-        return killers.get(killer).getKillsOnVictim(victim);
+    public void cleanVetoOn(String killeruuid, String victimuuid) {
+        vetoed.get(killeruuid).remove(victimuuid);
+    }
+    
+    public boolean isVetoed(String killeruuid) {
+        return vetoed.containsKey(killeruuid);
     }
 
-    public void cleanKillsOnVictim(String killer, String victim) {
-        killers.get(killer).cleanVictim(victim);
+    public boolean isVetoedOn(String killeruuid, String victimuuid) {
+        return vetoed.containsKey(killeruuid) && vetoed.get(killeruuid).containsKey(victimuuid);
+    }
+    
+    public int getVetoTime(String killeruuid) {
+        return (int) ((vetoed.get(killeruuid).values().iterator().next() + (Manager.getInstance().params
+                .getVetoTime() * 1000L) - System.currentTimeMillis()) / 1000L);
     }
 
-    public void cleanAllVictims(String killer) {
-        killers.get(killer).cleanAll();
+    public int getVetoTimeOn(String killeruuid, String victimuuid) {
+        return (int) ((vetoed.get(killeruuid).get(victimuuid) + (Manager.getInstance().params
+                .getVetoTime() * 1000L) - System.currentTimeMillis()) / 1000L);
     }
+    
+    public Map<String, Long> getVetoes(String killeruuid) {
+        return (this.vetoed.containsKey(killeruuid)) ? this.vetoed.get(killeruuid)
+                : new HashMap<>();
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="PLAYERKILLS">    
+    class PlayerKills {
 
-    public void vetar(String killer, long time) {
-        vetados.put(killer, time);
-    }
+        private final Map<String, Integer> victims = new HashMap();
 
-    public boolean isVetado(String killer) {
-        return vetados.containsKey(killer);
-    }
+        public boolean hasVictim(String victim) {
+            return victims.containsKey(victim);
+        }
 
-    public void cleanVeto(String killer) {
-        vetados.remove(killer);
-    }
+        public void addVictim(String victim) {
+            int kills = (victims.containsKey(victim) ? victims.get(victim) + 1 : 1);
+            victims.put(victim, kills);
+        }
 
-    public int getVetoTime(String killer) {
-        return (int) ((vetados.get(killer) + (plugin.getManager().params.getVetoTime() * 1000L) - System.currentTimeMillis()) / 1000L);
-    }
+        public int getKillsOnVictim(String victim) {
+            return victims.get(victim);
+        }
 
-    public PvpTitles getPlugin() {
-        return plugin;
+        public void cleanVictim(String victim) {
+            if (victims.containsKey(victim)) {
+                victims.remove(victim);
+            }
+        }
+
+        public void cleanAll() {
+            victims.clear();
+        }
     }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="KILLSTASK">    
+    class KillsTask {
+
+        private final String killer;
+        private final AntiFarmManager afm;
+
+        // Victim + task
+        private final Map<String, Integer> victims = new HashMap();
+
+        public KillsTask(String killer, AntiFarmManager afm) {
+            this.killer = killer;
+            this.afm = afm;
+        }
+
+        public void addVictim(final String victim) {
+            victims.put(victim, PvpTitles.getInstance().getServer().getScheduler().
+                    scheduleSyncDelayedTask(Manager.getInstance().getPvpTitles(), () -> {
+                        afm.cleanKillsOnVictim(killer, victim);
+                        victims.remove(victim);
+                    }, Manager.getInstance().getPvpTitles().getManager()
+                            .params.getCleanerTime() * Manager.TICKS * 1L)
+            );
+        }
+
+        public boolean hasVictim(String victim) {
+            return this.victims.containsKey(victim);
+        }
+
+        public void cleanVictim(String victim) {
+            int task = victims.get(victim);
+            Bukkit.getServer().getScheduler().cancelTask(task);
+            victims.remove(victim);
+        }
+
+        public void cleanAll() {
+            victims.entrySet()
+                    .stream()
+                    .map(Map.Entry::getKey)
+                    .forEach(this::cleanVictim);
+        }
+    }
+    //</editor-fold>
 }

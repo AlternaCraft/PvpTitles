@@ -26,7 +26,6 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.AntiFarmManager;
-import com.alternacraft.pvptitles.Managers.CleanTaskManager;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Rank;
@@ -75,7 +74,6 @@ public class HandlePlayerFame implements Listener {
 
     private Manager cm = null;
     private static AntiFarmManager afm = null;
-    private final Map<String, CleanTaskManager> csKiller = new HashMap();
 
     private PvpTitles pvpTitles = null;
 
@@ -88,7 +86,7 @@ public class HandlePlayerFame implements Listener {
         this.cm = pt.getManager();
         this.pvpTitles = pt;
 
-        afm = new AntiFarmManager(pvpTitles);
+        afm = new AntiFarmManager();
     }
 
     /**
@@ -199,15 +197,16 @@ public class HandlePlayerFame implements Listener {
         ConfigDataStore params = Manager.getInstance().params;
 
         Player victim = death.getEntity();
+        victim.setHealth(20.0);
         UUID victimuuid = victim.getUniqueId();
         Player killer = death.getEntity().getKiller();
 
         String tag = this.cm.params.getTag();
         int deaths = 0;
-        
-        boolean killedByPlayer = killer != null; 
-        
-        if (!params.isAddDeathOnlyByPlayer() 
+
+        boolean killedByPlayer = killer != null;
+
+        if (!params.isAddDeathOnlyByPlayer()
                 || params.isAddDeathOnlyByPlayer() && killedByPlayer) {
             // Añado una muerte más a la victima
             if (HandlePlayerFame.DEATHSTREAK.containsKey(victimuuid.toString())) {
@@ -219,7 +218,7 @@ public class HandlePlayerFame implements Listener {
         //<editor-fold defaultstate="collapsed" desc="VICTIM CALCULATOR">
         boolean resetByPlayer = params.hasResetOption(K_BY_PLAYER);
         boolean resetByEnv = params.hasResetOption(K_BY_ENVIRONMENT);
-        
+
         // Reset values for victim
         if ((resetByEnv && !killedByPlayer) || (resetByPlayer && killedByPlayer)) {
             // Final de la racha de bajas
@@ -239,20 +238,20 @@ public class HandlePlayerFame implements Listener {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
                 return; // Le bajaria los puntos posteriormente
             }
-            
+
             params.addVariableToFormula("MOD",
                     params.getLostMod());
             params.addVariableToFormula("STREAK",
                     deaths);
             params.addVariableToFormula("VPOINTS",
-                    previousFame);            
+                    previousFame);
             if (killedByPlayer) {
                 try {
                     params.addVariableToFormula("KPOINTS", this.cm.getDBH().getDM()
                             .loadPlayerFame(killer.getUniqueId(), null));
                 } catch (DBException ex) {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
-                }                
+                }
             }
 
             int gain = (int) params.getLostResult();
@@ -304,23 +303,46 @@ public class HandlePlayerFame implements Listener {
             UUID killeruuid = killer.getUniqueId();
 
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
-            if (afm.isVetado(killeruuid.toString()) || killeruuid.toString()
-                    .equalsIgnoreCase(victimuuid.toString())) {
-                if (afm.isVetado(killeruuid.toString())) {
-                    killer.sendMessage(getPluginName() + LangsFile.VETO_STARTED
-                            .getText(Localizer.getLocale(killer))
-                            .replace("%tag%", this.cm.params.getTag())
-                            .replace("%time%", splitToComponentTimes(afm
-                                    .getVetoTime(killeruuid.toString()))));
+            boolean vetoed = (Manager.getInstance().params.isPreventFromEvery()) ?
+                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedOn(
+                            killeruuid.toString(), victimuuid.toString()
+                    );
+            boolean suicide = killeruuid.toString().equalsIgnoreCase(victimuuid.toString());
+            if (vetoed || suicide) {
+                if (vetoed) {
+                    if (this.cm.params.isPreventFromEvery()) {
+                        killer.sendMessage(getPluginName() + LangsFile.VETOED_STARTED
+                                .getText(Localizer.getLocale(killer))
+                                .replace("%tag%", this.cm.params.getTag())
+                                .replace("%time%", splitToComponentTimes(
+                                        afm.getVetoTime(killeruuid.toString())
+                                ))
+                        );
+                    } else {
+                        killer.sendMessage(getPluginName() + LangsFile.VETOED_BY_STARTED
+                                .getText(Localizer.getLocale(killer))
+                                .replace("%tag%", this.cm.params.getTag())
+                                .replace("%time%", splitToComponentTimes(
+                                        afm.getVetoTimeOn(killeruuid.toString(),
+                                                victimuuid.toString())
+                                ))
+                                .replace("%player%", victim.getName())
+                        );
+                    }
                 }
                 return;
             }
 
             // Módulo anti farming
-            antiFarm(killer, victimuuid.toString());
+            antiFarm(killer, victim);
+
+            vetoed = (Manager.getInstance().params.isPreventFromEvery()) ?
+                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedOn(
+                            killeruuid.toString(), victimuuid.toString()
+                    );
 
             // Lo compruebo de nuevo por si le acaban de vetar
-            if (afm.isVetado(killeruuid.toString())) {
+            if (vetoed) {
                 return;
             }
 
@@ -353,7 +375,7 @@ public class HandlePlayerFame implements Listener {
                     CustomLogger.logArrayError(ex.getCustomStackTrace());
                 }
                 params.addVariableToFormula("KPOINTS",
-            		previousFame); 
+                        previousFame);
 
                 int gain = (int) Math.round((int) params.getReceivedResult()
                         * params.getMultiplier("Points", killer));
@@ -405,50 +427,38 @@ public class HandlePlayerFame implements Listener {
      * @param killer String con el nombre del asesino
      * @param victimuuid String con el nombre del asesinado
      */
-    private void antiFarm(final Player killer, String victimuuid) {
+    private void antiFarm(final Player killer, Player victim) {
         final String killeruuid = killer.getUniqueId().toString();
+        final String victimuuid = victim.getUniqueId().toString();
 
         if (afm.hasKiller(killeruuid)) {
-            CleanTaskManager ck = csKiller.get(killeruuid);
-
             // Ya lo ha matado antes
             if (afm.hasVictim(killeruuid, victimuuid)) {
-                ck.cleanVictim(victimuuid); // Cancel task
-
                 if (afm.getKillsOnVictim(killeruuid, victimuuid) > this.cm.params.getMaxKills() - 1) {
-                    afm.vetar(killeruuid, System.currentTimeMillis());
-                    ck.cleanAll(); // Cancel all tasks
-
-                    killer.sendMessage(getPluginName() + LangsFile.VETO_STARTED.getText(Localizer.getLocale(killer))
-                            .replace("%tag%", this.cm.params.getTag())
-                            .replace("%time%", splitToComponentTimes(this.cm.params.getVetoTime())));
-
-                    pvpTitles.getServer().getScheduler().runTaskLaterAsynchronously(pvpTitles, () -> {
-                        afm.cleanVeto(killeruuid);
-                        
-                        // Limpio su historial
-                        afm.cleanAllVictims(killeruuid);
-                        
-                        killer.sendMessage(getPluginName() + LangsFile.VETO_FINISHED.getText(Localizer.getLocale(killer)));
-                    }, this.cm.params.getVetoTime() * TICKS);
-
+                    afm.veto(killeruuid, victimuuid, System.currentTimeMillis());
+                    if (this.cm.params.isPreventFromEvery()) {
+                        killer.sendMessage(getPluginName() + LangsFile.VETOED_STARTED
+                                .getText(Localizer.getLocale(killer))
+                                .replace("%tag%", this.cm.params.getTag())
+                                .replace("%time%", splitToComponentTimes(this.cm.params.getVetoTime()))
+                        );
+                    } else {
+                        killer.sendMessage(getPluginName() + LangsFile.VETOED_BY_STARTED
+                                .getText(Localizer.getLocale(killer))
+                                .replace("%tag%", this.cm.params.getTag())
+                                .replace("%time%", splitToComponentTimes(this.cm.params.getVetoTime()))
+                                .replace("%player%", victim.getName())
+                        );
+                    }
                     return;
                 }
             }
 
             // Si llega aqui no ha abusado, de momento...
             afm.addKillOnVictim(killeruuid, victimuuid);
-            // Evento de limpieza...
-            ck.addVictim(victimuuid);
-
         } else {
-            CleanTaskManager ck = new CleanTaskManager(afm, killeruuid);
-
             afm.addKiller(killeruuid);
             afm.addKillOnVictim(killeruuid, victimuuid);
-            ck.addVictim(victimuuid);
-
-            csKiller.put(killeruuid, ck);
         }
     }
 
