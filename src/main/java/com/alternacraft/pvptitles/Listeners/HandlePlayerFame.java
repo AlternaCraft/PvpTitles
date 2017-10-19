@@ -197,7 +197,6 @@ public class HandlePlayerFame implements Listener {
         ConfigDataStore params = Manager.getInstance().params;
 
         Player victim = death.getEntity();
-        victim.setHealth(20.0);
         UUID victimuuid = victim.getUniqueId();
         Player killer = death.getEntity().getKiller();
 
@@ -453,13 +452,10 @@ public class HandlePlayerFame implements Listener {
                     return;
                 }
             }
-
-            // Si llega aqui no ha abusado, de momento...
-            afm.addKillOnVictim(killeruuid, victimuuid);
         } else {
             afm.addKiller(killeruuid);
-            afm.addKillOnVictim(killeruuid, victimuuid);
         }
+        afm.addKillOnVictim(killeruuid, victimuuid);
     }
 
     public static AntiFarmManager getAfm() {

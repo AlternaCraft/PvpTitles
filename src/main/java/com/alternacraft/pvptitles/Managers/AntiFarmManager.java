@@ -140,6 +140,7 @@ public class AntiFarmManager {
                 ? this.vetoed.get(killeruuid) : new HashMap<>();
     }
     //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="PLAYERKILLS">    
     class PlayerKills {
 
