@@ -118,7 +118,7 @@ NoPurge: []
 Kills: 3
 # Necessary time to clean the deaths on a player (In seconds)
 # It is restarted for each death.
-CleanerTime: 300
+CleanerTime: 200
 # Veto time [Stops getting points by law] (in seconds)
 VetoTime: 300
 # Prevent getting fame from every player or just from abused player?

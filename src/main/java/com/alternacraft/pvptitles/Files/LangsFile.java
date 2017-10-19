@@ -209,7 +209,7 @@ public enum LangsFile {
             "&bFelicidades! Ahora eres: %newRank%",
             "&bCongratulations! You are now: %newRank%"
     ),
-    VETOED_STARTED(
+    VETO_STARTED(
             "&cHas sido vetado y no conseguiras mas %tag% hasta dentro de %time%",
             "&cYou have been banned and not get more %tag% to within of %time%"
     ),
@@ -217,7 +217,7 @@ public enum LangsFile {
             "&cHas sido vetado y no conseguiras mas %tag% de %player% hasta dentro de %time%",
             "&cYou have been banned and not get more %tag% from %player% to within of %time%"
     ),
-    VETOED_FINISHED(
+    VETO_FINISHED(
             "&cVeto finalizado",
             "&cVeto has ended"
     ),

@@ -165,7 +165,7 @@ public class RankCommand implements CommandExecutor {
                         if (Manager.getInstance().params.isPreventFromEvery()) {
                             aux = new StringBuilder(aux).append(
                                     msg
-                                        .replace(VETO_TAG, LangsFile.VETOED_STARTED.getText(Localizer.getLocale(player))
+                                        .replace(VETO_TAG, LangsFile.VETO_STARTED.getText(Localizer.getLocale(player))
                                         .replace("%tag%", pt.getManager().params.getTag())
                                         .replace("%time%", time))
                             ).toString();

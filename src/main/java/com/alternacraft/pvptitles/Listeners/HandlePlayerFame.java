@@ -304,14 +304,14 @@ public class HandlePlayerFame implements Listener {
 
             // Compruebo primero si el jugador esta vetado o se mato a si mismo
             boolean vetoed = (Manager.getInstance().params.isPreventFromEvery()) ?
-                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedOn(
+                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedFor(
                             killeruuid.toString(), victimuuid.toString()
                     );
             boolean suicide = killeruuid.toString().equalsIgnoreCase(victimuuid.toString());
             if (vetoed || suicide) {
                 if (vetoed) {
                     if (this.cm.params.isPreventFromEvery()) {
-                        killer.sendMessage(getPluginName() + LangsFile.VETOED_STARTED
+                        killer.sendMessage(getPluginName() + LangsFile.VETO_STARTED
                                 .getText(Localizer.getLocale(killer))
                                 .replace("%tag%", this.cm.params.getTag())
                                 .replace("%time%", splitToComponentTimes(
@@ -337,7 +337,7 @@ public class HandlePlayerFame implements Listener {
             antiFarm(killer, victim);
 
             vetoed = (Manager.getInstance().params.isPreventFromEvery()) ?
-                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedOn(
+                    afm.isVetoed(killeruuid.toString()) : afm.isVetoedFor(
                             killeruuid.toString(), victimuuid.toString()
                     );
 
@@ -437,7 +437,7 @@ public class HandlePlayerFame implements Listener {
                 if (afm.getKillsOnVictim(killeruuid, victimuuid) > this.cm.params.getMaxKills() - 1) {
                     afm.veto(killeruuid, victimuuid, System.currentTimeMillis());
                     if (this.cm.params.isPreventFromEvery()) {
-                        killer.sendMessage(getPluginName() + LangsFile.VETOED_STARTED
+                        killer.sendMessage(getPluginName() + LangsFile.VETO_STARTED
                                 .getText(Localizer.getLocale(killer))
                                 .replace("%tag%", this.cm.params.getTag())
                                 .replace("%time%", splitToComponentTimes(this.cm.params.getVetoTime()))

@@ -36,7 +36,7 @@ public class AntiFarmManager {
     // Jugadores que no conseguiran fama por abuso de kills
     private final Map<String, Map<String, Long>> vetoed = new HashMap();
 
-    // Cleaning tasks
+    // Tarea de limpieza de bajas
     private final Map<String, KillsTask> cleaner = new HashMap();
 
     //<editor-fold defaultstate="collapsed" desc="KILLS">
@@ -91,7 +91,7 @@ public class AntiFarmManager {
             if (Manager.getInstance().params.isPreventFromEvery()) {
                 this.cleanVeto(killeruuid);
                 if (op.isOnline()) {
-                    op.getPlayer().sendMessage(getPluginName() + LangsFile.VETOED_FINISHED
+                    op.getPlayer().sendMessage(getPluginName() + LangsFile.VETO_FINISHED
                             .getText(Localizer.getLocale(op.getPlayer())));
                 }
             } else {
@@ -119,23 +119,25 @@ public class AntiFarmManager {
         return vetoed.containsKey(killeruuid);
     }
 
-    public boolean isVetoedOn(String killeruuid, String victimuuid) {
+    public boolean isVetoedFor(String killeruuid, String victimuuid) {
         return vetoed.containsKey(killeruuid) && vetoed.get(killeruuid).containsKey(victimuuid);
     }
     
     public int getVetoTime(String killeruuid) {
-        return (int) ((vetoed.get(killeruuid).values().iterator().next() + (Manager.getInstance().params
-                .getVetoTime() * 1000L) - System.currentTimeMillis()) / 1000L);
+        int time = Manager.getInstance().params.getVetoTime();
+        return (int) ((vetoed.get(killeruuid).values().iterator().next() 
+                + (time * 1000L) - System.currentTimeMillis()) / 1000L);
     }
 
     public int getVetoTimeOn(String killeruuid, String victimuuid) {
-        return (int) ((vetoed.get(killeruuid).get(victimuuid) + (Manager.getInstance().params
-                .getVetoTime() * 1000L) - System.currentTimeMillis()) / 1000L);
+        int time = Manager.getInstance().params.getVetoTime();
+        return (int) ((vetoed.get(killeruuid).get(victimuuid) 
+                + (time * 1000L) - System.currentTimeMillis()) / 1000L);
     }
     
     public Map<String, Long> getVetoes(String killeruuid) {
-        return (this.vetoed.containsKey(killeruuid)) ? this.vetoed.get(killeruuid)
-                : new HashMap<>();
+        return (this.vetoed.containsKey(killeruuid)) 
+                ? this.vetoed.get(killeruuid) : new HashMap<>();
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="PLAYERKILLS">    
