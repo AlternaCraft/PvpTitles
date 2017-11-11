@@ -49,7 +49,7 @@ public class DBLoader {
         this.config = config;
     }
 
-    public void selectDB() {
+    public boolean selectDB() {
         if (tipo == DBTYPE.MYSQL) {
             this.sql = new MySQLConnection();
         }
@@ -62,18 +62,19 @@ public class DBLoader {
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
             this.pvpTitles.getServer().getPluginManager().disablePlugin(this.pvpTitles);
-            return;
+            return false;
         }
 
-        if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED)) {
-            selectDB();
-            return;
+        if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED)) {            
+            return selectDB();
         } else {
             dm = new DatabaseManagerSQL(pvpTitles, sql);
         }        
         
         showMessage(ChatColor.YELLOW + tipo.name() + " database " 
                 + ChatColor.AQUA + "loaded correctly.");
+        
+        return true;
     }
 
     /**

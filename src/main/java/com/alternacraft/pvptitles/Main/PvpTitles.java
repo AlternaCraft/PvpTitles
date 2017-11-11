@@ -105,9 +105,6 @@ public class PvpTitles extends JavaPlugin {
             return;
         }
 
-        // Instancio la clase para evitar problemas en el reload
-        new Inventories().setup();
-
         // Registro los handlers de los eventos
         getServer().getPluginManager().registerEvents(new HandlePlayerFame(this), this);
         getServer().getPluginManager().registerEvents(new HandlePlayerTag(this), this);

@@ -37,14 +37,7 @@ public class Inventories {
 
     public static final int MAX_BOARDS_PER_PAGE = 18;
 
-    public static List<Inventory> opened = null;
-
-    public Inventories() {
-    }
-
-    public void setup() {
-        Inventories.opened = new ArrayList();
-    }
+    public static List<Inventory> opened = new ArrayList();
 
     public static List<Player> closeInventories() {
         List<Player> players = Inventories.opened

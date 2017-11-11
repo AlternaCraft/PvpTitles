@@ -140,10 +140,7 @@ public final class Manager {
         this.movementManager.updateTimeAFK();
 
         this.dbh = new DBLoader(plugin, this.ch.getConfig());
-        this.getDBH().selectDB();
-
-        // RCP
-        if (!new DBChecker(plugin).setup()) {
+        if (!this.getDBH().selectDB() || !new DBChecker(plugin).setup()) {
             return false;
         }
 

@@ -43,7 +43,6 @@ public class DBChecker {
             case MYSQL:
                 this.checkMySQLDB();
         }
-
         return true;
     }
 

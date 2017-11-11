@@ -56,11 +56,13 @@ public class ReloadCommand implements CommandExecutor {
         RankManager.clear(); // Clear registered ranks
         
         pvpTitles.getManager().reloadConfig();
-
         pvpTitles.getManager().getMovementManager().updateTimeAFK();
         
-        pvpTitles.getManager().getDBH().selectDB();
-        new DBChecker(pvpTitles).setup();
+        if (!pvpTitles.getManager().getDBH().selectDB() 
+                || !new DBChecker(pvpTitles).setup()) {
+            pvpTitles.getServer().getPluginManager().disablePlugin(pvpTitles);
+            return true;
+        }
 
         pvpTitles.getManager().loadLang();
         pvpTitles.getManager().loadModels();
