@@ -54,7 +54,7 @@ public class HandleSign implements Listener {
         this.cm = plugin.getManager();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCreateSign(SignChangeEvent event) {
         Sign sign = (Sign) event.getBlock().getState();
         String[] lineas = event.getLines();
@@ -136,7 +136,7 @@ public class HandleSign implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeleteSign(BlockBreakEvent event) {
         Integer[] coords = new Integer[]{1,-1};
         

@@ -52,19 +52,19 @@ public class HandleInventory implements Listener, EventExecutor {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (Inventories.opened.contains(event.getInventory())) {
             Inventories.opened.remove(event.getInventory());
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBoardChanged(BoardEvent event) {
         Inventories.reloadInventories(Inventories.closeInventories());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
         Player pl = (Player) event.getWhoClicked();

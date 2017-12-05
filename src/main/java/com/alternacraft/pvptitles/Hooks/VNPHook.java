@@ -27,7 +27,6 @@ import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
@@ -65,7 +64,7 @@ public class VNPHook {
     
     public class VanishChecker implements Listener {
         
-        @EventHandler(priority = EventPriority.HIGHEST)
+        @EventHandler
         public void VanishEvent(VanishStatusChangeEvent event) {
             Player player = event.getPlayer();
             String uuid = player.getUniqueId().toString();

@@ -38,7 +38,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -96,7 +95,7 @@ public class HandlePlayerTag implements Listener {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="LISTENERS">
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player pl = event.getPlayer();
         Rank rank = null;
@@ -185,7 +184,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -197,7 +196,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
 
@@ -244,7 +243,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -292,7 +291,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -338,7 +337,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChangeRank(RankChangedEvent event) {
         Player player = (Player) event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -356,7 +355,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -405,7 +404,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity().getPlayer();
         String uuid = event.getEntity().getUniqueId().toString();
@@ -415,7 +414,7 @@ public class HandlePlayerTag implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerSneaking(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();

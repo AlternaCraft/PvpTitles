@@ -122,7 +122,7 @@ public class HandlePlayerFame implements Listener {
         HandlePlayerTag.holoPlayerLogin(player);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
 
@@ -165,7 +165,7 @@ public class HandlePlayerFame implements Listener {
         this.pvpTitles.getManager().getMovementManager().removeLastMovement(player);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (cm.params.isCheckAFK()) { // Optimizacion
             Player player = event.getPlayer();
@@ -185,7 +185,7 @@ public class HandlePlayerFame implements Listener {
      *
      * @param death Evento PlayerDeathEvent
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onKill(PlayerDeathEvent death) {
         // Compruebo si el mundo esta en la blacklist
         if (this.cm.params.getAffectedWorlds().contains(death.getEntity().getWorld().getName().toLowerCase())) {

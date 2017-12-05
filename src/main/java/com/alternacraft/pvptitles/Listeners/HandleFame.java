@@ -40,7 +40,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class HandleFame implements Listener {
@@ -58,7 +57,7 @@ public class HandleFame implements Listener {
         this.dm = pt.getManager();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true)
     public void onFame(FameEvent e) {
         OfflinePlayer pl = e.getOfflinePlayer();
 
@@ -226,18 +225,18 @@ public class HandleFame implements Listener {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="MANAGING MESSAGES">
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onSetFame(FameSetEvent e) {
         fameLogic(e);
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onAddFame(FameAddEvent e) {
         fameLogic(e);
     }
 
     private void fameLogic(FameEvent e) {
-        if (e.isCancelled() || !e.getOfflinePlayer().isOnline()) {
+        if (!e.getOfflinePlayer().isOnline()) {
             return;
         }
 
