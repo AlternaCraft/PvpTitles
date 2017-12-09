@@ -56,6 +56,10 @@ public class HandleSign implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onCreateSign(SignChangeEvent event) {
+        if (!(event.getBlock().getState() instanceof Sign)) {
+            return;
+        }
+        
         Sign sign = (Sign) event.getBlock().getState();
         String[] lineas = event.getLines();
 

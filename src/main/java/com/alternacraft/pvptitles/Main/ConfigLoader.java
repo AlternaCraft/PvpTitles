@@ -166,10 +166,10 @@ public class ConfigLoader {
             messages = LangsFile.LangType.EN;
         }
 
-        params.setTag(config.getString("Tag"));
-        params.setPrefixColor(config.getString("PrefixColor"));
+        params.setTag(config.getString("Tag"));        
         params.setTop((short) config.getInt("Top"));
 
+        params.setFormat(config.getString("RanksFormat"));
         params.setPrefix(config.getString("Prefix"));
 
         params.displayInChat(config.getBoolean("DisplayTitleInChat"));

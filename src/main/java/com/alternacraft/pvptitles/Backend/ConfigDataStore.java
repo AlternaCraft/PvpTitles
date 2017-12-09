@@ -23,18 +23,18 @@ import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 import com.alternacraft.pvptitles.Misc.Formulas.EvaluableExpression;
 import com.alternacraft.pvptitles.Misc.Formulas.Expression;
+import com.alternacraft.pvptitles.Misc.StrUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.ChatColor;
-import static org.bukkit.ChatColor.valueOf;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class ConfigDataStore {
 
+    //<editor-fold defaultstate="collapsed" desc="VARIABLES">    
     /* METRICS && UPDATES */
     // Atributo para guardar si se van a usar las metricas
     private boolean metrics = true;
@@ -133,10 +133,10 @@ public class ConfigDataStore {
     // Modificador de la altura del holograma
     private short holoHeightMod = 1;
 
-    // Color del titulo en el chat
-    private ChatColor prefixColor = null;
     // Nombre de los puntos
     private String tag = null;
+    // Formato genérico del título
+    private String format = null;
     // Tag para intercambiar por el titulo
     private String prefix = null;
     // Cantidad de jugadores que aparecen en el ranking
@@ -147,12 +147,8 @@ public class ConfigDataStore {
      */
     public ConfigDataStore() {
     }
-
-    // ** SETTERS ** \\
-    public void setPrefixColor(String color) {
-        this.prefixColor = this.getPrefixColor(color);
-    }
-
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="SETTERS">    
     public void setPvpTitles_Bridge(boolean PvpTitles_Bridge) {
         this.PvpTitles_Bridge = PvpTitles_Bridge;
     }
@@ -386,15 +382,15 @@ public class ConfigDataStore {
         this.points = points;
     }
 
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
-
-    // ** GETTERS ** \\ 
-    public ChatColor getPrefixColor() {
-        return prefixColor;
-    }
-
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="GETTERS">
     public boolean isPvpTitles_Bridge() {
         return PvpTitles_Bridge;
     }
@@ -568,6 +564,14 @@ public class ConfigDataStore {
         return prefix;
     }
 
+    public String getFormat() {
+        return format;
+    }
+    
+    public String parseFormat(String title) {
+        return StrUtils.translateColors(this.format).replace("%T", title);
+    }
+
     public boolean isMw_enabled() {
         return mw_enabled;
     }
@@ -627,13 +631,5 @@ public class ConfigDataStore {
     public short getHoloHeightMod() {
         return holoHeightMod;
     }
-
-    /**
-     * Método para convertir el nombre del color a un valor válido
-     *
-     * @param color String con el nombre del color
-     */
-    private ChatColor getPrefixColor(String color) {
-        return valueOf(color.toUpperCase());
-    }
+    //</editor-fold>
 }

@@ -1,5 +1,5 @@
 # DO NOT TOUCH #
-Version: 2.8.5
+Version: 2.8.7
 ################
 
 ############################################################
@@ -260,12 +260,15 @@ DefaultLang: EN
 
 # Customizable Name for the points earned by players.
 Tag: Fame
-# Color of the title in chat.
-PrefixColor: green
+
 # Number of the top players that will be shown in chat with the pvpladder command.
 Top: 5
 
-# Prefix in the chat to replace
+# Format for all ranks, colors on display option have more priority than these ones.
+# "%T" will be replaced by the display of the rank
+RanksFormat: "&6%T&r"
+
+# Prefix in the chat to replace.
 Prefix: "{PVPTITLE}"
 # If you do not use any chat-plugin or do not want to implement it the title will be placed at the beginning of chat.
 

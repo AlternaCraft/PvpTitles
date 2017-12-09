@@ -93,7 +93,6 @@ public class HandlePlayerTag implements Listener {
         return rank.equalsIgnoreCase(IGNORED_RANK);
     }    
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="LISTENERS">
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
@@ -117,8 +116,8 @@ public class HandlePlayerTag implements Listener {
         if (rank != null && HandlePlayerTag.manager.params.displayInChat() 
                 && canDisplayRank(pl, rank.getId())) {
             
-            String rankName = String.format(HandlePlayerTag.manager.params.getPrefixColor()
-                    + rank.getDisplay() + ChatColor.RESET);
+            String rankName = String.format(HandlePlayerTag.manager.params
+                    .parseFormat(rank.getDisplay()));
 
             // Modulo de integracion con plugin de chat
             if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
