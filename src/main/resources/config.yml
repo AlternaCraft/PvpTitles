@@ -264,7 +264,7 @@ Tag: Fame
 # Number of the top players that will be shown in chat with the pvpladder command.
 Top: 5
 
-# Format for all ranks, colors on display option have more priority than these ones.
+# Format for all ranks, colors on display option on each rank have more priority than these.
 # "%T" will be replaced by the display of the rank
 RanksFormat: "&6%T&r"
 

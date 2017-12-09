@@ -34,7 +34,6 @@ import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import java.util.regex.Pattern;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -457,10 +456,15 @@ public class HandlePlayerTag implements Listener {
     //</editor-fold>
     
     private String clearFormat(String format) {
-        if (format.contains(HandlePlayerTag.manager.params.getPrefix())) {
-            format = format.replaceAll(
-                    Pattern.quote(HandlePlayerTag.manager.params.getPrefix()) + "\\s?", ""
-            );
+        String prefix = HandlePlayerTag.manager.params.getPrefix();
+        if (format.contains(prefix)) {
+            String removeBlank = "\\s(?:§[\\dabcdefklmnor])*" + Pattern.quote(prefix)
+                    + "((?:§[\\dabcdefklmnor])*)\\s";
+            if (format.matches(".*" + removeBlank + ".*")) {
+                format = format.replaceAll(removeBlank, " $1");
+            } else {
+                format = format.replace(prefix, "");                
+            }
         } 
         return format;
     }
