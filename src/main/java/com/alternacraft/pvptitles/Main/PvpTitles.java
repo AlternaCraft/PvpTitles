@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,8 +182,8 @@ public class PvpTitles extends JavaPlugin {
             // Inventories
             Inventories.closeInventories();
 
-            if (DBLoader.tipo.equals(DBLoader.DBTYPE.MYSQL)
-                    || DBLoader.tipo.equals(DBLoader.DBTYPE.SQLITE)) {
+            if (DBLoader.tipo.equals(DBLoader.DBType.MYSQL)
+                    || DBLoader.tipo.equals(DBLoader.DBType.SQLITE)) {
                 this.manager.getDBH().sql.closeConnection();
             }
 

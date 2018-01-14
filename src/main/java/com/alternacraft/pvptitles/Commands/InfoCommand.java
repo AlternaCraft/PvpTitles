@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.COMMAND_TAG;
-import com.alternacraft.pvptitles.Files.TemplatesFile.FILES;
+import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.INFO_COMMAND_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.VERSION_TAG;
@@ -53,7 +53,7 @@ public class InfoCommand implements CommandExecutor {
 
         Set<String> commands = pvpTitles.getDescription().getCommands().keySet();
 
-        List<String> commandTemplate = this.pvpTitles.getManager().templates.getFileContent(FILES.INFO_COMMAND);
+        List<String> commandTemplate = this.pvpTitles.getManager().templates.getFileContent(Files.INFO_COMMAND);
         commandTemplate
                 .stream()
                 .map(msg -> msg

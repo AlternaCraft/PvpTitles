@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Files.TemplatesFile.FILES;
+import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_PLAYER_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_POINTS_TAG;
@@ -63,7 +63,7 @@ public class LadderCommand implements CommandExecutor {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
 
-        List<String> lines = this.pvpTitles.getManager().templates.getFileContent(FILES.LADDER_COMMAND);
+        List<String> lines = this.pvpTitles.getManager().templates.getFileContent(Files.LADDER_COMMAND);
 
         for (String line : lines) {
             String msg = line;

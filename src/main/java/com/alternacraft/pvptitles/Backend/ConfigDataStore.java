@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Backend;
 
 import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
-import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
+import com.alternacraft.pvptitles.Main.DBLoader.DBType;
 import com.alternacraft.pvptitles.Main.Manager;
 import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 import com.alternacraft.pvptitles.Misc.Formulas.EvaluableExpression;
@@ -47,7 +47,7 @@ public class ConfigDataStore {
     // Atributo para guardar el tipo de formato para el error
     private short errorFormat = 2;
     // Atributo para almacenar la base de datos por defecto
-    private DBTYPE defaultDB = DBTYPE.SQLITE;
+    private DBType defaultDB = DBType.SQLITE;
 
     /* PVPTITLES BRIDGE */
     private boolean PvpTitles_Bridge = false;
@@ -338,7 +338,7 @@ public class ConfigDataStore {
         this.errorFormat = errorFormat;
     }
 
-    public void setDefaultDB(DBTYPE defaultDB) {
+    public void setDefaultDB(DBType defaultDB) {
         this.defaultDB = defaultDB;
     }
 
@@ -612,7 +612,7 @@ public class ConfigDataStore {
         return errorFormat;
     }
 
-    public DBTYPE getDefaultDB() {
+    public DBType getDefaultDB() {
         return defaultDB;
     }
 

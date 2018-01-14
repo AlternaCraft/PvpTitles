@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ package com.alternacraft.pvptitles.Main;
 
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
+import com.alternacraft.pvptitles.Main.DBLoader.DBType;
 import static com.alternacraft.pvptitles.Main.Manager.messages;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.FileConfig;
@@ -64,7 +64,7 @@ public class ConfigLoader {
         params.setErrorFormat((short) config.getInt("ErrorFormat"));
         String defdb = config.getString("DefaultDatabase");
         try {
-            params.setDefaultDB(DBTYPE.valueOf(defdb.toUpperCase()));
+            params.setDefaultDB(DBType.valueOf(defdb.toUpperCase()));
         } catch (Exception ex) {
             CustomLogger.logError("Bad name for default database; Using "
                     + params.getDefaultDB().name() + " per default...");
@@ -73,7 +73,7 @@ public class ConfigLoader {
         // MYSQL-PVPTITLES BRIDGE
         params.setPvpTitles_Bridge(config.getBoolean("Mysql.enable"));
         if (params.isPvpTitles_Bridge()) {
-            DBLoader.tipo = DBTYPE.MYSQL;
+            DBLoader.tipo = DBType.MYSQL;
 
             params.setUse_ssl(config.getBoolean("Mysql.enableSSL"));
             params.setHost(config.getString("Mysql.host"));

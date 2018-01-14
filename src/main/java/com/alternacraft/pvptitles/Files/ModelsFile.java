@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ public class ModelsFile {
     private static final String NEW_LINE = "\\/";
     private static final String NEW_COLUMN = "\\|";
 
-    enum UTILS {
+    enum Utils {
         SPACING("$spacing=", " "),
         FORWARD_SLASH("$fwslash=", "/"),
         VERTICAL_BAR("$vcbar=", "|");
@@ -101,7 +101,7 @@ public class ModelsFile {
         private String var = null;
         private String value = null;
 
-        UTILS(String var, String value) {
+        Utils(String var, String value) {
             this.var = var;
             this.value = value;
         }
@@ -161,15 +161,15 @@ public class ModelsFile {
 
             ArrayList<ArrayList<ArrayList<String>>> params = new ArrayList();
 
-            Map<UTILS, String> replazator = new HashMap();
+            Map<Utils, String> replacer = new HashMap();
             // Filas partidas
             for (int j = 1; j < datos.length; j++) {
-                for (UTILS var : UTILS.values()) { // Almaceno datos para cambiarlos posteriormente
+                for (Utils var : Utils.values()) { // Almaceno datos para cambiarlos posteriormente
                     if (datos[0].contains(var.getVar())) {
                         int start = datos[0].indexOf(var.getVar());
                         int end = var.getVar().length();
                         String spacing = datos[0].substring(start + end, start + end + 1);
-                        replazator.put(var, spacing);
+                        replacer.put(var, spacing);
                     }
                 }
 
@@ -202,8 +202,8 @@ public class ModelsFile {
                         String next = fc.get(k);
                         
                         // Cambio los valores guardados anteriormente por los nuevos
-                        for (Map.Entry<UTILS, String> entry : replazator.entrySet()) {
-                            UTILS key = entry.getKey();
+                        for (Map.Entry<Utils, String> entry : replacer.entrySet()) {
+                            Utils key = entry.getKey();
                             String value = entry.getValue();
                             
                             next = next.replace(value, key.getValue());

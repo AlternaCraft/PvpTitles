@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ public final class Manager {
         this.loadRewards();
         this.loadTemplates();
 
-        if (tipo == DBLoader.DBTYPE.MYSQL) {
+        if (tipo == DBLoader.DBType.MYSQL) {
             this.loadServers();
         }
 

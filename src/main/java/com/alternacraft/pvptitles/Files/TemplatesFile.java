@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public class TemplatesFile {
             .append("Templates")
             .append(File.separator).toString();
 
-    public enum FILES {
+    public enum Files {
         TAGS_DESCRIPTION("INFO.txt", ""
                 + "** Common tags **\n"
                 + " - " + PLUGIN_TAG + ": Plugin name\n"
@@ -101,7 +101,7 @@ public class TemplatesFile {
         private final String path;
         private final String content;
 
-        FILES(String path, String content) {
+        Files(String path, String content) {
             this.path = path;
             this.content = content;
         }
@@ -165,7 +165,7 @@ public class TemplatesFile {
     public void load() {
         templates.clear();
 
-        for (FILES file : FILES.values()) {
+        for (Files file : Files.values()) {
             CMDFile f = new CMDFile(file.getPath());
 
             if (!f.exists()) {
@@ -182,7 +182,7 @@ public class TemplatesFile {
         }
     }
 
-    public List<String> getFileContent(FILES file) {
+    public List<String> getFileContent(Files file) {
         return templates.get(file.getPath()).getContent();
     }
 }

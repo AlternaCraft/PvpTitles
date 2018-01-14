@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 
 public class BoardCommand implements CommandExecutor {
 
-    enum SUPPORTED_BOARDS {
+    enum SupportedBoards {
         HOLOGRAM
     }
 
@@ -69,15 +69,15 @@ public class BoardCommand implements CommandExecutor {
                 return false;
             }
             
-            if (args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())
+            if (args[1].equalsIgnoreCase(SupportedBoards.HOLOGRAM.name())
                     && !HolographicHook.ISHDENABLED) {
                 pl.sendMessage(getPluginName() + ChatColor.RED + "HolographicDisplays is not enabled");
                 return true;
             }
 
-            if (!args[1].equalsIgnoreCase(SUPPORTED_BOARDS.HOLOGRAM.name())) {
+            if (!args[1].equalsIgnoreCase(SupportedBoards.HOLOGRAM.name())) {
                 pl.sendMessage(getPluginName() + ChatColor.RED + "Supported types: "
-                        + SUPPORTED_BOARDS.HOLOGRAM.name().toLowerCase());
+                        + SupportedBoards.HOLOGRAM.name().toLowerCase());
                 return true;
             }
 

@@ -42,17 +42,17 @@ public class SQLiteConnection extends SQLConnection {
             connection = DriverManager.getConnection("jdbc:sqlite:" + this.filedir + this.filename);
             // Enable key update on foreign changes
             connection.createStatement().execute("PRAGMA foreign_keys = ON");
-            status = STATUS_AVAILABLE.CONNECTED;
+            status = Status.CONNECTED;
         } catch (ClassNotFoundException ex) {
             if (!reconnect) {
                 CustomLogger.logError("SQLite library not found");
             }
-            status = STATUS_AVAILABLE.NOT_CONNECTED;
+            status = Status.NOT_CONNECTED;
         } catch (SQLException ex) {
-            status = STATUS_AVAILABLE.NOT_CONNECTED;
+            status = Status.NOT_CONNECTED;
             if (!reconnect) {
                 throw new DBException("SQLite error: " + ex.getErrorCode(),
-                        DBException.DB_METHOD.DB_CONNECT);
+                        DBException.DBMethod.DB_CONNECT);
             }
         }
     }
@@ -67,7 +67,7 @@ public class SQLiteConnection extends SQLConnection {
             slowUpdate(getTableSigns());
             slowUpdate(getTriggerMeta());
         } catch (SQLException ex) {
-            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage()) {
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DBMethod.STRUCTURE, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }

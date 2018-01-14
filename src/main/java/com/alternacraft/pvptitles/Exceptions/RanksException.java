@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public class RanksException extends CustomException {
     private static final String PREFIX = "01x";
 
     // <editor-fold defaultstate="collapsed" desc="INTERNAL STUFF">
-    private enum POSSIBLE_ERRORS {
+    private enum PossibleErrors {
         NOT_FOUND("00", "Couldn't find a reason for the error..."),
         CORRUPTED_DATA("01", "It seems you have corrupted values in the database."
                 + " Please, use /pvpdatabase repair.");
@@ -33,7 +33,7 @@ public class RanksException extends CustomException {
         private String error_num = "-1";
         private String error_str = null;
 
-        private POSSIBLE_ERRORS(String num, String msg) {
+        private PossibleErrors(String num, String msg) {
             this.error_num = num;
             this.error_str = msg;
         }
@@ -88,16 +88,16 @@ public class RanksException extends CustomException {
                 if (k.equals("Seconds")) lowerThanZero = (long)v < 0;
                 if (k.equals("Fame")) lowerThanZero = (int)v < 0;
                 if (lowerThanZero) {
-                    if (!possible_errors.contains(POSSIBLE_ERRORS.CORRUPTED_DATA.getText())) {
+                    if (!possible_errors.contains(PossibleErrors.CORRUPTED_DATA.getText())) {
                         possible_errors.add(new StringBuilder("- ")
-                                .append(POSSIBLE_ERRORS.CORRUPTED_DATA.getText()).toString());
+                                .append(PossibleErrors.CORRUPTED_DATA.getText()).toString());
                     }
                 }
             }
         });
 
         return (possible_errors.isEmpty()) ? 
-                new ArrayList() {{ this.add(POSSIBLE_ERRORS.NOT_FOUND.getText()); }}
+                new ArrayList() {{ this.add(PossibleErrors.NOT_FOUND.getText()); }}
                 : possible_errors;
     }
 }

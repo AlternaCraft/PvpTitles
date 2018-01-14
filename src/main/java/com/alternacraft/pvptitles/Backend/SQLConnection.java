@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,9 @@ public abstract class SQLConnection {
 
     protected Connection connection;
     
-    public STATUS_AVAILABLE status = STATUS_AVAILABLE.NOT_CONNECTED;
+    public Status status = Status.NOT_CONNECTED;
 
-    public static enum STATUS_AVAILABLE {
+    public static enum Status {
         CONNECTED,
         NOT_CONNECTED;
     }
@@ -61,16 +61,16 @@ public abstract class SQLConnection {
                 valida = connection.isValid(3) && !connection.isClosed();
 
                 if (valida) {
-                    status = STATUS_AVAILABLE.CONNECTED;
+                    status = Status.CONNECTED;
                 } else if (reconnect) {
                     closeConnection();
                     Manager.getInstance().getDBH().sqlConnect(true);
                     valida = isConnected(false);
                 } else {
-                    status = STATUS_AVAILABLE.NOT_CONNECTED;
+                    status = Status.NOT_CONNECTED;
                 }
             } catch (SQLException ex) {
-                status = STATUS_AVAILABLE.NOT_CONNECTED;
+                status = Status.NOT_CONNECTED;
             } catch (AbstractMethodError ex) {
                 valida = true; // Should continue?
             }
@@ -83,7 +83,7 @@ public abstract class SQLConnection {
         try {
             if (!connection.isClosed()) {
                 connection.close();
-                status = STATUS_AVAILABLE.NOT_CONNECTED;
+                status = Status.NOT_CONNECTED;
             }
         } catch (SQLException | AbstractMethodError ex) {}
     }

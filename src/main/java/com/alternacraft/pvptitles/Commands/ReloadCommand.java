@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ package com.alternacraft.pvptitles.Commands;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
-import com.alternacraft.pvptitles.Main.DBLoader.DBTYPE;
+import com.alternacraft.pvptitles.Main.DBLoader.DBType;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -49,7 +49,7 @@ public class ReloadCommand implements CommandExecutor {
             return false;
         }
 
-        if (tipo.equals(DBTYPE.MYSQL) || tipo.equals(DBTYPE.SQLITE)) {
+        if (tipo.equals(DBType.MYSQL) || tipo.equals(DBType.SQLITE)) {
             this.pvpTitles.getManager().getDBH().sql.closeConnection();
         }
 
@@ -70,7 +70,7 @@ public class ReloadCommand implements CommandExecutor {
         pvpTitles.getManager().loadRewards();
         pvpTitles.getManager().loadTemplates();
 
-        if (tipo == DBTYPE.MYSQL) {
+        if (tipo == DBType.MYSQL) {
             pvpTitles.getManager().loadServers();
         }
 

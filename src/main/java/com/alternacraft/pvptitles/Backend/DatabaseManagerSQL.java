@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 package com.alternacraft.pvptitles.Backend;
 
-import com.alternacraft.pvptitles.Backend.SQLConnection.STATUS_AVAILABLE;
+import com.alternacraft.pvptitles.Backend.SQLConnection.Status;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import static com.alternacraft.pvptitles.Exceptions.DBException.UNKNOWN_ERROR;
 import com.alternacraft.pvptitles.Main.CustomLogger;
@@ -124,10 +124,10 @@ public class DatabaseManagerSQL implements DatabaseManager {
             HashMap data = new HashMap();
             data.put("Null player", (pl == null));
             data.put(DBLoader.tipo.name() + " connection", 
-                    sql.status == STATUS_AVAILABLE.CONNECTED);
+                    sql.status == Status.CONNECTED);
 
             throw new DBException("Error checking if player is registered",
-                    DBException.DB_METHOD.PLAYER_CONNECTION, data);
+                    DBException.DBMethod.PLAYER_CONNECTION, data);
         }
 
         String uuid = pl.getUniqueId().toString();
@@ -200,7 +200,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
             }
         } catch (final SQLException ex) {
             throw new DBException("Error checking if player exists",
-                    DBException.DB_METHOD.PLAYER_CONNECTION, ex.getMessage()) {
+                    DBException.DBMethod.PLAYER_CONNECTION, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -237,7 +237,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Update last login: " + modFecha.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_CONNECTION, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYER_CONNECTION, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -252,7 +252,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
         OfflinePlayer pl = plugin.getServer().getOfflinePlayer(playerUUID);
         
         if (pl == null) {
-            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_SAVING);
+            throw new DBException("Player is null", DBException.DBMethod.PLAYER_FAME_SAVING);
         }
 
         int psid = playerID(playerUUID.toString(), w);
@@ -270,7 +270,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR,
-                            DBException.DB_METHOD.PLAYER_FAME_SAVING, data);
+                            DBException.DBMethod.PLAYER_FAME_SAVING, data);
                 }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
                 try (PreparedStatement updateFame = sql.getConnection()
@@ -295,7 +295,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_SAVING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYER_FAME_SAVING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -306,7 +306,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public int loadPlayerFame(UUID playerUUID, String w) throws DBException {
         if (playerUUID == null) {
-            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_FAME_LOADING);
+            throw new DBException("Player is null", DBException.DBMethod.PLAYER_FAME_LOADING);
         }
 
         int fama = 0;
@@ -327,7 +327,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     data.put("Multiworld enabled", plugin.getManager().params.isMw_enabled());
 
                     throw new DBException(DBException.MULTIWORLD_ERROR,
-                            DBException.DB_METHOD.PLAYER_FAME_LOADING, data);
+                            DBException.DBMethod.PLAYER_FAME_LOADING, data);
                 }
                 String world = (w == null) ? ((Player) pl).getWorld().getName() : w;
 
@@ -359,7 +359,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_FAME_LOADING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYER_FAME_LOADING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -372,7 +372,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public void savePlayedTime(UUID playerUUID, long playedTime) throws DBException {
         if (playerUUID == null) {
-            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_SAVING);
+            throw new DBException("Player is null", DBException.DBMethod.PLAYER_TIME_SAVING);
         }
 
         OfflinePlayer oplayer = plugin.getServer().getOfflinePlayer(playerUUID);
@@ -393,7 +393,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Save played time: " + pTime.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_SAVING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYER_TIME_SAVING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -404,7 +404,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public long loadPlayedTime(UUID playerUUID) throws DBException {
         if (playerUUID == null) {
-            throw new DBException("Player is null", DBException.DB_METHOD.PLAYER_TIME_LOADING);
+            throw new DBException("Player is null", DBException.DBMethod.PLAYER_TIME_LOADING);
         }
 
         long time = 0;
@@ -427,7 +427,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYER_TIME_LOADING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYER_TIME_LOADING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -529,7 +529,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {            
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PLAYERS_TOP, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PLAYERS_TOP, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -544,7 +544,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public void saveBoard(SignBoard sb) throws DBException {
         if (sb == null) {
-            throw new DBException("Board is null", DBException.DB_METHOD.BOARD_SAVING);
+            throw new DBException("Board is null", DBException.DBMethod.BOARD_SAVING);
         }
 
         Location l = sb.getData().getLocation();
@@ -566,7 +566,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Save board: " + saveBoard.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SAVING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.BOARD_SAVING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -577,7 +577,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public void updateBoard(Location l) throws DBException {
         if (l == null) {
-            throw new DBException("Location is null", DBException.DB_METHOD.BOARD_UPDATING);
+            throw new DBException("Location is null", DBException.DBMethod.BOARD_UPDATING);
         }
 
         try {
@@ -591,7 +591,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Update board: " + updBoard.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_UPDATING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.BOARD_UPDATING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -602,7 +602,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
     @Override
     public void deleteBoard(Location l) throws DBException {
         if (l == null) {
-            throw new DBException("Location is null", DBException.DB_METHOD.BOARD_REMOVING);
+            throw new DBException("Location is null", DBException.DBMethod.BOARD_REMOVING);
         }
 
         try {
@@ -616,7 +616,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Delete board: " + delBoard.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_REMOVING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.BOARD_REMOVING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -657,7 +657,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.BOARD_SEARCHING, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.BOARD_SEARCHING, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -686,7 +686,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 CustomLogger.logDebugInfo("Server name: " + serverName.toString());
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.SERVER_NAME, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.SERVER_NAME, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -760,7 +760,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.PURGE_DATA, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.PURGE_DATA, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -895,7 +895,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_EXPORT, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.DB_EXPORT, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }
@@ -929,7 +929,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                     data.put("Actual database", DBLoader.tipo.name());
                     data.put("SQL syntax", (compile_by_mysql) ? "MYSQL":"SQLITE"); 
                     throw new DBException(DBException.BAD_SQL_SYNTAX, 
-                            DBException.DB_METHOD.DB_IMPORT, data);
+                            DBException.DBMethod.DB_IMPORT, data);
                 }
                 sqlfile.remove(0);
             }
@@ -957,7 +957,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
             try {
                 this.sql.update(consulta);
             } catch (SQLException ex) {
-                throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.DB_IMPORT, ex.getMessage()) {
+                throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.DB_IMPORT, ex.getMessage()) {
                     {
                         this.setStackTrace(ex.getStackTrace());
                     }
@@ -1042,7 +1042,7 @@ public class DatabaseManagerSQL implements DatabaseManager {
                 }
             }
         } catch (final SQLException ex) {
-            throw new DBException(UNKNOWN_ERROR, DBException.DB_METHOD.REPAIR, ex.getMessage()) {
+            throw new DBException(UNKNOWN_ERROR, DBException.DBMethod.REPAIR, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }

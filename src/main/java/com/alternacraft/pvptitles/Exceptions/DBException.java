@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ public class DBException extends CustomException {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="INTERNAL STUFF">
-    private DB_METHOD type = null;
+    private DBMethod type = null;
 
-    public enum DB_METHOD {
+    public enum DBMethod {
         STRUCTURE,
         PLAYER_CONNECTION,
         PLAYER_FAME_SAVING,
@@ -65,7 +65,7 @@ public class DBException extends CustomException {
         DB_CONNECT
     }
 
-    private enum POSSIBLE_ERRORS {
+    private enum PossibleErrors {
         NOT_FOUND("00", "Couldn't find a reason for the error..."),
         DB_CONNECTION("01", "The server has lost the " + DBLoader.tipo.name() + " connection"),
         DB_SQL("02", "The SQL should be executed in a %db% database");
@@ -73,7 +73,7 @@ public class DBException extends CustomException {
         private String error_num = "-1";
         private String error_str = null;
 
-        private POSSIBLE_ERRORS(String num, String msg) {
+        private PossibleErrors(String num, String msg) {
             this.error_num = num;
             this.error_str = msg;
         }
@@ -84,26 +84,26 @@ public class DBException extends CustomException {
     }
     // </editor-fold>
     
-    public DBException(String message, DB_METHOD type) {
+    public DBException(String message, DBMethod type) {
         super(message);
         this.type = type;
     }
 
-    public DBException(String message, DB_METHOD type, String custom_error) {
+    public DBException(String message, DBMethod type, String custom_error) {
         super(message, custom_error);
         this.type = type;
     }
 
-    public DBException(String message, DB_METHOD type, HashMap<String, Object> data) {
+    public DBException(String message, DBMethod type, HashMap<String, Object> data) {
         super(message, data);
         this.type = type;
     }
 
-    public DB_METHOD getType() {
+    public DBMethod getType() {
         return type;
     }
     
-    public void setMethod(DB_METHOD dbm) {
+    public void setMethod(DBMethod dbm) {
         this.type = dbm;
     }
 
@@ -141,12 +141,12 @@ public class DBException extends CustomException {
             if (k.contains(DBLoader.tipo.name()) && k.contains("connection")) {
                 if (!(boolean) v) {
                     possible_errors.add(new StringBuilder("- ")
-                                .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
+                                .append(PossibleErrors.DB_CONNECTION.getText()).toString());
                 }
             }
             if (k.contains("SQL syntax")) {
                 possible_errors.add(new StringBuilder("- ")
-                                .append(POSSIBLE_ERRORS.DB_SQL.getText()
+                                .append(PossibleErrors.DB_SQL.getText()
                                         .replace("%db%", (String) v)).toString());
             }
         }
@@ -155,12 +155,12 @@ public class DBException extends CustomException {
             if (this.custom_error.contains("connection closed") 
                     || this.custom_error.contains("Communications link failure")) {
                 possible_errors.add(new StringBuilder("- ")
-                                    .append(POSSIBLE_ERRORS.DB_CONNECTION.getText()).toString());
+                                    .append(PossibleErrors.DB_CONNECTION.getText()).toString());
             }
         }
 
         return (possible_errors.isEmpty()) ? 
-                new ArrayList() {{ this.add(POSSIBLE_ERRORS.NOT_FOUND.getText()); }}
+                new ArrayList() {{ this.add(PossibleErrors.NOT_FOUND.getText()); }}
                 : possible_errors;
     }
     

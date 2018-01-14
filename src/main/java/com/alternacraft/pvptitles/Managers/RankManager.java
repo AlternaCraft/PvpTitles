@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -103,7 +102,7 @@ public class RankManager {
         return r;
     }
 
-    public static NextRank getNextRank(Rank r, int actual_points, long actual_time, Player pl) {
+    public static NextRank getNextRank(Rank r, int actual_points, long actual_time, OfflinePlayer pl) {
         int rank_pos = Collections.binarySearch(RANKS, r, new RankComparator());
         if (rank_pos < 1 || rank_pos >= RANKS.size()) {
             return null;
@@ -123,7 +122,8 @@ public class RankManager {
         RANKS.clear();
     }
 
-    private static boolean hasRankPermission(Player pl, String perm) {
+    private static boolean hasRankPermission(OfflinePlayer pl, String perm) {
+        if (!pl.isOnline()) return false;
         return VaultHook.hasPermission(perm, pl.getPlayer());
     }
 

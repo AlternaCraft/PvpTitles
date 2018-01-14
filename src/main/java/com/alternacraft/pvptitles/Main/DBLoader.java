@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ public class DBLoader {
 
     private static final String SQLITE_DB = "PvpLite.db";
     
-    public static DBTYPE tipo = null;
-    public static enum DBTYPE {
+    public static DBType tipo = null;
+    public static enum DBType {
         MYSQL,
         SQLITE;
     }
@@ -50,7 +50,7 @@ public class DBLoader {
     }
 
     public boolean selectDB() {
-        if (tipo == DBTYPE.MYSQL) {
+        if (tipo == DBType.MYSQL) {
             this.sql = new MySQLConnection();
         }
         else {
@@ -65,7 +65,7 @@ public class DBLoader {
             return false;
         }
 
-        if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED)) {            
+        if (this.sql.status.equals(SQLConnection.Status.NOT_CONNECTED)) {            
             return selectDB();
         } else {
             dm = new DatabaseManagerSQL(pvpTitles, sql);
@@ -86,7 +86,7 @@ public class DBLoader {
     public void sqlConnect(boolean reconnect) throws DBException {
         ConfigDataStore params = pvpTitles.getManager().params;       
 
-        if (tipo == DBTYPE.MYSQL) {
+        if (tipo == DBType.MYSQL) {
             this.sql.connectDB(reconnect, params.getHost() + ":" + params.getPort()
                     + "/" + params.getDb(), String.valueOf(params.isUse_ssl()),
                     params.getUser(), params.getPass());
@@ -94,9 +94,9 @@ public class DBLoader {
             this.sql.connectDB(reconnect);
         }
 
-        if (this.sql.status.equals(SQLConnection.STATUS_AVAILABLE.NOT_CONNECTED) && !reconnect) {
-            if (tipo == DBTYPE.MYSQL) {
-                tipo = DBTYPE.SQLITE;
+        if (this.sql.status.equals(SQLConnection.Status.NOT_CONNECTED) && !reconnect) {
+            if (tipo == DBType.MYSQL) {
+                tipo = DBType.SQLITE;
             }
         } else {
             if (!reconnect) {            

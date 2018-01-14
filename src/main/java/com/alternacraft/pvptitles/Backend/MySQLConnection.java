@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,15 @@ public class MySQLConnection extends SQLConnection {
             Class.forName(DRIVER_MYSQL);
             this.connection = DriverManager.getConnection("jdbc:mysql://" + args[0]
                     + SUPRESS_WARNING + args[1], args[2], args[3]);
-            this.status = STATUS_AVAILABLE.CONNECTED;
+            this.status = Status.CONNECTED;
         } catch (ClassNotFoundException ex) {
             if (!reconnect) CustomLogger.logError("MySQL library not found");
-            this.status = STATUS_AVAILABLE.NOT_CONNECTED;
+            this.status = Status.NOT_CONNECTED;
         } catch (SQLException ex) {
             if (!reconnect) CustomLogger.logError(((ex.getErrorCode() == 0)
                     ? "Could not connect to MySQL" : "MySQL error: " + ex.getErrorCode())
                     + "; Using " + Manager.getInstance().params.getDefaultDB() + " per default...");
-            this.status = STATUS_AVAILABLE.NOT_CONNECTED;
+            this.status = Status.NOT_CONNECTED;
         }
     }
     
@@ -64,7 +64,7 @@ public class MySQLConnection extends SQLConnection {
             slowUpdate("DROP TRIGGER IF EXISTS `update_lastlogin`");
             slowUpdate(getTriggerMeta2());
         } catch (SQLException ex) {
-            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DB_METHOD.STRUCTURE, ex.getMessage()) {
+            throw new DBException(DBException.UNKNOWN_ERROR, DBException.DBMethod.STRUCTURE, ex.getMessage()) {
                 {
                     this.setStackTrace(ex.getStackTrace());
                 }

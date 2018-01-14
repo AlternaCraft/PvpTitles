@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 AlternaCraft
+ * Copyright (C) 2018 AlternaCraft
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_VALUE_TAG;
-import com.alternacraft.pvptitles.Files.TemplatesFile.FILES;
+import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.KS_TITLE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.KS_VALUE_TAG;
 import static com.alternacraft.pvptitles.Files.TemplatesFile.NEXT_RANK_TAG;
@@ -118,7 +118,7 @@ public class RankCommand implements CommandExecutor {
 
         String tag = pt.getManager().params.getTag();
         LangType lang = Localizer.getLocale(player);
-        List<String> lines = this.pt.getManager().templates.getFileContent(FILES.RANK_COMMAND);
+        List<String> lines = this.pt.getManager().templates.getFileContent(Files.RANK_COMMAND);
 
         for (String line : lines) {
             String msg = line;
