@@ -102,7 +102,7 @@ public enum LangsFile {
             "&4You are not allowed to do that"
     ),
     COMMAND_ARGUMENTS(
-            "&4Te faltan/sobran argumentos!",
+            "&4¡Te faltan/sobran argumentos!",
             "&4Your spare arguments!"
     ),
     COMMAND_RANK_INFO(
@@ -205,9 +205,13 @@ public enum LangsFile {
             "&aTe han matado y has perdido %fame% de %tag%",
             "&aYou have been killed and you have lost %fame% of %tag%"
     ),
-    PLAYER_NEW_RANK(
-            "&bFelicidades! Ahora eres: %newRank%",
+    PLAYER_RANK_PROMOTE(
+            "&b¡Felicidades! Ahora eres: %newRank%",
             "&bCongratulations! You are now: %newRank%"
+    ),
+    PLAYER_RANK_DEMOTE(
+            "&b¡Vaya! Has perdido tu rango, ahora eres: %newRank%",
+            "&bOops! You lost your previous rank, you are now: %newRank%"
     ),
     VETO_STARTED(
             "&cHas sido vetado y no conseguiras mas %tag% hasta dentro de %time%",

@@ -274,9 +274,9 @@ public final class Manager {
     public void loadRewards() {
         rewards = new HashMap();
 
-        YamlConfiguration lp = new RewardsFile().load();
+        YamlConfiguration rF = new RewardsFile().load();
 
-        List<String> activos = lp.getStringList("activeRewards");
+        List<String> activos = rF.getStringList("activeRewards");
         List<String> types = new ArrayList(
                 Arrays.asList("onRank", "onFame", "onKillstreak", "onKill")
         );
@@ -287,42 +287,71 @@ public final class Manager {
             for (String type : types) {
                 Map data = new HashMap();
 
-                String value = lp.getString("Rewards." + reward + "." + type);
+                Object v = rF.get("Rewards." + reward + "." + type);                
 
-                if (value != null || (type.equals("onKill") && nulos)) {
+                if (v != null || (type.equals("onKill") && nulos)) {
                     nulos = false;
+                    final List<Object> values = new ArrayList();
+
+                    if (v == null) {
+                        values.add(null);
+                    } else {
+                        if (v instanceof List) {
+                            if (type.equals("onRank")) {
+                                values.addAll((List<String>) v);                                
+                            } else {
+                                values.addAll((List<Integer>) v);
+                            }
+                        } else {
+                            if (v.toString().equals("*")) {
+                                if (type.equals("onRank")) {
+                                    RankManager.getRanks().forEach(rank -> {
+                                        values.add(rank.getId());
+                                    });
+                                } else {
+                                    showMessage(ChatColor.RED + "Invalid value * for reward " + reward);
+                                    continue;
+                                }
+                            } else {
+                                values.add(v.toString());                            
+                            }
+                        }                        
+                    }                    
 
                     if (!rewards.containsKey(type)) {
                         rewards.put(type, new ArrayList());
                     }
 
-                    HashMap<String, Map<String, Object>> actions = new HashMap();
+                    values.forEach(value -> {
+                        HashMap<String, Map<String, Object>> actions = new HashMap();
 
-                    // Valores de la recompensa
-                    if (lp.contains("Rewards." + reward + ".money")) {
-                        data.put("money", lp.getDouble("Rewards." + reward + ".money"));
-                    }
-                    if (lp.contains("Rewards." + reward + ".points")) {
-                        data.put("points", lp.getInt("Rewards." + reward + ".points"));
-                    }
-                    if (lp.contains("Rewards." + reward + ".time")) {
-                        data.put("points", lp.getLong("Rewards." + reward + ".time"));
-                    }
-                    // Permiso para utilizarla
-                    if (lp.contains("Rewards." + reward + ".permission")
-                            && lp.getBoolean("Rewards." + reward + ".permission")) {
-                        data.put("permission", "pvptitles.rw." + reward);
-                    }
+                        // Valores de la recompensa
+                        if (rF.contains("Rewards." + reward + ".money")) {
+                            data.put("money", rF.getDouble("Rewards." + reward + ".money"));
+                        }
+                        if (rF.contains("Rewards." + reward + ".points")) {
+                            data.put("points", rF.getInt("Rewards." + reward + ".points"));
+                        }
+                        if (rF.contains("Rewards." + reward + ".time")) {
+                            data.put("time", rF.getLong("Rewards." + reward + ".time"));
+                        }
+                        // Permiso para utilizarla
+                        if (rF.contains("Rewards." + reward + ".permission")
+                                && rF.getBoolean("Rewards." + reward + ".permission")) {
+                            data.put("permission", "pvptitles.rw." + reward);
+                        }
 
-                    data.put("commands", lp.getStringList("Rewards." + reward + ".command"));
-                    
-                    // Guardo en el mapa principal los valores para ese valor                    
-                    actions.put(value, data);
-                    rewards.get(type).add(actions);
+                        data.put("commands", rF.getStringList("Rewards." + reward + ".command"));
+
+                        // Guardo en el mapa principal los valores para ese valor
+                        String action = (value != null) ? String.valueOf(value) : null;
+                        actions.put(action, data);
+                        rewards.get(type).add(actions);                        
+                    });
                 }
             }
         });
-
+        
         showMessage(ChatColor.YELLOW + "" + activos.size() + " rewards " + ChatColor.AQUA + "loaded correctly.");
     }
 
@@ -451,7 +480,7 @@ public final class Manager {
                         timedPlayer.startSession(); // Nueva sesion
                         
                         pl.sendMessage(getPluginName()
-                                + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(pl))
+                                + LangsFile.PLAYER_RANK_PROMOTE.getText(Localizer.getLocale(pl))
                                         .replace("%newRank%", rankA.getDisplay()));
                     }
                 } catch (RanksException ex) {

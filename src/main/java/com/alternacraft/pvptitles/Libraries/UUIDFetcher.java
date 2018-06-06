@@ -148,6 +148,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         // Comprobacion case sensitive, si ha entrado alguna vez
         OfflinePlayer[] offplayers = Bukkit.getServer().getOfflinePlayers();
         for (OfflinePlayer offplayer : offplayers) {
+            if (offplayer == null) continue;
             if (offplayer.getName().equals(name)) {
                 return offplayer.getUniqueId();                
             }

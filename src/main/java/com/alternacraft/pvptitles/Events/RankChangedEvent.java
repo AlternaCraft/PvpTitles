@@ -27,13 +27,15 @@ public class RankChangedEvent extends Event implements Cancellable {
     private OfflinePlayer player = null;
     private String lastRankID = null;
     private String newRankID = null;
+    private boolean higherRank = true;
 
     private boolean cancelled;
     
-    public RankChangedEvent(OfflinePlayer pl, String lastRank, String newRank) {
+    public RankChangedEvent(OfflinePlayer pl, String lastRank, String newRank, boolean higher) {
         this.player = pl;
         this.lastRankID = lastRank;
         this.newRankID = newRank;
+        this.higherRank = higher;
     }
 
     public OfflinePlayer getPlayer() {
@@ -47,6 +49,10 @@ public class RankChangedEvent extends Event implements Cancellable {
     public String getNewRankID() {
         return newRankID;
     }    
+
+    public boolean isHigherRank() {
+        return higherRank;
+    }
 
     @Override
     public HandlerList getHandlers() {
@@ -66,5 +72,4 @@ public class RankChangedEvent extends Event implements Cancellable {
     public void setCancelled(boolean bln) {
         this.cancelled = bln;
     }    
-
 }

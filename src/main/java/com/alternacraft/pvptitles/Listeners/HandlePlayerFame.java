@@ -238,12 +238,10 @@ public class HandlePlayerFame implements Listener {
                 return; // Le bajaria los puntos posteriormente
             }
 
-            params.addVariableToFormula("MOD",
-                    params.getLostMod());
-            params.addVariableToFormula("STREAK",
-                    deaths);
-            params.addVariableToFormula("VPOINTS",
-                    previousFame);
+            params.addVariableToFormula("MOD", params.getLostMod());
+            params.addVariableToFormula("STREAK", deaths);
+            params.addVariableToFormula("VPOINTS", previousFame);
+            
             if (killedByPlayer) {
                 try {
                     params.addVariableToFormula("KPOINTS", this.cm.getDBH().getDM()
@@ -260,9 +258,7 @@ public class HandlePlayerFame implements Listener {
             }
 
             try {
-                this.cm.getDBH().getDM().savePlayerFame(victimuuid,
-                        actualFame, null);
-
+                this.cm.getDBH().getDM().savePlayerFame(victimuuid, actualFame, null);
                 victim.sendMessage(getPluginName() + LangsFile.PLAYER_GETS_DIE
                         .getText(Localizer.getLocale(victim))
                         .replace("%fame%", Integer.toString(gain))
@@ -272,7 +268,7 @@ public class HandlePlayerFame implements Listener {
                 return;
             }
 
-            long seconds = 0;
+            long seconds;
             try {
                 seconds = pvpTitles.getManager().getDBH().getDM().loadPlayedTime(victimuuid);
             } catch (DBException ex) {
@@ -285,14 +281,14 @@ public class HandlePlayerFame implements Listener {
                 Rank newRank = RankManager.getRank(actualFame, seconds, victim);
 
                 if (!currentRank.similar(newRank)) {
-                    victim.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK.getText(Localizer.getLocale(victim))
+                    victim.sendMessage(getPluginName() + LangsFile.PLAYER_RANK_DEMOTE.getText(Localizer.getLocale(victim))
                             .replace("%newRank%", newRank.getDisplay()));
                 }
             } catch (RanksException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
             }
 
-            FameEvent event = new FameEvent(victim, previousFame, gain);
+            FameEvent event = new FameEvent(victim, previousFame, -gain);
             pvpTitles.getServer().getPluginManager().callEvent(event);
         }
         //</editor-fold>
@@ -405,7 +401,7 @@ public class HandlePlayerFame implements Listener {
                     Rank newRank = RankManager.getRank(actualFame, seconds, killer);
 
                     if (!currentRank.similar(newRank)) {
-                        killer.sendMessage(getPluginName() + LangsFile.PLAYER_NEW_RANK
+                        killer.sendMessage(getPluginName() + LangsFile.PLAYER_RANK_PROMOTE
                                 .getText(Localizer.getLocale(killer))
                                 .replace("%newRank%", newRank.getDisplay()));
                     }

@@ -21,6 +21,7 @@ import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.Rank.NextRank;
+import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -132,4 +133,8 @@ public class RankManager {
                 .stream()
                 .anyMatch(next -> (next.hasTimeRequirement()));
     }
+    
+    public static List<Rank> getRanks() {
+        return ImmutableList.copyOf(RANKS);
+    } 
 }

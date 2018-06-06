@@ -72,74 +72,79 @@ public class HandleFame implements Listener {
         } catch (DBException ex) {
             CustomLogger.logArrayError(ex.getCustomStackTrace());
         }
+        
+        boolean higher = e.getFameIncr() >= 0;
+        
+        // Avoid rewards for victims
+        if (higher) {
+            //<editor-fold defaultstate="collapsed" desc="REWARDS FILTERS">        
+            if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
+                List<Map<String, Map<String, Object>>> kills = pt.getManager().rewards.get("onKill");
+                if (kills != null) {
+                    kills
+                            .stream()
+                            .filter(kill -> (kill != null && hasPermission(kill.get(null), pl)))
+                            .forEachOrdered(kill -> {
+                                setValues(kill.get(null), e.getOfflinePlayer(), e.getFameTotal());
+                            });
+                }
+            }
 
-        //<editor-fold defaultstate="collapsed" desc="REWARDS FILTERS">
-        if (!(e instanceof FameSetEvent) && !(e instanceof FameAddEvent)) {
-            List<Map<String, Map<String, Object>>> kills = pt.getManager().rewards.get("onKill");
-            if (kills != null) {
-                kills
+            List<Map<String, Map<String, Object>>> fame = pt.getManager().rewards.get("onFame");
+            if (fame != null) {
+                fame
                         .stream()
-                        .filter(kill -> (kill != null && hasPermission(kill.get(null), pl)))
-                        .forEachOrdered(kill -> {
-                            setValues(kill.get(null), e.getOfflinePlayer(), e.getFameTotal());
+                        .filter(famee -> (famee != null))
+                        .forEachOrdered(famee -> {
+                            famee.keySet()
+                                    .stream()
+                                    .filter(cantidad -> (e.getFame() < Integer.parseInt(cantidad)
+                                                && (e.getFameTotal()) >= Integer.valueOf(cantidad)
+                                                && hasPermission(famee.get(cantidad), pl)))
+                                    .forEachOrdered(cantidad -> {
+                                        setValues(famee.get(cantidad), e.getOfflinePlayer(), 
+                                                e.getFameTotal());
+                                    });
                         });
             }
-        }
 
-        List<Map<String, Map<String, Object>>> fame = pt.getManager().rewards.get("onFame");
-        if (fame != null) {
-            fame
-                    .stream()
-                    .filter(famee -> (famee != null))
-                    .forEachOrdered(famee -> {
-                        famee.keySet()
-                                .stream()
-                                .filter(cantidad -> (e.getFame() < Integer.parseInt(cantidad)
-                                            && (e.getFameTotal()) >= Integer.valueOf(cantidad)
-                                            && hasPermission(famee.get(cantidad), pl)))
-                                .forEachOrdered(cantidad -> {
-                                    setValues(famee.get(cantidad), e.getOfflinePlayer(), 
-                                            e.getFameTotal());
-                                });
-                    });
-        }
-
-        List<Map<String, Map<String, Object>>> rank = pt.getManager().rewards.get("onRank");
-        if (rank != null) {
-            for (Map<String, Map<String, Object>> rankk : rank) {
-                if (rankk != null) {
-                    for (String rango : rankk.keySet()) {
-                        try {
-                            Rank oldRank = RankManager.getRank(e.getFame(), seconds, pl);
-                            Rank newRank = RankManager.getRank(e.getFameTotal(), seconds, pl);
-                            if (rango.equals(newRank.getId()) && !rango.equals(oldRank.getId())
-                                    && hasPermission(rankk.get(rango), pl)) {
-                                setValues(rankk.get(rango), e.getOfflinePlayer(), e.getFameTotal());
+            List<Map<String, Map<String, Object>>> rank = pt.getManager().rewards.get("onRank");
+            if (rank != null) {
+                for (Map<String, Map<String, Object>> rankk : rank) {
+                    if (rankk != null) {
+                        for (String rango : rankk.keySet()) {
+                            try {
+                                Rank oldRank = RankManager.getRank(e.getFame(), seconds, pl);
+                                Rank newRank = RankManager.getRank(e.getFameTotal(), seconds, pl);
+                                if (rango.equals(newRank.getId()) && !rango.equals(oldRank.getId())
+                                        && hasPermission(rankk.get(rango), pl)) {
+                                    setValues(rankk.get(rango), e.getOfflinePlayer(), e.getFameTotal());
+                                }
+                            } catch (RanksException ex) {
+                                CustomLogger.logArrayError(ex.getCustomStackTrace());
                             }
-                        } catch (RanksException ex) {
-                            CustomLogger.logArrayError(ex.getCustomStackTrace());
                         }
                     }
                 }
             }
-        }
 
-        List<Map<String, Map<String, Object>>> killstreak = pt.getManager().rewards.get("onKillstreak");
-        if (killstreak != null) {
-            killstreak
-                    .stream()
-                    .filter(ks -> (ks != null))
-                    .forEachOrdered(ks -> {
-                        ks.keySet()
-                                .stream()
-                                .filter(kss -> (e.getKillstreak() == Integer.valueOf(kss)
-                                            && hasPermission(ks.get(kss), pl)))
-                                .forEachOrdered(kss -> {
-                                    setValues(ks.get(kss), e.getOfflinePlayer(), e.getFameTotal());
-                                });
-                    });
+            List<Map<String, Map<String, Object>>> killstreak = pt.getManager().rewards.get("onKillstreak");
+            if (killstreak != null) {
+                killstreak
+                        .stream()
+                        .filter(ks -> (ks != null))
+                        .forEachOrdered(ks -> {
+                            ks.keySet()
+                                    .stream()
+                                    .filter(kss -> (e.getKillstreak() == Integer.valueOf(kss)
+                                                && hasPermission(ks.get(kss), pl)))
+                                    .forEachOrdered(kss -> {
+                                        setValues(ks.get(kss), e.getOfflinePlayer(), e.getFameTotal());
+                                    });
+                        });
+            }
+            //</editor-fold>
         }
-        //</editor-fold>
 
         // Nuevo rango
         if (e.getOfflinePlayer().isOnline()) {
@@ -156,7 +161,7 @@ public class HandleFame implements Listener {
                 // Ha conseguido otro rango
                 if (!actualRank.similar(newRank)) {
                     pt.getServer().getPluginManager().callEvent(new RankChangedEvent(
-                            pl, actualRank.getId(), newRank.getId()));
+                            pl, actualRank.getId(), newRank.getId(), higher));
                 }
             } catch (RanksException ex) {
                 CustomLogger.logArrayError(ex.getCustomStackTrace());
@@ -169,7 +174,7 @@ public class HandleFame implements Listener {
         if (VaultHook.ECONOMY_ENABLED) {
             Economy economy = VaultHook.economy;
             if (economy != null && data.containsKey("money")) {
-                double money = Math.round((int) data.get("money")
+                double money = Math.round((double) data.get("money")
                         * Manager.getInstance().params.getMultiplier("RMoney", pl));
                 economy.depositPlayer(pl, money);
             }
