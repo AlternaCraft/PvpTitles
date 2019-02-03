@@ -90,7 +90,7 @@ public class ModelsFile {
     private static final String FIRST_CHAR_MODEL = "#";
     private static final String SPLIT_MODELS = "&&";
 
-    private static final String NEW_LINE = "\\/";
+    private static final String NEW_LINE = "/";
     private static final String NEW_COLUMN = "\\|";
 
     enum Utils {

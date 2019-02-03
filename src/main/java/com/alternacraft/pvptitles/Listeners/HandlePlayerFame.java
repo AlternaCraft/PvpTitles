@@ -226,8 +226,7 @@ public class HandlePlayerFame implements Listener {
             }
         }
 
-        boolean meetsRequirements = (params.isLPWhenDyingJustByPlayers())
-                ? killedByPlayer : true;
+        boolean meetsRequirements = (!params.isLPWhenDyingJustByPlayers()) || killedByPlayer;
 
         if (params.isEnableLPWhenDying() && meetsRequirements) {
             int previousFame;
@@ -420,7 +419,7 @@ public class HandlePlayerFame implements Listener {
      * Método para evitar que farmen puntos para los titulos pvp
      *
      * @param killer String con el nombre del asesino
-     * @param victimuuid String con el nombre del asesinado
+     * @param victim String con el nombre del asesinado
      */
     private void antiFarm(final Player killer, Player victim) {
         final String killeruuid = killer.getUniqueId().toString();

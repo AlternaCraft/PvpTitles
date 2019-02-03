@@ -36,6 +36,8 @@ import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -94,7 +96,7 @@ public class HandleFame implements Listener {
             if (fame != null) {
                 fame
                         .stream()
-                        .filter(famee -> (famee != null))
+                        .filter(Objects::nonNull)
                         .forEachOrdered(famee -> {
                             famee.keySet()
                                     .stream()
@@ -132,7 +134,7 @@ public class HandleFame implements Listener {
             if (killstreak != null) {
                 killstreak
                         .stream()
-                        .filter(ks -> (ks != null))
+                        .filter(Objects::nonNull)
                         .forEachOrdered(ks -> {
                             ks.keySet()
                                     .stream()
@@ -211,7 +213,7 @@ public class HandleFame implements Listener {
             ((List<String>) data.get("commands"))
                     .stream()
                     .map(cmd -> cmd.replaceAll("<[pP]layer>", pl.getName()))
-                    .map(cmd -> StrUtils.translateColors(cmd))
+                    .map(StrUtils::translateColors)
                     .forEachOrdered(cmd -> {
                         pt.getServer().dispatchCommand(pt.getServer().getConsoleSender(), cmd);
                     });

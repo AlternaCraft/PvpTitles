@@ -29,6 +29,8 @@ import org.bukkit.entity.Player;
 
 public class PlaceholderHook extends EZPlaceholderHook {
 
+    // https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Hook-into-PlaceholderAPI#using-placeholders-from-placeholderapi-in-your-plugin
+
     private PvpTitles plugin = null;
 
     public PlaceholderHook(PvpTitles plugin) {

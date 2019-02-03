@@ -17,15 +17,12 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import com.google.common.io.Files;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class UtilsFile {
 
@@ -80,12 +77,18 @@ public class UtilsFile {
     }
 
     public static List<String> getFileLines(File file) {
+        ArrayList<String> list = new ArrayList<>();
         try {
-            return Files.readLines(file, Charset.defaultCharset());
+            Scanner s = new Scanner(file);
+            while (s.hasNext()){
+                list.add(s.next());
+            }
+            s.close();
         } catch (IOException ex) {
             CustomLogger.logError(ex.getMessage());
+        } finally {
+            return list;
         }
-        return new ArrayList();
     }
 
     public static void delete(String path) {

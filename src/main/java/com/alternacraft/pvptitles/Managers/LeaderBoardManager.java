@@ -55,9 +55,7 @@ public class LeaderBoardManager {
                             // MultiServer
                             if (((Board) o).getData().getServer() != null
                                     && next.getData().getServer() != null) {
-                                if (!((Board) o).getData().getServer().equals(next.getData().getServer())) {
-                                    return false;
-                                }
+                                return ((Board) o).getData().getServer().equals(next.getData().getServer());
                             }
                             return true;
                         }

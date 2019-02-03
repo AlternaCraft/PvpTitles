@@ -60,7 +60,7 @@ public class RankManager {
             CustomLogger.logError("Rank ID " + rank.getId() + " is repeated!!");
         } else {
             RANKS.add(rank);
-            Collections.sort(RANKS, new RankComparator());
+            RANKS.sort(new RankComparator());
         }
     }
 
@@ -131,7 +131,7 @@ public class RankManager {
     public static boolean isTimeReqUsed() {
         return RANKS
                 .stream()
-                .anyMatch(next -> (next.hasTimeRequirement()));
+                .anyMatch(Rank::hasTimeRequirement);
     }
     
     public static List<Rank> getRanks() {

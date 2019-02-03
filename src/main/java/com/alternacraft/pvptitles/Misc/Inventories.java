@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -42,11 +43,11 @@ public class Inventories {
     public static List<Player> closeInventories() {
         List<Player> players = Inventories.opened
                 .stream()
-                .map(inv -> inv.getViewers())
+                .map(Inventory::getViewers)
                 .filter(v -> !v.isEmpty())
                 .map(v -> ((Player) v.get(0)))
                 .collect(Collectors.toList());
-        players.forEach(pl -> pl.closeInventory());
+        players.forEach(HumanEntity::closeInventory);
         return players;
     }
 
@@ -131,23 +132,23 @@ public class Inventories {
                     LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
             }
 
-            item = new ItemStack(Material.WOOL, 1, (byte) 4);
+            item = new ItemStack(Material.LEGACY_WOOL, 1, (byte) 4);
             createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         } else if (vuelta > 0) {
             content = new String[]{LangsFile.BOARD_INVENTORY_ACTION3_2.getText(lt)};
 
-            item = new ItemStack(Material.WOOL, 1, (byte) 4);
+            item = new ItemStack(Material.LEGACY_WOOL, 1, (byte) 4);
             createDisplay(item, inv, 18, LangsFile.BOARD_INVENTORY_INFO3.getText(lt)
                     .replace("%pageNumber%", String.valueOf(vuelta + 1)), content);
         }
 
         // items de ayuda
-        item = new ItemStack(Material.WOOL, 1, (byte) 5);
+        item = new ItemStack(Material.LEGACY_WOOL, 1, (byte) 5);
         createDisplay(item, inv, 25, LangsFile.BOARD_INVENTORY_ACTION1.getText(lt),
                 new String[]{LangsFile.BOARD_INVENTORY_INFO1.getText(lt)});
 
-        item = new ItemStack(Material.WOOL, 1, (byte) 14);
+        item = new ItemStack(Material.LEGACY_WOOL, 1, (byte) 14);
         createDisplay(item, inv, 26, LangsFile.BOARD_INVENTORY_ACTION2.getText(lt),
                 new String[]{LangsFile.BOARD_INVENTORY_INFO2.getText(lt)});
     }

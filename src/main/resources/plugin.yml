@@ -10,96 +10,96 @@ main: com.alternacraft.pvptitles.Main.PvpTitles
 softdepend: [ScoreBoardStats, Vault, HolographicDisplays, ProtocolLib, PlaceholderAPI, MVdWPlaceholderAPI, VanishNoPacket]
 
 commands:
-    pvpTitles:
-        description: It shows info about the plugin.
-        usage: /<command>
-        aliases: pvptitulos
-        permission: pvptitles.help
-    pvpRank:
-        description: It shows info about your rank and about your penalties.
-        usage: /<command> [<world_name>]
-        aliases: pvprango
-        permission: pvptitles.rank
-    pvpLadder:
-        description: It shows the top five players.
-        usage: /<command>
-        aliases: pvpranking
-        permission: pvptitles.ladder        
-    pvpFame:
-        description: Add, view or set player fame in game.
-        usage: /<command> add|see|set <player> [<world_name>] [<fame_points>] [-silent]
-        aliases: pvpfama
-        permission: pvptitles.setRank
-    pvpBoard:
-        description: Manage server scoreboards.
-        usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
-        aliases: pvpsign
-        permission: pvptitles.board
-    pvpPurge:
-        description: It cleans inactive users.
-        usage: /<command> [<inactive_days>]
-        aliases: pvppurga
-        permission: pvptitles.purge
-    pvpReload:
-        description: It reloads the plugin.
-        usage: /<command>     
-        aliases: pvprecarga
-        permission: pvptitles.reload
-    pvpDatabase:
-        description: It allows to manage data from the database.
-        usage: /<command> export|import|repair [<file_name>]
-        aliases: pvpdb
-        permission: pvptitles.database
-        
+  pvpTitles:
+    description: It shows info about the plugin.
+    usage: /<command>
+    aliases: pvptitulos
+    permission: pvptitles.help
+  pvpRank:
+    description: It shows info about your rank and about your penalties.
+    usage: /<command> [<world_name>]
+    aliases: pvprango
+    permission: pvptitles.rank
+  pvpLadder:
+    description: It shows the top five players.
+    usage: /<command>
+    aliases: pvpranking
+    permission: pvptitles.ladder
+  pvpFame:
+    description: Add, view or set player fame in game.
+    usage: /<command> add|see|set <player> [<world_name>] [<fame_points>] [-silent]
+    aliases: pvpfama
+    permission: pvptitles.setRank
+  pvpBoard:
+    description: Manage server scoreboards.
+    usage: /<command> [create|remove <board_type> <name> <board_model> [<server_name>]]
+    aliases: pvpsign
+    permission: pvptitles.board
+  pvpPurge:
+    description: It cleans inactive users.
+    usage: /<command> [<inactive_days>]
+    aliases: pvppurga
+    permission: pvptitles.purge
+  pvpReload:
+    description: It reloads the plugin.
+    usage: /<command>
+    aliases: pvprecarga
+    permission: pvptitles.reload
+  pvpDatabase:
+    description: It allows to manage data from the database.
+    usage: /<command> export|import|repair [<file_name>]
+    aliases: pvpdb
+    permission: pvptitles.database
+
 permissions:
-    pvptitles.*:
-        description: Access to all commands.
-        children:
-            - pvptitles.help: true            
-            - pvptitles.rank: true
-            - pvptitles.ladder: true
-            - pvptitles.setRank: true
-            - pvptitles.board: true
-            - pvptitles.purge: true            
-            - pvptitles.reload: true
-            - pvptitles.database: true
-            - pvptitles.manageboard: true
-    pvptitles.admin:
-        description: Access to staff commands
-        children:
-            - pvptitles.setRank: true
-            - pvptitles.board: true
-            - pvptitles.purge: true
-            - pvptitles.reload: true
-            - pvptitles.database: true
-            - pvptitles.manageboard: true
-    pvptitles.help:
-        description: Access to /pvptitles command.
-        default: true
-    pvptitles.rank:
-        description: Access to /pvprank command.
-        default: true
-    pvptitles.ladder:
-        description: Access to /pvpladder command.
-        default: true
-    pvptitles.setRank:
-        description: Access to /pvpfame command.
-        default: op
-    pvptitles.board:
-        description: Access to /pvpboard command.
-        default: op
-    pvptitles.purge:
-        description: Access to /pvppurge command.
-        default: op
-    pvptitles.reload:
-        description: Access to /pvpreload command.
-        default: op
-    pvptitles.database:
-        description: Access to /pvpdatabase command.
-        default: op
-    pvptitles.manageboard:
-        description: Create/destroy scoreboards per boards.
-        default: op
-    pvptitles.hideprefix:
-        description: Doesn't display your title.
-        default: false
+  pvptitles.*:
+    description: Access to all commands.
+    children:
+      - pvptitles.help: true
+      - pvptitles.rank: true
+      - pvptitles.ladder: true
+      - pvptitles.setRank: true
+      - pvptitles.board: true
+      - pvptitles.purge: true
+      - pvptitles.reload: true
+      - pvptitles.database: true
+      - pvptitles.manageboard: true
+  pvptitles.admin:
+    description: Access to staff commands
+    children:
+      - pvptitles.setRank: true
+      - pvptitles.board: true
+      - pvptitles.purge: true
+      - pvptitles.reload: true
+      - pvptitles.database: true
+      - pvptitles.manageboard: true
+  pvptitles.help:
+    description: Access to /pvptitles command.
+    default: true
+  pvptitles.rank:
+    description: Access to /pvprank command.
+    default: true
+  pvptitles.ladder:
+    description: Access to /pvpladder command.
+    default: true
+  pvptitles.setRank:
+    description: Access to /pvpfame command.
+    default: op
+  pvptitles.board:
+    description: Access to /pvpboard command.
+    default: op
+  pvptitles.purge:
+    description: Access to /pvppurge command.
+    default: op
+  pvptitles.reload:
+    description: Access to /pvpreload command.
+    default: op
+  pvptitles.database:
+    description: Access to /pvpdatabase command.
+    default: op
+  pvptitles.manageboard:
+    description: Create/destroy scoreboards per boards.
+    default: op
+  pvptitles.hideprefix:
+    description: Doesn't display your title.
+    default: false

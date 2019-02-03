@@ -52,17 +52,13 @@ public class Timer {
     public void saveToLog(String filename) {
         PluginLog pl = new PluginLog(PvpTitles.getInstance(), filename);
         
-        register.entrySet().forEach(entry -> {
-            String key = entry.getKey();
-            List<Long> value = entry.getValue();
-            
+        register.forEach((key, value) -> {
             int size = value.size();
             int total = 0;
             for (Long record : value) {
                 total += record;
             }
             total /= size;
-            
             pl.addMessage(key + " - " + total);
         });
         

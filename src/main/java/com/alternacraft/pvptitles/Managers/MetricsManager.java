@@ -31,7 +31,7 @@ import org.bstats.bukkit.Metrics;
 
 public class MetricsManager {
 
-    private final static String PATTERN = "(.*) \\((.*)\\) \\- (.*)";
+    private final static String PATTERN = "(.*) \\((.*)\\) - (.*)";
 
     // <editor-fold defaultstate="collapsed" desc="GRAPHS">
     private void setMWGraph(Metrics metrics) {
@@ -115,13 +115,13 @@ public class MetricsManager {
                     lines.stream()
                             .filter((line) -> 
                                     (!line.contains("---") 
-                                            && !line.matches("(\\d+\\-)+\\d+ (\\d+\\:)+\\d+")))
+                                            && !line.matches("(\\d+-)+\\d+ (\\d+:)+\\d+")))
                             .map((line) -> {
                                 Pattern pattern = Pattern.compile(PATTERN);
                                 Matcher matcher = pattern.matcher(line);
                                 return matcher;
                             })
-                            .filter((matcher) -> (matcher.find()))
+                            .filter(Matcher::find)
                             .forEachOrdered((matcher) -> {
                                 String key = matcher.group(2);
 

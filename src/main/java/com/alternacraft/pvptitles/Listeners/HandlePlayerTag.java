@@ -76,9 +76,7 @@ public class HandlePlayerTag implements Listener {
     private static boolean isValidWorld(String w) {
         // Compruebo si el mundo esta en la lista de los vetados        
         if (HandlePlayerTag.manager.params.getAffectedWorlds().contains(w.toLowerCase())) {
-            if (!HandlePlayerTag.manager.params.isTitleShown()) {
-                return false;
-            }
+            return HandlePlayerTag.manager.params.isTitleShown();
         }
 
         return true;

@@ -290,7 +290,6 @@ public class SignBoard extends Board {
      * Método para devolver la matriz con una estructura de carteles
      *
      * @param in Tabla vieja
-     * @param columns Columnas de la tabla
      *
      * @return Tabla nueva
      */

@@ -29,6 +29,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
@@ -79,9 +81,9 @@ public class ConfigurationFileTest extends TestBase {
         
         FileConfig fc = new FileConfig(mockPlugin);
         yaml = YamlConfiguration.loadConfiguration(customConfig);
-        
-        assertEquals(true, !yaml.getString("Version").equals("0"));
-        assertEquals(true, yaml.getBoolean("Debug"));
+
+        assertTrue(!yaml.getString("Version").equals("0"));
+        assertTrue(yaml.getBoolean("Debug"));
         assertEquals("machine", yaml.getString("Mysql.host"));
     }
 

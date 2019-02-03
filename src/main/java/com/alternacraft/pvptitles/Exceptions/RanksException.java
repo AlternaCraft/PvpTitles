@@ -79,14 +79,11 @@ public class RanksException extends CustomException {
     private List getPossibleErrors() {
         List<String> possible_errors = new ArrayList();
 
-        data.entrySet().forEach(entry -> {
-            String k = entry.getKey();
-            Object v = entry.getValue();
-            
+        data.forEach((k, v) -> {
             if (k.equals("Seconds") || k.equals("Fame")) {
                 boolean lowerThanZero = false;
-                if (k.equals("Seconds")) lowerThanZero = (long)v < 0;
-                if (k.equals("Fame")) lowerThanZero = (int)v < 0;
+                if (k.equals("Seconds")) lowerThanZero = (long) v < 0;
+                if (k.equals("Fame")) lowerThanZero = (int) v < 0;
                 if (lowerThanZero) {
                     if (!possible_errors.contains(PossibleErrors.CORRUPTED_DATA.getText())) {
                         possible_errors.add(new StringBuilder("- ")

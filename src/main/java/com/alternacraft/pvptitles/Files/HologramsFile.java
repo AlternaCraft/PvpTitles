@@ -106,9 +106,7 @@ public class HologramsFile {
                     holos.setModelo(modelo);
                     holos.setServer(server);
                     return holos;
-                }).forEachOrdered(holos -> {
-                    bds.add(holos);
-                });
+                }).forEachOrdered(bds::add);
 
         return bds;
     }

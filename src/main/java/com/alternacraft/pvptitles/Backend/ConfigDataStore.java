@@ -183,7 +183,7 @@ public class ConfigDataStore {
 
     public void setNameS(String nameS) {
         if ("".equals(nameS) || "Custom".equals(nameS)) {
-            nameS = getInstance().getServer().getServerName();
+            nameS = getInstance().getServer().getName();
         }
         this.nameS = nameS;
     }

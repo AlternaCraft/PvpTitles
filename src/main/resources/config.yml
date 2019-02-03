@@ -44,15 +44,15 @@ DefaultDatabase: SQLite
 # False to work with SQLite.
 # True to hook {connect} into the existing server MySQL.
 Mysql:
-    enable: false       
-    enableSSL: false
-    
-    host: localhost
-    port: 3306
-    database: dbname
-    user: user
-    pass: pass
-  
+  enable: false
+  enableSSL: false
+
+  host: localhost
+  port: 3306
+  database: dbname
+  user: user
+  pass: pass
+
 # Unique ID per server (Default -1 indicates that the server has not ID)
 MultiS: -1
 # Custom name for this server (If empty server name will be used)
@@ -66,19 +66,19 @@ NameS: Custom
 
 # MultiWorld
 MW:
-    # Enable points per world
-    enable: false
-        
+  # Enable points per world
+  enable: false
+
 # Manage some plugin features between worlds.
 MW-filter:
-    # It shows the titles on the worlds listed below.
-    title: false
-    # Awards points for fame on the worlds listed below.
-    points: false
-    # It shows the players, who played in the worlds listed below, on the leaderboard (pvpladder and boards)
-    show-on-leaderboard: false
-    # List of affected worlds (No case sensitive)
-    affected-worlds:
+  # It shows the titles on the worlds listed below.
+  title: false
+  # Awards points for fame on the worlds listed below.
+  points: false
+  # It shows the players, who played in the worlds listed below, on the leaderboard (pvpladder and boards)
+  show-on-leaderboard: false
+  # List of affected worlds (No case sensitive)
+  affected-worlds:
     - example_world
 
 ############################################################
@@ -167,16 +167,16 @@ AFKTime: 5
 #         vip: 1.25
 # is -> pvptitles.mp.rmoney.vip
 Multipliers:
-    RMoney:
-        vip: 1.25
-    RPoints:
-        vip: 1.25
-    RTime:
-        vip: 1.25
-    Points:           
-        vip: 1.5
-    Time:
-        vip: 2
+  RMoney:
+    vip: 1.25
+  RPoints:
+    vip: 1.25
+  RTime:
+    vip: 1.25
+  Points:
+    vip: 1.5
+  Time:
+    vip: 2
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -191,7 +191,7 @@ Multipliers:
 # - ENVIRONMENT -> Everything else.
 # If empty it won't be reset.
 ResetOptions:
-- PLAYER
+  - PLAYER
 # Add a death to deathstreak only when it is caused by a player.
 AddDeathOnlyByPlayer: true
 # Should be reset the killstreak/deathstreak value when a player leaves the server?
@@ -202,14 +202,14 @@ ResetOnPlayerLeaving: true
 ## AWARDED POINTS ##
 # RP -> Receive Points.
 # LP -> Lose Points.
-RPWhenKilling: 
-    # Enable to Receive Points when killing.
-    enable: true
-LPWhenDying: 
-    # Enable to Lose Points when dying.
-    enable: false
-    # Only by other players?
-    onlyPlayers: false
+RPWhenKilling:
+  # Enable to Receive Points when killing.
+  enable: true
+LPWhenDying:
+  # Enable to Lose Points when dying.
+  enable: false
+  # Only by other players?
+  onlyPlayers: false
 
 ## MODIFICATOR ##
 # Modificator to increase or decrease the amount of points you receive/lose.
@@ -226,16 +226,16 @@ LPWhenDying:
 #     -> Just use the name of the functions described into "Method Summary" 
 #     -> By default, the parameters type is "double"
 Modificator:
-    # When you are the killer.
-    Received:
-        # Formula to calculate the points.
-        formula: "ceil(((STREAK - 1) * MOD) + 1)"
-        # Modificator value.
-        value: 0.5
-    # When you are the victim.
-    Lost:
-        formula: "STREAK"
-        value: 0
+  # When you are the killer.
+  Received:
+    # Formula to calculate the points.
+    formula: "ceil(((STREAK - 1) * MOD) + 1)"
+    # Modificator value.
+    value: 0.5
+  # When you are the victim.
+  Lost:
+    formula: "STREAK"
+    value: 0
 # Default formula: (Killstreak * mod) + 1 | (Result is truncated upward)
 #   - Example: [Second low # (1 * 0.25 + 1) = 1.25 ~ 2 #
 #   - Recommended value between 0 - 1
@@ -307,50 +307,50 @@ HoloHeightModifier: 1
 # If you use "restricted: true", the permission that you have to use is:
 #     pvptitles.rank.<title_name>
 Ranks:
-    None:
-        points: 0
-    Hero: 
-        display: "&aHero&r"
-        points: 25
-    Fierce_Hero: 
-        display: Fierce Hero
-        points: 75
-    Mighty_Hero: 
-        display: Mighty Hero
-        points: 180
-    Deadly_Hero: 
-        display: Deadly Hero
-        points: 360
-    Terrifying_Hero: 
-        display: Terrifying Hero
-        points: 600
-    Conquering_Hero: 
-        display: Conquering Hero
-        points: 1000
-    Subjugating_Hero: 
-        display: Subjugating Hero
-        points: 1680
-    Vanquishing_Hero: 
-        display: Vanquishing Hero
-        points: 2800
-    Renowned_Hero: 
-        display: Renowned Hero
-        points: 4665
-    Illustrious_Hero: 
-        display: Illustrious Hero
-        points: 7750
-    Eminent_Hero: 
-        display: Eminent Hero
-        points: 12960
-    Kings_Hero: 
-        display: Kings Hero
-        points: 21600
-    Emperors_Hero: 
-        display: Emperors Hero
-        points: 36000
-    Balthazar_Hero: 
-        display: Balthazar Hero
-        points: 60000
-    Legendary_Hero: 
-        display: Legendary Hero
-        points: 100000
+  None:
+    points: 0
+  Hero:
+    display: "&aHero&r"
+    points: 25
+  Fierce_Hero:
+    display: Fierce Hero
+    points: 75
+  Mighty_Hero:
+    display: Mighty Hero
+    points: 180
+  Deadly_Hero:
+    display: Deadly Hero
+    points: 360
+  Terrifying_Hero:
+    display: Terrifying Hero
+    points: 600
+  Conquering_Hero:
+    display: Conquering Hero
+    points: 1000
+  Subjugating_Hero:
+    display: Subjugating Hero
+    points: 1680
+  Vanquishing_Hero:
+    display: Vanquishing Hero
+    points: 2800
+  Renowned_Hero:
+    display: Renowned Hero
+    points: 4665
+  Illustrious_Hero:
+    display: Illustrious Hero
+    points: 7750
+  Eminent_Hero:
+    display: Eminent Hero
+    points: 12960
+  Kings_Hero:
+    display: Kings Hero
+    points: 21600
+  Emperors_Hero:
+    display: Emperors Hero
+    points: 36000
+  Balthazar_Hero:
+    display: Balthazar Hero
+    points: 60000
+  Legendary_Hero:
+    display: Legendary Hero
+    points: 100000

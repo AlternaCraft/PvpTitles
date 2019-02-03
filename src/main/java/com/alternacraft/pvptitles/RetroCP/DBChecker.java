@@ -20,6 +20,8 @@ import com.alternacraft.pvptitles.Backend.SQLConnection;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
+
+import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
 import java.sql.ResultSet;
@@ -39,9 +41,8 @@ public class DBChecker {
     }
 
     public boolean setup() {
-        switch (tipo) {
-            case MYSQL:
-                this.checkMySQLDB();
+        if (tipo == DBLoader.DBType.MYSQL) {
+            this.checkMySQLDB();
         }
         return true;
     }

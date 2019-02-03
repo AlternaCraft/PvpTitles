@@ -190,7 +190,7 @@ public class AntiFarmManager {
                         afm.cleanKillsOnVictim(killer, victim);
                         victims.remove(victim);
                     }, Manager.getInstance().getPvpTitles().getManager()
-                            .params.getCleanerTime() * Manager.TICKS * 1L)
+                            .params.getCleanerTime() * Manager.TICKS)
             );
         }
 

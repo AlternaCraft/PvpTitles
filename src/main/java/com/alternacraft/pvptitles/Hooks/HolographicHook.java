@@ -72,9 +72,7 @@ public class HolographicHook {
 
     public static void loadPlayersInServer() {
         deleteHoloPlayers();
-        plugin.getServer().getOnlinePlayers().forEach((player) -> {
-            HandlePlayerTag.holoPlayerLogin(player);
-        });
+        plugin.getServer().getOnlinePlayers().forEach(HandlePlayerTag::holoPlayerLogin);
     }
 
     // Player prefix
@@ -124,9 +122,9 @@ public class HolographicHook {
         // Optimizacion para borrar hologramas si se desactivo la opcion
         HOLOPLAYERS.entrySet()
                 .stream()
-                .map(entry -> entry.getValue())
+                .map(Map.Entry::getValue)
                 .filter(holo -> !(holo.isDeleted()))
-                .forEach(holo -> holo.delete());
+                .forEach(Hologram::delete);
         HOLOPLAYERS.clear();
     }
     // End Player Prefix    
@@ -158,9 +156,8 @@ public class HolographicHook {
 
     public static void createHoloBoard(List<String> contenido, Location l) {
         Hologram h = HologramsAPI.createHologram(plugin, l);
-        contenido.forEach(string -> {
-            h.appendTextLine(string); // ChatColor.RESET
-        });
+        // ChatColor.RESET
+        contenido.forEach(h::appendTextLine);
     }
 
     public static void deleteHoloBoard(Location l) {
@@ -182,9 +179,7 @@ public class HolographicHook {
         HologramsAPI.getHolograms(plugin)
                 .stream()
                 .filter(holo -> !(holo.isDeleted()))
-                .forEach(holo -> {
-                    holo.delete();
-                });
+                .forEach(Hologram::delete);
     }
     // Fin todos
 }
