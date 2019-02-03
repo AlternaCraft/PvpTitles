@@ -7,7 +7,7 @@ before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y libxml2-utils
 install:
-- mvn install:install-file -Dfile=lib/VanishNoPacket.jar -DgroupId=org.kitteh -DartifactId=VanishNoPacket -Dversion=3.20 -Dpackaging=jar
+- mvn install:install-file -Dfile=libs/VanishNoPacket.jar -DgroupId=org.kitteh -DartifactId=VanishNoPacket -Dversion=3.20 -Dpackaging=jar
 script: mvn clean install
 after_success:
 - bash <(curl -s https://codecov.io/bash)
