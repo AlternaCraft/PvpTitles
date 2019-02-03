@@ -20,12 +20,14 @@ import com.alternacraft.pvptitles.Backend.MySQLConnection;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
-import static com.alternacraft.pvptitles.RetroCP.DBChecker.MYSQL_TIME_CREATED;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.alternacraft.pvptitles.RetroCP.DBChecker.MYSQL_TIME_CREATED;
 
 public class RetroDMMysql {
 

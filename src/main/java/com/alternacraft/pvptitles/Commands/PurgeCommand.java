@@ -21,7 +21,6 @@ import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PluginLog;
 import org.bukkit.ChatColor;
@@ -29,6 +28,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class PurgeCommand implements CommandExecutor {
 

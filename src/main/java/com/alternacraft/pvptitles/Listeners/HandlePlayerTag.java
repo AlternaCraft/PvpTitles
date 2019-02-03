@@ -20,12 +20,6 @@ import com.alternacraft.pvptitles.Events.RankChangedEvent;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Hooks.HolographicHook;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.HOLOPLAYERS;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.ISHDENABLED;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.RANK_LINE;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.TITLE_HEIGHT;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.createHoloPlayer;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.removeHoloPlayer;
 import com.alternacraft.pvptitles.Hooks.VNPHook;
 import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.CustomLogger;
@@ -33,20 +27,17 @@ import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
-import java.util.regex.Pattern;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.regex.Pattern;
+
+import static com.alternacraft.pvptitles.Hooks.HolographicHook.*;
 
 public class HandlePlayerTag implements Listener {
 

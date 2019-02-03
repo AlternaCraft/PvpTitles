@@ -18,8 +18,6 @@ package com.alternacraft.pvptitles.Hooks;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.HOLOPLAYERS;
-import static com.alternacraft.pvptitles.Hooks.HolographicHook.RANK_LINE;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
@@ -32,6 +30,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.kitteh.vanish.VanishPlugin;
 import org.kitteh.vanish.event.VanishStatusChangeEvent;
+
+import static com.alternacraft.pvptitles.Hooks.HolographicHook.HOLOPLAYERS;
+import static com.alternacraft.pvptitles.Hooks.HolographicHook.RANK_LINE;
 
 /**
  *

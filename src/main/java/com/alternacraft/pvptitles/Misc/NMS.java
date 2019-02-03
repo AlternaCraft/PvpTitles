@@ -17,9 +17,10 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import org.bukkit.entity.Player;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.bukkit.entity.Player;
 
 
 public class NMS {

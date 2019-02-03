@@ -16,10 +16,12 @@
  */
 package com.alternacraft.pvptitles.Main;
 
+import com.alternacraft.pvptitles.Misc.StrUtils;
+
+import java.util.logging.Level;
+
 import static com.alternacraft.pvptitles.Main.PvpTitles.LOGGER;
 import static com.alternacraft.pvptitles.Main.PvpTitles.debugMode;
-import com.alternacraft.pvptitles.Misc.StrUtils;
-import java.util.logging.Level;
 
 public class CustomLogger {
     

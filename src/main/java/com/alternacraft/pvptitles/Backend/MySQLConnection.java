@@ -19,6 +19,7 @@ package com.alternacraft.pvptitles.Backend;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
+
 import java.sql.DriverManager;
 import java.sql.SQLException;
 

@@ -19,10 +19,11 @@ package com.alternacraft.pvptitles.Misc;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.MovementManager;
+import org.bukkit.OfflinePlayer;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.OfflinePlayer;
 
 public class TimedPlayer {
 

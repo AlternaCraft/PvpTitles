@@ -27,22 +27,19 @@ import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.RankManager;
-import com.alternacraft.pvptitles.Misc.Localizer;
-import com.alternacraft.pvptitles.Misc.Rank;
-import com.alternacraft.pvptitles.Misc.Session;
-import com.alternacraft.pvptitles.Misc.StrUtils;
-import com.alternacraft.pvptitles.Misc.TimedPlayer;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import com.alternacraft.pvptitles.Misc.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class HandleFame implements Listener {
 
@@ -198,10 +195,9 @@ public class HandleFame implements Listener {
             fameLogic(event);
         }
         if (data.containsKey("time")) {
-            long time = (long) Math.round((long) data.get("time")
-                    * Manager.getInstance().params.getMultiplier("RTime", pl));
-            Manager.getInstance().getTimerManager().getPlayer(pl)
-                    .addSession(new Session(0L, time));
+            long time = Math.round((long) data.get("time") * Manager.getInstance().params.getMultiplier("RTime", pl));
+            TimedPlayer aux = Manager.getInstance().getTimerManager().getPlayer(pl);
+            if (aux != null) aux.addSession(new Session(0L, time));
             if (pl.isOnline()) {
                 pl.getPlayer().sendMessage(getPluginName()
                         + LangsFile.PLAYEDTIME_CHANGE_PLAYER.getText(Localizer.getLocale(pl.getPlayer()))

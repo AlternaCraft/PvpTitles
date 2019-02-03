@@ -19,13 +19,14 @@ package com.alternacraft.pvptitles.RetroCP;
 import com.alternacraft.pvptitles.Backend.SQLConnection;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
-
 import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.UtilsFile;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
 
 public class DBChecker {
 

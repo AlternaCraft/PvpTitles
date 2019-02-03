@@ -22,19 +22,21 @@ import com.alternacraft.pvptitles.Files.HologramsFile;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Misc.CustomLocation;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class LeaderBoardManager {
 

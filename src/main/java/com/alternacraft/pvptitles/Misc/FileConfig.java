@@ -17,22 +17,20 @@
 package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
-import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 
 /**
  * Custom class for working better with the main config file. These are the

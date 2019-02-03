@@ -24,9 +24,10 @@ import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import org.bukkit.Location;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Location;
 
 public class HologramBoard extends Board {
 

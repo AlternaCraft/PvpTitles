@@ -20,17 +20,15 @@ import com.alternacraft.pvptitles.Hooks.VaultHook;
 import com.alternacraft.pvptitles.Libraries.UUIDFetcher;
 import com.alternacraft.pvptitles.Main.DBLoader.DBType;
 import com.alternacraft.pvptitles.Main.Manager;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 import com.alternacraft.pvptitles.Misc.Formulas.EvaluableExpression;
 import com.alternacraft.pvptitles.Misc.Formulas.Expression;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+
+import java.util.*;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getInstance;
 
 public class ConfigDataStore {
 

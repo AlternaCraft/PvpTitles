@@ -18,6 +18,7 @@ package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.DBLoader;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

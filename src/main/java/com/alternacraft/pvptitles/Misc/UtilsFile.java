@@ -19,10 +19,12 @@ package com.alternacraft.pvptitles.Misc;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UtilsFile {
 
@@ -77,15 +79,11 @@ public class UtilsFile {
     }
 
     public static List<String> getFileLines(File file) {
-        ArrayList<String> list = new ArrayList<>();
-        try {
-            Scanner s = new Scanner(file);
-            while (s.hasNext()){
-                list.add(s.next());
-            }
-            s.close();
-        } catch (IOException ex) {
-            CustomLogger.logError(ex.getMessage());
+        List<String> list = new ArrayList<>();
+        try (Stream<String> stream = Files.lines(Paths.get(file.toURI()))) {
+            list = stream.collect(Collectors.toList());
+        } catch (IOException e) {
+            CustomLogger.logError("Error reading file: " + file.getName());
         } finally {
             return list;
         }

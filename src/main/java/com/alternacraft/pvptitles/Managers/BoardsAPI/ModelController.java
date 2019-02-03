@@ -23,6 +23,7 @@ import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Params;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+
 import java.util.List;
 
 public class ModelController {

@@ -18,17 +18,19 @@ package com.alternacraft.pvptitles.Tests;
 
 import com.alternacraft.pvptitles.Libraries.Updater;
 import com.alternacraft.pvptitles.Libraries.Updater.UpdateResult;
-import java.io.File;
-import java.util.Arrays;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginDescriptionFile;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.File;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PluginDescriptionFile.class, Server.class})

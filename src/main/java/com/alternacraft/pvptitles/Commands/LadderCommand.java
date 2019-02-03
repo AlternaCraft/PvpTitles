@@ -18,24 +18,22 @@ package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_PLAYER_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_POINTS_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_POS_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.TOP_TAG;
+import com.alternacraft.pvptitles.Files.TemplatesFile.*;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.alternacraft.pvptitles.Files.TemplatesFile.*;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class LadderCommand implements CommandExecutor {
 

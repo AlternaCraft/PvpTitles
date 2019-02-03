@@ -19,10 +19,11 @@ package com.alternacraft.pvptitles.Misc;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+
+import java.util.UUID;
 
 public class PlayerFame implements Comparable {
 

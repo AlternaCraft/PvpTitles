@@ -21,22 +21,24 @@ import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Hooks.HolographicHook;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.Board;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard;
-import static com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard.DEFAULT_POSITION;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import static com.alternacraft.pvptitles.Managers.BoardsCustom.HologramBoard.DEFAULT_POSITION;
 
 public class BoardCommand implements CommandExecutor {
 

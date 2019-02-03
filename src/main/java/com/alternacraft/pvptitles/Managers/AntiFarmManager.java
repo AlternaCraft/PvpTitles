@@ -18,15 +18,17 @@ package com.alternacraft.pvptitles.Managers;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
-import static com.alternacraft.pvptitles.Main.Manager.TICKS;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+
+import static com.alternacraft.pvptitles.Main.Manager.TICKS;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class AntiFarmManager {
 

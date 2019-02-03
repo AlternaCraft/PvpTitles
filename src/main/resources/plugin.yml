@@ -3,6 +3,7 @@ version: "${project.version}"
 description: Get epic titles in pvp
 database: false
 website: alternacraft.github.io/PvpTitles/
+api-version: 1.13
 
 author: AlternaCraft
 
@@ -23,7 +24,7 @@ commands:
   pvpLadder:
     description: It shows the top five players.
     usage: /<command>
-    aliases: pvpranking
+    aliases: pvpliders
     permission: pvptitles.ladder
   pvpFame:
     description: Add, view or set player fame in game.

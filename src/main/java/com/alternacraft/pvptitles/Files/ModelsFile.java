@@ -18,6 +18,7 @@ package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
+
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;

@@ -27,12 +27,13 @@ import com.alternacraft.pvptitles.Misc.StrUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 public class HolographicHook {
 

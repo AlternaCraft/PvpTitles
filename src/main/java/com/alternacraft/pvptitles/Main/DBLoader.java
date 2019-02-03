@@ -16,16 +16,12 @@
  */
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Backend.ConfigDataStore;
-import com.alternacraft.pvptitles.Backend.DatabaseManager;
-import com.alternacraft.pvptitles.Backend.DatabaseManagerSQL;
-import com.alternacraft.pvptitles.Backend.MySQLConnection;
-import com.alternacraft.pvptitles.Backend.SQLConnection;
-import com.alternacraft.pvptitles.Backend.SQLiteConnection;
+import com.alternacraft.pvptitles.Backend.*;
 import com.alternacraft.pvptitles.Exceptions.DBException;
-import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
 
 public class DBLoader {
 

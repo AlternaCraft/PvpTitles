@@ -17,22 +17,21 @@
 package com.alternacraft.pvptitles.Commands;
 
 import com.alternacraft.pvptitles.Files.LangsFile;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.COMMAND_TAG;
-import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.INFO_COMMAND_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.VERSION_TAG;
+import com.alternacraft.pvptitles.Files.TemplatesFile.*;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.alternacraft.pvptitles.Files.TemplatesFile.*;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public class InfoCommand implements CommandExecutor {
 

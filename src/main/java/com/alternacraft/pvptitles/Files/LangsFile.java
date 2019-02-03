@@ -19,10 +19,11 @@ package com.alternacraft.pvptitles.Files;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.StrUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Custom class for getting messages

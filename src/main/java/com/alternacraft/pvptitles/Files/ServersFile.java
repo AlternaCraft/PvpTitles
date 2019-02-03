@@ -17,10 +17,11 @@
 package com.alternacraft.pvptitles.Files;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ServersFile {
     public File serversFile = new File(PvpTitles.PLUGIN_DIR, "servers.yml");        

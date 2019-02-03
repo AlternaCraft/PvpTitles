@@ -18,12 +18,13 @@ package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class PluginLog {
 

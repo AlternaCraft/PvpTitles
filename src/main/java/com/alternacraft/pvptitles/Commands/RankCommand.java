@@ -20,37 +20,31 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_TITLE_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.FAME_VALUE_TAG;
-import com.alternacraft.pvptitles.Files.TemplatesFile.Files;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.KS_TITLE_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.KS_VALUE_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.NEXT_RANK_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.PLUGIN_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_TITLE_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.RANK_VALUE_TAG;
-import static com.alternacraft.pvptitles.Files.TemplatesFile.VETO_TAG;
+import com.alternacraft.pvptitles.Files.TemplatesFile.*;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.Rank.NextRank;
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import static com.alternacraft.pvptitles.Files.TemplatesFile.*;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import static com.alternacraft.pvptitles.Misc.StrUtils.splitToComponentTimes;
 
 public class RankCommand implements CommandExecutor {
 

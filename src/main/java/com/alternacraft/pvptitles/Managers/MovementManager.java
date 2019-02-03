@@ -18,10 +18,11 @@ package com.alternacraft.pvptitles.Managers;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
+import org.bukkit.OfflinePlayer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.OfflinePlayer;
 
 public class MovementManager {
 

@@ -19,16 +19,9 @@ package com.alternacraft.pvptitles.Main;
 import com.alternacraft.pvptitles.Backend.ConfigDataStore;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
-import com.alternacraft.pvptitles.Files.LangsFile;
+import com.alternacraft.pvptitles.Files.*;
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
-import com.alternacraft.pvptitles.Files.ModelsFile;
-import com.alternacraft.pvptitles.Files.RewardsFile;
-import com.alternacraft.pvptitles.Files.ServersFile;
-import com.alternacraft.pvptitles.Files.TemplatesFile;
 import com.alternacraft.pvptitles.Hooks.HolographicHook;
-import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
-import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
@@ -42,18 +35,18 @@ import com.alternacraft.pvptitles.Misc.Localizer;
 import com.alternacraft.pvptitles.Misc.Rank;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.RetroCP.DBChecker;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static com.alternacraft.pvptitles.Main.CustomLogger.showMessage;
+import static com.alternacraft.pvptitles.Main.DBLoader.tipo;
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 
 public final class Manager {
 

@@ -19,13 +19,9 @@ package com.alternacraft.pvptitles.Listeners;
 import com.alternacraft.pvptitles.Events.BoardEvent;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardData;
 import com.alternacraft.pvptitles.Misc.Inventories;
-import static com.alternacraft.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
 import com.alternacraft.pvptitles.Misc.Localizer;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -37,6 +33,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.EventExecutor;
+
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import static com.alternacraft.pvptitles.Misc.Inventories.MAX_BOARDS_PER_PAGE;
 
 /**
  * Clase evento para comprobar los jugadores que pulsan click en el inv virtual

@@ -17,9 +17,11 @@
 package com.alternacraft.pvptitles.Managers.BoardsAPI;
 
 import com.alternacraft.pvptitles.Misc.StrUtils;
-import static com.alternacraft.pvptitles.Misc.StrUtils.removeColors;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.alternacraft.pvptitles.Misc.StrUtils.removeColors;
 
 public class BoardModel {
 

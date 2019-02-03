@@ -16,42 +16,28 @@
  */
 package com.alternacraft.pvptitles.Main;
 
-import com.alternacraft.pvptitles.Commands.BoardCommand;
-import com.alternacraft.pvptitles.Commands.DBCommand;
-import com.alternacraft.pvptitles.Commands.FameCommand;
-import com.alternacraft.pvptitles.Commands.InfoCommand;
-import com.alternacraft.pvptitles.Commands.LadderCommand;
-import com.alternacraft.pvptitles.Commands.PurgeCommand;
-import com.alternacraft.pvptitles.Commands.RankCommand;
-import com.alternacraft.pvptitles.Commands.ReloadCommand;
+import com.alternacraft.pvptitles.Commands.*;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Files.LangsFile;
-import com.alternacraft.pvptitles.Hooks.HolographicHook;
-import com.alternacraft.pvptitles.Hooks.MVdWPlaceholderHook;
-import com.alternacraft.pvptitles.Hooks.PlaceholderHook;
-import com.alternacraft.pvptitles.Hooks.SBSHook;
-import com.alternacraft.pvptitles.Hooks.VNPHook;
-import com.alternacraft.pvptitles.Hooks.VaultHook;
-import com.alternacraft.pvptitles.Listeners.HandleFame;
-import com.alternacraft.pvptitles.Listeners.HandleInventory;
-import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
-import com.alternacraft.pvptitles.Listeners.HandlePlayerTag;
-import com.alternacraft.pvptitles.Listeners.HandleSign;
-import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
+import com.alternacraft.pvptitles.Hooks.*;
+import com.alternacraft.pvptitles.Listeners.*;
 import com.alternacraft.pvptitles.Managers.MetricsManager;
 import com.alternacraft.pvptitles.Managers.UpdaterManager;
 import com.alternacraft.pvptitles.Misc.Inventories;
 import com.alternacraft.pvptitles.Misc.TimedPlayer;
 import com.alternacraft.pvptitles.Misc.Timer;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import static com.alternacraft.pvptitles.Main.CustomLogger.logMessage;
 
 public class PvpTitles extends JavaPlugin {
 

@@ -19,15 +19,10 @@ package com.alternacraft.pvptitles.Listeners;
 import com.alternacraft.pvptitles.Files.LangsFile;
 import com.alternacraft.pvptitles.Main.Manager;
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.BoardModel;
 import com.alternacraft.pvptitles.Managers.BoardsAPI.ModelController;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
-import static com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData.EAST;
-import static com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData.NORTH;
-import static com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData.SOUTH;
-import static com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData.WEST;
 import com.alternacraft.pvptitles.Misc.Localizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +35,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+
+import static com.alternacraft.pvptitles.Main.PvpTitles.getPluginName;
+import static com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData.*;
 
 public class HandleSign implements Listener {
 

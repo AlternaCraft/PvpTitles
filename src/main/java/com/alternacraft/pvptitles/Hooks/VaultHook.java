@@ -17,13 +17,14 @@
 package com.alternacraft.pvptitles.Hooks;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
-import java.util.Arrays;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.util.Arrays;
 
 public class VaultHook {
 

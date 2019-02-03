@@ -18,8 +18,9 @@ package com.alternacraft.pvptitles.Misc;
 
 import com.alternacraft.pvptitles.Files.LangsFile.LangType;
 import com.alternacraft.pvptitles.Main.Manager;
-import java.lang.reflect.Field;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
 
 /**
  * 

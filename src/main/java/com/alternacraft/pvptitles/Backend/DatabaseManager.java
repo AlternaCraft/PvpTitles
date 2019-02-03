@@ -20,10 +20,11 @@ import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoard;
 import com.alternacraft.pvptitles.Managers.BoardsCustom.SignBoardData;
 import com.alternacraft.pvptitles.Misc.PlayerFame;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public interface DatabaseManager {
 

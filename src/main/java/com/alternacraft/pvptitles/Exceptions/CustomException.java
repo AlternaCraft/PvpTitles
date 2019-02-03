@@ -17,12 +17,13 @@
 package com.alternacraft.pvptitles.Exceptions;
 
 import com.alternacraft.pvptitles.Main.PvpTitles;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 /**
  * Custom exception.

@@ -19,13 +19,14 @@ package com.alternacraft.pvptitles.Hooks;
 import com.alternacraft.pvptitles.Exceptions.DBException;
 import com.alternacraft.pvptitles.Exceptions.RanksException;
 import com.alternacraft.pvptitles.Listeners.HandlePlayerFame;
-import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 import org.bukkit.entity.Player;
+
+import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 
 public class PlaceholderHook extends EZPlaceholderHook {
 
