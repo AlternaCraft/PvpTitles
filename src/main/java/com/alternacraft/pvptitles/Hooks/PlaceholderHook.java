@@ -23,20 +23,41 @@ import com.alternacraft.pvptitles.Main.CustomLogger;
 import com.alternacraft.pvptitles.Main.PvpTitles;
 import com.alternacraft.pvptitles.Managers.RankManager;
 import com.alternacraft.pvptitles.Misc.Rank;
-import me.clip.placeholderapi.external.EZPlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 import static com.alternacraft.pvptitles.Listeners.HandlePlayerTag.canDisplayRank;
 
-public class PlaceholderHook extends EZPlaceholderHook {
+public class PlaceholderHook extends PlaceholderExpansion {
 
     // https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Hook-into-PlaceholderAPI#using-placeholders-from-placeholderapi-in-your-plugin
-
+    // https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/PlaceholderExpansion#internal-class
     private PvpTitles plugin = null;
 
     public PlaceholderHook(PvpTitles plugin) {
-        super(plugin, "pvptitles");
+        //super(plugin, "pvptitles");
         this.plugin = plugin;
+    }
+    
+    @Override
+    public boolean persist(){
+        return true;
+    }
+    @Override
+    public boolean canRegister(){
+        return true;
+    }
+    @Override
+    public String getAuthor(){
+        return plugin.getDescription().getAuthors().toString();
+    }
+    @Override
+    public String getIdentifier(){
+        return "pvptitles";
+    }
+    @Override
+    public String getVersion(){
+        return plugin.getDescription().getVersion();
     }
     
     public String[] setup() {
